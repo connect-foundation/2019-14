@@ -1,31 +1,6 @@
 import React, { useEffect, useReducer } from "react";
-
-const MARKDOWN_ACTION = {
-  INIT: "markdown/init",
-  TRANSFORM: "markdown/transform",
-  INPUT: "markdown/input",
-};
-
-const markdownReducer = (state, action) => {
-  switch (action.type) {
-    case MARKDOWN_ACTION.INIT:
-      return {
-        text: action.text || "",
-        renderTarget: action.renderTarget || null,
-      };
-    case MARKDOWN_ACTION.INPUT:
-      return {
-        ...state,
-        text: action.text,
-      };
-    case MARKDOWN_ACTION.TRANSFORM:
-      return {
-        ...state,
-        renderTarget: action.renderTarget,
-      };
-  }
-  return state;
-};
+import markdownReducer from "../../reducers/MarkdownReducer";
+import { markdownActionCreator } from "../../actions/MarkdownAction";
 
 const HComponent = () => {
   return <div>hello h component!</div>;
@@ -34,7 +9,7 @@ const HComponent = () => {
 const MarkdownDefaultInput = ({ markdownDispatch }) => {
   const inputHandler = e => {
     const text = e.target.value;
-    markdownDispatch({ type: MARKDOWN_ACTION.INPUT, text });
+    markdownDispatch(markdownActionCreator.input(text));
   };
 
   return (
@@ -44,6 +19,13 @@ const MarkdownDefaultInput = ({ markdownDispatch }) => {
   );
 };
 
+const markdownRules = {
+  h1: {
+    syntax: "# ",
+    component: dispatch => <HComponent markdownDispatch={dispatch} />,
+  },
+};
+
 const MarkdownTransformer = () => {
   const [markdown, markdownDispatch] = useReducer(markdownReducer, {
     text: "",
@@ -51,12 +33,12 @@ const MarkdownTransformer = () => {
 
   useEffect(() => {
     const { text } = markdown;
+    const { h1 } = markdownRules;
 
-    if (text.startsWith("# ")) {
-      markdownDispatch({
-        type: MARKDOWN_ACTION.TRANSFORM,
-        renderTarget: <HComponent markdownDispatch={markdownDispatch} />,
-      });
+    // 이 부분에서 파서를 통해서 renderTarget에 원하는 컴포넌트를 추가할 수 있다.
+    if (text.startsWith(h1.syntax)) {
+      const component = h1.component(markdownDispatch);
+      markdownDispatch(markdownActionCreator.transform(component));
     }
   }, [markdown.text]);
 
