@@ -5,6 +5,7 @@ import {
   EditorDispatchContext,
 } from "../stores/EditorStore.jsx";
 import { editorActionCreator } from "../actions/EditorAction";
+import { MarkdownTransformer } from "../components/editor/MarkdownRenderer";
 
 const AComponent = () => {
   const dispatch = useContext(EditorDispatchContext);
@@ -40,6 +41,7 @@ const EditorPage = () => {
     <>
       <EditorStore>
         <TestComponent />
+        <MarkdownTransformer />
       </EditorStore>
     </>
   );
