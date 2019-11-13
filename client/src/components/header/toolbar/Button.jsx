@@ -19,7 +19,7 @@ const Wrapper = styled.button`
   border: transparent;
   cursor: pointer;
 
-  margin-left: ${(props) => (props.terminal ? "auto" : "0px")};
+  margin-left: ${(props) => (props.type === "terminal" ? "auto" : "0px")};
 `;
 
 const Button = ({ type }) => {
@@ -46,19 +46,11 @@ const Button = ({ type }) => {
       break;
   }
 
-  if (icon === faTerminal) {
-    return (
-      <Wrapper terminal>
-        <FontAwesomeIcon icon={icon} />
-      </Wrapper>
-    );
-  } else {
-    return (
-      <Wrapper>
-        <FontAwesomeIcon icon={icon} />
-      </Wrapper>
-    );
-  }
+  return (
+    <Wrapper type={type}>
+      <FontAwesomeIcon icon={icon} />
+    </Wrapper>
+  );
 };
 
 export default Button;
