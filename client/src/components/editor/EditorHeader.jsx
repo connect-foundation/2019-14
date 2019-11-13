@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Logo from "./Logo";
 // TODO 차후에 CSS 스타일이 고정되면 그에 맞게 수정한다.
 const Header = styled.header`
   display: flex;
@@ -17,7 +18,11 @@ const Header = styled.header`
 
 const EditorHeader = () => {
   // TODO boost writer 하드 코딩값 지우기
-  return <Header>boost writer</Header>;
+  return (
+    <Header>
+      <Logo />
+    </Header>
+  );
 };
 
 export default EditorHeader;
