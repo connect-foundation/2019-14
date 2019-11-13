@@ -15,9 +15,9 @@ const Header = styled.header`
  * Editor Tool Bar 컴포넌트를 import한다.
  */
 
-function EditorHeader() {
+const EditorHeader = () => {
   // TODO boost writer 하드 코딩값 지우기
   return <Header>boost writer</Header>;
-}
+};
 
 export default EditorHeader;
