@@ -1,11 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import EditorPage from "./pages/EditorPage";
+import EditorHeader from "./components/editor/EditorHeader";
 
 function App() {
   return (
     <div>
-      <EditorPage />
+      <EditorPage>
+        <EditorHeader />
+      </EditorPage>
     </div>
   );
 }
