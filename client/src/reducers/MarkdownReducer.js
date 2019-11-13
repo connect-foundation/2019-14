@@ -25,9 +25,11 @@ const markdownReducerHandler = {
 
 const markdownReducer = (state, action) => {
   const handler = markdownReducerHandler[action.type];
+
   if (handler === undefined) {
     return state;
   }
+
   return handler(state, action);
 };
 
