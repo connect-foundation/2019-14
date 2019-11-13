@@ -37,14 +37,6 @@ class DockerApi {
     const containerStream = await exec.start();
     return containerStream;
   }
-
-  // async signalById(containerId) {
-  //   // TODO: for kill signaling
-  // }
-
-  // async hijackingExecById(containerId, commandString) {
-  // TODO: for waiting stdin command
-  // }
 }
 
 module.exports = { DockerApi };

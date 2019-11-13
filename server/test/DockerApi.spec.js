@@ -2,7 +2,6 @@ require('dotenv').config();
 const expect = require("chai").expect;
 const { DockerApi } = require("../src/DockerApi.js");
 
-// dotenv로 옮기기
 const remoteIp = process.env.REMOTE_DOCKER_IP;
 const remotePort = process.env.REMOTE_DOCKER_PORT;
 
@@ -37,6 +36,7 @@ const streamResolver = (stream) => {
     let result = '';
     stream.on("data", (chunk) => {
       // https://github.com/moby/moby/issues/7375#issuecomment-51462963
+      // docker special character prefix
       result = chunk.slice(8).toString();
     });
 
