@@ -3,14 +3,13 @@ import React from "react";
 import Button from "./Button";
 
 const EditorToolBar = () => {
+  const types = ["new", "save", "load", "code", "share", "terminal"];
+
   return (
     <>
-      <Button type="new" />
-      <Button type="save" />
-      <Button type="load" />
-      <Button type="code" />
-      <Button type="share" />
-      <Button type="terminal" />
+      {types.map((type) => {
+        return <Button type={type} />;
+      })}
     </>
   );
 };
