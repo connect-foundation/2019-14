@@ -1,5 +1,5 @@
 import React, { useReducer } from "react";
-import { editorReducer } from "../reducers/EditorReducer";
+import editorReducer from "../reducers/EditorReducer";
 
 const EditorContext = React.createContext();
 const EditorDispatchContext = React.createContext();

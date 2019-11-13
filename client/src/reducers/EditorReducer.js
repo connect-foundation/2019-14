@@ -24,4 +24,4 @@ const editorReducer = (state, action) => {
   return handler(state, action);
 };
 
-export { editorReducer };
+export default editorReducer;
