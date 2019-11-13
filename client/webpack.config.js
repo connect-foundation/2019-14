@@ -35,10 +35,15 @@ const config = {
           },
         },
       },
-
       {
         test: /\.css$/,
         use: ["css-loader"],
+      },
+      {
+        test: /\.(jpg|png)$/,
+        use: {
+          loader: "url-loader",
+        },
       },
     ], // rules
   }, // module
