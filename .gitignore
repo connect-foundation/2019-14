@@ -4,3 +4,5 @@ node_modules
 # webpack의 번들링 결과물
 client/dist/bundle.js
 
+# dotenv 기본 파일
+.env
