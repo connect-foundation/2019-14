@@ -20,3 +20,25 @@ client
 │   └── utils: 공용 모듈이 위치할 디렉토리
 └── webpack.config.js
 ```
+
+## Backend 디렉토리 구조
+```
+server
+├── bin
+│   └── www
+├── package-lock.json
+├── package.json
+└── src
+    ├── app.js
+    ├── controller
+    │   └── index.js
+    ├── model
+    │   └── db
+    │       └── mysql.js
+    ├── routes
+    │   ├── index.js
+    │   └── users.js
+    └── utils
+        └── utils.js
+```
+
