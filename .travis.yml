@@ -1,31 +1,32 @@
 stages:
-  - lint
-  - unit-test
-
+- lint
+- unit-test
 dist: xenial
 language: node_js
 node_js:
-  - 12
+- 12
 before_install:
-  - export PATH=~/npm/node_modules/.bin:$PATH
+- cd server
+- openssl aes-256-cbc -K $encrypted_326998a00d0a_key -iv $encrypted_326998a00d0a_iv
+  -in .env.enc -out .env -d
+- cd -
+- export PATH=~/npm/node_modules/.bin:$PATH
 install:
-  - cd server
-  - npm install
-  - cd -
-  - cd client
-  - npm install
-  - cd -
-
+- cd server
+- npm install
+- cd -
+- cd client
+- npm install
+- cd -
 jobs:
   include:
-    - stage: lint
-      name: "Server linting"
-      script:
-        - cd server
-        - npm run lint
-
-    - stage: unit-test
-      name: "Server unit testing"
-      script:
-        - cd server
-        - npm run test
+  - stage: lint
+    name: Server linting
+    script:
+    - cd server
+    - npm run lint
+  - stage: unit-test
+    name: Server unit testing
+    script:
+    - cd server
+    - npm run test
