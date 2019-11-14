@@ -21,27 +21,18 @@ const DocumentTitleInput = styled.input`
 
 const DocumentTitle = () => {
   const defaultTitle = "제목 없는 문서";
-  const [state, setState] = useState(defaultTitle);
+  const [state, setState] = useState("");
 
-  const onChangeHandler = e => {
+  const onInputHandler = e => {
     const documentTitle = e.currentTarget.value;
     setState(documentTitle);
   };
 
-  const onBlurHandler = e => {
-    const documentTitle = e.currentTarget.value;
-
-    if (documentTitle === "") {
-      setState(defaultTitle);
-      e.currentTarget.value = defaultTitle;
-    }
-  };
-
   return (
     <DocumentTitleInput
+      placeholder={defaultTitle}
       defaultValue={state}
-      onChange={onChangeHandler}
-      onBlur={onBlurHandler}
+      onInput={onInputHandler}
     />
   );
 };
