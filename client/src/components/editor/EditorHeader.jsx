@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Logo from "./Logo";
 import DocumentTitleWrapper from "./DocumentTitleWrapper";
+import UserTerminalEnvironments from "./UserTerminalEnvironments";
 // TODO 차후에 CSS 스타일이 고정되면 그에 맞게 수정한다.
 const Header = styled.header`
   display: flex;
@@ -23,6 +24,7 @@ const EditorHeader = () => {
     <Header>
       <Logo />
       <DocumentTitleWrapper />
+      <UserTerminalEnvironments />
     </Header>
   );
 };
