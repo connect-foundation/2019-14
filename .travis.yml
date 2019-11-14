@@ -1,0 +1,32 @@
+stages:
+  - lint
+  - name: unit-test
+    if: branch = develop OR branch = /feature\/*/
+
+dist: xenial
+language: node_js
+node_js:
+  - 12
+before_install:
+  - export PATH=~/npm/node_modules/.bin:$PATH
+install:
+  - cd server
+  - npm install
+  - cd -
+  - cd client
+  - npm install
+  - cd -
+
+jobs:
+  include:
+    - stage: lint
+      name: "Server linting"
+      script:
+        - cd server
+        - npm run lint
+
+    - stage: unit-test
+      name: "Server unit testing"
+      script:
+        - cd server
+        - npm run test

@@ -24,7 +24,7 @@ class DockerApi {
         return info.id.startsWith(containerId);
       }) === undefined;
     if (noContainer) {
-      return;
+      return null;
     }
 
     const container = await this.request.getContainer(containerId);
