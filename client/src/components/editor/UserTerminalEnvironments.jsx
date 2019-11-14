@@ -7,7 +7,11 @@ import mysqlImagePath from "../../../public/mysql-logo-50.png";
 import nodejsImagePath from "../../../public/nodejs-50.png";
 import npmImagePath from "../../../public/npm-50.png";
 
-const UserTerminalEnvironmentContainer = styled.section``;
+const UserTerminalEnvironmentContainer = styled.section`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+`;
 
 const UserTerminalEnvironments = () => {
   const defaultData = [
