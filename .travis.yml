@@ -1,7 +1,6 @@
 stages:
   - lint
-  - name: unit-test
-    if: branch = develop OR branch = /feature\/*/
+  - unit-test
 
 dist: xenial
 language: node_js
