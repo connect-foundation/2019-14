@@ -37,6 +37,7 @@
     "mocha": "^6.2.2",
     "nps": "^5.9.8",
     "prettier": "^1.19.1",
+    "url-loader": "^2.2.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0"
