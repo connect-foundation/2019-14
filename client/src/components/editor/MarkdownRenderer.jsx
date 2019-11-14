@@ -1,21 +1,38 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useContext } from "react";
 import markdownReducer from "../../reducers/MarkdownReducer";
 import { markdownActionCreator } from "../../actions/MarkdownAction";
+import { CellContext, CellDispatchContext } from "../../stores/CellStore";
+import { cellActionCreator } from "../../actions/CellAction";
+import cellReducer from "../../reducers/CellReducer";
 
 const HComponent = () => {
   return <div>hello h component!</div>;
 };
 
 const MarkdownDefaultInput = ({ markdownDispatch }) => {
+  const cellDispatch = useContext(CellDispatchContext);
+
   const inputHandler = e => {
     const text = e.target.value;
     markdownDispatch(markdownActionCreator.input(text));
   };
 
+  const keyDownHandler = e => {
+    const { key } = e;
+
+    switch (key) {
+      case "Enter":
+        cellDispatch(cellActionCreator.new(<MarkdownDefaultInput />));
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
-    <div>
-      <input type="text" onInput={inputHandler} />
-    </div>
+    <>
+      <input type="text" onInput={inputHandler} onKeyDown={keyDownHandler} />
+    </>
   );
 };
 
@@ -30,15 +47,16 @@ const MarkdownTransformer = () => {
   const [markdown, markdownDispatch] = useReducer(markdownReducer, {
     text: "",
   });
+  const { state } = useContext(CellContext);
 
   useEffect(() => {
-    const { text } = markdown;
+    const { text } = state.cells[state.currentIndex + 1] || 0;
     const { h1 } = markdownRules;
 
     // 이 부분에서 파서를 통해서 renderTarget에 원하는 컴포넌트를 추가할 수 있다.
     if (text.startsWith(h1.syntax)) {
       const component = h1.component(markdownDispatch);
-      markdownDispatch(markdownActionCreator.transform(component));
+      markdownDispatch(cellActionCreator.transform(component));
     }
   }, [markdown.text]);
 
