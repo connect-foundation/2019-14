@@ -1,22 +1,29 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const DocumentTitleInput = styled.input`
-  padding-left: 1rem;
-  padding-right: 1rem;
+const DocumentTitleInput = styled.div`
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 1rem;
   background-color: #ffffff;
   font-size: 3.125rem;
-  height: 6rem;
+  min-height: 3.7rem;
+  max-width: 100%;
   border: none;
   outline: none;
-  :hover {
-    // border: 0.063rem solid red;
-  }
+  resize: none;
+  overflow: hidden;
 
   :focus {
     border: 0.125rem solid rgb(43, 125, 233);
     border-radius: 0.25rem;
   }
+
+  :empty:not(:focus):before {
+    content:attr(data-text);
+    color: gray;
+  }
+}
 `;
 
 const DocumentTitle = () => {
@@ -30,9 +37,11 @@ const DocumentTitle = () => {
 
   return (
     <DocumentTitleInput
+      contentEditable="true"
       placeholder={defaultTitle}
       defaultValue={state}
       onInput={onInputHandler}
+      data-text={defaultTitle}
     />
   );
 };
