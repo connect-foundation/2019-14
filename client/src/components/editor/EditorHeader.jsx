@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Logo from "./Logo";
-import DocumentTitleInput from "./DocumentTitle";
+import DocumentTitleWrapper from "./DocumentTitleWrapper";
 // TODO 차후에 CSS 스타일이 고정되면 그에 맞게 수정한다.
 const Header = styled.header`
   display: flex;
@@ -22,7 +22,7 @@ const EditorHeader = () => {
   return (
     <Header>
       <Logo />
-      <DocumentTitleInput />
+      <DocumentTitleWrapper />
     </Header>
   );
 };
