@@ -21,24 +21,24 @@ client
 └── webpack.config.js
 ```
 
+## Backend 디렉토리 구조
 ```
 server
-├── app.js
 ├── bin
 │   └── www
 ├── package-lock.json
 ├── package.json
 └── src
+    ├── app.js
     ├── controller
     │   └── index.js
     ├── model
     │   └── db
     │       └── mysql.js
-    ├── router
-    │   └── index.js
     ├── routes
     │   ├── index.js
     │   └── users.js
     └── utils
         └── utils.js
 ```
+
