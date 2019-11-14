@@ -6,9 +6,9 @@ import DocumentTitleWrapper from "./DocumentTitleWrapper";
 const Header = styled.header`
   display: flex;
   flex-direction: row;
-  // border: 1px solid green;
+  justify-content: space-between;
   width: 100%;
-  height: 10%;
+  height: 3.75rem;
 `;
 
 /**
