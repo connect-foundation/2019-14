@@ -3,11 +3,9 @@ import styled from "styled-components";
 
 const DocumentTitleInput = styled.div`
   display: inline-block;
-  margin-top: 1rem;
   padding: 1rem;
   background-color: #ffffff;
-  font-size: 3.125rem;
-  min-height: 3.7rem;
+  font-size: 1.125rem;
   max-width: 100%;
   border: none;
   outline: none;
