@@ -1,6 +1,6 @@
 require('dotenv').config();
 const expect = require("chai").expect;
-const { DockerApi } = require("../src/DockerApi.js");
+const { DockerApi } = require("../src/api/Docker.js");
 
 const remoteIp = process.env.REMOTE_DOCKER_IP;
 const remotePort = process.env.REMOTE_DOCKER_PORT;
