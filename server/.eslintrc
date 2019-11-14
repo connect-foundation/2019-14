@@ -11,7 +11,7 @@
     "prefer-arrow-callback": "error",
     "arrow-parens": "error",
     "arrow-body-style": ["error", "always"],
-    "no-param-reassign": ["error", { "props": false }],
+    "no-param-reassign": ["error"],
     "prettier/prettier": "error"
   }
 }

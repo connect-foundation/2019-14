@@ -6,10 +6,7 @@ language: node_js
 node_js:
 - 12
 before_install:
-- cd server
-- openssl aes-256-cbc -K $encrypted_326998a00d0a_key -iv $encrypted_326998a00d0a_iv
-  -in .env.enc -out .env -d
-- cd -
+- 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash openssl aes-256-cbc -K $encrypted_77d7c66353ef_key -iv $encrypted_77d7c66353ef_iv fi -in server/test.env.enc -out server/test.env -d; fi'
 - export PATH=~/npm/node_modules/.bin:$PATH
 install:
 - cd server
@@ -29,4 +26,4 @@ jobs:
     name: Server unit testing
     script:
     - cd server
-    - npm run test
+    - npm run unitTest

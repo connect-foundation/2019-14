@@ -10,8 +10,9 @@ class DockerApi {
     this.containerInfos = infos.map((info) => {
       const keys = Object.keys(info);
       const lowerCasedObject = keys.reduce((result, key) => {
-        result[key.toLowerCase()] = info[key];
-        return result;
+        const next = { ...result };
+        next[key.toLowerCase()] = info[key];
+        return next;
       }, {});
       return lowerCasedObject;
     });
