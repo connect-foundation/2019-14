@@ -7,7 +7,7 @@ const HComponent = () => {
 };
 
 const MarkdownDefaultInput = ({ markdownDispatch }) => {
-  const inputHandler = e => {
+  const inputHandler = (e) => {
     const text = e.target.value;
     markdownDispatch(markdownActionCreator.input(text));
   };
@@ -22,7 +22,7 @@ const MarkdownDefaultInput = ({ markdownDispatch }) => {
 const markdownRules = {
   h1: {
     syntax: "# ",
-    component: dispatch => <HComponent markdownDispatch={dispatch} />,
+    component: (dispatch) => <HComponent markdownDispatch={dispatch} />,
   },
 };
 
