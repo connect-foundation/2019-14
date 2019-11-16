@@ -1,12 +1,12 @@
 function test(params) {
-  return `mocha ${params}`;
+  return `mocha --recursive ${params}`;
 }
 
 module.exports = {
   scripts: {
     default: {
       script: "node index.js",
-      description: "Start app",
+      description: "Start app with 'npm start or nps'",
     },
     lint: {
       default: {
@@ -14,7 +14,7 @@ module.exports = {
         description: "Default lint",
       },
       code: {
-        script: "eslint .",
+        script: "eslint src",
         description: "Lint for code",
       },
     },
@@ -23,7 +23,7 @@ module.exports = {
         script: `nps ${["test.unit"].join(" ")}`,
       },
       unit: {
-        script: test("test/unit/*.spec.js"),
+        script: test("test/unit"),
         description: "Unit test",
       },
     },
