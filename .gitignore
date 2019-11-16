@@ -6,3 +6,6 @@ client/dist/bundle.js
 
 # dotenv 기본 파일
 .env
+
+# dotenv 테스트용 파일
+test.env

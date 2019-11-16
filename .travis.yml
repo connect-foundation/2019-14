@@ -1,0 +1,29 @@
+stages:
+- lint
+- unit-test
+dist: xenial
+language: node_js
+node_js:
+- 12
+before_install:
+- 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash openssl aes-256-cbc -K $encrypted_77d7c66353ef_key -iv $encrypted_77d7c66353ef_iv fi -in server/test.env.enc -out server/test.env -d; fi'
+- export PATH=~/npm/node_modules/.bin:$PATH
+install:
+- cd server
+- npm install
+- cd -
+- cd client
+- npm install
+- cd -
+jobs:
+  include:
+  - stage: lint
+    name: Server linting
+    script:
+    - cd server
+    - npm run lint
+  - stage: unit-test
+    name: Server unit testing
+    script:
+    - cd server
+    - npm run unitTest

@@ -10,8 +10,9 @@ class DockerApi {
     this.containerInfos = infos.map((info) => {
       const keys = Object.keys(info);
       const lowerCasedObject = keys.reduce((result, key) => {
-        result[key.toLowerCase()] = info[key];
-        return result;
+        const next = { ...result };
+        next[key.toLowerCase()] = info[key];
+        return next;
       }, {});
       return lowerCasedObject;
     });
@@ -24,7 +25,7 @@ class DockerApi {
         return info.id.startsWith(containerId);
       }) === undefined;
     if (noContainer) {
-      return;
+      return null;
     }
 
     const container = await this.request.getContainer(containerId);
