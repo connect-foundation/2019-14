@@ -1,6 +1,11 @@
-require('dotenv').config();
-const expect = require("chai").expect;
-const { DockerApi } = require("../src/api/Docker.js");
+const path = require("path");
+
+const resolvedPath = path.resolve(process.cwd(), "test.env");
+require("dotenv").config({
+  path: resolvedPath,
+});
+const { expect } = require("chai");
+const { DockerApi } = require("../../src/api/Docker.js");
 
 const remoteIp = process.env.REMOTE_DOCKER_IP;
 const remotePort = process.env.REMOTE_DOCKER_PORT;
@@ -16,7 +21,7 @@ const connectOptions = {
     port: 8000,
     version: "v1.40",
   },
-  noVersion:{
+  noVersion: {
     host: remoteIp,
     port: remotePort,
   },
@@ -33,7 +38,7 @@ const testcases = {
 
 const streamResolver = (stream) => {
   return new Promise((resolve, reject) => {
-    let result = '';
+    let result = "";
     stream.on("data", (chunk) => {
       // https://github.com/moby/moby/issues/7375#issuecomment-51462963
       // docker special character prefix
