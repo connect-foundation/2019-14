@@ -6,7 +6,7 @@ const HComponent = () => {
   return <div>hello h component!</div>;
 };
 
-const MarkdownDefaultInput = ({ cellDispatch }) => {
+const MarkdownDefaultInput = ({ currentIndex, cellDispatch }) => {
   const inputHandler = (e) => {
     const text = e.target.value;
     cellDispatch(cellActionCreator.input(text));
@@ -17,7 +17,15 @@ const MarkdownDefaultInput = ({ cellDispatch }) => {
 
     switch (key) {
       case "Enter":
-        cellDispatch(cellActionCreator.new(<MarkdownDefaultInput />));
+        cellDispatch(
+          cellActionCreator.new(
+            <MarkdownDefaultInput
+              currentIndex={currentIndex}
+              cellDispatch={cellDispatch}
+            />
+          )
+        );
+        cellDispatch(cellActionCreator.next());
         break;
       default:
         break;
@@ -48,26 +56,35 @@ const markdownRules = {
 const MarkdownTransformer = () => {
   const { state } = useContext(CellContext);
   const cellDispatch = useContext(CellDispatchContext);
+  const { currentIndex } = state;
+  const text = state.texts[currentIndex];
+  console.log(state.currentIndex, state.texts);
+  const renderTarget = (
+    <MarkdownDefaultInput
+      currentIndex={currentIndex}
+      cellDispatch={cellDispatch}
+    />
+  );
 
-  // console.log(state);
+  if (!state.cells[currentIndex]) {
+    cellDispatch(cellActionCreator.new(renderTarget));
+  }
+
   useEffect(() => {
-    const { text } = state.cells[state.currentIndex + 1] || 0;
     const { h1 } = markdownRules;
 
     // 이 부분에서 파서를 통해서 renderTarget에 원하는 컴포넌트를 추가할 수 있다.
     if (text && text.startsWith(h1.syntax)) {
-      const component = h1.component(cellDispatch);
-      cellDispatch(cellActionCreator.transform(component));
+      // const component = h1.component(cellDispatch);
+      // cellDispatch(cellActionCreator.transform(component, ""));
     }
-  }, [state.texts[state.currentIndex]]);
+  }, [text]);
 
   return (
     <div>
-      {state.renderTarget ? (
-        state.renderTarget
-      ) : (
-        <MarkdownDefaultInput cellDispatch={cellDispatch} />
-      )}
+      {state.cells[state.currentIndex]
+        ? state.cells[state.currentIndex]
+        : renderTarget}
     </div>
   );
 };

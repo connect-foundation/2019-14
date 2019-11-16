@@ -2,58 +2,93 @@ import { CELL_ACTION } from "../actions/CellAction";
 
 const cellReducerHandler = {
   [CELL_ACTION.NEW]: (state, action) => {
-    const { currentIndex } = state;
-    const nextIndex = currentIndex;
+    const currentIndex = state.currentIndex > 0 ? state.currentIndex : 0;
     const cells =
       state.cells.length > 0
         ? [
-            ...state.cells.slice(0, nextIndex),
+            ...state.cells.slice(0, currentIndex),
             action.renderTarget,
-            ...state.cells.slice(nextIndex, state.cells.length),
+            ...state.cells.slice(currentIndex, state.cells.length),
           ]
         : [action.renderTarget];
     const texts =
       state.texts.length > 0
         ? [
-            ...state.texts.slice(0, nextIndex),
+            ...state.texts.slice(0, currentIndex),
+            state.texts[currentIndex],
             "",
-            ...state.texts.slice(nextIndex, state.texts.length),
+            ...state.texts.slice(currentIndex + 1, state.texts.length),
           ]
         : [""];
-
     return {
       ...state,
       cells,
       texts,
-      currentIndex: nextIndex,
     };
   },
 
   [CELL_ACTION.INIT]: (state, action) => {
+    const { index } = action;
+    const texts =
+      state.texts.length > 0
+        ? [
+            ...state.texts.slice(0, index),
+            action.text,
+            ...state.texts.slice(index + 1, state.texts.length),
+          ]
+        : [""];
     return {
-      text: action.text || "",
-      renderTarget: action.renderTarget,
+      ...state,
+      texts,
     };
   },
 
-  [CELL_ACTION.SAVE]: (state, action) => {
+  [CELL_ACTION.INPUT]: (state, action) => {
+    const { currentIndex } = state;
+    const texts =
+      state.texts.length > 0
+        ? [
+            ...state.texts.slice(0, currentIndex),
+            action.text,
+            ...state.texts.slice(currentIndex + 1, state.texts.length),
+          ]
+        : [""];
     return {
       ...state,
-      selectedTarget: action.selectedTarget,
+      texts,
     };
   },
 
-  [CELL_ACTION.CHANGE]: (state, action) => {
+  [CELL_ACTION.TARGET.PREV]: (state) => {
     return {
       ...state,
-      selectedTarget: action.selectedTarget,
+      currentIndex: state.currentIndex - 1,
     };
   },
 
-  [CELL_ACTION.TRANSFORM]: (state, action) => {
+  [CELL_ACTION.TARGET.NEXT]: (state) => {
     return {
       ...state,
-      renderTarget: action.renderTarget,
+      currentIndex: state.currentIndex + 1,
+    };
+  },
+
+  [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
+    const { currentIndex } = action;
+    const cells = [
+      ...state.cells.slice(0, currentIndex),
+      action.renderTarget,
+      ...state.cells.slice(currentIndex + 1, state.cells.length),
+    ];
+    const texts = [
+      ...state.texts.slice(0, currentIndex),
+      action.text,
+      ...state.texts.slice(currentIndex + 1, state.texts.length),
+    ];
+    return {
+      ...state,
+      cells,
+      texts,
     };
   },
 };

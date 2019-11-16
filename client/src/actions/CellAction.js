@@ -1,8 +1,10 @@
 const CELL_ACTION = {
   NEW: "cell/new",
   INIT: "cell/init",
+  INPUT: "cell/input",
   TARGET: {
-    CHANGE: "cell/target/change",
+    PREV: "cell/target/prev",
+    NEXT: "cell/target/next",
     TRANSFORM: "cell/transform",
   },
 };
@@ -23,8 +25,8 @@ const cellActionCreator = {
   },
   /**
    * 셀의 데이터를 초기화시킨다.
-   * @param {Cell} renderTarget
-   * - 초기화할 셀 컴포넌트
+   * @param {Number} index
+   * - 초기화할 셀의 index
    * @param {Text} text
    * - 초기 데이터
    * @returns type
@@ -34,25 +36,47 @@ const cellActionCreator = {
    * @returns text
    * - 초기화 데이터
    */
-  init(renderTarget, text) {
+  init(index, text) {
     return {
       type: CELL_ACTION.INIT,
-      renderTarget,
+      index,
+      text: text || "",
+    };
+  },
+  /**
+   * 셀의 텍스트를 변경한다.
+   * @param {Text} text
+   * - 변경된 텍스트
+   * @returns type
+   * - 셀 액션 타입
+   * @returns renderTarget
+   * - 데이터를 [text]로 변경할 Cell
+   * @returns text
+   * - 변경된 텍스트
+   */
+  input(text) {
+    return {
+      type: CELL_ACTION.INPUT,
       text,
     };
   },
   /**
-   * 엔터, 위/아래 화살표 입력, 셀 클릭시 셀 포커스를 이동시킨다.
-   * - @todo cell 자체 말고 index로 변경해도 괜찮을 듯.
-   * @param {Cell} selectedTarget
-   * - 엔터: 다음 셀로 포커스 이동
-   * - 위/아래: 이전/다음 셀로 포커스 이동
-   * - 셀 클릭: 클릭한 셀로 포커스 이동
+   * 셀 포커스를 이동시킨다.
+   * - 위 방향키: 이전 셀로 포커스 이동
    */
-  change(selectedTarget) {
+  prev() {
     return {
-      type: CELL_ACTION.TARGET.CHANGE,
-      selectedTarget,
+      type: CELL_ACTION.TARGET.PREV,
+    };
+  },
+  /**
+   * 셀 포커스를 이동시킨다.
+   * - 엔터: 다음 셀로 포커스 이동
+   * - 아래 방향키: 다음 셀로 포커스 이동
+   */
+  next() {
+    return {
+      type: CELL_ACTION.TARGET.NEXT,
     };
   },
   /**
@@ -61,11 +85,13 @@ const cellActionCreator = {
    * @param {Cell} renderTarget
    * - 변경된 Cell(React Component)
    * - @todo 이 부분은 라인 파서와 연동이 필요함. 추가로 데이터 파라미터를 받아야 할 듯.
+   * - 라인 파서로 변경된 데이터가 반영된 텍스트를 받아서 store에 넣어줘야 함
    */
-  transform(renderTarget) {
+  transform(renderTarget, text) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
       renderTarget,
+      text,
     };
   },
 };

@@ -1,24 +1,18 @@
-import React, { useContext, useEffect } from "react";
-import { CellContext, CellDispatchContext } from "../../stores/CellStore";
-import { cellActionCreator } from "../../actions/CellAction";
+import React, { useContext } from "react";
+import { CellContext } from "../../stores/CellStore";
 import { MarkdownTransformer } from "./MarkdownRenderer";
 
 const EditorComponent = () => {
   const { state } = useContext(CellContext);
-  const cellDispatch = useContext(CellDispatchContext);
-  if (state.cells.length === 0) {
-    cellDispatch(cellActionCreator.new(<MarkdownTransformer />));
-  }
-
-  useEffect(() => {
-    // console.log(state);
-  });
+  const { cells } = state;
 
   return (
     <>
-      {state.cells.length > 0
-        ? state.cells.map((cell, i) => <div key={i}>{cell}</div>)
-        : null}
+      {cells && cells.length > 0 ? (
+        cells.map((cell, i) => <MarkdownTransformer key={i} />)
+      ) : (
+        <MarkdownTransformer />
+      )}
     </>
   );
 };
