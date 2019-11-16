@@ -12,23 +12,31 @@ const MarkdownDefaultInput = ({ currentIndex, cellDispatch }) => {
     cellDispatch(cellActionCreator.input(text));
   };
 
+  const keyDownEventDispatch = {
+    Enter: () => {
+      cellDispatch(
+        cellActionCreator.new(
+          <MarkdownDefaultInput
+            currentIndex={currentIndex}
+            cellDispatch={cellDispatch}
+          />
+        )
+      );
+      cellDispatch(cellActionCreator.next());
+    },
+    ArrowUp: () => {
+      console.log("this is ArrowUp Event!");
+    },
+    ArrowDown: () => {
+      console.log("this is ArrowDown Event!");
+    },
+  };
+
   const keyDownHandler = (e) => {
     const { key } = e;
-
-    switch (key) {
-      case "Enter":
-        cellDispatch(
-          cellActionCreator.new(
-            <MarkdownDefaultInput
-              currentIndex={currentIndex}
-              cellDispatch={cellDispatch}
-            />
-          )
-        );
-        cellDispatch(cellActionCreator.next());
-        break;
-      default:
-        break;
+    const exec = keyDownEventDispatch[key];
+    if (exec) {
+      exec();
     }
   };
 
@@ -58,7 +66,6 @@ const MarkdownTransformer = () => {
   const cellDispatch = useContext(CellDispatchContext);
   const { currentIndex } = state;
   const text = state.texts[currentIndex];
-  console.log(state.currentIndex, state.texts);
   const renderTarget = (
     <MarkdownDefaultInput
       currentIndex={currentIndex}
@@ -75,8 +82,8 @@ const MarkdownTransformer = () => {
 
     // 이 부분에서 파서를 통해서 renderTarget에 원하는 컴포넌트를 추가할 수 있다.
     if (text && text.startsWith(h1.syntax)) {
-      // const component = h1.component(cellDispatch);
-      // cellDispatch(cellActionCreator.transform(component, ""));
+      const component = h1.component(cellDispatch);
+      cellDispatch(cellActionCreator.transform(component, "transform h1 tag"));
     }
   }, [text]);
 
