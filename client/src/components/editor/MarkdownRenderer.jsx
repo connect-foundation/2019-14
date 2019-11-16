@@ -1,23 +1,18 @@
-import React, { useEffect, useReducer, useContext } from "react";
-import markdownReducer from "../../reducers/MarkdownReducer";
-import { markdownActionCreator } from "../../actions/MarkdownAction";
+import React, { useEffect, useContext } from "react";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
-import cellReducer from "../../reducers/CellReducer";
 
 const HComponent = () => {
   return <div>hello h component!</div>;
 };
 
-const MarkdownDefaultInput = ({ markdownDispatch }) => {
-  const cellDispatch = useContext(CellDispatchContext);
-
-  const inputHandler = e => {
+const MarkdownDefaultInput = ({ cellDispatch }) => {
+  const inputHandler = (e) => {
     const text = e.target.value;
-    markdownDispatch(markdownActionCreator.input(text));
+    cellDispatch(cellActionCreator.input(text));
   };
 
-  const keyDownHandler = e => {
+  const keyDownHandler = (e) => {
     const { key } = e;
 
     switch (key) {
@@ -31,7 +26,14 @@ const MarkdownDefaultInput = ({ markdownDispatch }) => {
 
   return (
     <>
-      <input type="text" onInput={inputHandler} onKeyDown={keyDownHandler} />
+      <input
+        type="text"
+        onInput={inputHandler}
+        onKeyDown={keyDownHandler}
+        // 임시로 해놓은 기능.
+        // dispatch not a function 에러 고친 후 이걸 따로 빼서 focus 이벤트 줄 계획.
+        ref={(input) => input && input.focus()}
+      />
     </>
   );
 };
@@ -39,33 +41,32 @@ const MarkdownDefaultInput = ({ markdownDispatch }) => {
 const markdownRules = {
   h1: {
     syntax: "# ",
-    component: dispatch => <HComponent markdownDispatch={dispatch} />,
+    component: (dispatch) => <HComponent cellDispatch={dispatch} />,
   },
 };
 
 const MarkdownTransformer = () => {
-  const [markdown, markdownDispatch] = useReducer(markdownReducer, {
-    text: "",
-  });
   const { state } = useContext(CellContext);
+  const cellDispatch = useContext(CellDispatchContext);
 
+  // console.log(state);
   useEffect(() => {
     const { text } = state.cells[state.currentIndex + 1] || 0;
     const { h1 } = markdownRules;
 
     // 이 부분에서 파서를 통해서 renderTarget에 원하는 컴포넌트를 추가할 수 있다.
-    if (text.startsWith(h1.syntax)) {
-      const component = h1.component(markdownDispatch);
-      markdownDispatch(cellActionCreator.transform(component));
+    if (text && text.startsWith(h1.syntax)) {
+      const component = h1.component(cellDispatch);
+      cellDispatch(cellActionCreator.transform(component));
     }
-  }, [markdown.text]);
+  }, [state.texts[state.currentIndex]]);
 
   return (
     <div>
-      {markdown.renderTarget ? (
-        markdown.renderTarget
+      {state.renderTarget ? (
+        state.renderTarget
       ) : (
-        <MarkdownDefaultInput markdownDispatch={markdownDispatch} />
+        <MarkdownDefaultInput cellDispatch={cellDispatch} />
       )}
     </div>
   );

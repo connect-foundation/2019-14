@@ -6,8 +6,9 @@ const CellDispatchContext = React.createContext();
 
 const CellStore = ({ children }) => {
   const [state, dispatch] = useReducer(cellReducer, {
-    currentIndex: 0,
+    currentIndex: -1,
     cells: [],
+    texts: [],
   });
 
   return (

@@ -3,17 +3,29 @@ import { CELL_ACTION } from "../actions/CellAction";
 const cellReducerHandler = {
   [CELL_ACTION.NEW]: (state, action) => {
     const { currentIndex } = state;
+    const nextIndex = currentIndex;
     const cells =
       state.cells.length > 0
         ? [
-            ...state.cells.slice(0, currentIndex + 1),
+            ...state.cells.slice(0, nextIndex),
             action.renderTarget,
-            ...state.cells.slice(currentIndex + 1, state.cells.length),
+            ...state.cells.slice(nextIndex, state.cells.length),
           ]
         : [action.renderTarget];
+    const texts =
+      state.texts.length > 0
+        ? [
+            ...state.texts.slice(0, nextIndex),
+            "",
+            ...state.texts.slice(nextIndex, state.texts.length),
+          ]
+        : [""];
+
     return {
       ...state,
       cells,
+      texts,
+      currentIndex: nextIndex,
     };
   },
 

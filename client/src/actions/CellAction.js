@@ -13,7 +13,7 @@ const cellActionCreator = {
    * @returns type
    * - Cell Action Type
    * @returns renderTarget
-   * - null?
+   * - 새로 생성한 Cell
    */
   new(renderTarget) {
     return {
