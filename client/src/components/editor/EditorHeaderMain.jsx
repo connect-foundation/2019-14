@@ -12,12 +12,6 @@ const Main = styled.main`
   height: 3.75rem;
 `;
 
-/**
- * 에디터 헤더 컴포넌트
- * 헤더 메인(로고, 타이틀, 선택한 환경 아이콘들)과
- * Editor Tool Bar 컴포넌트를 import한다.
- */
-
 const EditorHeaderMain = () => {
   // TODO boost writer 하드 코딩값 지우기
   return (
