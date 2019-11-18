@@ -35,18 +35,31 @@ const connectOptions = {
   },
 };
 
+const containerInfo = {
+  id: "d5d08093284f",
+  name: "zen_liskov",
+};
+
 const testcases = {
-  exec: {
+  execById: {
     options: connectOptions.right,
-    id: "d5d08093284f",
+    id: containerInfo.id,
     cmd: "echo 'hello'",
     answer: "hello",
   },
+  execByName: [
+    {
+      options: connectOptions.right,
+      name: containerInfo.name,
+      cmd: "echo 'hello'",
+      answer: "hello",
+    },
+  ],
 };
 
 describe("DockerApi", () => {
-  it("container에 not-pending 형식의 명령어를 수행할 수 있다", async () => {
-    const testcase = testcases.exec;
+  it("container id로 not-pending 명령어를 수행할 수 있다", async () => {
+    const testcase = testcases.execById;
     const dockerClient = new DockerApi(testcase.options);
     await dockerClient.init();
 
@@ -57,5 +70,23 @@ describe("DockerApi", () => {
 
     const result = rawString.slice(8, -1);
     expect(result).to.be.equal(testcase.answer);
+  });
+
+  it("container name으로 not-pending 명령을 실행할 수 있다", (done) => {
+    const isDone = testcases.execByName.map(async (testcase) => {
+      const dockerClient = new DockerApi(testcase.options);
+      await dockerClient.init();
+
+      const stream = await dockerClient.execByName(testcase.name, testcase.cmd);
+
+      const resolver = new StreamResolver(stream);
+      const rawString = await resolver.flush();
+
+      const result = rawString.slice(8, -1);
+      expect(result).to.be.equal(testcase.answer);
+    });
+    Promise.all(isDone).then(() => {
+      done();
+    });
   });
 });
