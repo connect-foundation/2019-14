@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import PropTypes from 'prop-types';
 
 const DocumentTitleInput = styled.div`
   display: inline-block;
@@ -24,24 +25,31 @@ const DocumentTitleInput = styled.div`
 }
 `;
 
-const DocumentTitle = () => {
-  const defaultTitle = "제목 없는 문서";
+const DocumentTitle = (props) => {
   const [state, setState] = useState("");
 
   const onInputHandler = e => {
-    const documentTitle = e.currentTarget.value;
+    const documentTitle = e.currentTarget.textContent;
     setState(documentTitle);
   };
 
   return (
     <DocumentTitleInput
-      contentEditable="true"
-      placeholder={defaultTitle}
-      defaultValue={state}
+      contentEditable={props.contentEditable}
       onInput={onInputHandler}
-      data-text={defaultTitle}
+      data-text={props.placeholder}
     />
   );
+};
+
+DocumentTitle.propTypes = {
+  contentEditable: PropTypes.bool,
+  placeholder: PropTypes.string,
+}
+
+DocumentTitle.defaultProps = {
+  contentEditable: true,
+  placeholder: "제목 없는 문서",
 };
 
 export default DocumentTitle;
