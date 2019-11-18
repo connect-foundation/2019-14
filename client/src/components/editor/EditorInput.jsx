@@ -56,29 +56,19 @@ const Input = styled.input`
 const EditorInput = () => {
   const [state, setState] = useState({ value: "", type: "", placeholder: "" });
 
+  const STATE = {
+    "#": { ...state, type: MARKDOWN_TYPE.H1 },
+    "##": { ...state, type: MARKDOWN_TYPE.H2 },
+    "###": { ...state, type: MARKDOWN_TYPE.H3 },
+    "####": { ...state, type: MARKDOWN_TYPE.H4 },
+    "#####": { ...state, type: MARKDOWN_TYPE.H5 },
+    "######": { ...state, type: MARKDOWN_TYPE.H6 },
+  };
+
   const onChange = (ev) => setState({ ...state, value: ev.target.value });
   const onKeyPress = (ev) => {
-    if (ev.key === " ") {
-      switch (state.value) {
-        case "#":
-          setState({ ...state, type: MARKDOWN_TYPE.H1 });
-          break;
-        case "##":
-          setState({ ...state, type: MARKDOWN_TYPE.H2 });
-          break;
-        case "###":
-          setState({ ...state, type: MARKDOWN_TYPE.H3 });
-          break;
-        case "####":
-          setState({ ...state, type: MARKDOWN_TYPE.H4 });
-          break;
-        case "#####":
-          setState({ ...state, type: MARKDOWN_TYPE.H5 });
-          break;
-        case "######":
-          setState({ ...state, type: MARKDOWN_TYPE.H6 });
-          break;
-      }
+    if (!state.type && ev.key === " ") {
+      setState(STATE[state.value]);
     }
   };
 
