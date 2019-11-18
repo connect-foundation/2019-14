@@ -6,7 +6,7 @@ const HComponent = () => {
   return <div>hello h component!</div>;
 };
 
-const MarkdownDefaultInput = ({ currentIndex, cellDispatch }) => {
+const MarkdownDefaultInput = ({ cellDispatch }) => {
   const inputHandler = (e) => {
     const text = e.target.value;
     cellDispatch(cellActionCreator.input(text));
@@ -16,10 +16,7 @@ const MarkdownDefaultInput = ({ currentIndex, cellDispatch }) => {
     Enter: () => {
       cellDispatch(
         cellActionCreator.new(
-          <MarkdownDefaultInput
-            currentIndex={currentIndex}
-            cellDispatch={cellDispatch}
-          />
+          <MarkdownDefaultInput cellDispatch={cellDispatch} />
         )
       );
       cellDispatch(cellActionCreator.next());
@@ -61,17 +58,12 @@ const markdownRules = {
   },
 };
 
-const MarkdownTransformer = () => {
+const MarkdownTransformer = ({ idx }) => {
   const { state } = useContext(CellContext);
   const cellDispatch = useContext(CellDispatchContext);
   const { currentIndex } = state;
   const text = state.texts[currentIndex];
-  const renderTarget = (
-    <MarkdownDefaultInput
-      currentIndex={currentIndex}
-      cellDispatch={cellDispatch}
-    />
-  );
+  const renderTarget = <MarkdownDefaultInput cellDispatch={cellDispatch} />;
 
   if (!state.cells[currentIndex]) {
     cellDispatch(cellActionCreator.new(renderTarget));
@@ -83,17 +75,13 @@ const MarkdownTransformer = () => {
     // 이 부분에서 파서를 통해서 renderTarget에 원하는 컴포넌트를 추가할 수 있다.
     if (text && text.startsWith(h1.syntax)) {
       const component = h1.component(cellDispatch);
-      cellDispatch(cellActionCreator.transform(component, "transform h1 tag"));
+      cellDispatch(
+        cellActionCreator.transform(component, currentIndex, "transform h1 tag")
+      );
     }
   }, [text]);
 
-  return (
-    <div>
-      {state.cells[state.currentIndex]
-        ? state.cells[state.currentIndex]
-        : renderTarget}
-    </div>
-  );
+  return <div>{state.cells[idx] ? state.cells[idx] : renderTarget}</div>;
 };
 
 export { MarkdownTransformer, MarkdownDefaultInput };

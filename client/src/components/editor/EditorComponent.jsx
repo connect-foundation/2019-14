@@ -9,7 +9,7 @@ const EditorComponent = () => {
   return (
     <>
       {cells && cells.length > 0 ? (
-        cells.map((cell, i) => <MarkdownTransformer key={i} />)
+        cells.map((cell, i) => <MarkdownTransformer key={i} idx={i} />)
       ) : (
         <MarkdownTransformer />
       )}

@@ -87,9 +87,10 @@ const cellActionCreator = {
    * - @todo 이 부분은 라인 파서와 연동이 필요함. 추가로 데이터 파라미터를 받아야 할 듯.
    * - 라인 파서로 변경된 데이터가 반영된 텍스트를 받아서 store에 넣어줘야 함
    */
-  transform(renderTarget, text) {
+  transform(renderTarget, currentIndex, text) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
+      currentIndex,
       renderTarget,
       text,
     };
