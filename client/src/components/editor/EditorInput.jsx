@@ -3,6 +3,11 @@ import styled from "styled-components";
 
 import MARKDOWN_TYPE from "./MARKDOWN_TYPE";
 
+const HEADING_ATTRIBUTE = {
+  diplay: "block",
+  fontWeight: "bold",
+};
+
 const MARKDOWN_ATTRIBUTE = {
   [MARKDOWN_TYPE.DEFAULT]: {
     placeholder: "",
@@ -10,31 +15,37 @@ const MARKDOWN_ATTRIBUTE = {
     marginTopBottom: "0",
   },
   [MARKDOWN_TYPE.H1]: {
+    ...HEADING_ATTRIBUTE,
     placeholder: "Heading 1",
     fontSize: "2em",
     marginTopBottom: "0.67em",
   },
   [MARKDOWN_TYPE.H2]: {
+    ...HEADING_ATTRIBUTE,
     placeholder: "Heading 2",
     fontSize: "1.5em",
     marginTopBottom: "0.83em",
   },
   [MARKDOWN_TYPE.H3]: {
+    ...HEADING_ATTRIBUTE,
     placeholder: "Heading 3",
     fontSize: "1.17em",
     marginTopBottom: "1em",
   },
   [MARKDOWN_TYPE.H4]: {
+    ...HEADING_ATTRIBUTE,
     placeholder: "Heading 4",
     fontSize: "1em",
     marginTopBottom: "1.33em",
   },
   [MARKDOWN_TYPE.H5]: {
+    ...HEADING_ATTRIBUTE,
     placeholder: "Heading 5",
     fontSize: ".83em",
     marginTopBottom: "1.67em",
   },
   [MARKDOWN_TYPE.H6]: {
+    ...HEADING_ATTRIBUTE,
     placeholder: "Heading 6",
     fontSize: ".67em",
     marginTopBottom: "2.33em",
@@ -42,12 +53,12 @@ const MARKDOWN_ATTRIBUTE = {
 };
 
 const Input = styled.input`
-  display: block;
-  font-weight: bold;
   width: 100%;
   border: transparent;
   outline: transparent;
 
+  display: ${(props) => MARKDOWN_ATTRIBUTE[props.type].display};
+  font-weight: ${(props) => MARKDOWN_ATTRIBUTE[props.type].fontWeight};
   font-size: ${(props) => MARKDOWN_ATTRIBUTE[props.type].fontSize};
   margin-top: ${(props) => MARKDOWN_ATTRIBUTE[props.type].marginTopBottom};
   margin-bottom: ${(props) => MARKDOWN_ATTRIBUTE[props.type].marginTopBottom}};
