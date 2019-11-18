@@ -6,7 +6,7 @@ module.exports = {
   scripts: {
     default: {
       script: "node index.js",
-      description: "Start app with 'npm start or nps'",
+      description: "Start app",
     },
     lint: {
       default: {
@@ -20,11 +20,15 @@ module.exports = {
     },
     test: {
       default: {
-        script: `nps ${["test.unit"].join(" ")}`,
+        script: `nps ${["test.unit", "test.integration"].join(" ")}`,
       },
       unit: {
         script: test("test/unit"),
         description: "Unit test",
+      },
+      integration: {
+        script: test("test/integration"),
+        description: "Integrate test",
       },
     },
   },
