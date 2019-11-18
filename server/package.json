@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "unitTest": "mocha test/unit",
-    "lint": "eslint src"
+    "start": "nps",
+    "test": "nps test",
+    "lint": "nps lint.code"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -26,6 +26,7 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-prettier": "^3.1.1",
     "mocha": "^6.2.2",
+    "nps": "^5.9.8",
     "prettier": "^1.19.1"
   }
 }
