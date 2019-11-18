@@ -6,16 +6,15 @@ const cellReducerHandler = {
     const cells =
       state.cells.length > 0
         ? [
-            ...state.cells.slice(0, currentIndex),
+            ...state.cells.slice(0, currentIndex + 1),
             action.renderTarget,
-            ...state.cells.slice(currentIndex, state.cells.length),
+            ...state.cells.slice(currentIndex + 1, state.cells.length),
           ]
         : [action.renderTarget];
     const texts =
       state.texts.length > 0
         ? [
-            ...state.texts.slice(0, currentIndex),
-            state.texts[currentIndex],
+            ...state.texts.slice(0, currentIndex + 1),
             "",
             ...state.texts.slice(currentIndex + 1, state.texts.length),
           ]

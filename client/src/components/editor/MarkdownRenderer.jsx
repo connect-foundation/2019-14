@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useRef } from "react";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
 
@@ -6,68 +6,34 @@ const HComponent = () => {
   return <div>hello h component!</div>;
 };
 
-const MarkdownDefaultInput = ({ cellDispatch }) => {
-  const inputHandler = (e) => {
-    const text = e.target.value;
-    cellDispatch(cellActionCreator.input(text));
-  };
+const useState = () => {
+  const { state } = useContext(CellContext);
+  return state;
+};
 
-  const keyDownEventDispatch = {
-    Enter: () => {
-      cellDispatch(
-        cellActionCreator.new(
-          <MarkdownDefaultInput cellDispatch={cellDispatch} />
-        )
-      );
-      cellDispatch(cellActionCreator.next());
-    },
-    ArrowUp: () => {
-      console.log("this is ArrowUp Event!");
-    },
-    ArrowDown: () => {
-      console.log("this is ArrowDown Event!");
-    },
-  };
-
-  const keyDownHandler = (e) => {
-    const { key } = e;
-    const exec = keyDownEventDispatch[key];
-    if (exec) {
-      exec();
-    }
-  };
-
-  return (
-    <>
-      <input
-        type="text"
-        onInput={inputHandler}
-        onKeyDown={keyDownHandler}
-        // 임시로 해놓은 기능.
-        // dispatch not a function 에러 고친 후 이걸 따로 빼서 focus 이벤트 줄 계획.
-        ref={(input) => input && input.focus()}
-      />
-    </>
-  );
+const useCellDispatch = () => {
+  const cellDispatch = useContext(CellDispatchContext);
+  return cellDispatch;
 };
 
 const markdownRules = {
   h1: {
     syntax: "# ",
-    component: (dispatch) => <HComponent cellDispatch={dispatch} />,
+    component: () => <HComponent />,
   },
 };
 
-const MarkdownTransformer = ({ idx }) => {
-  const { state } = useContext(CellContext);
-  const cellDispatch = useContext(CellDispatchContext);
+const MarkdownTransformer = ({ callback, inputRef }) => {
+  const cellDispatch = useCellDispatch();
+  const state = useState();
   const { currentIndex } = state;
   const text = state.texts[currentIndex];
-  const renderTarget = <MarkdownDefaultInput cellDispatch={cellDispatch} />;
 
-  if (!state.cells[currentIndex]) {
-    cellDispatch(cellActionCreator.new(renderTarget));
-  }
+  useEffect(() => {
+    if (inputRef && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [inputRef]);
 
   useEffect(() => {
     const { h1 } = markdownRules;
@@ -76,12 +42,67 @@ const MarkdownTransformer = ({ idx }) => {
     if (text && text.startsWith(h1.syntax)) {
       const component = h1.component(cellDispatch);
       cellDispatch(
-        cellActionCreator.transform(component, currentIndex, "transform h1 tag")
+        cellActionCreator.transform(
+          (callback, inputRef) => component,
+          currentIndex,
+          "transform h1 tag"
+        )
       );
     }
   }, [text]);
 
-  return <div>{state.cells[idx] ? state.cells[idx] : renderTarget}</div>;
+  const inputHandler = (e) => {
+    const { value } = e.target;
+    cellDispatch(cellActionCreator.input(value));
+  };
+
+  const nextFocus = () => {
+    cellDispatch(cellActionCreator.next());
+  };
+
+  const prevFocus = () => {
+    cellDispatch(cellActionCreator.prev());
+  };
+
+  const newCell = () => {
+    cellDispatch(
+      cellActionCreator.new((callback, ref) => (
+        <MarkdownTransformer callback={callback} inputRef={ref} />
+      ))
+    );
+  };
+
+  const keyDownEventDispatch = {
+    Enter: () => {
+      nextFocus();
+      newCell();
+    },
+    ArrowUp: () => {
+      prevFocus();
+    },
+    ArrowDown: () => {
+      nextFocus();
+    },
+  };
+
+  const keyDownHandler = (e) => {
+    const { key } = e;
+    const exec = keyDownEventDispatch[key];
+    if (exec) {
+      callback(exec);
+    }
+  };
+
+  return inputRef ? (
+    <input
+      type="text"
+      onInput={inputHandler}
+      onKeyDown={keyDownHandler}
+      ref={inputRef}
+    />
+  ) : (
+    <input type="text" onInput={inputHandler} onKeyDown={keyDownHandler} />
+  );
 };
 
-export { MarkdownTransformer, MarkdownDefaultInput };
+export default MarkdownTransformer;
