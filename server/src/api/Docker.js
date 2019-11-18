@@ -1,6 +1,15 @@
 const fs = require("fs");
 const Docker = require("dockerode");
 
+const changeToFormattedName = (name) => {
+  const startFormat = "/";
+  const startChar = name[0];
+  if (startChar === startFormat) {
+    return name;
+  }
+  return `${startFormat}${name}`;
+};
+
 class DockerApi {
   constructor(options) {
     const requestOptions = {
@@ -45,6 +54,26 @@ class DockerApi {
     }
 
     const container = await this.request.getContainer(containerId);
+    const exec = await container.exec({
+      AttachStdin: true,
+      AttachStdout: true,
+      AttachStderr: true,
+      Cmd: ["/bin/sh", "-c", commandString],
+    });
+    const containerStream = await exec.start();
+    return containerStream;
+  }
+
+  async execByName(containerName, commandString = "") {
+    const formattedName = changeToFormattedName(containerName);
+    const isUsedName = (info) => {
+      return info.names.includes(formattedName);
+    };
+    const targetInfo = this.containerInfos.find(isUsedName);
+    if (!targetInfo) {
+      return null;
+    }
+    const container = await this.request.getContainer(targetInfo.id);
     const exec = await container.exec({
       AttachStdin: true,
       AttachStdout: true,
