@@ -19,7 +19,7 @@ const useCellDispatch = () => {
 const markdownRules = {
   h1: {
     syntax: "# ",
-    component: () => <HComponent />,
+    component: <HComponent />,
   },
 };
 
@@ -47,11 +47,10 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
 
     // 이 부분에서 파서를 통해서 renderTarget에 원하는 컴포넌트를 추가할 수 있다.
     if (text && text.startsWith(h1.syntax)) {
-      const component = h1.component(cellDispatch);
+      const { component } = h1;
       cellDispatch(
         cellActionCreator.transform(
           (callback, inputRef) => component,
-          currentIndex,
           "transform h1 tag"
         )
       );
@@ -64,12 +63,9 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
   };
 
   const saveCursorPosition = () => {
-    cellDispatch(
-      cellActionCreator.move(
-        inputRef.current.selectionStart,
-        inputRef.current.selectionEnd
-      )
-    );
+    const start = (inputRef && inputRef.current.selectionStart) || 0;
+    const end = (inputRef && inputRef.current.selectionEnd) || 0;
+    cellDispatch(cellActionCreator.move(start, end));
   };
 
   const focus = {

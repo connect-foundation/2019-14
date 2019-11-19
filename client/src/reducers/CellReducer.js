@@ -101,7 +101,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
-    const { currentIndex } = action;
+    const { currentIndex } = state;
     const cells = arrayInterceptor.CHANGE(
       state.cells,
       currentIndex,
