@@ -23,7 +23,7 @@ const markdownRules = {
   },
 };
 
-const MarkdownTransformer = ({ callback, inputRef }) => {
+const MarkdownTransformer = ({ inputRef }) => {
   const cellDispatch = useCellDispatch();
   const state = useCellState();
   const { currentIndex } = state;
@@ -35,10 +35,6 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
       const { cursor } = state;
       inputRef.current.selectionStart = cursor.start;
       inputRef.current.selectionEnd = cursor.end;
-
-      // inputRef.current.value = "123";
-      // console.log(inputRef.current.selectionStart);
-      // console.log(inputRef.current.selectionEnd);
     }
   }, [inputRef]);
 
@@ -85,22 +81,44 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
 
   const newCell = () => {
     cellDispatch(
-      cellActionCreator.new((callback, ref) => (
-        <MarkdownTransformer callback={callback} inputRef={ref} />
-      ))
+      cellActionCreator.new((ref) => <MarkdownTransformer inputRef={ref} />)
     );
   };
 
   const keyDownEventDispatch = {
-    Enter: () => {
-      newCell();
-      focus.next();
+    Enter: (e) => {
+      /**
+       * @todo Shift + Enter 동작 추가 예정
+       */
+      if (e.shiftKey) {
+        return () => {
+          console.log("this is shift+enter");
+        };
+      }
+      return () => {
+        newCell();
+        focus.next();
+      };
     },
     ArrowUp: () => {
-      focus.prev();
+      return () => {
+        focus.prev();
+      };
     },
     ArrowDown: () => {
-      focus.next();
+      return () => {
+        focus.next();
+      };
+    },
+    Tab: (e) => {
+      if (e.shiftKey) {
+        return () => {
+          focus.prev();
+        };
+      }
+      return () => {
+        focus.next();
+      };
     },
   };
 
@@ -109,8 +127,12 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
     const exec = keyDownEventDispatch[key];
     if (exec) {
       e.preventDefault();
-      callback(exec);
+      exec(e)();
     }
+  };
+
+  const focusHandler = (e) => {
+    console.log(e);
   };
 
   return inputRef ? (
@@ -118,10 +140,16 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
       type="text"
       onInput={inputHandler}
       onKeyDown={keyDownHandler}
+      onFocus={focusHandler}
       ref={inputRef}
     />
   ) : (
-    <input type="text" onInput={inputHandler} onKeyDown={keyDownHandler} />
+    <input
+      type="text"
+      onInput={inputHandler}
+      onKeyDown={keyDownHandler}
+      onFocus={focusHandler}
+    />
   );
 };
 

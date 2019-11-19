@@ -12,24 +12,18 @@ const EditorComponent = () => {
   useEffect(() => {
     if (state.cells.length === 0) {
       cellDispatch(
-        cellActionCreator.new((callback, ref) => (
-          <MarkdownTransformer callback={callback} inputRef={ref} />
-        ))
+        cellActionCreator.new((ref) => <MarkdownTransformer inputRef={ref} />)
       );
     }
   }, []);
-
-  const keydownCallback = (exec) => {
-    exec();
-  };
 
   return (
     <>
       {cells.map((cell, i) => {
         if (state.currentIndex === i) {
-          return <div key={`md${i}`}>{cell(keydownCallback, inputRef)}</div>;
+          return <div key={`md${i}`}>{cell(inputRef)}</div>;
         }
-        return <div key={`md${i}`}>{cell(keydownCallback)}</div>;
+        return <div key={`md${i}`}>{cell()}</div>;
       })}
     </>
   );
