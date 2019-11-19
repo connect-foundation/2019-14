@@ -1,15 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import EditorPage from "./pages/EditorPage";
-import EditorHeader from "./components/editor/EditorHeader";
+import EditorHeader from "./components/editor/header/EditorHeader";
 
 function App() {
   return (
-    <div>
-      <EditorPage>
-        <EditorHeader />
-      </EditorPage>
-    </div>
+    <>
+      <EditorPage />
+    </>
   );
 }
 

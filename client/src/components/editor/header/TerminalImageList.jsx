@@ -2,18 +2,18 @@ import React from "react";
 import styled from "styled-components";
 import TerminalImage from "./TerminalImage";
 // TODO 임시로 저장한 기본 아이콘 삭제할 것
-import ubuntuImagePath from "../../../public/ubuntu-50.png";
-import mysqlImagePath from "../../../public/mysql-logo-50.png";
-import nodejsImagePath from "../../../public/nodejs-50.png";
-import npmImagePath from "../../../public/npm-50.png";
+import ubuntuImagePath from "../../../../public/ubuntu-50.png";
+import mysqlImagePath from "../../../../public/mysql-logo-50.png";
+import nodejsImagePath from "../../../../public/nodejs-50.png";
+import npmImagePath from "../../../../public/npm-50.png";
 
-const UserTerminalEnvironmentContainer = styled.section`
+const TerminalImageList = styled.section`
   display: flex;
   flex-direction: row;
   justify-content: center;
 `;
 
-const UserTerminalEnvironments = () => {
+const TerminalImageLists = () => {
   const defaultData = [
     ubuntuImagePath,
     mysqlImagePath,
@@ -26,10 +26,10 @@ const UserTerminalEnvironments = () => {
     });
   };
   return (
-    <UserTerminalEnvironmentContainer>
+    <TerminalImageList>
       {makeImageList()}
-    </UserTerminalEnvironmentContainer>
+    </TerminalImageList>
   );
 };
 
-export default UserTerminalEnvironments;
+export default TerminalImageList;
