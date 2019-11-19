@@ -132,7 +132,7 @@ const MarkdownTransformer = ({ inputRef }) => {
   };
 
   const focusHandler = (e) => {
-    console.log(e);
+    // console.log(e);
   };
 
   return inputRef ? (

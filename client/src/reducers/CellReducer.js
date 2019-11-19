@@ -31,11 +31,26 @@ const arrayInterceptor = {
         ...array.slice(cur + 1, array.length),
       ];
     }
-    return [""];
+    return [data];
   },
 };
 
 const cellReducerHandler = {
+  [CELL_ACTION.INIT]: (state, action) => {
+    const { index } = action;
+    const cells = arrayInterceptor.CHANGE(
+      state.cells,
+      index,
+      action.renderTarget
+    );
+    const texts = arrayInterceptor.CHANGE(state.texts, index, "");
+    return {
+      ...state,
+      cells,
+      texts,
+    };
+  },
+
   [CELL_ACTION.NEW]: (state, action) => {
     const currentIndex = state.currentIndex > 0 ? state.currentIndex : 0;
     const cells = arrayInterceptor.ADD(
@@ -48,26 +63,6 @@ const cellReducerHandler = {
     return {
       ...state,
       cells,
-      texts,
-    };
-  },
-
-  /**
-   * @todo init의 역할 변경 및 확정시키기
-   * - 지정 인덱스의 셀을 맨 처음 디폴트 인풋 태그로 초기화시킨다.
-   */
-  [CELL_ACTION.INIT]: (state, action) => {
-    const { index } = action;
-    const texts =
-      state.texts.length > 0
-        ? [
-            ...state.texts.slice(0, index),
-            action.text,
-            ...state.texts.slice(index + 1, state.texts.length),
-          ]
-        : [""];
-    return {
-      ...state,
       texts,
     };
   },

@@ -12,7 +12,7 @@ const EditorComponent = () => {
   useEffect(() => {
     if (state.cells.length === 0) {
       cellDispatch(
-        cellActionCreator.new((ref) => <MarkdownTransformer inputRef={ref} />)
+        cellActionCreator.init((ref) => <MarkdownTransformer inputRef={ref} />)
       );
     }
   }, []);

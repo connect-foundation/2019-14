@@ -1,6 +1,6 @@
 const CELL_ACTION = {
-  NEW: "cell/new",
   INIT: "cell/init",
+  NEW: "cell/new",
   INPUT: "cell/input",
   TARGET: {
     PREV: "cell/target/prev",
@@ -14,6 +14,22 @@ const CELL_ACTION = {
 
 const cellActionCreator = {
   /**
+   * 셀의 데이터를 초기화시킨다.
+   * @param {Cell} renderTarget 초기화할 셀
+   * @param {Number} index 초기화할 셀의 index
+   * - 파라미터로 넘기지 않으면 기본값 0
+   * @returns type: 셀 액션 타입
+   * @returns renderTarget: 데이터를 [text]로 초기화할 셀 컴포넌트
+   * @returns: text 초기화 데이터
+   */
+  init(renderTarget, index) {
+    return {
+      type: CELL_ACTION.INIT,
+      renderTarget,
+      index: index || 0,
+    };
+  },
+  /**
    * 셀을 생성한다.
    * @returns type: 셀 액션 타입
    * @returns renderTarget: 새로 생성한 셀 컴포넌트
@@ -22,21 +38,6 @@ const cellActionCreator = {
     return {
       type: CELL_ACTION.NEW,
       renderTarget,
-    };
-  },
-  /**
-   * 셀의 데이터를 초기화시킨다.
-   * @param {Number} index 초기화할 셀의 index
-   * @param {Text} text 초기 데이터
-   * @returns type: 셀 액션 타입
-   * @returns renderTarget: 데이터를 [text]로 초기화할 셀 컴포넌트
-   * @returns: text 초기화 데이터
-   */
-  init(index, text) {
-    return {
-      type: CELL_ACTION.INIT,
-      index,
-      text: text || "",
     };
   },
   /**
