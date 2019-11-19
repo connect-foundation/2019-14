@@ -3,79 +3,93 @@ import styled from "styled-components";
 
 const MARKDOWN_TYPE = {
   "": styled.div`
-    :focus {
+    &:focus {
       outline: none;
     }
   `,
 
   h1: styled.h1`
-    :empty:before {
-      content: attr(placeholder);
-      color: gray;
+    &:empty {
+      &::before {
+        content: attr(placeholder);
+        color: gray;
+      }
     }
 
-    :focus {
+    &:focus {
       outline: none;
     }
   `,
   h2: styled.h2`
-    :empty:before {
-      content: attr(placeholder);
-      color: gray;
+    &:empty {
+      &::before {
+        content: attr(placeholder);
+        color: gray;
+      }
     }
 
-    :focus {
+    &:focus {
       outline: none;
     }
   `,
   h3: styled.h3`
-    :empty:before {
-      content: attr(placeholder);
-      color: gray;
+    &:empty {
+      &::before {
+        content: attr(placeholder);
+        color: gray;
+      }
     }
 
-    :focus {
+    &:focus {
       outline: none;
     }
   `,
   h4: styled.h4`
-    :empty:before {
-      content: attr(placeholder);
-      color: gray;
+    &:empty {
+      &::before {
+        content: attr(placeholder);
+        color: gray;
+      }
     }
 
-    :focus {
+    &:focus {
       outline: none;
     }
   `,
   h5: styled.h5`
-    :empty:before {
-      content: attr(placeholder);
-      color: gray;
+    &:empty {
+      &::before {
+        content: attr(placeholder);
+        color: gray;
+      }
     }
 
-    :focus {
+    &:focus {
       outline: none;
     }
   `,
   h6: styled.h6`
-    :empty:before {
-      content: attr(placeholder);
-      color: gray;
+    &:empty {
+      &::before {
+        content: attr(placeholder);
+        color: gray;
+      }
     }
 
-    :focus {
+    &:focus {
       outline: none;
     }
   `,
 
   li: styled.li`
-    :empty:before {
-      content: attr(placeholder);
-      color: gray;
+    &:empty {
+      &::before {
+        content: attr(placeholder);
+        color: gray;
+      }
     }
 
-    :focus {
+    &:focus {
       outline: none;
     }
   `,
@@ -111,14 +125,6 @@ const EditorInput = () => {
       setState(STATE[state.value]);
     }
   };
-
-  useEffect(() => {
-    if (state.type)
-      setState({
-        ...state,
-        value: "",
-      });
-  }, [state.type]);
 
   const MarkdownWrapper = MARKDOWN_TYPE[state.type];
 
