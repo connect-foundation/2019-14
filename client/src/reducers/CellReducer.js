@@ -119,6 +119,18 @@ const cellReducerHandler = {
       texts,
     };
   },
+
+  [CELL_ACTION.CURSOR.MOVE]: (state, action) => {
+    const cursor = {
+      start: action.selectionStart,
+      end: action.selectionEnd,
+    };
+
+    return {
+      ...state,
+      cursor,
+    };
+  },
 };
 
 const cellReducer = (state, action) => {

@@ -32,9 +32,11 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
+      const { cursor } = state;
+      inputRef.current.selectionStart = cursor.start;
+      inputRef.current.selectionEnd = cursor.end;
+
       // inputRef.current.value = "123";
-      // inputRef.current.selectionStart = 1;
-      // inputRef.current.selectionEnd = 1;
       // console.log(inputRef.current.selectionStart);
       // console.log(inputRef.current.selectionEnd);
     }
@@ -61,17 +63,28 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
     cellDispatch(cellActionCreator.input(value));
   };
 
-  const nextFocus = () => {
-    // console.log(currentIndex, state.cells.length);
-    if (currentIndex < state.cells.length - 1) {
-      cellDispatch(cellActionCreator.next());
-    }
+  const saveCursorPosition = () => {
+    cellDispatch(
+      cellActionCreator.move(
+        inputRef.current.selectionStart,
+        inputRef.current.selectionEnd
+      )
+    );
   };
 
-  const prevFocus = () => {
-    if (currentIndex > 0) {
-      cellDispatch(cellActionCreator.prev());
-    }
+  const focus = {
+    next: () => {
+      if (currentIndex < state.cells.length - 1) {
+        cellDispatch(cellActionCreator.next());
+        saveCursorPosition();
+      }
+    },
+    prev: () => {
+      if (currentIndex > 0) {
+        cellDispatch(cellActionCreator.prev());
+        saveCursorPosition();
+      }
+    },
   };
 
   const newCell = () => {
@@ -85,13 +98,13 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
   const keyDownEventDispatch = {
     Enter: () => {
       newCell();
-      nextFocus();
+      focus.next();
     },
     ArrowUp: () => {
-      prevFocus();
+      focus.prev();
     },
     ArrowDown: () => {
-      nextFocus();
+      focus.next();
     },
   };
 
