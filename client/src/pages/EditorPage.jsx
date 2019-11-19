@@ -2,14 +2,14 @@ import React from "react";
 
 import { CellStore } from "../stores/CellStore";
 import EditorComponent from "../components/editor/EditorComponent";
-import EditorInput from "../components/editor/EditorInput";
+import Editor from "../components/editor/Editor";
 
 const EditorPage = () => {
   return (
     <>
       <CellStore>
         <EditorComponent />
-        <EditorInput />
+        <Editor />
       </CellStore>
     </>
   );
