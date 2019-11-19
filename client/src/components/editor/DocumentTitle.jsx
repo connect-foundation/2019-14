@@ -37,19 +37,19 @@ const DocumentTitle = (props) => {
     <DocumentTitleInput
       contentEditable={props.contentEditable}
       onInput={onInputHandler}
-      data-text={props.placeholder}
+      data-text={props.defaultText}
     />
   );
 };
 
 DocumentTitle.propTypes = {
   contentEditable: PropTypes.bool,
-  placeholder: PropTypes.string,
+  defaultText: PropTypes.string,
 }
 
 DocumentTitle.defaultProps = {
   contentEditable: true,
-  placeholder: "제목 없는 문서",
+  defaultText: "제목 없는 문서",
 };
 
 export default DocumentTitle;
