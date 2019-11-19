@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const MARKDOWN_TYPE = {
@@ -106,6 +106,22 @@ const MARKDOWN_TYPE = {
       outline: none;
     }
   `,
+
+  blockquote: styled.blockquote`
+    border-left: 0.25rem solid silver;
+    padding-left: 1rem;
+
+    &:empty {
+      &::before {
+        content: attr(placeholder);
+        color: gray;
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+  `,
 };
 
 const EditorInput = () => {
@@ -128,16 +144,21 @@ const EditorInput = () => {
     "+": { ...state, type: "ul", placeholder: "list" },
 
     "1.": { ...state, type: "ol", placeholder: "list" },
+
+    ">": { ...state, type: "blockquote", placeholder: "quote" },
   };
 
   const onInput = (ev) => {
     setState({ ...state, value: ev.target.textContent });
   };
+
   const onKeyPress = (ev) => {
     const { key } = ev;
 
-    if (!state.type && key === " ") {
-      setState(STATE[state.value]);
+    if (key === " ") {
+      if (!state.type) {
+        setState(STATE[state.value]);
+      }
     }
   };
 
