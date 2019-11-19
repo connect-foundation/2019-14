@@ -8,6 +8,7 @@ require("dotenv").config({
 const { expect } = require("chai");
 const { DockerApi } = require("../../src/api/Docker.js");
 const { StreamResolver } = require("../../src/utils/StreamResolver");
+const { containers } = require("../DockerSetup.js");
 
 const remoteIp = process.env.REMOTE_DOCKER_IP;
 const remotePort = process.env.REMOTE_DOCKER_PORT;
@@ -35,22 +36,17 @@ const connectOptions = {
   },
 };
 
-const containerInfo = {
-  id: "d5d08093284f",
-  name: "zen_liskov",
-};
-
 const testcases = {
   execById: {
     options: connectOptions.right,
-    id: containerInfo.id,
+    id: containers.ubuntu.id,
     cmd: "echo 'hello'",
     answer: "hello",
   },
   execByName: [
     {
       options: connectOptions.right,
-      name: containerInfo.name,
+      name: containers.ubuntu.name,
       cmd: "echo 'hello'",
       answer: "hello",
     },
