@@ -68,6 +68,17 @@ const MARKDOWN_TYPE = {
       outline: none;
     }
   `,
+
+  li: styled.li`
+    :empty:before {
+      content: attr(placeholder);
+      color: gray;
+    }
+
+    :focus {
+      outline: none;
+    }
+  `,
 };
 
 const EditorInput = () => {
@@ -84,6 +95,10 @@ const EditorInput = () => {
     "####": { ...state, type: "h4", placeholder: "Heading 4" },
     "#####": { ...state, type: "h5", placeholder: "Heading 5" },
     "######": { ...state, type: "h6", placeholder: "Heading 6" },
+
+    "-": { ...state, type: "li", placeholder: "list" },
+    "*": { ...state, type: "li", placeholder: "list" },
+    "+": { ...state, type: "li", placeholder: "list" },
   };
 
   const onInput = (ev) => {
