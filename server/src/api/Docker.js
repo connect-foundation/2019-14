@@ -1,19 +1,44 @@
+const fs = require("fs");
 const Docker = require("dockerode");
+
+const changeToFormattedName = (name) => {
+  const startFormat = "/";
+  const startChar = name[0];
+  if (startChar === startFormat) {
+    return name;
+  }
+  return `${startFormat}${name}`;
+};
 
 class DockerApi {
   constructor(options) {
-    this.request = new Docker({ ...options, socketPath: null });
+    const requestOptions = {
+      ...options,
+    };
+
+    if (requestOptions.caPath) {
+      requestOptions.ca = fs.readFileSync(requestOptions.caPath);
+    }
+
+    if (requestOptions.certPath) {
+      requestOptions.cert = fs.readFileSync(requestOptions.certPath);
+    }
+
+    if (requestOptions.keyPath) {
+      requestOptions.key = fs.readFileSync(requestOptions.keyPath);
+    }
+
+    this.request = new Docker({ ...requestOptions, socketPath: null });
   }
 
   async init() {
     const infos = await this.request.listContainers();
     this.containerInfos = infos.map((info) => {
       const keys = Object.keys(info);
-      const lowerCasedObject = keys.reduce((result, key) => {
-        const next = { ...result };
-        next[key.toLowerCase()] = info[key];
-        return next;
-      }, {});
+      const lowerCasedObject = {};
+      keys.forEach((key) => {
+        lowerCasedObject[key.toLowerCase()] = info[key];
+      });
       return lowerCasedObject;
     });
   }
@@ -29,6 +54,26 @@ class DockerApi {
     }
 
     const container = await this.request.getContainer(containerId);
+    const exec = await container.exec({
+      AttachStdin: true,
+      AttachStdout: true,
+      AttachStderr: true,
+      Cmd: ["/bin/sh", "-c", commandString],
+    });
+    const containerStream = await exec.start();
+    return containerStream;
+  }
+
+  async execByName(containerName, commandString = "") {
+    const formattedName = changeToFormattedName(containerName);
+    const isUsedName = (info) => {
+      return info.names.includes(formattedName);
+    };
+    const targetInfo = this.containerInfos.find(isUsedName);
+    if (!targetInfo) {
+      return null;
+    }
+    const container = await this.request.getContainer(targetInfo.id);
     const exec = await container.exec({
       AttachStdin: true,
       AttachStdout: true,

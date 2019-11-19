@@ -9,12 +9,4 @@ const DocumentTitleWrapper = styled.div`
   outline: none;
 `;
 
-const TitleWrapper = () => {
-  return (
-    <DocumentTitleWrapper>
-      <DocumentTitle />
-    </DocumentTitleWrapper>
-  );
-};
-
-export default TitleWrapper;
+export default DocumentTitleWrapper;
