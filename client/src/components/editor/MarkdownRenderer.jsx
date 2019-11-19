@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useRef } from "react";
+import React, { useEffect, useContext } from "react";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
 
@@ -6,7 +6,7 @@ const HComponent = () => {
   return <div>hello h component!</div>;
 };
 
-const useState = () => {
+const useCellState = () => {
   const { state } = useContext(CellContext);
   return state;
 };
@@ -25,7 +25,7 @@ const markdownRules = {
 
 const MarkdownTransformer = ({ callback, inputRef }) => {
   const cellDispatch = useCellDispatch();
-  const state = useState();
+  const state = useCellState();
   const { currentIndex } = state;
   const text = state.texts[currentIndex];
 

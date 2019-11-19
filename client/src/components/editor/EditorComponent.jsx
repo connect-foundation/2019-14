@@ -19,7 +19,7 @@ const EditorComponent = () => {
     }
   }, []);
 
-  const callback = (exec) => {
+  const keydownCallback = (exec) => {
     exec();
   };
 
@@ -27,9 +27,9 @@ const EditorComponent = () => {
     <>
       {cells.map((cell, i) => {
         if (state.currentIndex === i) {
-          return <div key={`md${i}`}>{cell(callback, inputRef)}</div>;
+          return <div key={`md${i}`}>{cell(keydownCallback, inputRef)}</div>;
         }
-        return <div key={`md${i}`}>{cell(callback)}</div>;
+        return <div key={`md${i}`}>{cell(keydownCallback)}</div>;
       })}
     </>
   );
