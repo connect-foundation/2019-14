@@ -36,20 +36,10 @@ jobs:
     before_script:
     - cd $TRAVIS_BUILD_DIR/server
     script:
-    - >
-      if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then
-        npm start test
-      else
-        npm start test.unit
-      fi
+    - npm start test.unit
 
   - script:
-    - >
-      if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then
-        npm start test
-      else
-        npm start test.unit
-      fi
+    - npm start test.unit
     name: "server test sequence"
     before_script:
     - cd $TRAVIS_BUILD_DIR/server
