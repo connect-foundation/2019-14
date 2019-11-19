@@ -1,12 +1,10 @@
-
 import React from "react";
 import styled from "styled-components";
 import Logo from "./Logo";
+import DocumentTitle from "./DocumentTitle";
 import DocumentTitleWrapper from "./DocumentTitleWrapper";
-import DocumentTtitleInput from "./DocumentTitle";
-import UserTerminalEnvironments from "./UserTerminalEnvironments";
+import TerminalImageContainer from "./TerminalImageContainer";
 // TODO 차후에 CSS 스타일이 고정되면 그에 맞게 수정한다.
-
 
 /**
  * 에디터 헤더 컴포넌트
@@ -27,10 +25,10 @@ const EditorHeader = () => {
   return (
     <Header>
       <Logo />
-        <DocumentTitleWrapper >
-          <DocumentTtitleInput />
-        </DocumentTitleWrapper>
-      <UserTerminalEnvironments />
+      <DocumentTitleWrapper>
+        <DocumentTitle />
+      </DocumentTitleWrapper>
+      <TerminalImageContainer />
     </Header>
   );
 };
