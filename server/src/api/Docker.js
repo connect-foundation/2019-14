@@ -3,8 +3,7 @@ const Docker = require("dockerode");
 
 const changeToFormattedName = (name) => {
   const startFormat = "/";
-  const startChar = name[0];
-  if (startChar === startFormat) {
+  if (name.startsWith(startFormat)) {
     return name;
   }
   return `${startFormat}${name}`;
@@ -12,7 +11,15 @@ const changeToFormattedName = (name) => {
 
 class DockerApi {
   constructor(options) {
+    const defaultOptions = {
+      version: "v1.40",
+      caPath: "~/.docker/ca.pem",
+      certPath: "~/.docker/cert.pem",
+      keyPath: "~/.docker/key.pem",
+      socketPath: null,
+    };
     const requestOptions = {
+      ...defaultOptions,
       ...options,
     };
 
@@ -28,7 +35,7 @@ class DockerApi {
       requestOptions.key = fs.readFileSync(requestOptions.keyPath);
     }
 
-    this.request = new Docker({ ...requestOptions, socketPath: null });
+    this.request = new Docker(requestOptions);
   }
 
   async init() {
