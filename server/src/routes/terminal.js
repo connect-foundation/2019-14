@@ -2,6 +2,9 @@ const debug = require("debug")("boostwriter:routes:terminal");
 const express = require("express");
 const { DockerApi } = require("../api/Docker");
 const { StreamResolver } = require("../utils/StreamResolver");
+const { utils } = require("../utils");
+
+const { wrapAsync } = utils;
 
 const router = express.Router();
 
@@ -34,22 +37,25 @@ const dockerOptions = {
 
 const dockerClient = new DockerApi(dockerOptions);
 
-router.post("/command/not-pending", async (req, res) => {
-  const { containerName, cmd, options } = req.body;
+router.post(
+  "/command/not-pending",
+  wrapAsync(async (req, res) => {
+    const { containerName, cmd, options } = req.body;
 
-  await dockerClient.init();
+    await dockerClient.init();
 
-  const resultStream = await dockerClient.execByName(containerName, cmd);
-  const output = await resolveDockerStream(resultStream);
+    const resultStream = await dockerClient.execByName(containerName, cmd);
+    const output = await resolveDockerStream(resultStream);
 
-  debug(
-    `containerName: ${containerName}`,
-    `command: ${cmd}`,
-    `options: ${options}`,
-    `result: ${output}`
-  );
+    debug(
+      `containerName: ${containerName}`,
+      `command: ${cmd}`,
+      `options: ${options}`,
+      `result: ${output}`
+    );
 
-  res.status(200).send({ output });
-});
+    res.status(200).send({ output });
+  })
+);
 
 module.exports = router;
