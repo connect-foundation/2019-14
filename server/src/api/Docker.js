@@ -1,3 +1,4 @@
+const debug = require("debug")("boostwriter:api:Docker");
 const fs = require("fs");
 const Docker = require("dockerode");
 
@@ -34,6 +35,8 @@ class DockerApi {
     if (requestOptions.keyPath) {
       requestOptions.key = fs.readFileSync(requestOptions.keyPath);
     }
+
+    debug(`Docker Api create request with`, requestOptions);
 
     this.request = new Docker(requestOptions);
   }

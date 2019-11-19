@@ -1,3 +1,4 @@
+const debug = require("debug")("boostwriter:app");
 const createError = require("http-errors");
 const express = require("express");
 const cookieParser = require("cookie-parser");
@@ -15,7 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/terminal", terminalRouter);
 
 // catch 404 and forward to error handler
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 
 // error handler
 app.use((err, req, res) => {
+  debug("Last Error Middleware", error);
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};

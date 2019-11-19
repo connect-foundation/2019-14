@@ -1,4 +1,4 @@
-const debug = require("debug")("routes:terminal");
+const debug = require("debug")("boostwriter:routes:terminal");
 const express = require("express");
 const { DockerApi } = require("../api/Docker");
 const { StreamResolver } = require("../utils/StreamResolver");

@@ -5,7 +5,7 @@
  */
 
 require("../src/env").appendEnv("remote");
-const debug = require("debug")("server:server");
+const debug = require("debug")("boostwriter:index");
 const http = require("http");
 const app = require("../src/app");
 
