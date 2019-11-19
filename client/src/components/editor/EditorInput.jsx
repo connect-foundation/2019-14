@@ -1,50 +1,49 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-import MARKDOWN_TYPE from "./MARKDOWN_TYPE";
-
 const HEADING_ATTRIBUTE = {
   diplay: "block",
   fontWeight: "bold",
 };
 
 const MARKDOWN_ATTRIBUTE = {
-  [MARKDOWN_TYPE.DEFAULT]: {
+  "": {
     placeholder: "",
     fontSize: "medium",
     marginTopBottom: "0",
   },
-  [MARKDOWN_TYPE.H1]: {
+
+  H1: {
     ...HEADING_ATTRIBUTE,
     placeholder: "Heading 1",
     fontSize: "2em",
     marginTopBottom: "0.67em",
   },
-  [MARKDOWN_TYPE.H2]: {
+  H2: {
     ...HEADING_ATTRIBUTE,
     placeholder: "Heading 2",
     fontSize: "1.5em",
     marginTopBottom: "0.83em",
   },
-  [MARKDOWN_TYPE.H3]: {
+  H3: {
     ...HEADING_ATTRIBUTE,
     placeholder: "Heading 3",
     fontSize: "1.17em",
     marginTopBottom: "1em",
   },
-  [MARKDOWN_TYPE.H4]: {
+  H4: {
     ...HEADING_ATTRIBUTE,
     placeholder: "Heading 4",
     fontSize: "1em",
     marginTopBottom: "1.33em",
   },
-  [MARKDOWN_TYPE.H5]: {
+  H5: {
     ...HEADING_ATTRIBUTE,
     placeholder: "Heading 5",
     fontSize: ".83em",
     marginTopBottom: "1.67em",
   },
-  [MARKDOWN_TYPE.H6]: {
+  H6: {
     ...HEADING_ATTRIBUTE,
     placeholder: "Heading 6",
     fontSize: ".67em",
@@ -65,20 +64,26 @@ const Input = styled.input`
 `;
 
 const EditorInput = () => {
-  const [state, setState] = useState({ value: "", type: "", placeholder: "" });
+  const [state, setState] = useState({
+    value: "",
+    type: "",
+    placeholder: "",
+  });
 
   const STATE = {
-    "#": { ...state, type: MARKDOWN_TYPE.H1 },
-    "##": { ...state, type: MARKDOWN_TYPE.H2 },
-    "###": { ...state, type: MARKDOWN_TYPE.H3 },
-    "####": { ...state, type: MARKDOWN_TYPE.H4 },
-    "#####": { ...state, type: MARKDOWN_TYPE.H5 },
-    "######": { ...state, type: MARKDOWN_TYPE.H6 },
+    "#": { ...state, type: "H1" },
+    "##": { ...state, type: "H2" },
+    "###": { ...state, type: "H3" },
+    "####": { ...state, type: "H4" },
+    "#####": { ...state, type: "H5" },
+    "######": { ...state, type: "H6" },
   };
 
   const onChange = (ev) => setState({ ...state, value: ev.target.value });
   const onKeyPress = (ev) => {
-    if (!state.type && ev.key === " ") {
+    const { key } = ev;
+
+    if (!state.type && key === " ") {
       setState(STATE[state.value]);
     }
   };
