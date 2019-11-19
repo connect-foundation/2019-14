@@ -1,12 +1,15 @@
 import React from "react";
 import styled from "styled-components";
+import Logo from "./Logo";
+import DocumentTitleWrapper from "./DocumentTitleWrapper";
+import UserTerminalEnvironments from "./UserTerminalEnvironments";
 // TODO 차후에 CSS 스타일이 고정되면 그에 맞게 수정한다.
 const Header = styled.header`
   display: flex;
   flex-direction: row;
-  border: 1px solid green;
+  justify-content: space-between;
   width: 100%;
-  height: 10%;
+  height: 3.75rem;
 `;
 
 /**
@@ -17,7 +20,13 @@ const Header = styled.header`
 
 const EditorHeader = () => {
   // TODO boost writer 하드 코딩값 지우기
-  return <Header>boost writer</Header>;
+  return (
+    <Header>
+      <Logo />
+      <DocumentTitleWrapper />
+      <UserTerminalEnvironments />
+    </Header>
+  );
 };
 
 export default EditorHeader;

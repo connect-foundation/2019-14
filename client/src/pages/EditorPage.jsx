@@ -1,53 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 
-import Input from "../components/editor/Input";
-import { editorActionCreator } from "../actions/EditorAction";
-import { MarkdownTransformer } from "../components/editor/MarkdownRenderer";
-import {
-  EditorStore,
-  EditorContext,
-  EditorDispatchContext,
-} from "../stores/EditorStore.jsx";
-
-const AComponent = () => {
-  const dispatch = useContext(EditorDispatchContext);
-
-  const inputHandler = (e) => {
-    const data = e.target.value;
-
-    dispatch(editorActionCreator.update(data));
-  };
-
-  return <input type="text" onInput={inputHandler} />;
-};
-
-const BComponent = () => {
-  const { state } = useContext(EditorContext);
-
-  return (
-    <>
-      <input type="button" value={state.data} />
-    </>
-  );
-};
-
-const TestComponent = () => {
-  return (
-    <>
-      <AComponent />
-      <BComponent />
-    </>
-  );
-};
+import { CellStore } from "../stores/CellStore";
+import EditorComponent from "../components/editor/EditorComponent";
+import EditorInput from "../components/editor/EditorInput";
 
 const EditorPage = () => {
   return (
     <>
-      <EditorStore>
-        <TestComponent />
-        <MarkdownTransformer />
-        <Input />
-      </EditorStore>
+      <CellStore>
+        <EditorComponent />
+        <EditorInput />
+      </CellStore>
     </>
   );
 };
