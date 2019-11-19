@@ -24,23 +24,32 @@ const resolveDockerStream = async (stream) => {
   return rawString;
 };
 
+const dockerOptions = {
+  host: process.env.REMOTE_DOCKER_IP,
+  port: process.env.REMOTE_DOCKER_PORT,
+  caPath: process.env.SSL_CA_PATH,
+  certPath: process.env.SSL_CERT_PATH,
+  keyPath: process.env.SSL_KEY_PATH,
+};
+
+const dockerClient = new DockerApi(dockerOptions);
+
 router.post("/command/not-pending", async (req, res) => {
   const { containerName, cmd, options } = req.body;
 
-  const dockerClient = new DockerApi(options);
   await dockerClient.init();
 
   const resultStream = await dockerClient.execByName(containerName, cmd);
-  const cmdResult = resolveDockerStream(resultStream);
+  const output = await resolveDockerStream(resultStream);
 
   debug(
     `containerName: ${containerName}`,
     `command: ${cmd}`,
     `options: ${options}`,
-    `result: ${cmdResult}`
+    `result: ${output}`
   );
 
-  res.status(200).send(cmdResult);
+  res.status(200).send({ output });
 });
 
 module.exports = router;
