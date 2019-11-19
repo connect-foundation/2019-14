@@ -13,7 +13,7 @@ const TerminalImageList = styled.section`
   justify-content: center;
 `;
 
-const TerminalImageLists = () => {
+const TerminalImageContainer = () => {
   const defaultData = [
     ubuntuImagePath,
     mysqlImagePath,
@@ -32,4 +32,4 @@ const TerminalImageLists = () => {
   );
 };
 
-export default TerminalImageList;
+export default TerminalImageContainer;
