@@ -1,13 +1,12 @@
+
 import React from "react";
 import styled from "styled-components";
-import EditorHeaderMain from "./EditorHeaderMain";
-import EditorToolBar from "../header/toolbar/ToolBar";
-
+import Logo from "./Logo";
+import DocumentTitleWrapper from "./DocumentTitleWrapper";
+import DocumentTtitleInput from "./DocumentTitle";
+import UserTerminalEnvironments from "./UserTerminalEnvironments";
 // TODO 차후에 CSS 스타일이 고정되면 그에 맞게 수정한다.
-const Header = styled.header`
-  display: flex;
-  flex-direction: column;
-`;
+
 
 /**
  * 에디터 헤더 컴포넌트
@@ -15,12 +14,23 @@ const Header = styled.header`
  * Editor Tool Bar 컴포넌트를 import한다.
  */
 
+const Header = styled.header`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  height: 3.75rem;
+`;
+
 const EditorHeader = () => {
   // TODO boost writer 하드 코딩값 지우기
   return (
     <Header>
-      <EditorHeaderMain />
-      <EditorToolBar />
+      <Logo />
+        <DocumentTitleWrapper >
+          <DocumentTtitleInput />
+        </DocumentTitleWrapper>
+      <UserTerminalEnvironments />
     </Header>
   );
 };
