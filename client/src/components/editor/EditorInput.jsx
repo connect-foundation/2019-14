@@ -81,7 +81,20 @@ const MARKDOWN_TYPE = {
     }
   `,
 
-  li: styled.li`
+  ul: styled.li`
+    &:empty {
+      &::before {
+        content: attr(placeholder);
+        color: gray;
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+  `,
+
+  ol: styled.li`
     &:empty {
       &::before {
         content: attr(placeholder);
@@ -110,9 +123,11 @@ const EditorInput = () => {
     "#####": { ...state, type: "h5", placeholder: "Heading 5" },
     "######": { ...state, type: "h6", placeholder: "Heading 6" },
 
-    "-": { ...state, type: "li", placeholder: "list" },
-    "*": { ...state, type: "li", placeholder: "list" },
-    "+": { ...state, type: "li", placeholder: "list" },
+    "-": { ...state, type: "ul", placeholder: "list" },
+    "*": { ...state, type: "ul", placeholder: "list" },
+    "+": { ...state, type: "ul", placeholder: "list" },
+
+    "1.": { ...state, type: "ol", placeholder: "list" },
   };
 
   const onInput = (ev) => {
@@ -128,14 +143,38 @@ const EditorInput = () => {
 
   const MarkdownWrapper = MARKDOWN_TYPE[state.type];
 
-  return (
-    <MarkdownWrapper
-      placeholder={state.placeholder}
-      contentEditable={true}
-      onInput={onInput}
-      onKeyPress={onKeyPress}
-    />
-  );
+  if (state.type === "ul") {
+    return (
+      <ul>
+        <MarkdownWrapper
+          placeholder={state.placeholder}
+          contentEditable={true}
+          onInput={onInput}
+          onKeyPress={onKeyPress}
+        />
+      </ul>
+    );
+  } else if (state.type === "ol") {
+    return (
+      <ol>
+        <MarkdownWrapper
+          placeholder={state.placeholder}
+          contentEditable={true}
+          onInput={onInput}
+          onKeyPress={onKeyPress}
+        />
+      </ol>
+    );
+  } else {
+    return (
+      <MarkdownWrapper
+        placeholder={state.placeholder}
+        contentEditable={true}
+        onInput={onInput}
+        onKeyPress={onKeyPress}
+      />
+    );
+  }
 };
 
 export default EditorInput;
