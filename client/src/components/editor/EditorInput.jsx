@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
+const stateAttr = {
+  "#": { type: "h1", placeholder: "Heading 1" },
+  "##": { type: "h2", placeholder: "Heading 2" },
+  "###": { type: "h3", placeholder: "Heading 3" },
+  "####": { type: "h4", placeholder: "Heading 4" },
+  "#####": { type: "h5", placeholder: "Heading 5" },
+  "######": { type: "h6", placeholder: "Heading 6" },
+
+  "-": { type: "ul", placeholder: "Unordered List" },
+  "*": { type: "ul", placeholder: "Unordered List" },
+  "+": { type: "ul", placeholder: "Unordered List" },
+
+  "1.": { type: "ol", placeholder: "Ordered List" },
+
+  ">": { type: "blockquote", placeholder: "Quote" },
+};
+
 const MarkdownWrapper = styled.input`
   border: none;
 
@@ -15,9 +32,8 @@ const MarkdownWrapper = styled.input`
     outline: none;
   }
 
-  border-left: ${(props) => (props.isQuote ? "0.4rem solid silver" : "none")};
-
-  padding-left: ${(props) => (props.isQuote ? "0.8rem" : "0")};
+  border-left: ${(props) => (props.isQuote ? "0.25rem solid silver" : "none")};
+  padding-left: ${(props) => (props.isQuote ? "0.5rem" : "0")};
 `;
 
 const EditorInput = () => {
@@ -26,23 +42,6 @@ const EditorInput = () => {
     type: "",
     placeholder: "",
   });
-
-  const STATE = {
-    "#": { ...state, type: "h1", placeholder: "Heading 1" },
-    "##": { ...state, type: "h2", placeholder: "Heading 2" },
-    "###": { ...state, type: "h3", placeholder: "Heading 3" },
-    "####": { ...state, type: "h4", placeholder: "Heading 4" },
-    "#####": { ...state, type: "h5", placeholder: "Heading 5" },
-    "######": { ...state, type: "h6", placeholder: "Heading 6" },
-
-    "-": { ...state, type: "ul", placeholder: "Unordered List" },
-    "*": { ...state, type: "ul", placeholder: "Unordered List" },
-    "+": { ...state, type: "ul", placeholder: "Unordered List" },
-
-    "1.": { ...state, type: "ol", placeholder: "Ordered List" },
-
-    ">": { ...state, type: "blockquote", placeholder: "Quote" },
-  };
 
   const onInput = (ev) => {
     setState({ ...state, value: ev.target.value });
@@ -53,7 +52,7 @@ const EditorInput = () => {
 
     if (key === " ") {
       if (!state.type) {
-        setState(STATE[state.value]);
+        setState({ ...state, ...stateAttr[state.value] });
       }
     }
   };
