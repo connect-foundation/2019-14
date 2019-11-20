@@ -40,7 +40,7 @@ const cellReducerHandler = {
     const { index } = action;
     const cells = splice.change(state.cells, index, action.renderTarget);
     const texts = splice.change(state.texts, index, "");
-    console.log(texts);
+
     return {
       ...state,
       cells,

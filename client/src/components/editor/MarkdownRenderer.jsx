@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
+import EditorInput from "./EditorInput";
 
 const HComponent = () => {
   return <div>hello h component!</div>;
@@ -37,20 +38,20 @@ const MarkdownTransformer = ({ cellIndex, inputRef }) => {
     }
   }, [inputRef]);
 
-  useEffect(() => {
-    const { h1 } = markdownRules;
+  // useEffect(() => {
+  //   const { h1 } = markdownRules;
 
-    // 이 부분에서 파서를 통해서 renderTarget에 원하는 컴포넌트를 추가할 수 있다.
-    if (text && text.startsWith(h1.syntax)) {
-      const { component } = h1;
-      cellDispatch(
-        cellActionCreator.transform(
-          (callback, inputRef) => component,
-          "transform h1 tag"
-        )
-      );
-    }
-  }, [text]);
+  //   // 이 부분에서 파서를 통해서 renderTarget에 원하는 컴포넌트를 추가할 수 있다.
+  //   if (text && text.startsWith(h1.syntax)) {
+  //     const { component } = h1;
+  //     cellDispatch(
+  //       cellActionCreator.transform(
+  //         (callback, inputRef) => component,
+  //         "transform h1 tag"
+  //       )
+  //     );
+  //   }
+  // }, [text]);
 
   const inputHandler = (e) => {
     const { value } = e.target;
@@ -187,20 +188,17 @@ const MarkdownTransformer = ({ cellIndex, inputRef }) => {
   };
 
   return inputRef ? (
-    <input
-      type="text"
-      onInput={inputHandler}
+    <EditorInput
       onKeyDown={keyDownHandler}
       onFocus={focusHandler}
-      ref={inputRef}
-      value={text}
+      inputRef={inputRef}
+      cellIndex={cellIndex}
     />
   ) : (
-    <input
-      type="text"
-      onInput={inputHandler}
+    <EditorInput
       onKeyDown={keyDownHandler}
       onFocus={focusHandler}
+      cellIndex={cellIndex}
     />
   );
 };

@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import styled from "styled-components";
+import { CellContext, CellDispatchContext } from "../../stores/CellStore";
+import { cellActionCreator } from "../../actions/CellAction";
 
 const stateAttr = {
   "#": { type: "h1", placeholder: "Heading 1" },
@@ -18,7 +20,7 @@ const stateAttr = {
   ">": { type: "blockquote", placeholder: "Quote" },
 };
 
-const MarkdownWrapper = styled.input`
+const MarkdownWrapper = styled.div`
   border: none;
 
   &:empty {
@@ -44,19 +46,38 @@ const MarkdownWrapper = styled.input`
   }};
 `;
 
-const EditorInput = () => {
+const EditorInput = ({ onKeyDown, onFocus, inputRef, cellIndex }) => {
   const [state, setState] = useState({
     value: "",
     type: "",
     placeholder: "",
   });
 
+  const cellContext = useContext(CellContext);
+  const cellState = cellContext.state;
+  // console.log(cellState);
+  // console.log(cellState.texts);
+
+  const cellDispatch = useContext(CellDispatchContext);
   const onInput = (ev) => {
-    setState({ ...state, value: ev.target.value });
+    const { textContent } = ev.target;
+    cellDispatch(cellActionCreator.input(textContent));
+    setState({
+      ...state,
+      value: cellState.texts[cellIndex],
+    });
   };
 
   const onKeyPress = (ev) => {
     const { key } = ev;
+    console.log(
+      "1234",
+      state.type,
+      "/",
+      state.value,
+      "/",
+      stateAttr[state.value]
+    );
 
     if (key === " ") {
       if (!state.type) setState({ ...state, ...stateAttr[state.value] });
@@ -71,24 +92,29 @@ const EditorInput = () => {
         <MarkdownWrapper
           as="li"
           placeholder={state.placeholder}
-          contentEditable={true}
+          contentEditable
           onInput={onInput}
           onKeyPress={onKeyPress}
+          onKeyDown={onKeyDown}
+          onFocus={onFocus}
+          ref={inputRef || null}
         />
       </MarkdownWrapper>
     );
-  } else {
-    return (
-      <MarkdownWrapper
-        as={state.type}
-        isQuote={isQuote}
-        placeholder={state.placeholder}
-        contentEditable={true}
-        onInput={onInput}
-        onKeyPress={onKeyPress}
-      />
-    );
   }
+  return (
+    <MarkdownWrapper
+      as={state.type}
+      isQuote={isQuote}
+      placeholder={state.placeholder}
+      contentEditable
+      onInput={onInput}
+      onKeyPress={onKeyPress}
+      onKeyDown={onKeyDown}
+      onFocus={onFocus}
+      ref={inputRef || null}
+    />
+  );
 };
 
 export default EditorInput;
