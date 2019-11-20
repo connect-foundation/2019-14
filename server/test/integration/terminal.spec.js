@@ -17,7 +17,7 @@ const testcases = {
 
 describe("Terminal Router", () => {
   it("not-pending 쉘 명령을 수행할 수 있다", function (done) {
-		const testcase = testcases.notPending;
+    const testcase = testcases.notPending;
     const agent = request.agent(app);
     agent
       .post(`/api/terminal/command/not-pending`)
