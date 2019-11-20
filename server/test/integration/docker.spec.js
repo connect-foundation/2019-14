@@ -1,14 +1,10 @@
-const fs = require("fs");
+require("../../src/env-loader").appendEnv("test");
 const path = require("path");
 
-const resolvedPath = path.resolve(process.cwd(), "test.env");
-require("dotenv").config({
-  path: resolvedPath,
-});
 const { expect } = require("chai");
-const { DockerApi } = require("../../src/api/Docker.js");
-const { StreamResolver } = require("../../src/utils/StreamResolver");
-const { containers } = require("../DockerSetup.js");
+const { DockerApi } = require("../../src/api/docker");
+const { StreamResolver } = require("../../src/utils/stream-resolver");
+const { containers } = require("../docker-setup");
 
 const remoteIp = process.env.REMOTE_DOCKER_IP;
 const remotePort = process.env.REMOTE_DOCKER_PORT;

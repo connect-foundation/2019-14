@@ -1,8 +1,8 @@
-require("../../src/env").appendEnv("test");
+require("../../src/env-loader").appendEnv("test");
 
 const request = require("supertest");
 const { expect } = require("chai");
-const { containers } = require("../DockerSetup.js");
+const { containers } = require("../docker-setup.js");
 const app = require("../../src/app");
 
 const testcases = {

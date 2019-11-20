@@ -1,7 +1,7 @@
 const debug = require("debug")("boostwriter:routes:terminal");
 const express = require("express");
-const { DockerApi } = require("../api/Docker");
-const { StreamResolver } = require("../utils/StreamResolver");
+const { DockerApi } = require("../api/docker");
+const { StreamResolver } = require("../utils/stream-resolver");
 const { utils } = require("../utils");
 
 const { wrapAsync } = utils;

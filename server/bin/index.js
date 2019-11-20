@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-require("../src/env").appendEnv("remote");
+require("../src/env-loader").appendEnv("remote");
 const debug = require("debug")("boostwriter:index");
 const http = require("http");
 const app = require("../src/app");

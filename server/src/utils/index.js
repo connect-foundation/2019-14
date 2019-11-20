@@ -1,4 +1,4 @@
-const { StreamResolver } = require("./StreamResolver");
+const { StreamResolver } = require("./stream-resolver");
 
 const utils = {};
 
