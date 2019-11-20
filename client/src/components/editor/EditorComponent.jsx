@@ -12,7 +12,9 @@ const EditorComponent = () => {
   useEffect(() => {
     if (state.cells.length === 0) {
       cellDispatch(
-        cellActionCreator.init((ref) => <MarkdownTransformer inputRef={ref} />)
+        cellActionCreator.init((cellIndex, ref) => (
+          <MarkdownTransformer cellIndex={cellIndex} inputRef={ref} />
+        ))
       );
     }
   }, []);
@@ -21,9 +23,9 @@ const EditorComponent = () => {
     <>
       {cells.map((cell, cellIndex) => {
         if (state.currentIndex === cellIndex) {
-          return <div key={`md${cellIndex}`}>{cell(inputRef)}</div>;
+          return <div key={`md${cellIndex}`}>{cell(cellIndex, inputRef)}</div>;
         }
-        return <div key={`md${cellIndex}`}>{cell()}</div>;
+        return <div key={`md${cellIndex}`}>{cell(cellIndex)}</div>;
       })}
     </>
   );

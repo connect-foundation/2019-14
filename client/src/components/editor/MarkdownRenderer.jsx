@@ -23,16 +23,16 @@ const markdownRules = {
   },
 };
 
-const MarkdownTransformer = ({ inputRef }) => {
+const MarkdownTransformer = ({ cellIndex, inputRef }) => {
   const cellDispatch = useCellDispatch();
   const cellState = useCellState();
-  const { currentIndex } = state;
-  const text = state.texts[currentIndex];
+  const { currentIndex } = cellState;
+  const text = cellState.texts[currentIndex];
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      const { cursor } = state;
+      const { cursor } = cellState;
       inputRef.current.selectionStart = cursor.start;
       inputRef.current.selectionEnd = cursor.end;
     }
@@ -69,14 +69,14 @@ const MarkdownTransformer = ({ inputRef }) => {
 
   const focus = {
     next: () => {
-      if (currentIndex < state.cells.length - 1) {
-        cellDispatch(cellActionCreator.next());
+      if (currentIndex < cellState.cells.length - 1) {
+        cellDispatch(cellActionCreator.focusNext());
         saveCursorPosition();
       }
     },
     prev: () => {
       if (currentIndex > 0) {
-        cellDispatch(cellActionCreator.prev());
+        cellDispatch(cellActionCreator.focusPrev());
         saveCursorPosition();
       }
     },
@@ -84,7 +84,9 @@ const MarkdownTransformer = ({ inputRef }) => {
 
   const newCell = () => {
     cellDispatch(
-      cellActionCreator.new((ref) => <MarkdownTransformer inputRef={ref} />)
+      cellActionCreator.new((index, ref) => (
+        <MarkdownTransformer cellIndex={index} inputRef={ref} />
+      ))
     );
   };
 
@@ -134,8 +136,8 @@ const MarkdownTransformer = ({ inputRef }) => {
     }
   };
 
-  const focusHandler = (e) => {
-    // console.log(e);
+  const focusHandler = () => {
+    cellDispatch(cellActionCreator.focusMove(cellIndex));
   };
 
   return inputRef ? (

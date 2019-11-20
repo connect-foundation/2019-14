@@ -3,9 +3,12 @@ const CELL_ACTION = {
   NEW: "cell/new",
   INPUT: "cell/input",
   TARGET: {
+    TRANSFORM: "cell/target/transform",
+  },
+  FOCUS: {
     PREV: "cell/target/prev",
     NEXT: "cell/target/next",
-    TRANSFORM: "cell/target/transform",
+    MOVE: "cell/target/move",
   },
   CURSOR: {
     MOVE: "cell/cursor/move",
@@ -29,6 +32,7 @@ const cellActionCreator = {
       index: index || 0,
     };
   },
+
   /**
    * 셀을 생성한다.
    * @returns type: 셀 액션 타입
@@ -40,6 +44,7 @@ const cellActionCreator = {
       renderTarget,
     };
   },
+
   /**
    * 셀의 텍스트를 변경한다.
    * @param {Text} text 변경된 텍스트
@@ -53,25 +58,39 @@ const cellActionCreator = {
       text,
     };
   },
+
   /**
-   * 셀 포커스를 이동시킨다.
+   * 셀 포커스를 바로 이전 셀로 이동시킨다.
    * - 위 방향키: 이전 셀로 포커스 이동
    */
-  prev() {
+  focusPrev() {
     return {
-      type: CELL_ACTION.TARGET.PREV,
+      type: CELL_ACTION.FOCUS.PREV,
     };
   },
+
   /**
-   * 셀 포커스를 이동시킨다.
+   * 셀 포커스를 바로 다음 셀로 이동시킨다.
    * - 엔터: 다음 셀로 포커스 이동
    * - 아래 방향키: 다음 셀로 포커스 이동
    */
-  next() {
+  focusNext() {
     return {
-      type: CELL_ACTION.TARGET.NEXT,
+      type: CELL_ACTION.FOCUS.NEXT,
     };
   },
+
+  /**
+   * 셀 포커스를 인덱스 위치로 이동시킨다.
+   * @param {Number} index 포커스를 이동시킬 인덱스
+   */
+  focusMove(index) {
+    return {
+      type: CELL_ACTION.FOCUS.MOVE,
+      index,
+    };
+  },
+
   /**
    * 셀의 속성을 변경한다.
    * - ex) default input cell -> list cell

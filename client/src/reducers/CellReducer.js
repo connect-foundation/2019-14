@@ -69,17 +69,24 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.TARGET.PREV]: (state) => {
+  [CELL_ACTION.FOCUS.PREV]: (state) => {
     return {
       ...state,
       currentIndex: state.currentIndex - 1,
     };
   },
 
-  [CELL_ACTION.TARGET.NEXT]: (state) => {
+  [CELL_ACTION.FOCUS.NEXT]: (state) => {
     return {
       ...state,
       currentIndex: state.currentIndex + 1,
+    };
+  },
+
+  [CELL_ACTION.FOCUS.MOVE]: (state, { index }) => {
+    return {
+      ...state,
+      currentIndex: index,
     };
   },
 
