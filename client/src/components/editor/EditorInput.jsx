@@ -1,128 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-const MARKDOWN_TYPE = {
-  "": styled.div`
-    &:focus {
-      outline: none;
-    }
-  `,
+const MarkdownWrapper = styled.input`
+  border: none;
 
-  h1: styled.h1`
-    &:empty {
-      &::before {
-        content: attr(placeholder);
-        color: gray;
-      }
+  &:empty {
+    &::before {
+      content: attr(placeholder);
+      color: silver;
     }
+  }
 
-    &:focus {
-      outline: none;
-    }
-  `,
-  h2: styled.h2`
-    &:empty {
-      &::before {
-        content: attr(placeholder);
-        color: gray;
-      }
-    }
+  &:focus {
+    outline: none;
+  }
 
-    &:focus {
-      outline: none;
-    }
-  `,
-  h3: styled.h3`
-    &:empty {
-      &::before {
-        content: attr(placeholder);
-        color: gray;
-      }
-    }
+  border-left: ${(props) => (props.isQuote ? "0.4rem solid silver" : "none")};
 
-    &:focus {
-      outline: none;
-    }
-  `,
-  h4: styled.h4`
-    &:empty {
-      &::before {
-        content: attr(placeholder);
-        color: gray;
-      }
-    }
-
-    &:focus {
-      outline: none;
-    }
-  `,
-  h5: styled.h5`
-    &:empty {
-      &::before {
-        content: attr(placeholder);
-        color: gray;
-      }
-    }
-
-    &:focus {
-      outline: none;
-    }
-  `,
-  h6: styled.h6`
-    &:empty {
-      &::before {
-        content: attr(placeholder);
-        color: gray;
-      }
-    }
-
-    &:focus {
-      outline: none;
-    }
-  `,
-
-  ul: styled.li`
-    &:empty {
-      &::before {
-        content: attr(placeholder);
-        color: gray;
-      }
-    }
-
-    &:focus {
-      outline: none;
-    }
-  `,
-
-  ol: styled.li`
-    &:empty {
-      &::before {
-        content: attr(placeholder);
-        color: gray;
-      }
-    }
-
-    &:focus {
-      outline: none;
-    }
-  `,
-
-  blockquote: styled.blockquote`
-    border-left: 0.25rem solid silver;
-    padding-left: 1rem;
-
-    &:empty {
-      &::before {
-        content: attr(placeholder);
-        color: gray;
-      }
-    }
-
-    &:focus {
-      outline: none;
-    }
-  `,
-};
+  padding-left: ${(props) => (props.isQuote ? "0.8rem" : "0")};
+`;
 
 const EditorInput = () => {
   const [state, setState] = useState({
@@ -139,17 +35,17 @@ const EditorInput = () => {
     "#####": { ...state, type: "h5", placeholder: "Heading 5" },
     "######": { ...state, type: "h6", placeholder: "Heading 6" },
 
-    "-": { ...state, type: "ul", placeholder: "list" },
-    "*": { ...state, type: "ul", placeholder: "list" },
-    "+": { ...state, type: "ul", placeholder: "list" },
+    "-": { ...state, type: "ul", placeholder: "Unordered List" },
+    "*": { ...state, type: "ul", placeholder: "Unordered List" },
+    "+": { ...state, type: "ul", placeholder: "Unordered List" },
 
-    "1.": { ...state, type: "ol", placeholder: "list" },
+    "1.": { ...state, type: "ol", placeholder: "Ordered List" },
 
-    ">": { ...state, type: "blockquote", placeholder: "quote" },
+    ">": { ...state, type: "blockquote", placeholder: "Quote" },
   };
 
   const onInput = (ev) => {
-    setState({ ...state, value: ev.target.textContent });
+    setState({ ...state, value: ev.target.value });
   };
 
   const onKeyPress = (ev) => {
@@ -162,33 +58,25 @@ const EditorInput = () => {
     }
   };
 
-  const MarkdownWrapper = MARKDOWN_TYPE[state.type];
+  const isQuote = state.type === "blockquote";
 
-  if (state.type === "ul") {
+  if (state.type === "ul" || state.type === "ol") {
     return (
-      <ul>
+      <MarkdownWrapper as={state.type} is>
         <MarkdownWrapper
+          as="li"
           placeholder={state.placeholder}
           contentEditable={true}
           onInput={onInput}
           onKeyPress={onKeyPress}
         />
-      </ul>
-    );
-  } else if (state.type === "ol") {
-    return (
-      <ol>
-        <MarkdownWrapper
-          placeholder={state.placeholder}
-          contentEditable={true}
-          onInput={onInput}
-          onKeyPress={onKeyPress}
-        />
-      </ol>
+      </MarkdownWrapper>
     );
   } else {
     return (
       <MarkdownWrapper
+        as={state.type}
+        isQuote={isQuote}
         placeholder={state.placeholder}
         contentEditable={true}
         onInput={onInput}
