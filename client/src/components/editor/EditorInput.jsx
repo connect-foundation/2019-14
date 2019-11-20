@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const stateAttr = {
@@ -36,12 +36,8 @@ const MarkdownWrapper = styled.input`
     cursor: text;
   }
 
-  border-left: ${(props) => {
-    if (props.isQuote) return "0.25rem solid silver";
-  }}
-  padding-left: ${(props) => {
-    if (props.isQuote) return "0.5rem";
-  }};
+  border-left: ${(props) => (props.isQuote ? "0.25rem solid silver" : null)};
+  padding-left: ${(props) => (props.isQuote ? "0.5rem" : null)};
 `;
 
 const EditorInput = () => {
@@ -63,10 +59,22 @@ const EditorInput = () => {
     }
   };
 
+  const isList = state.type === "ul" || state.type === "ol";
   const isQuote = state.type === "blockquote";
 
-  if (state.type === "ul" || state.type === "ol") {
-    return (
+  let renderTarget = (
+    <MarkdownWrapper
+      as={state.type}
+      isQuote={isQuote}
+      placeholder={state.placeholder}
+      contentEditable={true}
+      onInput={onInput}
+      onKeyPress={onKeyPress}
+    />
+  );
+
+  if (isList) {
+    renderTarget = (
       <MarkdownWrapper as={state.type}>
         <MarkdownWrapper
           as="li"
@@ -77,18 +85,9 @@ const EditorInput = () => {
         />
       </MarkdownWrapper>
     );
-  } else {
-    return (
-      <MarkdownWrapper
-        as={state.type}
-        isQuote={isQuote}
-        placeholder={state.placeholder}
-        contentEditable={true}
-        onInput={onInput}
-        onKeyPress={onKeyPress}
-      />
-    );
   }
+
+  return renderTarget;
 };
 
 export default EditorInput;
