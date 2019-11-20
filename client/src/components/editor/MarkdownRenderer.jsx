@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useRef } from "react";
+import React, { useEffect, useContext } from "react";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
 
@@ -6,7 +6,7 @@ const HComponent = () => {
   return <div>hello h component!</div>;
 };
 
-const useState = () => {
+const useCellState = () => {
   const { state } = useContext(CellContext);
   return state;
 };
@@ -19,19 +19,22 @@ const useCellDispatch = () => {
 const markdownRules = {
   h1: {
     syntax: "# ",
-    component: () => <HComponent />,
+    component: <HComponent />,
   },
 };
 
-const MarkdownTransformer = ({ callback, inputRef }) => {
+const MarkdownTransformer = ({ inputRef }) => {
   const cellDispatch = useCellDispatch();
-  const state = useState();
+  const cellState = useCellState();
   const { currentIndex } = state;
   const text = state.texts[currentIndex];
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
+      const { cursor } = state;
+      inputRef.current.selectionStart = cursor.start;
+      inputRef.current.selectionEnd = cursor.end;
     }
   }, [inputRef]);
 
@@ -40,11 +43,10 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
 
     // 이 부분에서 파서를 통해서 renderTarget에 원하는 컴포넌트를 추가할 수 있다.
     if (text && text.startsWith(h1.syntax)) {
-      const component = h1.component(cellDispatch);
+      const { component } = h1;
       cellDispatch(
         cellActionCreator.transform(
           (callback, inputRef) => component,
-          currentIndex,
           "transform h1 tag"
         )
       );
@@ -56,32 +58,70 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
     cellDispatch(cellActionCreator.input(value));
   };
 
-  const nextFocus = () => {
-    cellDispatch(cellActionCreator.next());
+  const saveCursorPosition = () => {
+    if (!inputRef) {
+      return null;
+    }
+    const start = inputRef.current.selectionStart || 0;
+    const end = inputRef.current.selectionEnd || 0;
+    cellDispatch(cellActionCreator.moveCursor(start, end));
   };
 
-  const prevFocus = () => {
-    cellDispatch(cellActionCreator.prev());
+  const focus = {
+    next: () => {
+      if (currentIndex < state.cells.length - 1) {
+        cellDispatch(cellActionCreator.next());
+        saveCursorPosition();
+      }
+    },
+    prev: () => {
+      if (currentIndex > 0) {
+        cellDispatch(cellActionCreator.prev());
+        saveCursorPosition();
+      }
+    },
   };
 
   const newCell = () => {
     cellDispatch(
-      cellActionCreator.new((callback, ref) => (
-        <MarkdownTransformer callback={callback} inputRef={ref} />
-      ))
+      cellActionCreator.new((ref) => <MarkdownTransformer inputRef={ref} />)
     );
   };
 
   const keyDownEventDispatch = {
-    Enter: () => {
-      nextFocus();
-      newCell();
+    Enter: (e) => {
+      /**
+       * @todo Shift + Enter 동작 추가 예정
+       */
+      if (e.shiftKey) {
+        return () => {
+          console.log("this is shift+enter");
+        };
+      }
+      return () => {
+        newCell();
+        focus.next();
+      };
     },
     ArrowUp: () => {
-      prevFocus();
+      return () => {
+        focus.prev();
+      };
     },
     ArrowDown: () => {
-      nextFocus();
+      return () => {
+        focus.next();
+      };
+    },
+    Tab: (e) => {
+      if (e.shiftKey) {
+        return () => {
+          focus.prev();
+        };
+      }
+      return () => {
+        focus.next();
+      };
     },
   };
 
@@ -89,8 +129,13 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
     const { key } = e;
     const exec = keyDownEventDispatch[key];
     if (exec) {
-      callback(exec);
+      e.preventDefault();
+      exec(e)();
     }
+  };
+
+  const focusHandler = (e) => {
+    // console.log(e);
   };
 
   return inputRef ? (
@@ -98,10 +143,16 @@ const MarkdownTransformer = ({ callback, inputRef }) => {
       type="text"
       onInput={inputHandler}
       onKeyDown={keyDownHandler}
+      onFocus={focusHandler}
       ref={inputRef}
     />
   ) : (
-    <input type="text" onInput={inputHandler} onKeyDown={keyDownHandler} />
+    <input
+      type="text"
+      onInput={inputHandler}
+      onKeyDown={keyDownHandler}
+      onFocus={focusHandler}
+    />
   );
 };
 
