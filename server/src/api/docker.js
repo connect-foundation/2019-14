@@ -93,6 +93,64 @@ class DockerApi {
     const containerStream = await exec.start();
     return containerStream;
   }
+
+  async createCustomTerminal(userTerminalInfo) {
+
+    if (!userTerminalInfo) {
+      const defaultBaseImage = "ubuntu";
+      return this.createContainer(defaultBaseImage);
+    }
+    // TODO 유저 입력 파싱
+    const defaultOptions = {
+      context: __dirname,
+      src: ["Dockerfile"],
+    }
+
+    const imageTag = {
+      t: "test"
+    }
+
+    const progressCallback = (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+    }
+
+    const finishCallback = (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+    }
+
+    const stream = await this.request.buildImage(defaultOptions, imageTag);
+
+    this.request.modem.followProgress(stream, progressCallback, finishCallback);
+  }
+
+  async createDefaultTerminal(baseImageName) {
+    // TOOD 초기 하드코딩 값 변경하거나 없앨 것
+    const defaultCmd = ["/bin/bash"];
+    const defaultTagName = "ubuntu-container-test";
+    let newContainerId = "";
+
+    await this.request.createContainer({
+      AttachStdin: false,
+      AttachStdout: true,
+      AttachStderr: true,
+      Image: baseImageName,
+      Cmd: defaultCmd,
+      name: defaultTagName,
+      Tty: true,
+    })
+    .then((container) => {
+      newContainerId = container.id;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+    return newContainerId;
+  }
 }
 
 module.exports = { DockerApi };
