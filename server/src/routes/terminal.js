@@ -58,4 +58,21 @@ router.post(
   })
 );
 
+router.post(
+  "/createTerminal",
+  async (req, res) => {
+    const docker = req.app.get("docker");
+    const result = await docker.createDefaultTerminal("ubuntu");
+
+    if (!result) {
+      res.status(400).json({message: "not created terminal"});
+      return;
+    }
+
+    res.status(200).json({containerId: result});
+    
+    return;
+  }
+)
+
 module.exports = router;
