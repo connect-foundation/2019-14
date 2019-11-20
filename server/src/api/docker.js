@@ -10,6 +10,23 @@ const changeToFormattedName = (name) => {
   return `${startFormat}${name}`;
 };
 
+const exec = async (container, commandString = "", options = {}) => {
+  if (!container) {
+    return null;
+  }
+
+  const defaultOptions = {
+    AttachStdin: true,
+    AttachStdout: true,
+    AttachStderr: true,
+    Cmd: ["/bin/sh", "-c", commandString],
+  };
+
+  const command = await container.exec({ ...defaultOptions, ...options });
+  const containerStream = await command.start();
+  return containerStream;
+};
+
 class DockerApi {
   constructor(options) {
     const defaultOptions = {
@@ -61,13 +78,8 @@ class DockerApi {
     }
 
     const container = await this.request.getContainer(containerId);
-    const exec = await container.exec({
-      AttachStdin: true,
-      AttachStdout: true,
-      AttachStderr: true,
-      Cmd: ["/bin/sh", "-c", commandString],
-    });
-    const containerStream = await exec.start();
+
+    const containerStream = await exec(container, commandString);
     return containerStream;
   }
 
@@ -76,13 +88,8 @@ class DockerApi {
 
     const container = await this.request.getContainer(containerId);
 
-    const exec = await container.exec({
-      AttachStdin: true,
-      AttachStdout: true,
-      AttachStderr: true,
-      Cmd: ["/bin/sh", "-c", commandString],
-    });
-    const containerStream = await exec.start();
+    const containerStream = await exec(container, commandString);
+
     return containerStream;
   }
 
