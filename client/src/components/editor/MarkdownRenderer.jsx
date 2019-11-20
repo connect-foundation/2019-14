@@ -25,7 +25,7 @@ const markdownRules = {
 
 const MarkdownTransformer = ({ inputRef }) => {
   const cellDispatch = useCellDispatch();
-  const state = useCellState();
+  const cellState = useCellState();
   const { currentIndex } = state;
   const text = state.texts[currentIndex];
 
@@ -59,9 +59,12 @@ const MarkdownTransformer = ({ inputRef }) => {
   };
 
   const saveCursorPosition = () => {
-    const start = (inputRef && inputRef.current.selectionStart) || 0;
-    const end = (inputRef && inputRef.current.selectionEnd) || 0;
-    cellDispatch(cellActionCreator.move(start, end));
+    if (!inputRef) {
+      return null;
+    }
+    const start = inputRef.current.selectionStart || 0;
+    const end = inputRef.current.selectionEnd || 0;
+    cellDispatch(cellActionCreator.moveCursor(start, end));
   };
 
   const focus = {

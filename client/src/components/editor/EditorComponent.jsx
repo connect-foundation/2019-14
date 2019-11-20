@@ -19,11 +19,11 @@ const EditorComponent = () => {
 
   return (
     <>
-      {cells.map((cell, i) => {
-        if (state.currentIndex === i) {
-          return <div key={`md${i}`}>{cell(inputRef)}</div>;
+      {cells.map((cell, cellIndex) => {
+        if (state.currentIndex === cellIndex) {
+          return <div key={`md${cellIndex}`}>{cell(inputRef)}</div>;
         }
-        return <div key={`md${i}`}>{cell()}</div>;
+        return <div key={`md${cellIndex}`}>{cell()}</div>;
       })}
     </>
   );

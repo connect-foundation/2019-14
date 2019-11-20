@@ -96,7 +96,7 @@ const cellActionCreator = {
    * @param {Number} selectionStart 커서 시작 위치
    * @param {Number} selectionEnd 커서 끝 위치
    */
-  move(selectionStart, selectionEnd) {
+  moveCursor(selectionStart, selectionEnd) {
     return {
       type: CELL_ACTION.CURSOR.MOVE,
       selectionStart,
