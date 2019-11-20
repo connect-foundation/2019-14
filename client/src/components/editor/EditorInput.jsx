@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
+/**
+ * @todo keys 파싱 부분 정규표현식으로 변경 예정
+ */
 const stateAttr = {
   "#": { type: "h1", placeholder: "Heading 1" },
   "##": { type: "h2", placeholder: "Heading 2" },
@@ -18,7 +21,7 @@ const stateAttr = {
   ">": { type: "blockquote", placeholder: "Quote" },
 };
 
-const MarkdownWrapper = styled.input`
+const MarkdownWrapper = styled.div`
   border: none;
 
   &:empty {
@@ -27,11 +30,9 @@ const MarkdownWrapper = styled.input`
       color: silver;
     }
   }
-
   &:focus {
     outline: none;
   }
-
   &:hover {
     cursor: text;
   }
@@ -48,14 +49,18 @@ const EditorInput = () => {
   });
 
   const onInput = (ev) => {
-    setState({ ...state, value: ev.target.value });
+    setState({ ...state, value: ev.target.textContent });
   };
 
   const onKeyPress = (ev) => {
     const { key } = ev;
 
-    if (key === " ") {
-      if (!state.type) setState({ ...state, ...stateAttr[state.value] });
+    switch (key) {
+      case " ":
+        if (!state.type) setState({ ...state, ...stateAttr[state.value] });
+        break;
+      case "Enter":
+        break;
     }
   };
 
