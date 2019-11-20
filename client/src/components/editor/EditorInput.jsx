@@ -1,106 +1,94 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-import MARKDOWN_TYPE from "./MARKDOWN_TYPE";
+const stateAttr = {
+  "#": { type: "h1", placeholder: "Heading 1" },
+  "##": { type: "h2", placeholder: "Heading 2" },
+  "###": { type: "h3", placeholder: "Heading 3" },
+  "####": { type: "h4", placeholder: "Heading 4" },
+  "#####": { type: "h5", placeholder: "Heading 5" },
+  "######": { type: "h6", placeholder: "Heading 6" },
 
-const HEADING_ATTRIBUTE = {
-  diplay: "block",
-  fontWeight: "bold",
+  "-": { type: "ul", placeholder: "Unordered List" },
+  "*": { type: "ul", placeholder: "Unordered List" },
+  "+": { type: "ul", placeholder: "Unordered List" },
+
+  "1.": { type: "ol", placeholder: "Ordered List" },
+
+  ">": { type: "blockquote", placeholder: "Quote" },
 };
 
-const MARKDOWN_ATTRIBUTE = {
-  [MARKDOWN_TYPE.DEFAULT]: {
-    placeholder: "",
-    fontSize: "medium",
-    marginTopBottom: "0",
-  },
-  [MARKDOWN_TYPE.H1]: {
-    ...HEADING_ATTRIBUTE,
-    placeholder: "Heading 1",
-    fontSize: "2em",
-    marginTopBottom: "0.67em",
-  },
-  [MARKDOWN_TYPE.H2]: {
-    ...HEADING_ATTRIBUTE,
-    placeholder: "Heading 2",
-    fontSize: "1.5em",
-    marginTopBottom: "0.83em",
-  },
-  [MARKDOWN_TYPE.H3]: {
-    ...HEADING_ATTRIBUTE,
-    placeholder: "Heading 3",
-    fontSize: "1.17em",
-    marginTopBottom: "1em",
-  },
-  [MARKDOWN_TYPE.H4]: {
-    ...HEADING_ATTRIBUTE,
-    placeholder: "Heading 4",
-    fontSize: "1em",
-    marginTopBottom: "1.33em",
-  },
-  [MARKDOWN_TYPE.H5]: {
-    ...HEADING_ATTRIBUTE,
-    placeholder: "Heading 5",
-    fontSize: ".83em",
-    marginTopBottom: "1.67em",
-  },
-  [MARKDOWN_TYPE.H6]: {
-    ...HEADING_ATTRIBUTE,
-    placeholder: "Heading 6",
-    fontSize: ".67em",
-    marginTopBottom: "2.33em",
-  },
-};
+const MarkdownWrapper = styled.input`
+  border: none;
 
-const Input = styled.input`
-  width: 100%;
-  border: transparent;
-  outline: transparent;
+  &:empty {
+    &::before {
+      content: attr(placeholder);
+      color: silver;
+    }
+  }
 
-  display: ${(props) => MARKDOWN_ATTRIBUTE[props.type].display};
-  font-weight: ${(props) => MARKDOWN_ATTRIBUTE[props.type].fontWeight};
-  font-size: ${(props) => MARKDOWN_ATTRIBUTE[props.type].fontSize};
-  margin-top: ${(props) => MARKDOWN_ATTRIBUTE[props.type].marginTopBottom};
-  margin-bottom: ${(props) => MARKDOWN_ATTRIBUTE[props.type].marginTopBottom}};
+  &:focus {
+    outline: none;
+  }
+
+  &:hover {
+    cursor: text;
+  }
+
+  border-left: ${(props) => {
+    if (props.isQuote) return "0.25rem solid silver";
+  }}
+  padding-left: ${(props) => {
+    if (props.isQuote) return "0.5rem";
+  }};
 `;
 
 const EditorInput = () => {
-  const [state, setState] = useState({ value: "", type: "", placeholder: "" });
+  const [state, setState] = useState({
+    value: "",
+    type: "",
+    placeholder: "",
+  });
 
-  const STATE = {
-    "#": { ...state, type: MARKDOWN_TYPE.H1 },
-    "##": { ...state, type: MARKDOWN_TYPE.H2 },
-    "###": { ...state, type: MARKDOWN_TYPE.H3 },
-    "####": { ...state, type: MARKDOWN_TYPE.H4 },
-    "#####": { ...state, type: MARKDOWN_TYPE.H5 },
-    "######": { ...state, type: MARKDOWN_TYPE.H6 },
+  const onInput = (ev) => {
+    setState({ ...state, value: ev.target.value });
   };
 
-  const onChange = (ev) => setState({ ...state, value: ev.target.value });
   const onKeyPress = (ev) => {
-    if (!state.type && ev.key === " ") {
-      setState(STATE[state.value]);
+    const { key } = ev;
+
+    if (key === " ") {
+      if (!state.type) setState({ ...state, ...stateAttr[state.value] });
     }
   };
 
-  useEffect(() => {
-    if (state.type)
-      setState({
-        ...state,
-        value: "",
-        placeholder: MARKDOWN_ATTRIBUTE[state.type].placeholder,
-      });
-  }, [state.type]);
+  const isQuote = state.type === "blockquote";
 
-  return (
-    <Input
-      type={state.type}
-      value={state.value}
-      placeholder={state.placeholder}
-      onChange={onChange}
-      onKeyPress={onKeyPress}
-    />
-  );
+  if (state.type === "ul" || state.type === "ol") {
+    return (
+      <MarkdownWrapper as={state.type}>
+        <MarkdownWrapper
+          as="li"
+          placeholder={state.placeholder}
+          contentEditable={true}
+          onInput={onInput}
+          onKeyPress={onKeyPress}
+        />
+      </MarkdownWrapper>
+    );
+  } else {
+    return (
+      <MarkdownWrapper
+        as={state.type}
+        isQuote={isQuote}
+        placeholder={state.placeholder}
+        contentEditable={true}
+        onInput={onInput}
+        onKeyPress={onKeyPress}
+      />
+    );
+  }
 };
 
 export default EditorInput;
