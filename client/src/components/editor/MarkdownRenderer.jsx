@@ -26,13 +26,12 @@ const markdownRules = {
 const MarkdownTransformer = ({ cellIndex, inputRef }) => {
   const cellDispatch = useCellDispatch();
   const cellState = useCellState();
-  const { currentIndex } = cellState;
-  const text = cellState.texts[currentIndex];
+  const { currentIndex, cursor } = cellState;
+  const text = cellState.texts[cellIndex];
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      const { cursor } = cellState;
       inputRef.current.selectionStart = cursor.start;
       inputRef.current.selectionEnd = cursor.end;
     }
@@ -58,13 +57,23 @@ const MarkdownTransformer = ({ cellIndex, inputRef }) => {
     cellDispatch(cellActionCreator.input(value));
   };
 
+  const currentCursorPosition = () => {
+    const start = inputRef.current.selectionStart || 0;
+    const end = inputRef.current.selectionEnd || 0;
+    return {
+      start,
+      end,
+    };
+  };
+
   const saveCursorPosition = () => {
     if (!inputRef) {
       return null;
     }
-    const start = inputRef.current.selectionStart || 0;
-    const end = inputRef.current.selectionEnd || 0;
-    cellDispatch(cellActionCreator.moveCursor(start, end));
+    const currentCursor = currentCursorPosition();
+    cellDispatch(
+      cellActionCreator.moveCursor(currentCursor.start, currentCursor.end)
+    );
   };
 
   const focus = {
@@ -92,6 +101,20 @@ const MarkdownTransformer = ({ cellIndex, inputRef }) => {
 
   const keyDownEventDispatch = {
     Enter: (e) => {
+      const currentTag = false;
+      if (currentTag && text.length === 0) {
+        return () => {
+          cellDispatch(
+            cellActionCreator.init(
+              (index, ref) => (
+                <MarkdownTransformer cellIndex={index} inputRef={ref} />
+              ),
+              currentIndex
+            )
+          );
+        };
+      }
+
       /**
        * @todo Shift + Enter 동작 추가 예정
        */
@@ -104,6 +127,26 @@ const MarkdownTransformer = ({ cellIndex, inputRef }) => {
         newCell();
         focus.next();
       };
+    },
+    Backspace: (e) => {
+      const currentCursor = currentCursorPosition();
+
+      if (
+        currentCursor.start === currentCursor.end &&
+        currentCursor.start === 0
+      ) {
+        return () => {
+          cellDispatch(
+            cellActionCreator.init(
+              (index, ref) => (
+                <MarkdownTransformer cellIndex={index} inputRef={ref} />
+              ),
+              currentIndex
+            )
+          );
+        };
+      }
+      return () => {};
     },
     ArrowUp: () => {
       return () => {
@@ -131,13 +174,16 @@ const MarkdownTransformer = ({ cellIndex, inputRef }) => {
     const { key } = e;
     const exec = keyDownEventDispatch[key];
     if (exec) {
-      e.preventDefault();
+      if (key !== "Backspace") {
+        e.preventDefault();
+      }
       exec(e)();
     }
   };
 
   const focusHandler = () => {
     cellDispatch(cellActionCreator.focusMove(cellIndex));
+    saveCursorPosition();
   };
 
   return inputRef ? (
@@ -147,6 +193,7 @@ const MarkdownTransformer = ({ cellIndex, inputRef }) => {
       onKeyDown={keyDownHandler}
       onFocus={focusHandler}
       ref={inputRef}
+      value={text}
     />
   ) : (
     <input
