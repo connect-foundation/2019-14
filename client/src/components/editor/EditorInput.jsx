@@ -32,8 +32,16 @@ const MarkdownWrapper = styled.input`
     outline: none;
   }
 
-  border-left: ${(props) => (props.isQuote ? "0.25rem solid silver" : "none")};
-  padding-left: ${(props) => (props.isQuote ? "0.5rem" : "0")};
+  &:hover {
+    cursor: text;
+  }
+
+  border-left: ${(props) => {
+    if (props.isQuote) return "0.25rem solid silver";
+  }}
+  padding-left: ${(props) => {
+    if (props.isQuote) return "0.5rem";
+  }};
 `;
 
 const EditorInput = () => {
@@ -51,9 +59,7 @@ const EditorInput = () => {
     const { key } = ev;
 
     if (key === " ") {
-      if (!state.type) {
-        setState({ ...state, ...stateAttr[state.value] });
-      }
+      if (!state.type) setState({ ...state, ...stateAttr[state.value] });
     }
   };
 
@@ -61,7 +67,7 @@ const EditorInput = () => {
 
   if (state.type === "ul" || state.type === "ol") {
     return (
-      <MarkdownWrapper as={state.type} is>
+      <MarkdownWrapper as={state.type}>
         <MarkdownWrapper
           as="li"
           placeholder={state.placeholder}
