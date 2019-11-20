@@ -54,12 +54,9 @@ class DockerApi {
   }
 
   async execById(containerId, commandString = "") {
-    const noContainer =
-      this.containerInfos.find((info) => {
-        // support compressed-hash and full-hash
-        return info.id.startsWith(containerId);
-      }) === undefined;
-    if (noContainer) {
+    const isCached = this.isContainerExist(containerId);
+
+    if (!isCached) {
       return null;
     }
 
@@ -75,15 +72,10 @@ class DockerApi {
   }
 
   async execByName(containerName, commandString = "") {
-    const formattedName = changeToFormattedName(containerName);
-    const isUsedName = (info) => {
-      return info.names.includes(formattedName);
-    };
-    const targetInfo = this.containerInfos.find(isUsedName);
-    if (!targetInfo) {
-      return null;
-    }
-    const container = await this.request.getContainer(targetInfo.id);
+    const containerId = this.convertToContainerId(containerName);
+
+    const container = await this.request.getContainer(containerId);
+
     const exec = await container.exec({
       AttachStdin: true,
       AttachStdout: true,
@@ -92,6 +84,25 @@ class DockerApi {
     });
     const containerStream = await exec.start();
     return containerStream;
+  }
+
+  convertToContainerId(containerName = "") {
+    const formattedName = changeToFormattedName(containerName);
+
+    const isUsedName = (info) => {
+      return info.names.includes(formattedName);
+    };
+
+    const targetInfo = this.containerInfos.find(isUsedName);
+
+    return targetInfo ? targetInfo.id : null;
+  }
+
+  isContainerExist(containerId) {
+    return this.containerInfos.some((info) => {
+      // support compressed-hash and full-hash
+      return info.id.startsWith(containerId);
+    });
   }
 }
 
