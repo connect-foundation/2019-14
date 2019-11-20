@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const DocumentTitleInput = styled.div`
   display: inline-block;
@@ -28,7 +28,7 @@ const DocumentTitleInput = styled.div`
 const DocumentTitle = (props) => {
   const [state, setState] = useState("");
 
-  const onInputHandler = e => {
+  const onInputHandler = (e) => {
     const documentTitle = e.currentTarget.textContent;
     setState(documentTitle);
   };
@@ -45,7 +45,7 @@ const DocumentTitle = (props) => {
 DocumentTitle.propTypes = {
   contentEditable: PropTypes.bool,
   defaultText: PropTypes.string,
-}
+};
 
 DocumentTitle.defaultProps = {
   contentEditable: true,

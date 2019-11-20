@@ -1,23 +1,21 @@
 import React from "react";
 import styled from "styled-components";
 
-import Button from "./Button";
+import { ToolBarButton, BUTTON_TYPE } from "./ToolBarButton";
 
-const Wrapper = styled.nav`
+const ToolBarWrapper = styled.nav`
   display: flex;
   width: 100%;
 `;
 
 const ToolBar = () => {
-  const types = ["new", "save", "load", "code", "share", "terminal"];
+  const getToolBarButtons = () => {
+    return Object.keys(BUTTON_TYPE).map((buttonType, index) => {
+      return <ToolBarButton key={index} buttonType={buttonType} />;
+    });
+  };
 
-  return (
-    <Wrapper>
-      {types.map((type) => {
-        return <Button type={type} />;
-      })}
-    </Wrapper>
-  );
+  return <ToolBarWrapper>{getToolBarButtons()}</ToolBarWrapper>;
 };
 
 export default ToolBar;
