@@ -1,4 +1,5 @@
 import React, { useReducer } from "react";
+import propTypes from "prop-types";
 import cellReducer from "../reducers/CellReducer";
 import { UuidManager } from "../utils";
 
@@ -12,7 +13,7 @@ const CellStore = ({ children }) => {
     uuidManager: new UuidManager(),
     cells: [],
     texts: [],
-    type: [],
+    tags: [],
     cursor: {
       start: 0,
       end: 0,
@@ -26,6 +27,14 @@ const CellStore = ({ children }) => {
       </CellDispatchContext.Provider>
     </CellContext.Provider>
   );
+};
+
+CellStore.defaultProps = {
+  children: [],
+};
+
+CellStore.propTypes = {
+  children: propTypes.arrayOf(propTypes.element),
 };
 
 export { CellContext, CellDispatchContext, CellStore };

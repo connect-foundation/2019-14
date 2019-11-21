@@ -2,6 +2,11 @@ const debug = require("debug")("boostwriter:api:Docker");
 const fs = require("fs");
 const Docker = require("dockerode");
 
+const SIGNAL_TYPE = {
+  SIGINT: 2,
+  SIGKILL: 9,
+};
+
 const changeToFormattedName = (name) => {
   const startFormat = "/";
   if (name.startsWith(startFormat)) {
@@ -23,7 +28,18 @@ const exec = async (container, commandString = "", options = {}) => {
   };
 
   const command = await container.exec({ ...defaultOptions, ...options });
-  const containerStream = await command.start();
+
+  const commandOptions = {
+    hijack: false,
+    stdin: false,
+  };
+
+  if (options.isPending) {
+    commandOptions.hijack = true;
+    // commandOptions.stdin = true;
+  }
+
+  const containerStream = await command.start(commandOptions);
   return containerStream;
 };
 
@@ -93,6 +109,38 @@ class DockerApi {
     return containerStream;
   }
 
+  async sendSignal(containerId, signalNumber = SIGNAL_TYPE.SIGINT) {
+    const isCached = this.isContainerExist(containerId);
+
+    if (!isCached) {
+      return null;
+    }
+
+    const container = await this.request.getContainer(containerId);
+
+    const result = await container.kill({
+      id: containerId,
+      signal: signalNumber,
+    });
+    return result;
+  }
+
+  async execPendingById(containerId, commandString = "") {
+    const isCached = this.isContainerExist(containerId);
+
+    if (!isCached) {
+      return null;
+    }
+
+    const container = await this.request.getContainer(containerId);
+
+    const containerStream = await exec(container, commandString, {
+      isPending: true,
+    });
+
+    return containerStream;
+  }
+
   convertToContainerId(containerName = "") {
     const formattedName = changeToFormattedName(containerName);
 
@@ -113,7 +161,6 @@ class DockerApi {
   }
 
   async createCustomTerminal(userTerminalInfo) {
-
     if (!userTerminalInfo) {
       const defaultBaseImage = "ubuntu";
       return this.createContainer(defaultBaseImage);
@@ -122,27 +169,30 @@ class DockerApi {
     const defaultOptions = {
       context: __dirname,
       src: ["Dockerfile"],
-    }
+    };
 
     const imageTag = {
-      t: "test"
-    }
+      t: "test",
+    };
 
-    const progressCallback = (err, data) => {
+    const progressCallback = (err) => {
       if (err) {
-        console.log(err);
+        debug("progress", err);
       }
-    }
+    };
 
-    const finishCallback = (err, data) => {
+    const finishCallback = (err) => {
       if (err) {
-        console.log(err);
+        debug("finish", err);
       }
-    }
+    };
 
     const stream = await this.request.buildImage(defaultOptions, imageTag);
 
     this.request.modem.followProgress(stream, progressCallback, finishCallback);
+
+    // TODO: refactor
+    return null;
   }
 
   async createDefaultTerminal(baseImageName) {
@@ -158,10 +208,10 @@ class DockerApi {
       Cmd: defaultCmd,
       name: defaultTagName,
       Tty: true,
-    })
+    });
 
     return newContainerInfo.id;
   }
 }
 
-module.exports = { DockerApi };
+module.exports = { DockerApi, SIGNAL_TYPE };

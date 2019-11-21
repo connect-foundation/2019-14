@@ -28,6 +28,7 @@ const cellActionCreator = {
       type: CELL_ACTION.INIT,
       renderTarget,
       index: index || 0,
+      tag: "",
     };
   },
 
@@ -39,6 +40,7 @@ const cellActionCreator = {
     return {
       type: CELL_ACTION.NEW,
       renderTarget,
+      tag: "",
     };
   },
 
@@ -99,17 +101,16 @@ const cellActionCreator = {
   /**
    * 셀의 속성을 변경한다.
    * - ex) default input cell -> list cell
-   * @param {Cell} renderTarget 변경할 Cell
    * @param {Number} index 변경할 Cell의 인덱스
    * @param {String} text 변경할 Cell의 텍스트
-   * - @todo 현재 무슨 태그인지 저장하기
+   * @param {String} tag 변경할 Cell의 태그
    */
-  transform(renderTarget, index, text) {
+  transform(index, text, tag) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
-      renderTarget,
       index,
       text,
+      tag,
     };
   },
 
