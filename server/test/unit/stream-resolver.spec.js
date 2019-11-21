@@ -1,6 +1,6 @@
 const { PassThrough } = require("stream");
 const { expect } = require("chai");
-const { StreamResolver } = require("../../src/utils/StreamResolver");
+const { StreamResolver } = require("../../src/utils/stream-resolver");
 
 const testcases = {
   normal: [

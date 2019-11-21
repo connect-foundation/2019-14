@@ -1,3 +1,4 @@
+const debug = require("debug")("boostwriter:app");
 const createError = require("http-errors");
 const express = require("express");
 const cookieParser = require("cookie-parser");
@@ -5,8 +6,12 @@ const logger = require("morgan");
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
+const terminalRouter = require("./routes/terminal");
+const { DockerApi } = require("./api/docker");
 
 const app = express();
+
+app.set("docker", new DockerApi());
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -14,7 +19,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/terminal", terminalRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -23,6 +29,7 @@ app.use((req, res, next) => {
 
 // error handler
 app.use((err, req, res) => {
+  debug("Last Error Middleware", err);
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};

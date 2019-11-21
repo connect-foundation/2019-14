@@ -12,24 +12,18 @@ const EditorComponent = () => {
   useEffect(() => {
     if (state.cells.length === 0) {
       cellDispatch(
-        cellActionCreator.new((callback, ref) => (
-          <MarkdownTransformer callback={callback} inputRef={ref} />
-        ))
+        cellActionCreator.init((ref) => <MarkdownTransformer inputRef={ref} />)
       );
     }
   }, []);
 
-  const callback = (exec) => {
-    exec();
-  };
-
   return (
     <>
-      {cells.map((cell, i) => {
-        if (state.currentIndex === i) {
-          return <div key={`md${i}`}>{cell(callback, inputRef)}</div>;
+      {cells.map((cell, cellIndex) => {
+        if (state.currentIndex === cellIndex) {
+          return <div key={`md${cellIndex}`}>{cell(inputRef)}</div>;
         }
-        return <div key={`md${i}`}>{cell(callback)}</div>;
+        return <div key={`md${cellIndex}`}>{cell()}</div>;
       })}
     </>
   );

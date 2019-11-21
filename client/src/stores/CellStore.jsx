@@ -9,6 +9,11 @@ const CellStore = ({ children }) => {
     currentIndex: 0,
     cells: [],
     texts: [],
+    tags: [],
+    cursor: {
+      start: 0,
+      end: 0,
+    },
   });
 
   return (

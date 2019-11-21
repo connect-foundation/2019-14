@@ -1,13 +1,10 @@
-const fs = require("fs");
+require("../../src/env-loader").appendEnv("test");
 const path = require("path");
 
-const resolvedPath = path.resolve(process.cwd(), "test.env");
-require("dotenv").config({
-  path: resolvedPath,
-});
 const { expect } = require("chai");
-const { DockerApi } = require("../../src/api/Docker.js");
-const { StreamResolver } = require("../../src/utils/StreamResolver");
+const { DockerApi } = require("../../src/api/docker");
+const { StreamResolver } = require("../../src/utils/stream-resolver");
+const { containers } = require("../docker-setup");
 
 const remoteIp = process.env.REMOTE_DOCKER_IP;
 const remotePort = process.env.REMOTE_DOCKER_PORT;
@@ -35,22 +32,17 @@ const connectOptions = {
   },
 };
 
-const containerInfo = {
-  id: "d5d08093284f",
-  name: "zen_liskov",
-};
-
 const testcases = {
   execById: {
     options: connectOptions.right,
-    id: containerInfo.id,
+    id: containers.ubuntu.id,
     cmd: "echo 'hello'",
     answer: "hello",
   },
   execByName: [
     {
       options: connectOptions.right,
-      name: containerInfo.name,
+      name: containers.ubuntu.name,
       cmd: "echo 'hello'",
       answer: "hello",
     },
