@@ -100,9 +100,9 @@
 
 #### 박다정
 
-[개인 홈페이지]()
+[개인 홈페이지](https://dimss.tistory.com/)
 
-[깃헙]()
+[깃헙](https://github.com/dimsssss)
 
 #### 윤준환
 
