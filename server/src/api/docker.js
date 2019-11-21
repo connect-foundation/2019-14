@@ -131,9 +131,8 @@ class DockerApi {
     // TOOD 초기 하드코딩 값 변경하거나 없앨 것
     const defaultCmd = ["/bin/bash"];
     const defaultTagName = "ubuntu-container-test";
-    let newContainerId = "";
 
-    await this.request.createContainer({
+    const newContainerInfo = await this.request.createContainer({
       AttachStdin: false,
       AttachStdout: true,
       AttachStderr: true,
@@ -142,14 +141,8 @@ class DockerApi {
       name: defaultTagName,
       Tty: true,
     })
-    .then((container) => {
-      newContainerId = container.id;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
 
-    return newContainerId;
+    return newContainerInfo.id;
   }
 }
 

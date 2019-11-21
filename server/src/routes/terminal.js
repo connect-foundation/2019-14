@@ -59,7 +59,7 @@ router.post(
 );
 
 router.post(
-  "/createTerminal",
+  "/",
   async (req, res) => {
     const docker = req.app.get("docker");
     const result = await docker.createDefaultTerminal("ubuntu");
@@ -69,9 +69,7 @@ router.post(
       return;
     }
 
-    res.status(200).json({containerId: result});
-    
-    return;
+    res.status(201).json({containerId: result});
   }
 )
 
