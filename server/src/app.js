@@ -7,8 +7,11 @@ const logger = require("morgan");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const terminalRouter = require("./routes/terminal");
+const { DockerApi } = require("./api/docker");
 
 const app = express();
+
+app.set("docker", new DockerApi());
 
 app.use(logger("dev"));
 app.use(express.json());
