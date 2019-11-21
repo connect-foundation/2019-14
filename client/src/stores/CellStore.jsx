@@ -1,5 +1,6 @@
 import React, { useReducer } from "react";
 import cellReducer from "../reducers/CellReducer";
+import UuidManager from "../utils/UuidManager";
 
 const CellContext = React.createContext();
 const CellDispatchContext = React.createContext();
@@ -8,6 +9,7 @@ const CellStore = ({ children }) => {
   const [state, dispatch] = useReducer(cellReducer, {
     currentIndex: 0,
     inputRef: null,
+    uuidManager: new UuidManager(),
     cells: [],
     texts: [],
     type: [],
