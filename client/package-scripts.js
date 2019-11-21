@@ -8,6 +8,12 @@ module.exports = {
       script: "node index.js",
       description: "Start app with 'npm start or nps'",
     },
+    dev: {
+      default: {
+        script: "webpack-dev-server",
+        description: "Start dev server for local testing",
+      },
+    },
     lint: {
       default: {
         script: "nps lint.code",
