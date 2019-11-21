@@ -1,10 +1,11 @@
+import uuid from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
 
 const splice = {
   /**
    * @param {Array} array 데이터를 끼워넣을 배열
    * @param {Number} cur 현재 인덱스
-   * @param {any} data 끼워넣을 데이터
+   * @param {any} data 현재 인덱스 다음에 끼워넣을 데이터
    * @returns {Array} 데이터가 추가된 배열
    */
   add: (array, cur, data) => {
@@ -35,10 +36,18 @@ const splice = {
   },
 };
 
+let cellUuidArray = [];
+const findIndexByCellUuid = (targetUuid) => {
+  const index = cellUuidArray.findIndex((cellUuid) => cellUuid === targetUuid);
+  return index;
+};
+
 const cellReducerHandler = {
   [CELL_ACTION.INIT]: (state, action) => {
-    const { index } = action;
-    const cells = splice.change(state.cells, index, action.renderTarget);
+    const { index, renderTarget } = action;
+    const cellUuid = uuid();
+    cellUuidArray.push(cellUuid);
+    const cells = splice.change(state.cells, index, renderTarget(cellUuid));
     const texts = splice.change(state.texts, index, "");
 
     return {
@@ -49,9 +58,12 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.NEW]: (state, action) => {
-    const currentIndex = state.currentIndex > 0 ? state.currentIndex : 0;
-    const cells = splice.add(state.cells, currentIndex, action.renderTarget);
+    const { currentIndex } = state;
+    const { renderTarget } = action;
+    const cellUuid = uuid();
+    const cells = splice.add(state.cells, currentIndex, renderTarget(cellUuid));
     const texts = splice.add(state.texts, currentIndex, "");
+    cellUuidArray = splice.add(cellUuidArray, currentIndex, cellUuid);
 
     return {
       ...state,
@@ -91,10 +103,17 @@ const cellReducerHandler = {
     };
   },
 
+  [CELL_ACTION.FOCUS.ATTACH]: (state, action) => {
+    return {
+      ...state,
+      inputRef: action.inputRef,
+    };
+  },
+
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
-    const { currentIndex } = state;
-    const cells = splice.change(state.cells, currentIndex, action.renderTarget);
-    const texts = splice.change(state.texts, currentIndex, action.text);
+    const { index } = action;
+    const cells = splice.change(state.cells, index, action.renderTarget);
+    const texts = splice.change(state.texts, index, action.text);
 
     return {
       ...state,
