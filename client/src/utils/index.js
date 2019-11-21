@@ -1,4 +1,7 @@
-const splice = {
+import UuidManager from "./UuidManager";
+
+const utils = {};
+utils.splice = {
   /**
    * @param {Array} array 데이터를 끼워넣을 배열
    * @param {Number} cur 현재 인덱스
@@ -33,4 +36,4 @@ const splice = {
   },
 };
 
-export { splice };
+export { utils, UuidManager };

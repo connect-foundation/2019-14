@@ -1,6 +1,6 @@
 import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
-import { splice } from "../utils";
+import { utils } from "../utils";
 
 const cellReducerHandler = {
   [CELL_ACTION.INIT]: (state, action) => {
@@ -8,8 +8,12 @@ const cellReducerHandler = {
     const { uuidManager } = state;
     const cellUuid = uuid();
     uuidManager.push(cellUuid);
-    const cells = splice.change(state.cells, index, renderTarget(cellUuid));
-    const texts = splice.change(state.texts, index, "");
+    const cells = utils.splice.change(
+      state.cells,
+      index,
+      renderTarget(cellUuid)
+    );
+    const texts = utils.splice.change(state.texts, index, "");
 
     return {
       ...state,
@@ -23,9 +27,13 @@ const cellReducerHandler = {
     const { renderTarget } = action;
     const cellUuid = uuid();
 
-    const cells = splice.add(state.cells, currentIndex, renderTarget(cellUuid));
-    const texts = splice.add(state.texts, currentIndex, "");
-    uuidManager.uuidArray = splice.add(
+    const cells = utils.splice.add(
+      state.cells,
+      currentIndex,
+      renderTarget(cellUuid)
+    );
+    const texts = utils.splice.add(state.texts, currentIndex, "");
+    uuidManager.uuidArray = utils.splice.add(
       uuidManager.uuidArray,
       currentIndex,
       cellUuid
@@ -40,7 +48,7 @@ const cellReducerHandler = {
 
   [CELL_ACTION.INPUT]: (state, action) => {
     const { currentIndex } = state;
-    const texts = splice.change(state.texts, currentIndex, action.text);
+    const texts = utils.splice.change(state.texts, currentIndex, action.text);
 
     return {
       ...state,
@@ -78,8 +86,8 @@ const cellReducerHandler = {
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
     const { index } = action;
-    const cells = splice.change(state.cells, index, action.renderTarget);
-    const texts = splice.change(state.texts, index, action.text);
+    const cells = utils.splice.change(state.cells, index, action.renderTarget);
+    const texts = utils.splice.change(state.texts, index, action.text);
 
     return {
       ...state,

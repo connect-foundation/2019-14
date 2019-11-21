@@ -1,6 +1,6 @@
 import React, { useReducer } from "react";
 import cellReducer from "../reducers/CellReducer";
-import UuidManager from "../utils/UuidManager";
+import { UuidManager } from "../utils";
 
 const CellContext = React.createContext();
 const CellDispatchContext = React.createContext();
