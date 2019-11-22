@@ -6,9 +6,10 @@ const CELL_ACTION = {
     TRANSFORM: "cell/target/transform",
   },
   FOCUS: {
-    PREV: "cell/target/prev",
-    NEXT: "cell/target/next",
-    MOVE: "cell/target/move",
+    PREV: "cell/focus/prev",
+    NEXT: "cell/focus/next",
+    MOVE: "cell/focus/move",
+    ATTACH: "cell/focus/attach",
   },
   CURSOR: {
     MOVE: "cell/cursor/move",
@@ -18,12 +19,9 @@ const CELL_ACTION = {
 const cellActionCreator = {
   /**
    * 셀의 데이터를 초기화시킨다.
-   * @param {Cell} renderTarget 초기화할 셀
+   * @param {Cell} renderTarget 초기화할 셀을 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
    * @param {Number} index 초기화할 셀의 index
    * - 파라미터로 넘기지 않으면 기본값 0
-   * @returns type: 셀 액션 타입
-   * @returns renderTarget: 데이터를 [text]로 초기화할 셀 컴포넌트
-   * @returns: text 초기화 데이터
    */
   init(renderTarget, index) {
     return {
@@ -35,8 +33,7 @@ const cellActionCreator = {
 
   /**
    * 셀을 생성한다.
-   * @returns type: 셀 액션 타입
-   * @returns renderTarget: 새로 생성한 셀 컴포넌트
+   * @param {Cell} renderTarget: 새 셀 컴포넌트를 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
    */
   new(renderTarget) {
     return {
@@ -48,9 +45,6 @@ const cellActionCreator = {
   /**
    * 셀의 텍스트를 변경한다.
    * @param {Text} text 변경된 텍스트
-   * @returns type: 셀 액션 타입
-   * @returns renderTarget: 데이터를 [text]로 변경할 Cell
-   * @returns text: 변경된 텍스트
    */
   input(text) {
     return {
@@ -92,18 +86,29 @@ const cellActionCreator = {
   },
 
   /**
+   * 현재 셀에 ref를 부여한다.
+   * @param {ref} inputRef input ref
+   */
+  focusAttachRef(inputRef) {
+    return {
+      type: CELL_ACTION.FOCUS.ATTACH,
+      inputRef,
+    };
+  },
+
+  /**
    * 셀의 속성을 변경한다.
    * - ex) default input cell -> list cell
-   * @param {Cell} renderTarget
-   * - 변경된 Cell(React Component)
-   * - @todo 이 부분은 라인 파서와 연동이 필요함. 추가로 데이터 파라미터를 받아야 할 듯.
-   * - 라인 파서로 변경된 데이터가 반영된 텍스트를 받아서 store에 넣어줘야 함
+   * @param {Cell} renderTarget 변경할 Cell
+   * @param {Number} index 변경할 Cell의 인덱스
+   * @param {String} text 변경할 Cell의 텍스트
    * - @todo 현재 무슨 태그인지 저장하기
    */
-  transform(renderTarget, text) {
+  transform(renderTarget, index, text) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
       renderTarget,
+      index,
       text,
     };
   },

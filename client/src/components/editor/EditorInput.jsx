@@ -1,5 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
+import { CellContext, CellDispatchContext } from "../../stores/CellStore";
+import { cellActionCreator } from "../../actions/CellAction";
+
+/**
+ * @todo 리팩토링 예정
+ * - 이 파일을 부모로 올리고 attr과 wrapper같은걸 분리 예정
+ */
 
 const stateAttr = {
   "#": { type: "h1", placeholder: "Heading 1" },
@@ -18,7 +25,7 @@ const stateAttr = {
   ">": { type: "blockquote", placeholder: "Quote" },
 };
 
-const MarkdownWrapper = styled.input`
+const MarkdownWrapper = styled.div`
   border: none;
 
   &:empty {
@@ -38,57 +45,83 @@ const MarkdownWrapper = styled.input`
 
   border-left: ${(props) => {
     if (props.isQuote) return "0.25rem solid silver";
+    return null;
   }}
   padding-left: ${(props) => {
     if (props.isQuote) return "0.5rem";
+    return null;
   }};
 `;
 
-const EditorInput = () => {
-  const [state, setState] = useState({
-    value: "",
-    type: "",
-    placeholder: "",
-  });
+const useCellState = () => {
+  const { state } = useContext(CellContext);
+  return state;
+};
+
+const useCellDispatch = () => {
+  const cellDispatch = useContext(CellDispatchContext);
+  return cellDispatch;
+};
+
+const EditorInput = ({ onKeyDown, onFocus, inputRef }) => {
+  const cellDispatch = useCellDispatch();
+  const cellState = useCellState();
+  // const text = cellState.texts[cellIndex];
+
+  // const [state, setState] = useState({
+  //   value: text,
+  //   type: "",
+  //   placeholder: "",
+  // });
 
   const onInput = (ev) => {
-    setState({ ...state, value: ev.target.value });
+    const { textContent } = ev.target;
+
+    cellDispatch(cellActionCreator.input(textContent));
   };
 
   const onKeyPress = (ev) => {
-    const { key } = ev;
-
-    if (key === " ") {
-      if (!state.type) setState({ ...state, ...stateAttr[state.value] });
-    }
+    // const { key } = ev;
+    // if (key === " ") {
+    //   if (!state.type)
+    //     setState({
+    //       ...state,
+    //       ...stateAttr[text],
+    //     });
+    // }
   };
 
-  const isQuote = state.type === "blockquote";
+  // const isQuote = state.type === "blockquote";
 
-  if (state.type === "ul" || state.type === "ol") {
-    return (
-      <MarkdownWrapper as={state.type}>
-        <MarkdownWrapper
-          as="li"
-          placeholder={state.placeholder}
-          contentEditable={true}
-          onInput={onInput}
-          onKeyPress={onKeyPress}
-        />
-      </MarkdownWrapper>
-    );
-  } else {
-    return (
-      <MarkdownWrapper
-        as={state.type}
-        isQuote={isQuote}
-        placeholder={state.placeholder}
-        contentEditable={true}
-        onInput={onInput}
-        onKeyPress={onKeyPress}
-      />
-    );
-  }
+  // if (state.type === "ul" || state.type === "ol") {
+  //   return (
+  //     <MarkdownWrapper as={state.type}>
+  //       <MarkdownWrapper
+  //         as="li"
+  //         placeholder={state.placeholder}
+  //         contentEditable
+  //         onInput={onInput}
+  //         onKeyPress={onKeyPress}
+  //         onKeyDown={onKeyDown}
+  //         onFocus={onFocus}
+  //         ref={inputRef || null}
+  //       />
+  //     </MarkdownWrapper>
+  //   );
+  // }
+  return (
+    <MarkdownWrapper
+      // as={state.type}
+      // isQuote={isQuote}
+      // placeholder={state.placeholder}
+      contentEditable
+      onInput={onInput}
+      onKeyPress={onKeyPress}
+      onKeyDown={onKeyDown}
+      onFocus={onFocus}
+      ref={inputRef || null}
+    />
+  );
 };
 
 export default EditorInput;
