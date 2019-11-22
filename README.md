@@ -88,7 +88,7 @@
 
 #### 권태욱
 
-[Notion](https://notion.so/imurukevol)
+[Notion](https://www.notion.so/imurukevol/538cebd586e04ce5ab1c3ee1e5bda02f)
 
 [GitHub](https://github.com/ImuruKevol)
 
