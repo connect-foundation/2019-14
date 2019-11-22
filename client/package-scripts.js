@@ -1,5 +1,5 @@
 function test(params) {
-  return `mocha --recursive ${params}`;
+  return `jest ${params}`;
 }
 
 module.exports = {
