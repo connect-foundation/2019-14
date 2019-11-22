@@ -1,12 +1,4 @@
-import React, { useContext } from "react";
 import styled from "styled-components";
-import { CellContext, CellDispatchContext } from "../../stores/CellStore";
-import { cellActionCreator } from "../../actions/CellAction";
-
-/**
- * @todo 리팩토링 예정
- * - 이 파일을 부모로 올리고 attr과 wrapper같은걸 분리 예정
- */
 
 const stateAttr = {
   "#": { type: "h1", placeholder: "Heading 1" },
@@ -53,75 +45,4 @@ const MarkdownWrapper = styled.div`
   }};
 `;
 
-const useCellState = () => {
-  const { state } = useContext(CellContext);
-  return state;
-};
-
-const useCellDispatch = () => {
-  const cellDispatch = useContext(CellDispatchContext);
-  return cellDispatch;
-};
-
-const EditorInput = ({ onKeyDown, onFocus, inputRef }) => {
-  const cellDispatch = useCellDispatch();
-  const cellState = useCellState();
-  // const text = cellState.texts[cellIndex];
-
-  // const [state, setState] = useState({
-  //   value: text,
-  //   type: "",
-  //   placeholder: "",
-  // });
-
-  const onInput = (ev) => {
-    const { textContent } = ev.target;
-
-    cellDispatch(cellActionCreator.input(textContent));
-  };
-
-  const onKeyPress = (ev) => {
-    // const { key } = ev;
-    // if (key === " ") {
-    //   if (!state.type)
-    //     setState({
-    //       ...state,
-    //       ...stateAttr[text],
-    //     });
-    // }
-  };
-
-  // const isQuote = state.type === "blockquote";
-
-  // if (state.type === "ul" || state.type === "ol") {
-  //   return (
-  //     <MarkdownWrapper as={state.type}>
-  //       <MarkdownWrapper
-  //         as="li"
-  //         placeholder={state.placeholder}
-  //         contentEditable
-  //         onInput={onInput}
-  //         onKeyPress={onKeyPress}
-  //         onKeyDown={onKeyDown}
-  //         onFocus={onFocus}
-  //         ref={inputRef || null}
-  //       />
-  //     </MarkdownWrapper>
-  //   );
-  // }
-  return (
-    <MarkdownWrapper
-      // as={state.type}
-      // isQuote={isQuote}
-      // placeholder={state.placeholder}
-      contentEditable
-      onInput={onInput}
-      onKeyPress={onKeyPress}
-      onKeyDown={onKeyDown}
-      onFocus={onFocus}
-      ref={inputRef || null}
-    />
-  );
-};
-
-export default EditorInput;
+export { stateAttr, MarkdownWrapper };
