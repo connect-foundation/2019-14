@@ -5,8 +5,14 @@ function test(params) {
 module.exports = {
   scripts: {
     default: {
-      script: "node index.js",
+      script: "serve -l 7070 dist",
       description: "Start app with 'npm start or nps'",
+    },
+    build: {
+      default: {
+        script: "webpack --config webpack.production.config.js",
+        description: "Start client build",
+      },
     },
     lint: {
       default: {

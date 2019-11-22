@@ -12,6 +12,7 @@ node_js:
 cache: npm
 before_install:
 - export PATH=~/npm/node_modules/.bin:$PATH
+- sudo apt-get install -y sshpass
 - cd $TRAVIS_BUILD_DIR/server
 - >
   awk
@@ -64,4 +65,27 @@ jobs:
   - stage: production
     name: "deploy to production server"
     script:
-    - . ./travis-deploy.sh
+    - >
+      sshpass -p "$PROD_USER_PASSWORD"
+      scp -P $PROD_SERVER_PORT -r -o StrictHostKeyChecking=no 
+      ./ $PROD_USER_ID@$PROD_SERVER_HOST:/home/boost/server
+    - >
+      sshpass -p "$PROD_USER_PASSWORD"
+      ssh -p $PROD_SERVER_PORT -o StrictHostKeyChecking=no 
+      $PROD_USER_ID@$PROD_SERVER_HOST "cd server && npm start production"
+    before_script:
+    - cd $TRAVIS_BUILD_DIR/server
+
+  - script:
+    - >
+      sshpass -p $PROD_USER_PASSWORD
+      scp -P $PROD_SERVER_PORT -r -o StrictHostKeyChecking=no 
+      ./dist $PROD_USER_ID@$PROD_SERVER_HOST:/home/boost/client
+    - >
+      sshpass -p $PROD_USER_PASSWORD
+      ssh -p $PROD_SERVER_PORT -o StrictHostKeyChecking=no 
+      $PROD_USER_ID@$PROD_SERVER_HOST "cd client && npm start"
+    name: "client deploy"
+    before_script:
+    - cd $TRAVIS_BUILD_DIR/client
+    - npm start build
