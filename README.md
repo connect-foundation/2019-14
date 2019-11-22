@@ -98,15 +98,15 @@
 
 #### 권태욱
 
-[개인 홈페이지]()
+[Notion](https://www.notion.so/imurukevol/538cebd586e04ce5ab1c3ee1e5bda02f)
 
-[깃헙](https://github.com/ImuruKevol)
+[GitHub](https://github.com/ImuruKevol)
 
 #### 김윤환
 
 [개인 홈페이지]()
 
-[깃헙](https://github.com/DrizzlingCattus)
+[GitHub](https://github.com/DrizzlingCattus)
 
 #### 박다정
 
