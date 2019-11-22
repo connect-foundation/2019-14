@@ -12,7 +12,6 @@ const EditorPage = () => {
       <CellStore>
         <EditorHeader />
         <EditorToolbar />
-        <EditorInput />
         <EditorComponent />
       </CellStore>
     </>
