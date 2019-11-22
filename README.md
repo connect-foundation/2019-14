@@ -88,9 +88,9 @@
 
 #### 권태욱
 
-[개인 홈페이지]()
+[Notion](https://notion.so/imurukevol)
 
-[깃헙]()
+[GitHub](https://github.com/ImuruKevol)
 
 #### 김윤환
 
