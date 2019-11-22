@@ -1,0 +1,67 @@
+stages:
+- name: "test"
+- name: "release"
+  if: branch = release
+- name: "production"
+  if: branch = master
+
+dist: xenial
+language: node_js
+node_js:
+- 12
+cache: npm
+before_install:
+- export PATH=~/npm/node_modules/.bin:$PATH
+- cd $TRAVIS_BUILD_DIR/server
+- >
+  awk
+  -v FS==
+  -v REMOTE_DOCKER_IP="$REMOTE_DOCKER_IP"
+  -v REMOTE_DOCKER_PORT="$REMOTE_DOCKER_PORT"
+  '/^REMOTE_DOCKER_IP/{sub($2, REMOTE_DOCKER_IP, $2); print > "test.env"} 
+  /^REMOTE_DOCKER_PORT/{sub($2, REMOTE_DOCKER_PORT, $2); print > "test.env"}' 
+  OFS==
+  template.env;
+  cat test.env
+install:
+- cd $TRAVIS_BUILD_DIR/server
+- npm install
+- cd $TRAVIS_BUILD_DIR/client
+- npm install
+
+jobs:
+  include:
+  - stage: test 
+    name: "server lint sequence"
+    before_script:
+    - cd $TRAVIS_BUILD_DIR/server
+    script:
+    - npm start test.unit
+
+  - script:
+    - npm start test.unit
+    name: "server test sequence"
+    before_script:
+    - cd $TRAVIS_BUILD_DIR/server
+
+  - script:
+    - npm start lint
+    name: "client lint sequence"
+    before_script:
+    - cd $TRAVIS_BUILD_DIR/client
+
+  - script:
+    - npm start test
+    name: "client test sequence"
+    before_script:
+    - cd $TRAVIS_BUILD_DIR/client
+
+  - stage: release
+    name: "release to production like server"
+    script:
+    - . ./travis-release.sh
+
+  - stage: production
+    name: "deploy to production server"
+    script:
+    - . ./travis-deploy.sh

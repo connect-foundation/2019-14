@@ -1,0 +1,20 @@
+# node packages
+node_modules
+
+# webpack의 번들링 결과물
+client/dist/bundle.js
+
+# dotenv 기본 파일
+.env
+
+# dotenv 테스트용 파일
+test.env
+
+# dotenv 프로덕션용 파일
+remote.env
+
+# dotenv 로컬용 파일
+local.env
+
+# ssl관련 인증서 디렉토리
+ssl
