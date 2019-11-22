@@ -11,10 +11,12 @@ const EditorComponent = () => {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    const renderTarget = (uuid) => <MarkdownTransformer cellUuid={uuid} />;
+    const renderTargetCallback = (cellUuid) => (
+      <MarkdownTransformer cellUuid={cellUuid} />
+    );
     if (state.cells.length === 0) {
       cellDispatch(cellActionCreator.focusAttachRef(inputRef));
-      cellDispatch(cellActionCreator.init(renderTarget));
+      cellDispatch(cellActionCreator.init(renderTargetCallback));
     }
   }, []);
 

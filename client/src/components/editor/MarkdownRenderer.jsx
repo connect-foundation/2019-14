@@ -25,11 +25,6 @@ const MarkdownTransformer = ({ cellUuid }) => {
   }
 
   useEffect(() => {
-    // cellUuid로 현재 인덱스를 찾고, currentIndex와 일치하면 inputRef 가져오기
-    // const cellIndex = uuidManager.findIndex(cellUuid);
-    // if (currentIndex === cellIndex) {
-    //   inputRef = cellState.inputRef;
-    //   console.log(cellIndex, currentIndex);
     if (inputRef && inputRef.current) {
       console.log(inputRef.current);
     }
