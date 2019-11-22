@@ -149,6 +149,10 @@ const EditorInput = () => {
     );
   }
 
+  if (isHorizontalRule) {
+    renderTarget = <hr />;
+  }
+
   return renderTarget;
 };
 

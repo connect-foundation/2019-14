@@ -12,6 +12,8 @@ const MARKDOWN_REGEXP = {
   blockquote: /^\s{0,3}>\s+/g,
 
   pre: /^\s{4,}\s*/g,
+
+  hr: /^-{3,}|\*{3,}/g,
 };
 
 const getType = (textContent) => {
