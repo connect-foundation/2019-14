@@ -1,15 +1,27 @@
 const MARKDOWN_REGEXP = {
-  h1: /^ {0,3}# +/gm,
-  h2: /^ {0,3}## +/gm,
-  h3: /^ {0,3}### +/gm,
-  h4: /^ {0,3}#### +/gm,
-  h5: /^ {0,3}##### +/gm,
-  h6: /^ {0,3}###### +/gm,
+  h1: /^\s{0,3}#\s+/g,
+  h2: /^\s{0,3}#{2}\s+/g,
+  h3: /^\s{0,3}#{3}\s+/g,
+  h4: /^\s{0,3}#{4}\s+/g,
+  h5: /^\s{0,3}#{5}\s+/g,
+  h6: /^\s{0,3}#{6}\s+/g,
 
-  ul: /^ {0,3}(-|\*|\+) +/gm,
-  ol: /^ {0,3}[0-9]+. +/gm,
+  ul: /^\s{0,3}(-|\*|\+)\s+/g,
+  ol: /^\s{0,3}\d+.\s+/g,
 
-  blockquote: /^ {0,3}> +/gm,
+  blockquote: /^\s{0,3}>\s+/g,
 
-  code: /^ {4,} */gm,
+  code: /^\s{4,}\s*/g,
 };
+
+const getType = (textContent) => {
+  let type = "";
+
+  Object.values(MARKDOWN_REGEXP).forEach((regExp, i) => {
+    if (regExp.exec(textContent)) type = Object.keys(MARKDOWN_REGEXP)[i];
+  });
+
+  return type;
+};
+
+export { getType };
