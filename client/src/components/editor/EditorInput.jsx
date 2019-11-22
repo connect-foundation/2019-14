@@ -1,24 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-/**
- * @todo keys 파싱 부분 정규표현식으로 변경 예정
- */
-const stateAttr = {
-  "#": { type: "h1", placeholder: "Heading 1" },
-  "##": { type: "h2", placeholder: "Heading 2" },
-  "###": { type: "h3", placeholder: "Heading 3" },
-  "####": { type: "h4", placeholder: "Heading 4" },
-  "#####": { type: "h5", placeholder: "Heading 5" },
-  "######": { type: "h6", placeholder: "Heading 6" },
+import { getType } from "../../utils/index";
 
-  "-": { type: "ul", placeholder: "Unordered List" },
-  "*": { type: "ul", placeholder: "Unordered List" },
-  "+": { type: "ul", placeholder: "Unordered List" },
+const PLACEHOLDER = {
+  h1: "Heading 1",
+  h2: "Heading 2",
+  h3: "Heading 3",
+  h4: "Heading 4",
+  h5: "Heading 5",
+  h6: "Heading 6",
 
-  "1.": { type: "ol", placeholder: "Ordered List" },
+  ul: "Unordered List",
 
-  ">": { type: "blockquote", placeholder: "Quote" },
+  ol: "Ordered List",
+
+  blockquote: "Quote",
+
+  code: "Code",
 };
 
 const MarkdownWrapper = styled.div`
@@ -46,39 +45,66 @@ const EditorInput = () => {
     value: "",
     type: "",
     placeholder: "",
+    start: 1,
   });
+
+  const inputRef = React.createRef();
 
   const onInput = (ev) => {
     setState({ ...state, value: ev.target.textContent });
   };
+
+  useEffect(() => {
+    const type = getType(state.value);
+    const placeholder = PLACEHOLDER[type];
+
+    if (!state.type) {
+      setState({
+        ...state,
+        type: type,
+        placeholder: placeholder,
+      });
+    }
+  }, [state.value]);
+
+  useEffect(() => {
+    let start = 1;
+
+    if (state.type === "ol") start = parseInt(state.value.replace(".", ""));
+
+    setState({ ...state, value: state.value, start: start });
+  }, [state.type]);
 
   const onKeyPress = (ev) => {
     const { key } = ev;
 
     switch (key) {
       case " ":
-        if (!state.type) setState({ ...state, ...stateAttr[state.value] });
         break;
       case "Enter":
         break;
     }
   };
 
-  const isList = state.type === "ul" || state.type === "ol";
+  const isUnorderedList = state.type === "ul";
+  const isOrderedList = state.type === "ol";
   const isQuote = state.type === "blockquote";
+  const isCode = state.type === "code";
 
   let renderTarget = (
     <MarkdownWrapper
       as={state.type}
       isQuote={isQuote}
+      isCode={isCode}
       placeholder={state.placeholder}
       contentEditable={true}
       onInput={onInput}
       onKeyPress={onKeyPress}
+      ref={inputRef}
     />
   );
 
-  if (isList) {
+  if (isUnorderedList) {
     renderTarget = (
       <MarkdownWrapper as={state.type}>
         <MarkdownWrapper
@@ -87,6 +113,22 @@ const EditorInput = () => {
           contentEditable={true}
           onInput={onInput}
           onKeyPress={onKeyPress}
+          ref={inputRef}
+        />
+      </MarkdownWrapper>
+    );
+  }
+
+  if (isOrderedList) {
+    renderTarget = (
+      <MarkdownWrapper as={state.type} start={state.start}>
+        <MarkdownWrapper
+          as="li"
+          placeholder={state.placeholder}
+          contentEditable={true}
+          onInput={onInput}
+          onKeyPress={onKeyPress}
+          ref={inputRef}
         />
       </MarkdownWrapper>
     );
