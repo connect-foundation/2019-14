@@ -161,7 +161,6 @@ class DockerApi {
   }
 
   async createCustomTerminal(userTerminalInfo) {
-
     if (!userTerminalInfo) {
       const defaultBaseImage = "ubuntu";
       return this.createContainer(defaultBaseImage);
@@ -170,27 +169,30 @@ class DockerApi {
     const defaultOptions = {
       context: __dirname,
       src: ["Dockerfile"],
-    }
+    };
 
     const imageTag = {
-      t: "test"
-    }
+      t: "test",
+    };
 
-    const progressCallback = (err, data) => {
+    const progressCallback = (err) => {
       if (err) {
-        console.log(err);
+        debug("progress", err);
       }
-    }
+    };
 
-    const finishCallback = (err, data) => {
+    const finishCallback = (err) => {
       if (err) {
-        console.log(err);
+        debug("finish", err);
       }
-    }
+    };
 
     const stream = await this.request.buildImage(defaultOptions, imageTag);
 
     this.request.modem.followProgress(stream, progressCallback, finishCallback);
+
+    // TODO: refactor
+    return null;
   }
 
   async createDefaultTerminal(baseImageName) {
@@ -206,7 +208,7 @@ class DockerApi {
       Cmd: defaultCmd,
       name: defaultTagName,
       Tty: true,
-    })
+    });
 
     return newContainerInfo.id;
   }
