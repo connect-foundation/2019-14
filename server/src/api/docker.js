@@ -2,6 +2,11 @@ const debug = require("debug")("boostwriter:api:Docker");
 const fs = require("fs");
 const Docker = require("dockerode");
 
+const SIGNAL_TYPE = {
+  SIGINT: 2,
+  SIGKILL: 9,
+};
+
 const changeToFormattedName = (name) => {
   const startFormat = "/";
   if (name.startsWith(startFormat)) {
@@ -23,7 +28,18 @@ const exec = async (container, commandString = "", options = {}) => {
   };
 
   const command = await container.exec({ ...defaultOptions, ...options });
-  const containerStream = await command.start();
+
+  const commandOptions = {
+    hijack: false,
+    stdin: false,
+  };
+
+  if (options.isPending) {
+    commandOptions.hijack = true;
+    // commandOptions.stdin = true;
+  }
+
+  const containerStream = await command.start(commandOptions);
   return containerStream;
 };
 
@@ -89,6 +105,38 @@ class DockerApi {
     const container = await this.request.getContainer(containerId);
 
     const containerStream = await exec(container, commandString);
+
+    return containerStream;
+  }
+
+  async sendSignal(containerId, signalNumber = SIGNAL_TYPE.SIGINT) {
+    const isCached = this.isContainerExist(containerId);
+
+    if (!isCached) {
+      return null;
+    }
+
+    const container = await this.request.getContainer(containerId);
+
+    const result = await container.kill({
+      id: containerId,
+      signal: signalNumber,
+    });
+    return result;
+  }
+
+  async execPendingById(containerId, commandString = "") {
+    const isCached = this.isContainerExist(containerId);
+
+    if (!isCached) {
+      return null;
+    }
+
+    const container = await this.request.getContainer(containerId);
+
+    const containerStream = await exec(container, commandString, {
+      isPending: true,
+    });
 
     return containerStream;
   }
@@ -164,4 +212,4 @@ class DockerApi {
   }
 }
 
-module.exports = { DockerApi };
+module.exports = { DockerApi, SIGNAL_TYPE };
