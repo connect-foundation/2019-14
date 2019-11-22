@@ -1,5 +1,3 @@
-# 2019-14.
-
 # Boost Writer
 
 ---
@@ -12,7 +10,7 @@
 
 ---
 
-### 구성
+### 인프라 구성
 
 - Docker Server : Docker daemon이 가동중인 서버. 유저 터미널 환경을 컨터이너로 관리한다.
 - Docker Private Registry : 유저가 만든 터미널 환경을 이미지로 관리한다.
@@ -20,7 +18,7 @@
 - DB Server
 - Nginx
 
-![infra](https://user-images.githubusercontent.com/4661295/69349455-1b9e5380-0cbb-11ea-8f7b-98b71e443f2d.jpg)
+![infra](https://user-images.githubusercontent.com/4661295/69394024-2c33e580-0d1e-11ea-8c7a-49cec33aeea7.jpg)
 
 ## Feature
 
@@ -87,8 +85,6 @@
   $$$ Terminal
   ```
 
-  ![]()
-
 - 작성한 문서 공유 기능
   - 링크를 통한 문서 공유 기능
 
@@ -104,16 +100,14 @@
 
 #### 김윤환
 
-[개인 홈페이지]()
-
 [GitHub](https://github.com/DrizzlingCattus)
 
 #### 박다정
 
 [개인 홈페이지](https://dimss.tistory.com/)
 
-[깃헙](https://github.com/dimsssss)
+[GitHub](https://github.com/dimsssss)
 
 #### 윤준환
 
-[깃헙](https://github.com/RBJH)
+[GitHub](https://github.com/RBJH)
