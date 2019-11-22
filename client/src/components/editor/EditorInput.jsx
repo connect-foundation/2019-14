@@ -17,7 +17,7 @@ const PLACEHOLDER = {
 
   blockquote: "Quote",
 
-  code: "Code",
+  pre: "Code",
 };
 
 const MarkdownWrapper = styled.div`
@@ -90,12 +90,12 @@ const EditorInput = () => {
   const isOrderedList = state.type === "ol";
   const isQuote = state.type === "blockquote";
   const isCode = state.type === "code";
+  const isHorizontalRule = state.type === "hr";
 
   let renderTarget = (
     <MarkdownWrapper
       as={state.type}
       isQuote={isQuote}
-      isCode={isCode}
       placeholder={state.placeholder}
       contentEditable={true}
       onInput={onInput}
@@ -124,6 +124,21 @@ const EditorInput = () => {
       <MarkdownWrapper as={state.type} start={state.start}>
         <MarkdownWrapper
           as="li"
+          placeholder={state.placeholder}
+          contentEditable={true}
+          onInput={onInput}
+          onKeyPress={onKeyPress}
+          ref={inputRef}
+        />
+      </MarkdownWrapper>
+    );
+  }
+
+  if (isCode) {
+    renderTarget = (
+      <MarkdownWrapper as={state.type}>
+        <MarkdownWrapper
+          as="code"
           placeholder={state.placeholder}
           contentEditable={true}
           onInput={onInput}
