@@ -47,14 +47,10 @@ const MarkdownTransformer = ({ cellUuid }) => {
       const range = selection.getRangeAt(0);
       const cursorCaret = document.querySelector("#cursorCaret");
       range.selectNode(cursorCaret);
-      // selection.removeAllRanges();
-      // range.setStart(range.startContainer, textContent.length);
-      // range.setEnd(range.startContainer, textContent.length);
-      console.log(range);
       selection.removeAllRanges();
       selection.addRange(range);
       range.deleteContents();
-      // selection.addRange(range);
+      inputRef.current.normalize();
     }
   }, []);
 
@@ -171,43 +167,49 @@ const MarkdownTransformer = ({ cellUuid }) => {
     },
   };
 
-  const inputHandler = (e) => {
-    const { textContent } = e.target;
-
-    saveCursorPosition();
-    cellDispatch(cellActionCreator.input(textContent));
-  };
-
   const keyDownHandler = (e) => {
     const { key } = e;
+    const { textContent } = e.target;
     const exec = keyDownEventDispatch[key];
+
     if (exec) {
       if (key !== "Backspace") {
         e.preventDefault();
       }
+      saveCursorPosition();
+      cellDispatch(cellActionCreator.input(textContent));
       exec(e)();
     }
   };
 
   const keyPressHandler = (e) => {
     const { key } = e;
+    const { textContent } = e.target;
+
     if (key === " ") {
-      console.log(stateAttr[text]);
-      // if (!state.type)
-      //   setState({
-      //     ...state,
-      //     ...stateAttr[text],
-      //   });
+      console.log(stateAttr[textContent]);
     }
   };
 
-  const focusHandler = () => {
+  const focusHandler = (e) => {
     /**
      * @todo 버그로 인한 비활성화
-     * - 무한 렌더링 버그
+     * - 무한 루프 버그
      */
-    // cellDispatch(cellActionCreator.focusMove(cellIndex));
-    // saveCursorPosition();
+
+    cellDispatch(cellActionCreator.focusMove(cellIndex));
+    saveCursorPosition();
+  };
+
+  const blurHandler = (e) => {
+    /**
+     * @todo 클릭시 포커스 이동할 때의 이벤트
+     * 버그로 인해 비활성화
+     */
+    const { textContent } = e.target;
+
+    saveCursorPosition();
+    cellDispatch(cellActionCreator.input(textContent));
   };
 
   return (
@@ -216,12 +218,15 @@ const MarkdownTransformer = ({ cellUuid }) => {
       // isQuote={isQuote}
       // placeholder={state.placeholder}
       contentEditable
-      onInput={inputHandler}
       onKeyPress={keyPressHandler}
       onKeyDown={keyDownHandler}
-      onFocus={focusHandler}
+      // onBlur={blurHandler}
+      // onFocus={focusHandler}
       ref={inputRef || null}
-    />
+      suppressContentEditableWarning
+    >
+      {text}
+    </MarkdownWrapper>
   );
 };
 
