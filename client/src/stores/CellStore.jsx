@@ -12,7 +12,7 @@ const CellStore = ({ children }) => {
     uuidManager: new UuidManager(),
     cells: [],
     texts: [],
-    type: [],
+    tags: [],
     cursor: {
       start: 0,
       end: 0,

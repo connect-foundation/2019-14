@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
-import { stateAttr, MarkdownWrapper } from "./EditorInput";
+import { stateAttr, placeholder, MarkdownWrapper } from "./EditorInput";
 
 const useCellState = () => {
   const { state } = useContext(CellContext);
@@ -33,6 +33,7 @@ const MarkdownTransformer = ({ cellUuid }) => {
     inputRef = cellState.inputRef;
   }
   const text = cellState.texts[cellIndex];
+  const tag = cellState.tags[cellIndex];
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -169,7 +170,7 @@ const MarkdownTransformer = ({ cellUuid }) => {
 
   const keyDownHandler = (e) => {
     const { key } = e;
-    const { textContent } = e.target;
+    const { innerHTML } = e.target;
     const exec = keyDownEventDispatch[key];
 
     if (exec) {
@@ -177,7 +178,7 @@ const MarkdownTransformer = ({ cellUuid }) => {
         e.preventDefault();
       }
       saveCursorPosition();
-      cellDispatch(cellActionCreator.input(textContent));
+      cellDispatch(cellActionCreator.input(innerHTML));
       exec(e)();
     }
   };
@@ -186,8 +187,14 @@ const MarkdownTransformer = ({ cellUuid }) => {
     const { key } = e;
     const { textContent } = e.target;
 
-    if (key === " ") {
-      console.log(stateAttr[textContent]);
+    if (stateAttr[textContent] && key === " ") {
+      if (!stateAttr[textContent].type) {
+        return null;
+      }
+      const { type } = stateAttr[textContent];
+      if (type) {
+        cellDispatch(cellActionCreator.transform(cellIndex, "", type));
+      }
     }
   };
 
@@ -206,21 +213,22 @@ const MarkdownTransformer = ({ cellUuid }) => {
      * @todo 클릭시 포커스 이동할 때의 이벤트
      * 버그로 인해 비활성화
      */
-    const { textContent } = e.target;
+    const { innerHTML } = e.target;
+    console.log(innerHTML);
 
-    saveCursorPosition();
-    cellDispatch(cellActionCreator.input(textContent));
+    // saveCursorPosition();
+    // cellDispatch(cellActionCreator.input(textContent));
   };
 
   return (
     <MarkdownWrapper
-      // as={stateAttr[text].type}
-      // isQuote={isQuote}
-      // placeholder={state.placeholder}
+      as={tag}
+      isQuote={tag === "blockquote"}
+      placeholder={placeholder[tag]}
       contentEditable
       onKeyPress={keyPressHandler}
       onKeyDown={keyDownHandler}
-      // onBlur={blurHandler}
+      onBlur={blurHandler}
       // onFocus={focusHandler}
       ref={inputRef || null}
       suppressContentEditableWarning

@@ -1,20 +1,32 @@
 import styled from "styled-components";
 
 const stateAttr = {
-  "#": { type: "h1", placeholder: "Heading 1" },
-  "##": { type: "h2", placeholder: "Heading 2" },
-  "###": { type: "h3", placeholder: "Heading 3" },
-  "####": { type: "h4", placeholder: "Heading 4" },
-  "#####": { type: "h5", placeholder: "Heading 5" },
-  "######": { type: "h6", placeholder: "Heading 6" },
+  "#": { type: "h1" },
+  "##": { type: "h2" },
+  "###": { type: "h3" },
+  "####": { type: "h4" },
+  "#####": { type: "h5" },
+  "######": { type: "h6" },
 
-  "-": { type: "ul", placeholder: "Unordered List" },
-  "*": { type: "ul", placeholder: "Unordered List" },
-  "+": { type: "ul", placeholder: "Unordered List" },
+  "-": { type: "ul" },
+  "*": { type: "ul" },
+  "+": { type: "ul" },
 
-  "1.": { type: "ol", placeholder: "Ordered List" },
+  "1.": { type: "ol" },
 
-  ">": { type: "blockquote", placeholder: "Quote" },
+  ">": { type: "blockquote" },
+};
+
+const placeholder = {
+  h1: "Heading 1",
+  h2: "Heading 2",
+  h3: "Heading 3",
+  h4: "Heading 4",
+  h5: "Heading 5",
+  h6: "Heading 6",
+  ul: "Unordered List",
+  ol: "Ordered List",
+  blockquote: "Quote",
 };
 
 const MarkdownWrapper = styled.div`
@@ -45,4 +57,4 @@ const MarkdownWrapper = styled.div`
   }};
 `;
 
-export { stateAttr, MarkdownWrapper };
+export { stateAttr, placeholder, MarkdownWrapper };
