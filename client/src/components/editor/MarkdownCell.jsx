@@ -1,4 +1,5 @@
 import React, { useEffect, useContext } from "react";
+import propTypes from "prop-types";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
 import MarkdownWrapper from "./style/MarkdownWrapper";
@@ -236,6 +237,10 @@ const MarkdownCell = ({ cellUuid }) => {
       {text}
     </MarkdownWrapper>
   );
+};
+
+MarkdownCell.propTypes = {
+  cellUuid: propTypes.string.isRequired,
 };
 
 export default MarkdownCell;
