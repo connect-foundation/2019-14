@@ -13,6 +13,7 @@ const CELL_TYPE = {
     H5: "h5",
     H6: "h6",
   },
+  BLOCKQUOTE: "blockquote",
 };
 
 export default CELL_TYPE;

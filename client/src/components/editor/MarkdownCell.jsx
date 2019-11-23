@@ -1,7 +1,10 @@
 import React, { useEffect, useContext } from "react";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
-import { stateAttr, placeholder, MarkdownWrapper } from "./EditorInput";
+import MarkdownWrapper from "./style/MarkdownWrapper";
+import { MARKDOWN } from "../../enums";
+
+const { RULE, PLACEHOLDER } = MARKDOWN;
 
 const useCellState = () => {
   const { state } = useContext(CellContext);
@@ -22,7 +25,7 @@ const getSelection = () => {
   return cursor;
 };
 
-const MarkdownTransformer = ({ cellUuid }) => {
+const MarkdownCell = ({ cellUuid }) => {
   const cellDispatch = useCellDispatch();
   const cellState = useCellState();
   const { currentIndex, uuidManager, cursor } = cellState;
@@ -84,7 +87,7 @@ const MarkdownTransformer = ({ cellUuid }) => {
 
   const newCell = () => {
     cellDispatch(
-      cellActionCreator.new((uuid) => <MarkdownTransformer cellUuid={uuid} />)
+      cellActionCreator.new((uuid) => <MarkdownCell cellUuid={uuid} />)
     );
   };
 
@@ -101,7 +104,7 @@ const MarkdownTransformer = ({ cellUuid }) => {
       //     cellDispatch(
       //       cellActionCreator.init(
       //         (index, ref) => (
-      //           <MarkdownTransformer cellIndex={index} inputRef={ref} />
+      //           <MarkdownCell cellIndex={index} inputRef={ref} />
       //         ),
       //         currentIndex
       //       )
@@ -137,7 +140,7 @@ const MarkdownTransformer = ({ cellUuid }) => {
     //       cellDispatch(
     //         cellActionCreator.init(
     //           (index, ref) => (
-    //             <MarkdownTransformer cellIndex={index} inputRef={ref} />
+    //             <MarkdownCell cellIndex={index} inputRef={ref} />
     //           ),
     //           currentIndex
     //         )
@@ -187,11 +190,8 @@ const MarkdownTransformer = ({ cellUuid }) => {
     const { key } = e;
     const { textContent } = e.target;
 
-    if (stateAttr[textContent] && key === " ") {
-      if (!stateAttr[textContent].type) {
-        return null;
-      }
-      const { type } = stateAttr[textContent];
+    if (RULE[textContent] && key === " ") {
+      const type = RULE[textContent];
       if (type) {
         cellDispatch(cellActionCreator.transform(cellIndex, "", type));
       }
@@ -224,7 +224,7 @@ const MarkdownTransformer = ({ cellUuid }) => {
     <MarkdownWrapper
       as={tag}
       isQuote={tag === "blockquote"}
-      placeholder={placeholder[tag]}
+      placeholder={PLACEHOLDER[tag]}
       contentEditable
       onKeyPress={keyPressHandler}
       onKeyDown={keyDownHandler}
@@ -238,4 +238,4 @@ const MarkdownTransformer = ({ cellUuid }) => {
   );
 };
 
-export default MarkdownTransformer;
+export default MarkdownCell;
