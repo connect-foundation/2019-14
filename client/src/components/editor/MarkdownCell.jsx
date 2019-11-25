@@ -1,7 +1,11 @@
 import React, { useEffect, useContext } from "react";
+import propTypes from "prop-types";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
-import EditorInput from "./EditorInput";
+import MarkdownWrapper from "./style/MarkdownWrapper";
+import { MARKDOWN } from "../../enums";
+
+const { RULE, PLACEHOLDER } = MARKDOWN;
 
 const useCellState = () => {
   const { state } = useContext(CellContext);
@@ -13,7 +17,16 @@ const useCellDispatch = () => {
   return cellDispatch;
 };
 
-const MarkdownTransformer = ({ cellUuid }) => {
+const getSelection = () => {
+  const selection = window.getSelection();
+  const cursor = {
+    start: selection.focusOffset,
+    end: selection.focusOffset + selection.rangeCount - 1,
+  };
+  return cursor;
+};
+
+const MarkdownCell = ({ cellUuid }) => {
   const cellDispatch = useCellDispatch();
   const cellState = useCellState();
   const { currentIndex, uuidManager, cursor } = cellState;
@@ -23,36 +36,35 @@ const MarkdownTransformer = ({ cellUuid }) => {
   if (currentIndex === cellIndex) {
     inputRef = cellState.inputRef;
   }
-
-  useEffect(() => {
-    if (inputRef && inputRef.current) {
-      console.log(inputRef.current);
-    }
-    // }
-  }, []);
+  const text = cellState.texts[cellIndex];
+  const tag = cellState.tags[cellIndex];
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      inputRef.current.selectionStart = cursor.start;
-      inputRef.current.selectionEnd = cursor.end;
-    }
-  }, [inputRef]);
 
-  const currentCursorPosition = () => {
-    const start = inputRef.current.selectionStart || 0;
-    const end = inputRef.current.selectionEnd || 0;
-    return {
-      start,
-      end,
-    };
-  };
+      const cursorFront = text.slice(0, cursor.start);
+      const cursorBack = text.slice(cursor.start, text.length);
+      const content = `${cursorFront}<span id="cursorCaret"></span>${cursorBack}`;
+      inputRef.current.innerHTML = content;
+
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
+      const cursorCaret = document.querySelector("#cursorCaret");
+      range.selectNode(cursorCaret);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      range.deleteContents();
+      inputRef.current.normalize();
+    }
+  }, []);
 
   const saveCursorPosition = () => {
     if (!inputRef) {
       return null;
     }
-    const currentCursor = currentCursorPosition();
+    const currentCursor = getSelection();
+
     cellDispatch(
       cellActionCreator.moveCursor(currentCursor.start, currentCursor.end)
     );
@@ -76,7 +88,7 @@ const MarkdownTransformer = ({ cellUuid }) => {
 
   const newCell = () => {
     cellDispatch(
-      cellActionCreator.new((uuid) => <MarkdownTransformer cellUuid={uuid} />)
+      cellActionCreator.new((uuid) => <MarkdownCell cellUuid={uuid} />)
     );
   };
 
@@ -93,7 +105,7 @@ const MarkdownTransformer = ({ cellUuid }) => {
       //     cellDispatch(
       //       cellActionCreator.init(
       //         (index, ref) => (
-      //           <MarkdownTransformer cellIndex={index} inputRef={ref} />
+      //           <MarkdownCell cellIndex={index} inputRef={ref} />
       //         ),
       //         currentIndex
       //       )
@@ -129,7 +141,7 @@ const MarkdownTransformer = ({ cellUuid }) => {
     //       cellDispatch(
     //         cellActionCreator.init(
     //           (index, ref) => (
-    //             <MarkdownTransformer cellIndex={index} inputRef={ref} />
+    //             <MarkdownCell cellIndex={index} inputRef={ref} />
     //           ),
     //           currentIndex
     //         )
@@ -162,33 +174,73 @@ const MarkdownTransformer = ({ cellUuid }) => {
 
   const keyDownHandler = (e) => {
     const { key } = e;
+    const { innerHTML } = e.target;
     const exec = keyDownEventDispatch[key];
+
     if (exec) {
       if (key !== "Backspace") {
         e.preventDefault();
       }
+      saveCursorPosition();
+      cellDispatch(cellActionCreator.input(innerHTML));
       exec(e)();
     }
   };
 
-  const focusHandler = () => {
-    /**
-     * @todo 버그로 인한 비활성화
-     * - 무한 렌더링 버그
-     */
-    // cellDispatch(cellActionCreator.focusMove(cellIndex));
-    // saveCursorPosition();
+  const keyPressHandler = (e) => {
+    const { key } = e;
+    const { textContent } = e.target;
+
+    if (RULE[textContent] && key === " ") {
+      const type = RULE[textContent];
+      if (type) {
+        cellDispatch(cellActionCreator.transform(cellIndex, "", type));
+      }
+    }
   };
 
-  return inputRef ? (
-    <EditorInput
+  const focusHandler = (e) => {
+    /**
+     * @todo 버그로 인한 비활성화
+     * - 무한 루프 버그
+     */
+
+    cellDispatch(cellActionCreator.focusMove(cellIndex));
+    saveCursorPosition();
+  };
+
+  const blurHandler = (e) => {
+    /**
+     * @todo 클릭시 포커스 이동할 때의 이벤트
+     * 버그로 인해 비활성화
+     */
+    const { innerHTML } = e.target;
+    console.log(innerHTML);
+
+    // saveCursorPosition();
+    // cellDispatch(cellActionCreator.input(textContent));
+  };
+
+  return (
+    <MarkdownWrapper
+      as={tag}
+      isQuote={tag === "blockquote"}
+      placeholder={PLACEHOLDER[tag]}
+      contentEditable
+      onKeyPress={keyPressHandler}
       onKeyDown={keyDownHandler}
-      onFocus={focusHandler}
-      inputRef={inputRef}
-    />
-  ) : (
-    <EditorInput onKeyDown={keyDownHandler} onFocus={focusHandler} />
+      onBlur={blurHandler}
+      // onFocus={focusHandler}
+      ref={inputRef || null}
+      suppressContentEditableWarning
+    >
+      {text}
+    </MarkdownWrapper>
   );
 };
 
-export default MarkdownTransformer;
+MarkdownCell.propTypes = {
+  cellUuid: propTypes.string.isRequired,
+};
+
+export default MarkdownCell;

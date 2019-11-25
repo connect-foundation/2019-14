@@ -2,23 +2,23 @@ import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
 import { utils } from "../utils";
 
+const { splice } = utils;
+
 const cellReducerHandler = {
   [CELL_ACTION.INIT]: (state, action) => {
     const { index, renderTarget } = action;
     const { uuidManager } = state;
     const cellUuid = uuid();
     uuidManager.push(cellUuid);
-    const cells = utils.splice.change(
-      state.cells,
-      index,
-      renderTarget(cellUuid)
-    );
-    const texts = utils.splice.change(state.texts, index, "");
+    const cells = splice.change(state.cells, index, renderTarget(cellUuid));
+    const texts = splice.change(state.texts, index, "");
+    const tags = splice.change(state.tags, index, action.tag);
 
     return {
       ...state,
       cells,
       texts,
+      tags,
     };
   },
 
@@ -27,13 +27,10 @@ const cellReducerHandler = {
     const { renderTarget } = action;
     const cellUuid = uuid();
 
-    const cells = utils.splice.add(
-      state.cells,
-      currentIndex,
-      renderTarget(cellUuid)
-    );
-    const texts = utils.splice.add(state.texts, currentIndex, "");
-    uuidManager.uuidArray = utils.splice.add(
+    const cells = splice.add(state.cells, currentIndex, renderTarget(cellUuid));
+    const texts = splice.add(state.texts, currentIndex, "");
+    const tags = splice.add(state.tags, currentIndex, action.tag);
+    uuidManager.uuidArray = splice.add(
       uuidManager.uuidArray,
       currentIndex,
       cellUuid
@@ -43,12 +40,13 @@ const cellReducerHandler = {
       ...state,
       cells,
       texts,
+      tags,
     };
   },
 
   [CELL_ACTION.INPUT]: (state, action) => {
     const { currentIndex } = state;
-    const texts = utils.splice.change(state.texts, currentIndex, action.text);
+    const texts = splice.change(state.texts, currentIndex, action.text);
 
     return {
       ...state,
@@ -85,14 +83,15 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
-    const { index } = action;
-    const cells = utils.splice.change(state.cells, index, action.renderTarget);
-    const texts = utils.splice.change(state.texts, index, action.text);
+    const { index, text, tag } = action;
+
+    const texts = splice.change(state.texts, index, text);
+    const tags = splice.change(state.tags, index, tag);
 
     return {
       ...state,
-      cells,
       texts,
+      tags,
     };
   },
 

@@ -1,0 +1,35 @@
+const THEME = {
+  VIOLET: {
+    THEME_COLOR_1: "#210f20",
+    THEME_COLOR_2: "#3C013C",
+    THEME_COLOR_3: "#AF71AF",
+    THEME_COLOR_4: "#EAC3EA",
+    THEME_COLOR_5: "#F3F0F3",
+  },
+
+  DARK: {
+    THEME_COLOR_1: "#2A2323",
+    THEME_COLOR_2: "#383A38",
+    THEME_COLOR_3: "#8B8687",
+    THEME_COLOR_4: "#A3A1A1",
+    THEME_COLOR_5: "#FAFAFA",
+  },
+
+  DARK_IVORY: {
+    THEME_COLOR_1: "#1C1C1A",
+    THEME_COLOR_2: "#2F2F2F",
+    THEME_COLOR_3: "#7F7C7C",
+    THEME_COLOR_4: "#CFCCCC",
+    THEME_COLOR_5: "#FFF1D1",
+  },
+
+  DARK_BLUE: {
+    THEME_COLOR_1: "#F0F5F9",
+    THEME_COLOR_2: "#C9D6DE",
+    THEME_COLOR_3: "#42505A",
+    THEME_COLOR_4: "#2A303A",
+    THEME_COLOR_5: "#1E2022",
+  },
+};
+
+export default THEME;
