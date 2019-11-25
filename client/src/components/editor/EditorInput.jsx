@@ -17,7 +17,7 @@ const PLACEHOLDER = {
 
   blockquote: "Quote",
 
-  pre: "Code",
+  code: "Code",
 };
 
 const MarkdownWrapper = styled.div`
@@ -38,6 +38,7 @@ const MarkdownWrapper = styled.div`
 
   border-left: ${(props) => (props.isQuote ? "0.25rem solid silver" : null)};
   padding-left: ${(props) => (props.isQuote ? "0.5rem" : null)};
+  background-color: ${(props) => (props.isCode ? "silver" : null)};}
 `;
 
 const EditorInput = () => {
@@ -100,57 +101,53 @@ const EditorInput = () => {
       contentEditable={true}
       onInput={onInput}
       onKeyPress={onKeyPress}
-      ref={inputRef}
     />
   );
 
   if (isUnorderedList) {
     renderTarget = (
-      <MarkdownWrapper as={state.type}>
+      <ul>
         <MarkdownWrapper
           as="li"
           placeholder={state.placeholder}
           contentEditable={true}
           onInput={onInput}
           onKeyPress={onKeyPress}
-          ref={inputRef}
         />
-      </MarkdownWrapper>
+      </ul>
     );
   }
 
   if (isOrderedList) {
     renderTarget = (
-      <MarkdownWrapper as={state.type} start={state.start}>
+      <ol start={state.start}>
         <MarkdownWrapper
           as="li"
           placeholder={state.placeholder}
           contentEditable={true}
           onInput={onInput}
           onKeyPress={onKeyPress}
-          ref={inputRef}
         />
-      </MarkdownWrapper>
+      </ol>
     );
   }
 
   if (isCode) {
     renderTarget = (
-      <MarkdownWrapper as={state.type}>
+      <pre>
         <MarkdownWrapper
-          as="code"
+          as={state.type}
           placeholder={state.placeholder}
           contentEditable={true}
           onInput={onInput}
           onKeyPress={onKeyPress}
-          ref={inputRef}
         />
-      </MarkdownWrapper>
+      </pre>
     );
   }
 
   if (isHorizontalRule) {
-    renderTarget = <hr />;
+    renderTarget = <hr noshade="noshade" style={{ borderColor: "silver" }} />;
   }
 
   return renderTarget;
