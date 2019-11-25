@@ -1,4 +1,4 @@
-import { CELL_TYPE } from "../enums";
+import { CELL_TAG } from "../enums";
 
 const CELL_ACTION = {
   INIT: "cell/init",
@@ -30,7 +30,7 @@ const cellActionCreator = {
       type: CELL_ACTION.INIT,
       renderTarget,
       index: index || 0,
-      tag: CELL_TYPE.DEFAULT,
+      tag: CELL_TAG.DEFAULT,
     };
   },
 
@@ -42,7 +42,7 @@ const cellActionCreator = {
     return {
       type: CELL_ACTION.NEW,
       renderTarget,
-      tag: CELL_TYPE.DEFAULT,
+      tag: CELL_TAG.DEFAULT,
     };
   },
 

@@ -1,5 +1,5 @@
-import CELL_TYPE from "./CELL_TYPE";
+import CELL_TAG from "./CELL_TAG";
 import MARKDOWN from "./MARKDOWN";
 import THEME from "./THEME";
 
-export { CELL_TYPE, MARKDOWN, THEME };
+export { CELL_TAG, MARKDOWN, THEME };

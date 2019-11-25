@@ -43,9 +43,9 @@ const MarkdownCell = ({ cellUuid }) => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
 
-      const front = text.slice(0, cursor.start);
-      const back = text.slice(cursor.start, text.length);
-      const content = `${front}<span id="cursorCaret"></span>${back}`;
+      const cursorFront = text.slice(0, cursor.start);
+      const cursorBack = text.slice(cursor.start, text.length);
+      const content = `${cursorFront}<span id="cursorCaret"></span>${cursorBack}`;
       inputRef.current.innerHTML = content;
 
       const selection = window.getSelection();

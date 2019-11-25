@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const MarkdownWrapper = styled.div`
+const MarkdownWrapper = styled.p`
   border: none;
 
   &:empty {

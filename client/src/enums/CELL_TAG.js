@@ -1,4 +1,4 @@
-const CELL_TYPE = {
+const CELL_TAG = {
   DEFAULT: null,
   LIST: {
     UL: "ul",
@@ -16,4 +16,4 @@ const CELL_TYPE = {
   BLOCKQUOTE: "blockquote",
 };
 
-export default CELL_TYPE;
+export default CELL_TAG;
