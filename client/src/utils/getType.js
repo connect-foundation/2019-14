@@ -26,4 +26,4 @@ const getType = (textContent) => {
   return type;
 };
 
-export { getType };
+export default getType;

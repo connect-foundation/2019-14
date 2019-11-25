@@ -51,26 +51,26 @@ const MarkdownCell = ({ cellUuid }) => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
 
-      const cursorFront = text.slice(0, cursor.start);
-      const cursorBack = text.slice(cursor.start, text.length);
+      // const cursorFront = text.slice(0, cursor.start);
+      // const cursorBack = text.slice(cursor.start, text.length);
 
-      const content = `${cursorFront}<span id="cursorCaret"></span>${cursorBack}`;
+      // const content = `${cursorFront}<span id="cursorCaret"></span>${cursorBack}`;
 
-      inputRef.current.innerHTML = content;
+      // inputRef.current.innerHTML = content;
 
-      const selection = window.getSelection();
-      const range = selection.getRangeAt(0);
+      // const selection = window.getSelection();
+      // const range = selection.getRangeAt(0);
 
-      const cursorCaret = document.querySelector("#cursorCaret");
+      // const cursorCaret = document.querySelector("#cursorCaret");
 
-      range.selectNode(cursorCaret);
+      // range.selectNode(cursorCaret);
 
-      selection.removeAllRanges();
-      selection.addRange(range);
+      // selection.removeAllRanges();
+      // selection.addRange(range);
 
-      range.deleteContents();
+      // range.deleteContents();
 
-      inputRef.current.normalize();
+      // inputRef.current.normalize();
     }
   }, []);
 
@@ -79,8 +79,6 @@ const MarkdownCell = ({ cellUuid }) => {
 
     if (key === " ") {
       const { textContent } = e.target;
-
-      console.log(textContent, "@@");
 
       const tag = getType(textContent);
 
@@ -277,9 +275,9 @@ const MarkdownCell = ({ cellUuid }) => {
 
   if (isUnorderedList) {
     renderTarget = (
-      <ul>
+      <MarkdownWrapper as={tag}>
         <MarkdownWrapper
-          as={tag}
+          as="li"
           placeholder={PLACEHOLDER[tag]}
           contentEditable
           onKeyDown={keyDownHandler}
@@ -291,15 +289,16 @@ const MarkdownCell = ({ cellUuid }) => {
         >
           {text}
         </MarkdownWrapper>
-      </ul>
+      </MarkdownWrapper>
     );
   }
 
   if (isOrderedList) {
     renderTarget = (
-      <ol start={state.start}>
+      <MarkdownWrapper as={tag}>
+        {/* start={start}> */}
         <MarkdownWrapper
-          as={tag}
+          as="li"
           isQuote={tag === "blockquote"}
           placeholder={PLACEHOLDER[tag]}
           contentEditable
@@ -312,8 +311,7 @@ const MarkdownCell = ({ cellUuid }) => {
         >
           {text}
         </MarkdownWrapper>
-        />
-      </ol>
+      </MarkdownWrapper>
     );
   }
 
