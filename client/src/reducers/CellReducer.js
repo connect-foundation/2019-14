@@ -94,15 +94,16 @@ const cellReducerHandler = {
     const { index, text, tag, cell } = action;
 
     const texts = splice.change(state.texts, index, text);
+
     const tags = splice.change(state.tags, index, tag);
 
-    // const cells = splice.change(state.cells, index, cell);
+    const cells = splice.change(state.cells, index, cell);
 
     return {
       ...state,
       texts,
       tags,
-      // cells,
+      cells,
     };
   },
 
