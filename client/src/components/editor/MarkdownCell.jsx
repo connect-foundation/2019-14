@@ -1,41 +1,49 @@
 import React, { useEffect, useContext } from "react";
 import propTypes from "prop-types";
+
+import MarkdownWrapper from "./style/MarkdownWrapper";
+import { getType } from "../../utils/getType";
+import { PLACEHOLDER } from "../../enums";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
-import MarkdownWrapper from "./style/MarkdownWrapper";
-import { MARKDOWN } from "../../enums";
-
-const { RULE, PLACEHOLDER } = MARKDOWN;
 
 const useCellState = () => {
   const { state } = useContext(CellContext);
+
   return state;
 };
 
 const useCellDispatch = () => {
   const cellDispatch = useContext(CellDispatchContext);
+
   return cellDispatch;
 };
 
 const getSelection = () => {
   const selection = window.getSelection();
+
   const cursor = {
     start: selection.focusOffset,
     end: selection.focusOffset + selection.rangeCount - 1,
   };
+
   return cursor;
 };
 
 const MarkdownCell = ({ cellUuid }) => {
   const cellDispatch = useCellDispatch();
   const cellState = useCellState();
+
   const { currentIndex, uuidManager, cursor } = cellState;
+
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
+
   if (currentIndex === cellIndex) {
     inputRef = cellState.inputRef;
   }
+
   const text = cellState.texts[cellIndex];
   const tag = cellState.tags[cellIndex];
 
@@ -45,29 +53,60 @@ const MarkdownCell = ({ cellUuid }) => {
 
       const cursorFront = text.slice(0, cursor.start);
       const cursorBack = text.slice(cursor.start, text.length);
+
       const content = `${cursorFront}<span id="cursorCaret"></span>${cursorBack}`;
+
       inputRef.current.innerHTML = content;
 
       const selection = window.getSelection();
       const range = selection.getRangeAt(0);
+
       const cursorCaret = document.querySelector("#cursorCaret");
+
       range.selectNode(cursorCaret);
+
       selection.removeAllRanges();
       selection.addRange(range);
+
       range.deleteContents();
+
       inputRef.current.normalize();
     }
   }, []);
 
+  const onKeyPress = (e) => {
+    const { key } = e;
+
+    if (key === " ") {
+      const { textContent } = e.target;
+
+      console.log(textContent, "@@");
+
+      const tag = getType(textContent);
+
+      cellDispatch(cellActionCreator.transform(cellIndex, "", tag));
+    }
+  };
+  /*
+  useEffect(() => {
+    let start = 1;
+
+    if (tag === "ol") start = parseInt(text.replace(".", ""));
+
+    cellDispatch(cellActionCreator.transform(cellIndex, "", tag));
+  }, [tag]);
+*/
   const saveCursorPosition = () => {
     if (!inputRef) {
       return null;
     }
+
     const currentCursor = getSelection();
 
     cellDispatch(
       cellActionCreator.moveCursor(currentCursor.start, currentCursor.end)
     );
+
     return null;
   };
 
@@ -75,12 +114,14 @@ const MarkdownCell = ({ cellUuid }) => {
     next: () => {
       if (currentIndex < cellState.cells.length - 1) {
         cellDispatch(cellActionCreator.focusNext());
+
         saveCursorPosition();
       }
     },
     prev: () => {
       if (currentIndex > 0) {
         cellDispatch(cellActionCreator.focusPrev());
+
         saveCursorPosition();
       }
     },
@@ -175,27 +216,17 @@ const MarkdownCell = ({ cellUuid }) => {
   const keyDownHandler = (e) => {
     const { key } = e;
     const { innerHTML } = e.target;
+
     const exec = keyDownEventDispatch[key];
 
     if (exec) {
       if (key !== "Backspace") {
         e.preventDefault();
       }
+
       saveCursorPosition();
       cellDispatch(cellActionCreator.input(innerHTML));
       exec(e)();
-    }
-  };
-
-  const keyPressHandler = (e) => {
-    const { key } = e;
-    const { textContent } = e.target;
-
-    if (RULE[textContent] && key === " ") {
-      const type = RULE[textContent];
-      if (type) {
-        cellDispatch(cellActionCreator.transform(cellIndex, "", type));
-      }
     }
   };
 
@@ -221,14 +252,20 @@ const MarkdownCell = ({ cellUuid }) => {
     // cellDispatch(cellActionCreator.input(textContent));
   };
 
-  return (
+  const isUnorderedList = tag === "ul";
+  const isOrderedList = tag === "ol";
+  const isQuote = tag === "blockquote";
+  const isCode = tag === "code";
+  const isHorizontalRule = tag === "hr";
+
+  let renderTarget = (
     <MarkdownWrapper
       as={tag}
-      isQuote={tag === "blockquote"}
+      isQuote={isQuote}
       placeholder={PLACEHOLDER[tag]}
       contentEditable
-      onKeyPress={keyPressHandler}
       onKeyDown={keyDownHandler}
+      onKeyPress={onKeyPress}
       onBlur={blurHandler}
       // onFocus={focusHandler}
       ref={inputRef || null}
@@ -237,6 +274,75 @@ const MarkdownCell = ({ cellUuid }) => {
       {text}
     </MarkdownWrapper>
   );
+
+  if (isUnorderedList) {
+    renderTarget = (
+      <ul>
+        <MarkdownWrapper
+          as={tag}
+          placeholder={PLACEHOLDER[tag]}
+          contentEditable
+          onKeyDown={keyDownHandler}
+          onKeyPress={onKeyPress}
+          onBlur={blurHandler}
+          // onFocus={focusHandler}
+          ref={inputRef || null}
+          suppressContentEditableWarning
+        >
+          {text}
+        </MarkdownWrapper>
+      </ul>
+    );
+  }
+
+  if (isOrderedList) {
+    renderTarget = (
+      <ol start={state.start}>
+        <MarkdownWrapper
+          as={tag}
+          isQuote={tag === "blockquote"}
+          placeholder={PLACEHOLDER[tag]}
+          contentEditable
+          onKeyDown={keyDownHandler}
+          onKeyPress={onKeyPress}
+          onBlur={blurHandler}
+          // onFocus={focusHandler}
+          ref={inputRef || null}
+          suppressContentEditableWarning
+        >
+          {text}
+        </MarkdownWrapper>
+        />
+      </ol>
+    );
+  }
+
+  if (isCode) {
+    renderTarget = (
+      <pre>
+        <MarkdownWrapper
+          as={tag}
+          isQuote={tag === "blockquote"}
+          placeholder={PLACEHOLDER[tag]}
+          contentEditable
+          onKeyDown={keyDownHandler}
+          onKeyPress={onKeyPress}
+          onBlur={blurHandler}
+          // onFocus={focusHandler}
+          ref={inputRef || null}
+          suppressContentEditableWarning
+        >
+          {text}
+        </MarkdownWrapper>
+      </pre>
+    );
+  }
+
+  if (isHorizontalRule) {
+    renderTarget = <hr noshade="noshade" style={{ borderColor: "silver" }} />;
+  }
+
+  return renderTarget;
 };
 
 MarkdownCell.propTypes = {
