@@ -9,23 +9,16 @@ const MarkdownWrapper = styled.p`
       color: silver;
     }
   }
-
   &:focus {
     outline: none;
   }
-
   &:hover {
     cursor: text;
   }
 
-  border-left: ${(props) => {
-    if (props.isQuote) return "0.25rem solid silver";
-    return null;
-  }}
-  padding-left: ${(props) => {
-    if (props.isQuote) return "0.5rem";
-    return null;
-  }};
+  border-left: ${(props) => (props.isQuote ? "0.25rem solid silver" : null)};
+  padding-left: ${(props) => (props.isQuote ? "0.5rem" : null)};
+  background-color: ${(props) => (props.isCode ? "silver" : null)};}
 `;
 
 export default MarkdownWrapper;
