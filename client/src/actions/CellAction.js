@@ -1,4 +1,4 @@
-import { CELL_TAG } from "../enums";
+import CELL_TAG from "../enums/CELL_TAG";
 
 const CELL_ACTION = {
   INIT: "cell/init",
