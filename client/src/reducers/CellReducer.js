@@ -6,11 +6,15 @@ const { splice } = utils;
 
 const cellReducerHandler = {
   [CELL_ACTION.INIT]: (state, action) => {
-    const { index, renderTarget } = action;
+    const { index, createMarkdownCell } = action;
     const { uuidManager } = state;
     const cellUuid = uuid();
     uuidManager.push(cellUuid);
-    const cells = splice.change(state.cells, index, renderTarget(cellUuid));
+    const cells = splice.change(
+      state.cells,
+      index,
+      createMarkdownCell(cellUuid)
+    );
     const texts = splice.change(state.texts, index, "");
     const tags = splice.change(state.tags, index, action.tag);
 
@@ -24,10 +28,14 @@ const cellReducerHandler = {
 
   [CELL_ACTION.NEW]: (state, action) => {
     const { currentIndex, uuidManager } = state;
-    const { renderTarget } = action;
+    const { createMarkdownCell } = action;
     const cellUuid = uuid();
 
-    const cells = splice.add(state.cells, currentIndex, renderTarget(cellUuid));
+    const cells = splice.add(
+      state.cells,
+      currentIndex,
+      createMarkdownCell(cellUuid)
+    );
     const texts = splice.add(state.texts, currentIndex, "");
     const tags = splice.add(state.tags, currentIndex, action.tag);
     uuidManager.uuidArray = splice.add(
@@ -83,15 +91,18 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
-    const { index, text, tag } = action;
+    const { index, text, tag, cell } = action;
 
     const texts = splice.change(state.texts, index, text);
     const tags = splice.change(state.tags, index, tag);
+
+    // const cells = splice.change(state.cells, index, cell);
 
     return {
       ...state,
       texts,
       tags,
+      // cells,
     };
   },
 
