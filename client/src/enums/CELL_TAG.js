@@ -1,5 +1,5 @@
 const CELL_TAG = {
-  DEFAULT: null,
+  DEFAULT: "",
   LIST: {
     UL: "ul",
     OL: "ol",
@@ -14,6 +14,7 @@ const CELL_TAG = {
     H6: "h6",
   },
   BLOCKQUOTE: "blockquote",
+  TERMINAL: "terminal",
 };
 
 export default CELL_TAG;
