@@ -1,3 +1,4 @@
+import getType from "./getType";
 import UuidManager from "./UuidManager";
 
 const utils = {};
@@ -36,4 +37,4 @@ utils.splice = {
   },
 };
 
-export { utils, UuidManager };
+export { utils, getType, UuidManager };
