@@ -27,21 +27,14 @@ const resolveDockerStream = async (stream) => {
   return rawString;
 };
 
-const dockerOptions = {
-  host: process.env.REMOTE_DOCKER_IP,
-  port: process.env.REMOTE_DOCKER_PORT,
-  caPath: process.env.SSL_CA_PATH,
-  certPath: process.env.SSL_CERT_PATH,
-  keyPath: process.env.SSL_KEY_PATH,
-};
-const dockerClient = new DockerApi(dockerOptions);
+const Terminal = require("../controller/terminal");
 
+const terminalController = new Terminal();
 router.post(
   "/command/not-pending",
   wrapAsync(async (req, res) => {
     const { containerName, cmd, options } = req.body;
-
-    await dockerClient.init();
+    const dockerClient = req.app.get("docker");
 
     const resultStream = await dockerClient.execByName(containerName, cmd);
     const output = await resolveDockerStream(resultStream);
