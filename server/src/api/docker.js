@@ -210,7 +210,7 @@ class DockerApi {
       this.startContainer(newContainerInfo.id);
       return newContainerInfo.id;
     } catch (error) {
-      console.error(error);
+      throw error;
     }
   }
 
@@ -218,7 +218,7 @@ class DockerApi {
     const container = await this.request.getContainer(containerId);
     container.start((err, data) => {
       if (err) {
-        console.log(err);
+        throw err;
       }
 
       console.log(data);
