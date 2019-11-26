@@ -52,18 +52,33 @@ router.post(
 
 router.post("/", async (req, res) => {
   try {
-    dockerClient.init();
-
-    const result = await dockerClient.createDefaultTerminal("ubuntu");
+    const docker = req.app.get("docker");
+    const result = await terminalController.createDefaultTerminal(
+      docker,
+      "ubuntu"
+    );
 
     if (!result) {
       res.status(400).json({ message: "not created terminal" });
       return;
     }
     res.status(201).json({ containerId: result });
+    return;
   } catch (error) {
-    console.error(error);
+    res.json(error);
   }
 });
 
+router.patch("/", async (req, res) => {
+  try {
+    const docker = req.app.get("docker");
+    const { containerId } = req.body;
+    const result = await terminalController.terminalStart(docker, containerId);
+
+    res.status(201).json({ containerId: result });
+  } catch (error) {
+    // HTTP STATUS CODE 409 mean conflict
+    res.status(409).json(error);
+  }
+});
 module.exports = router;
