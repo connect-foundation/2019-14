@@ -30,11 +30,11 @@ const terminalReducerHandler = {
     };
   },
 
-  [TERMINAL_ACTION.EVAL_INPUT]: (state, action) => {},
+  // [TERMINAL_ACTION.EVAL_INPUT]: (state, action) => {},
 
-  [TERMINAL_ACTION.EVAL_ALL]: (state, action) => {},
+  // [TERMINAL_ACTION.EVAL_ALL]: (state, action) => {},
 
-  [TERMINAL_ACTION.FOCUS_CHANGE]: (state, action) => {},
+  // [TERMINAL_ACTION.FOCUS_CHANGE]: (state, action) => {},
 };
 
 const terminalReducer = async (state, action) => {
