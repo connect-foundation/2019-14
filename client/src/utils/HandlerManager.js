@@ -53,7 +53,6 @@ const customKeydownEventHandler = (e) => {
         else handler[EVENT_TYPE.ENTER](e);
         break;
       case "Backspace":
-        e.preventDefault();
         handler[EVENT_TYPE.BACKSPACE](e);
         break;
       case "Tab":

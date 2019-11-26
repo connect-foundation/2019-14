@@ -1,10 +1,9 @@
-import React, { useRef, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import propTypes from "prop-types";
 
 import MarkdownWrapper from "./style/MarkdownWrapper";
 import getType from "../../utils/getType";
-import CELL_TAG from "../../enums/CELL_TAG";
-import { PLACEHOLDER, EVENT_TYPE } from "../../enums";
+import { PLACEHOLDER, EVENT_TYPE, CELL_TAG } from "../../enums";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
 import cellGenerator from "./CellGenerator";
@@ -36,14 +35,10 @@ const getSelection = () => {
 const MarkdownCell = ({ cellUuid }) => {
   const cellDispatch = useCellDispatch();
   const cellState = useCellState();
-
   const { currentIndex, uuidManager, cursor } = cellState;
-
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
-
-  handlerManager.clearWindowKeydownEvent();
 
   const saveCursorPosition = () => {
     if (!inputRef) {
@@ -61,7 +56,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const focus = {
     next: () => {
-      if (currentIndex < cellState.cells.length - 1) {
+      if (cellIndex < cellState.cells.length - 1) {
         cellDispatch(cellActionCreator.focusNext());
 
         saveCursorPosition();
@@ -80,19 +75,16 @@ const MarkdownCell = ({ cellUuid }) => {
     cellDispatch(
       cellActionCreator.new((uuid) => <MarkdownCell cellUuid={uuid} />)
     );
-    // focus.next();
   };
 
   if (currentIndex === cellIndex) {
     inputRef = cellState.inputRef;
-    handlerManager.clearWindowKeydownEvent();
     handlerManager.initHandler();
     handlerManager.setHandler(EVENT_TYPE.ENTER, (e) => {
       const { innerHTML } = e.target;
       saveCursorPosition();
-      cellDispatch(cellActionCreator.input(innerHTML));
+      cellDispatch(cellActionCreator.input(cellUuid, innerHTML));
       newCell();
-      focus.next();
     });
     handlerManager.setHandler(EVENT_TYPE.ARROW_UP, focus.prev);
     handlerManager.setHandler(EVENT_TYPE.ARROW_DOWN, focus.next);
@@ -155,28 +147,6 @@ const MarkdownCell = ({ cellUuid }) => {
   }, [tag]);
 */
 
-  const focusHandler = (e) => {
-    /**
-     * @todo 버그로 인한 비활성화
-     * - 무한 루프 버그
-     */
-
-    cellDispatch(cellActionCreator.focusMove(cellIndex));
-    saveCursorPosition();
-  };
-
-  const blurHandler = (e) => {
-    /**
-     * @todo 클릭시 포커스 이동할 때의 이벤트
-     * 버그로 인해 비활성화
-     */
-    const { innerHTML } = e.target;
-    // console.log(innerHTML);
-
-    // saveCursorPosition();
-    // cellDispatch(cellActionCreator.input(textContent));
-  };
-
   // const isUnorderedList = tag === "ul";
   // const isOrderedList = tag === "ol";
   // const isQuote = tag === "blockquote";
@@ -189,8 +159,6 @@ const MarkdownCell = ({ cellUuid }) => {
       placeholder={PLACEHOLDER[currentTag]}
       contentEditable
       onKeyPress={onKeyPress}
-      onBlur={blurHandler}
-      // onFocus={focusHandler}
       ref={inputRef || null}
       suppressContentEditableWarning
     >

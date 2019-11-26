@@ -48,11 +48,13 @@ const cellActionCreator = {
 
   /**
    * 셀의 텍스트를 변경한다.
+   * @param {Uuid} cellUuid 텍스트를 변경할 셀의 uuid
    * @param {Text} text 변경된 텍스트
    */
-  input(text) {
+  input(cellUuid, text) {
     return {
       type: CELL_ACTION.INPUT,
+      cellUuid,
       text,
     };
   },
@@ -79,13 +81,13 @@ const cellActionCreator = {
   },
 
   /**
-   * 셀 포커스를 인덱스 위치로 이동시킨다.
-   * @param {Number} index 포커스를 이동시킬 인덱스
+   * 셀 포커스를 지정한 위치로 이동시킨다.
+   * @param {Uuid} cellUuid 포커스를 이동시킬 셀의 uuid
    */
-  focusMove(index) {
+  focusMove(cellUuid) {
     return {
       type: CELL_ACTION.FOCUS.MOVE,
-      index,
+      cellUuid,
     };
   },
 
