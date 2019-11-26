@@ -55,18 +55,20 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const focus = {
-    next: () => {
+    next: (e) => {
       if (cellIndex < cellState.cells.length - 1) {
-        cellDispatch(cellActionCreator.focusNext());
-
+        const { innerHTML } = e.target;
         saveCursorPosition();
+        cellDispatch(cellActionCreator.input(cellUuid, innerHTML));
+        cellDispatch(cellActionCreator.focusNext());
       }
     },
-    prev: () => {
+    prev: (e) => {
       if (currentIndex > 0) {
-        cellDispatch(cellActionCreator.focusPrev());
-
+        const { innerHTML } = e.target;
         saveCursorPosition();
+        cellDispatch(cellActionCreator.input(cellUuid, innerHTML));
+        cellDispatch(cellActionCreator.focusPrev());
       }
     },
   };
@@ -100,26 +102,26 @@ const MarkdownCell = ({ cellUuid }) => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
 
-      // const cursorFront = text.slice(0, cursor.start);
-      // const cursorBack = text.slice(cursor.start, text.length);
+      const cursorFront = text.slice(0, cursor.start);
+      const cursorBack = text.slice(cursor.start, text.length);
 
-      // const content = `${cursorFront}<span id="cursorCaret"></span>${cursorBack}`;
+      const content = `${cursorFront}<span id="cursorCaret"></span>${cursorBack}`;
 
-      // inputRef.current.innerHTML = content;
+      inputRef.current.innerHTML = content;
 
-      // const selection = window.getSelection();
-      // const range = selection.getRangeAt(0);
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
 
-      // const cursorCaret = document.querySelector("#cursorCaret");
+      const cursorCaret = document.querySelector("#cursorCaret");
 
-      // range.selectNode(cursorCaret);
+      range.selectNode(cursorCaret);
 
-      // selection.removeAllRanges();
-      // selection.addRange(range);
+      selection.removeAllRanges();
+      selection.addRange(range);
 
-      // range.deleteContents();
+      range.deleteContents();
 
-      // inputRef.current.normalize();
+      inputRef.current.normalize();
     }
   }, []);
 
@@ -137,21 +139,6 @@ const MarkdownCell = ({ cellUuid }) => {
       );
     }
   };
-  /*
-  useEffect(() => {
-    let start = 1;
-
-    if (tag === "ol") start = parseInt(text.replace(".", ""));
-
-    cellDispatch(cellActionCreator.transform(cellIndex, "", tag));
-  }, [tag]);
-*/
-
-  // const isUnorderedList = tag === "ul";
-  // const isOrderedList = tag === "ol";
-  // const isQuote = tag === "blockquote";
-  // const isCode = tag === "code";
-  // const isHorizontalRule = tag === "hr";
 
   const renderTarget = (
     <MarkdownWrapper
@@ -165,73 +152,6 @@ const MarkdownCell = ({ cellUuid }) => {
       {text}
     </MarkdownWrapper>
   );
-
-  // if (isUnorderedList) {
-  //  renderTarget = (
-  //    <MarkdownWrapper as={tag}>
-  //      <MarkdownWrapper
-  //        as="li"
-  //        placeholder={PLACEHOLDER[tag]}
-  //        contentEditable
-  //        onKeyDown={keyDownHandler}
-  //        onKeyPress={onKeyPress}
-  //        onBlur={blurHandler}
-  //        // onFocus={focusHandler}
-  //        ref={inputRef || null}
-  //        suppressContentEditableWarning
-  //      >
-  //        {text}
-  //      </MarkdownWrapper>
-  //    </MarkdownWrapper>
-  //  );
-  // }
-
-  // if (isOrderedList) {
-  //  renderTarget = (
-  //    <MarkdownWrapper as={tag}>
-  //      {/* start={start}> */}
-  //      <MarkdownWrapper
-  //        as="li"
-  //        isQuote={tag === "blockquote"}
-  //        placeholder={PLACEHOLDER[tag]}
-  //        contentEditable
-  //        onKeyDown={keyDownHandler}
-  //        onKeyPress={onKeyPress}
-  //        onBlur={blurHandler}
-  //        // onFocus={focusHandler}
-  //        ref={inputRef || null}
-  //        suppressContentEditableWarning
-  //      >
-  //        {text}
-  //      </MarkdownWrapper>
-  //    </MarkdownWrapper>
-  //  );
-  // }
-
-  // if (isCode) {
-  //  renderTarget = (
-  //    <pre>
-  //      <MarkdownWrapper
-  //        as={tag}
-  //        isQuote={tag === "blockquote"}
-  //        placeholder={PLACEHOLDER[tag]}
-  //        contentEditable
-  //        onKeyDown={keyDownHandler}
-  //        onKeyPress={onKeyPress}
-  //        onBlur={blurHandler}
-  //        // onFocus={focusHandler}
-  //        ref={inputRef || null}
-  //        suppressContentEditableWarning
-  //      >
-  //        {text}
-  //      </MarkdownWrapper>
-  //    </pre>
-  //  );
-  // }
-
-  // if (isHorizontalRule) {
-  //  renderTarget = <hr noshade="noshade" style={{ borderColor: "silver" }} />;
-  // }
 
   return renderTarget;
 };
