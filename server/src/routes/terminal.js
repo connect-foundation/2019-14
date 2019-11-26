@@ -34,7 +34,6 @@ const dockerOptions = {
   certPath: process.env.SSL_CERT_PATH,
   keyPath: process.env.SSL_KEY_PATH,
 };
-
 const dockerClient = new DockerApi(dockerOptions);
 
 router.post(
@@ -59,15 +58,19 @@ router.post(
 );
 
 router.post("/", async (req, res) => {
-  const docker = req.app.get("docker");
-  const result = await docker.createDefaultTerminal("ubuntu");
+  try {
+    dockerClient.init();
 
-  if (!result) {
-    res.status(400).json({ message: "not created terminal" });
-    return;
+    const result = await dockerClient.createDefaultTerminal("ubuntu");
+
+    if (!result) {
+      res.status(400).json({ message: "not created terminal" });
+      return;
+    }
+    res.status(201).json({ containerId: result });
+  } catch (error) {
+    console.error(error);
   }
-
-  res.status(201).json({ containerId: result });
 });
 
 module.exports = router;
