@@ -1,5 +1,5 @@
 function test(params) {
-  return `mocha --recursive ${params}`;
+  return `jest ${params}`;
 }
 
 module.exports = {
@@ -12,6 +12,12 @@ module.exports = {
       default: {
         script: "webpack --config webpack.production.config.js",
         description: "Start client build",
+      },
+    },
+    dev: {
+      default: {
+        script: "webpack-dev-server",
+        description: "Start dev server for local testing",
       },
     },
     lint: {
