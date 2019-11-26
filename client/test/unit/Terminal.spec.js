@@ -1,8 +1,5 @@
 import TestStore from "../TestStore";
-import {
-  TERMINAL_ACTION,
-  terminalActionCreator,
-} from "../../src/actions/TerminalAction";
+import { terminalActionCreator } from "../../src/actions/TerminalAction";
 import terminalReducer from "../../src/reducers/TerminalReducer";
 import { utils } from "../../src/utils";
 
@@ -67,10 +64,10 @@ const testcases = {
 describe("Terminal Cell", () => {
   it("새로운 셀을 생성후 포커스 위치로 입력창이 이동된다", (done) => {
     const isDone = testcases.newRepl.map(async (testcase) => {
-      const { storeState, focusIndex, currentText, answer } = testcase;
+      const { storeState, answer } = testcase;
       const store = new TestStore(terminalReducer, storeState);
       const nextState = await store.dispatchAsync(
-        terminalActionCreator.createNewRepl(focusIndex, currentText)
+        terminalActionCreator.createNewRepl()
       );
 
       expect(nextState).toEqual(answer);
