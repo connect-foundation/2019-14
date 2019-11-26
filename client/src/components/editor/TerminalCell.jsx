@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { EVENT_TYPE } from "../../enums";
 
 const ReplInputWrapper = styled.p.attrs(() => ({
   contentEditable: true,
@@ -28,18 +29,13 @@ const ReplOutputComponent = () => {
   return <ReplOutputWrapper />;
 };
 
-const KEY = {
-  ENTER: "enter",
-  DOWN: "down",
-};
-
 const handlers = {};
 const addHandler = (keyboardHandler) => {
   handlers.terminal = keyboardHandler;
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-      handlers.terminal[KEY.ENTER](e);
+      handlers.terminal[EVENT_TYPE.ENTER](e);
     }
   });
 };
@@ -74,7 +70,7 @@ const TerminalCell = ({ cellUuid }) => {
   const [replComponents, setReplComponents] = useState([]);
 
   const keyboardHandler = {
-    [KEY.ENTER]: (e) => {
+    [EVENT_TYPE.ENTER]: (e) => {
       e.preventDefault();
       const newOne = <ReplCell isKeyDown />;
       setReplComponents((prevState) => {

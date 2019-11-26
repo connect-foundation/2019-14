@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useContext } from "react";
 import propTypes from "prop-types";
 
 import MarkdownWrapper from "./style/MarkdownWrapper";
-import getType from "../../utils/getType";
+import { getType } from "../../utils";
 import CELL_TAG from "../../enums/CELL_TAG";
 import { PLACEHOLDER } from "../../enums";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
