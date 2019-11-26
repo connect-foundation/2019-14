@@ -13,4 +13,9 @@ Terminal.prototype.terminalStart = async (dockerInstance, containerId) => {
   return result;
 };
 
+Terminal.prototype.terminalStop = async (dockerInstance, containerId) => {
+  const result = await dockerInstance.stopContainer(containerId);
+  return result;
+};
+
 module.exports = Terminal;
