@@ -72,7 +72,7 @@ router.patch("/", async (req, res) => {
   try {
     const docker = req.app.get("docker");
     const { containerId } = req.body;
-    const result = await terminalController.terminalStart(docker, containerId);
+    const result = await terminalController.startTerminal(docker, containerId);
 
     res.status(201).json({ containerId: result });
   } catch (error) {
@@ -85,7 +85,7 @@ router.delete("/", async (req, res) => {
   try {
     const docker = req.app.get("docker");
     const { containerId } = req.body;
-    const result = await terminalController.terminalStop(docker, containerId);
+    const result = await terminalController.stopTerminal(docker, containerId);
 
     res.status(201).json({ containerId: result });
   } catch (error) {
