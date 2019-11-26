@@ -14,16 +14,20 @@ const MARKDOWN_REGEXP = {
   code: /^(\s{4,}\s*)|\s{0,3}`{3,}/g,
 
   hr: /^\s{0,3}-{3,}|\*{3,}|_{3,}/g,
+
+  terminal: /^\$\$\$\s*/,
 };
 
 const getType = (textContent) => {
-  let type = "";
-
-  Object.values(MARKDOWN_REGEXP).forEach((regExp, i) => {
-    if (regExp.exec(textContent)) type = Object.keys(MARKDOWN_REGEXP)[i];
+  const types = Object.keys(MARKDOWN_REGEXP);
+  const result = types.find((type) => {
+    const regExp = MARKDOWN_REGEXP[type];
+    if (regExp.exec(textContent)) {
+      return true;
+    }
+    return false;
   });
-
-  return type;
+  return result;
 };
 
 export default getType;

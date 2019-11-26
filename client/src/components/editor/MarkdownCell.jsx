@@ -1,11 +1,13 @@
-import React, { useEffect, useContext } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import propTypes from "prop-types";
 
 import MarkdownWrapper from "./style/MarkdownWrapper";
-import { getType } from "../../utils/getType";
+import getType from "../../utils/getType";
+import CELL_TAG from "../../enums/CELL_TAG";
 import { PLACEHOLDER } from "../../enums";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
+import cellGenerator from "./CellGenerator";
 
 const useCellState = () => {
   const { state } = useContext(CellContext);
@@ -45,7 +47,7 @@ const MarkdownCell = ({ cellUuid }) => {
   }
 
   const text = cellState.texts[cellIndex];
-  const tag = cellState.tags[cellIndex];
+  const currentTag = cellState.tags[cellIndex];
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -75,14 +77,17 @@ const MarkdownCell = ({ cellUuid }) => {
   }, []);
 
   const onKeyPress = (e) => {
-    const { key } = e;
+    const { textContent } = e.target;
 
-    if (key === " ") {
-      const { textContent } = e.target;
+    const matchingTag = getType(textContent);
 
-      const tag = getType(textContent);
-
-      cellDispatch(cellActionCreator.transform(cellIndex, "", tag));
+    if (matchingTag && matchingTag !== currentTag) {
+      const makeNewCell = cellGenerator[matchingTag];
+      const cell = makeNewCell(cellUuid);
+      console.log("hello cell", cell);
+      cellDispatch(
+        cellActionCreator.transform(cellIndex, "", matchingTag, cell)
+      );
     }
   };
   /*
@@ -250,17 +255,16 @@ const MarkdownCell = ({ cellUuid }) => {
     // cellDispatch(cellActionCreator.input(textContent));
   };
 
-  const isUnorderedList = tag === "ul";
-  const isOrderedList = tag === "ol";
-  const isQuote = tag === "blockquote";
-  const isCode = tag === "code";
-  const isHorizontalRule = tag === "hr";
+  // const isUnorderedList = tag === "ul";
+  // const isOrderedList = tag === "ol";
+  // const isQuote = tag === "blockquote";
+  // const isCode = tag === "code";
+  // const isHorizontalRule = tag === "hr";
 
-  let renderTarget = (
+  const renderTarget = (
     <MarkdownWrapper
-      as={tag}
-      isQuote={isQuote}
-      placeholder={PLACEHOLDER[tag]}
+      as={currentTag}
+      placeholder={PLACEHOLDER[currentTag]}
       contentEditable
       onKeyDown={keyDownHandler}
       onKeyPress={onKeyPress}
@@ -273,72 +277,72 @@ const MarkdownCell = ({ cellUuid }) => {
     </MarkdownWrapper>
   );
 
-  if (isUnorderedList) {
-    renderTarget = (
-      <MarkdownWrapper as={tag}>
-        <MarkdownWrapper
-          as="li"
-          placeholder={PLACEHOLDER[tag]}
-          contentEditable
-          onKeyDown={keyDownHandler}
-          onKeyPress={onKeyPress}
-          onBlur={blurHandler}
-          // onFocus={focusHandler}
-          ref={inputRef || null}
-          suppressContentEditableWarning
-        >
-          {text}
-        </MarkdownWrapper>
-      </MarkdownWrapper>
-    );
-  }
+  // if (isUnorderedList) {
+  //  renderTarget = (
+  //    <MarkdownWrapper as={tag}>
+  //      <MarkdownWrapper
+  //        as="li"
+  //        placeholder={PLACEHOLDER[tag]}
+  //        contentEditable
+  //        onKeyDown={keyDownHandler}
+  //        onKeyPress={onKeyPress}
+  //        onBlur={blurHandler}
+  //        // onFocus={focusHandler}
+  //        ref={inputRef || null}
+  //        suppressContentEditableWarning
+  //      >
+  //        {text}
+  //      </MarkdownWrapper>
+  //    </MarkdownWrapper>
+  //  );
+  // }
 
-  if (isOrderedList) {
-    renderTarget = (
-      <MarkdownWrapper as={tag}>
-        {/* start={start}> */}
-        <MarkdownWrapper
-          as="li"
-          isQuote={tag === "blockquote"}
-          placeholder={PLACEHOLDER[tag]}
-          contentEditable
-          onKeyDown={keyDownHandler}
-          onKeyPress={onKeyPress}
-          onBlur={blurHandler}
-          // onFocus={focusHandler}
-          ref={inputRef || null}
-          suppressContentEditableWarning
-        >
-          {text}
-        </MarkdownWrapper>
-      </MarkdownWrapper>
-    );
-  }
+  // if (isOrderedList) {
+  //  renderTarget = (
+  //    <MarkdownWrapper as={tag}>
+  //      {/* start={start}> */}
+  //      <MarkdownWrapper
+  //        as="li"
+  //        isQuote={tag === "blockquote"}
+  //        placeholder={PLACEHOLDER[tag]}
+  //        contentEditable
+  //        onKeyDown={keyDownHandler}
+  //        onKeyPress={onKeyPress}
+  //        onBlur={blurHandler}
+  //        // onFocus={focusHandler}
+  //        ref={inputRef || null}
+  //        suppressContentEditableWarning
+  //      >
+  //        {text}
+  //      </MarkdownWrapper>
+  //    </MarkdownWrapper>
+  //  );
+  // }
 
-  if (isCode) {
-    renderTarget = (
-      <pre>
-        <MarkdownWrapper
-          as={tag}
-          isQuote={tag === "blockquote"}
-          placeholder={PLACEHOLDER[tag]}
-          contentEditable
-          onKeyDown={keyDownHandler}
-          onKeyPress={onKeyPress}
-          onBlur={blurHandler}
-          // onFocus={focusHandler}
-          ref={inputRef || null}
-          suppressContentEditableWarning
-        >
-          {text}
-        </MarkdownWrapper>
-      </pre>
-    );
-  }
+  // if (isCode) {
+  //  renderTarget = (
+  //    <pre>
+  //      <MarkdownWrapper
+  //        as={tag}
+  //        isQuote={tag === "blockquote"}
+  //        placeholder={PLACEHOLDER[tag]}
+  //        contentEditable
+  //        onKeyDown={keyDownHandler}
+  //        onKeyPress={onKeyPress}
+  //        onBlur={blurHandler}
+  //        // onFocus={focusHandler}
+  //        ref={inputRef || null}
+  //        suppressContentEditableWarning
+  //      >
+  //        {text}
+  //      </MarkdownWrapper>
+  //    </pre>
+  //  );
+  // }
 
-  if (isHorizontalRule) {
-    renderTarget = <hr noshade="noshade" style={{ borderColor: "silver" }} />;
-  }
+  // if (isHorizontalRule) {
+  //  renderTarget = <hr noshade="noshade" style={{ borderColor: "silver" }} />;
+  // }
 
   return renderTarget;
 };
