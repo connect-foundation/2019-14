@@ -1,5 +1,7 @@
 import getType from "./getType";
 import UuidManager from "./UuidManager";
+import HandlerManager from "./HandlerManager";
+import getType from "./getType";
 
 const utils = {};
 utils.splice = {
@@ -37,4 +39,4 @@ utils.splice = {
   },
 };
 
-export { utils, getType, UuidManager };
+export { utils, getType, UuidManager, HandlerManager };
