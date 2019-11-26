@@ -26,4 +26,3 @@ UuidManager.prototype.findIndex = (uuid) => {
 };
 
 export default UuidManager;
-
