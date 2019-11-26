@@ -4,10 +4,11 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "./style/MarkdownWrapper";
 import getType from "../../utils/getType";
 import CELL_TAG from "../../enums/CELL_TAG";
-import { PLACEHOLDER } from "../../enums";
+import { PLACEHOLDER, EVENT_TYPE } from "../../enums";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
 import cellGenerator from "./CellGenerator";
+import { handlerManager } from "../../utils";
 
 const useCellState = () => {
   const { state } = useContext(CellContext);
@@ -42,8 +43,62 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const cellIndex = uuidManager.findIndex(cellUuid);
 
+  handlerManager.clearWindowKeydownEvent();
+
+  const saveCursorPosition = () => {
+    if (!inputRef) {
+      return null;
+    }
+
+    const currentCursor = getSelection();
+
+    cellDispatch(
+      cellActionCreator.moveCursor(currentCursor.start, currentCursor.end)
+    );
+
+    return null;
+  };
+
+  const focus = {
+    next: () => {
+      if (currentIndex < cellState.cells.length - 1) {
+        cellDispatch(cellActionCreator.focusNext());
+
+        saveCursorPosition();
+      }
+    },
+    prev: () => {
+      if (currentIndex > 0) {
+        cellDispatch(cellActionCreator.focusPrev());
+
+        saveCursorPosition();
+      }
+    },
+  };
+
+  const newCell = () => {
+    cellDispatch(
+      cellActionCreator.new((uuid) => <MarkdownCell cellUuid={uuid} />)
+    );
+    // focus.next();
+  };
+
   if (currentIndex === cellIndex) {
     inputRef = cellState.inputRef;
+    handlerManager.clearWindowKeydownEvent();
+    handlerManager.initHandler();
+    handlerManager.setHandler(EVENT_TYPE.ENTER, (e) => {
+      const { innerHTML } = e.target;
+      saveCursorPosition();
+      cellDispatch(cellActionCreator.input(innerHTML));
+      newCell();
+      focus.next();
+    });
+    handlerManager.setHandler(EVENT_TYPE.ARROW_UP, focus.prev);
+    handlerManager.setHandler(EVENT_TYPE.ARROW_DOWN, focus.next);
+    handlerManager.setHandler(EVENT_TYPE.TAB, focus.next);
+    handlerManager.setHandler(EVENT_TYPE.SHIFT_TAB, focus.prev);
+    handlerManager.setWindowKeydownEvent();
   }
 
   const text = cellState.texts[cellIndex];
@@ -99,139 +154,6 @@ const MarkdownCell = ({ cellUuid }) => {
     cellDispatch(cellActionCreator.transform(cellIndex, "", tag));
   }, [tag]);
 */
-  const saveCursorPosition = () => {
-    if (!inputRef) {
-      return null;
-    }
-
-    const currentCursor = getSelection();
-
-    cellDispatch(
-      cellActionCreator.moveCursor(currentCursor.start, currentCursor.end)
-    );
-
-    return null;
-  };
-
-  const focus = {
-    next: () => {
-      if (currentIndex < cellState.cells.length - 1) {
-        cellDispatch(cellActionCreator.focusNext());
-
-        saveCursorPosition();
-      }
-    },
-    prev: () => {
-      if (currentIndex > 0) {
-        cellDispatch(cellActionCreator.focusPrev());
-
-        saveCursorPosition();
-      }
-    },
-  };
-
-  const newCell = () => {
-    cellDispatch(
-      cellActionCreator.new((uuid) => <MarkdownCell cellUuid={uuid} />)
-    );
-  };
-
-  const keyDownEventDispatch = {
-    Enter: (e) => {
-      /**
-       * @todo 태그에 따라 빈 셀에서 엔터 입력시 초기화하는 기능
-       * - 다른 기능 완료 후 다시 활성화 및 완성
-       * - 태그 기능 스토어 및 액션, 리듀서에 등록 후 활성화
-       */
-      // const currentTag = false;
-      // if (currentTag && text.length === 0) {
-      //   return () => {
-      //     cellDispatch(
-      //       cellActionCreator.init(
-      //         (index, ref) => (
-      //           <MarkdownCell cellIndex={index} inputRef={ref} />
-      //         ),
-      //         currentIndex
-      //       )
-      //     );
-      //   };
-      // }
-
-      /**
-       * @todo Shift + Enter 동작 추가 예정
-       */
-      if (e.shiftKey) {
-        return () => {
-          console.log("this is shift+enter");
-        };
-      }
-      return () => {
-        newCell();
-        focus.next();
-      };
-    },
-    /**
-     * @todo 빈 셀에서 백스페이스 입력시 셀 초기화 기능
-     * - 다른 기능 완료 후 다시 활성화 및 완성
-     */
-    // Backspace: (e) => {
-    //   const currentCursor = currentCursorPosition();
-
-    //   if (
-    //     currentCursor.start === currentCursor.end &&
-    //     currentCursor.start === 0
-    //   ) {
-    //     return () => {
-    //       cellDispatch(
-    //         cellActionCreator.init(
-    //           (index, ref) => (
-    //             <MarkdownCell cellIndex={index} inputRef={ref} />
-    //           ),
-    //           currentIndex
-    //         )
-    //       );
-    //     };
-    //   }
-    //   return () => {};
-    // },
-    ArrowUp: () => {
-      return () => {
-        focus.prev();
-      };
-    },
-    ArrowDown: () => {
-      return () => {
-        focus.next();
-      };
-    },
-    Tab: (e) => {
-      if (e.shiftKey) {
-        return () => {
-          focus.prev();
-        };
-      }
-      return () => {
-        focus.next();
-      };
-    },
-  };
-
-  const keyDownHandler = (e) => {
-    const { key } = e;
-    const { innerHTML } = e.target;
-
-    const exec = keyDownEventDispatch[key];
-
-    if (exec) {
-      if (key !== "Backspace") {
-        e.preventDefault();
-      }
-
-      saveCursorPosition();
-      cellDispatch(cellActionCreator.input(innerHTML));
-      exec(e)();
-    }
-  };
 
   const focusHandler = (e) => {
     /**
@@ -249,7 +171,7 @@ const MarkdownCell = ({ cellUuid }) => {
      * 버그로 인해 비활성화
      */
     const { innerHTML } = e.target;
-    console.log(innerHTML);
+    // console.log(innerHTML);
 
     // saveCursorPosition();
     // cellDispatch(cellActionCreator.input(textContent));
@@ -266,7 +188,6 @@ const MarkdownCell = ({ cellUuid }) => {
       as={currentTag}
       placeholder={PLACEHOLDER[currentTag]}
       contentEditable
-      onKeyDown={keyDownHandler}
       onKeyPress={onKeyPress}
       onBlur={blurHandler}
       // onFocus={focusHandler}
