@@ -11,7 +11,7 @@ function UuidManager() {
  * uuid를 맨 뒤에 추가한다.
  * @param {Uuid} uuid uuid 모듈을 사용하여 생성한 uuid
  */
-UuidManager.prototype.push = (uuid) => {
+UuidManager.prototype.push = function(uuid) {
   this.uuidArray.push(uuid);
 };
 
@@ -20,7 +20,7 @@ UuidManager.prototype.push = (uuid) => {
  * @param {Uuid} uuid 인덱스를 검색할 uuid
  * @returns {Number} uuid를 이용하여 검색한 인덱스를 리턴한다. 존재하지 않을시 -1.
  */
-UuidManager.prototype.findIndex = (uuid) => {
+UuidManager.prototype.findIndex = function(uuid) {
   const index = this.uuidArray.findIndex((cellUuid) => cellUuid === uuid);
   return index;
 };
