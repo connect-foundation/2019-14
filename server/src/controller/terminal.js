@@ -8,12 +8,12 @@ Terminal.prototype.createDefaultTerminal = async (
   return containerId;
 };
 
-Terminal.prototype.terminalStart = async (dockerInstance, containerId) => {
+Terminal.prototype.startTerminal = async (dockerInstance, containerId) => {
   const result = await dockerInstance.startContainer(containerId);
   return result;
 };
 
-Terminal.prototype.terminalStop = async (dockerInstance, containerId) => {
+Terminal.prototype.stopTerminal = async (dockerInstance, containerId) => {
   const result = await dockerInstance.stopContainer(containerId);
   return result;
 };
