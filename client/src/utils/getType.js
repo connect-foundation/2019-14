@@ -7,7 +7,7 @@ const MARKDOWN_REGEXP = {
   h6: /^\s{0,3}#{6}\s*/g,
 
   ul: /^\s{0,3}(-|\*|\+)\s*/g,
-  ol: /^\s{0,3}\d+.\s*/g,
+  ol: /^\s{0,3}\d+\.\s*/g,
 
   blockquote: /^\s{0,3}>\s*/g,
 

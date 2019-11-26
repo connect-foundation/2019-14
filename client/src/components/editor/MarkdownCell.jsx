@@ -3,7 +3,8 @@ import propTypes from "prop-types";
 
 import MarkdownWrapper from "./style/MarkdownWrapper";
 import cellGenerator from "./CellGenerator";
-import getType from "../../utils/getType";
+import { getType } from "../../utils/";
+import { getStart } from "../../utils/";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
 import { PLACEHOLDER } from "../../enums";
@@ -35,7 +36,7 @@ const MarkdownCell = ({ cellUuid }) => {
   const cellDispatch = useCellDispatch();
   const cellState = useCellState();
 
-  const { currentIndex, uuidManager, cursor } = cellState;
+  const { currentIndex, uuidManager, start, cursor } = cellState;
 
   let inputRef = null;
 
@@ -82,22 +83,30 @@ const MarkdownCell = ({ cellUuid }) => {
 
     if (matchingTag && matchingTag !== currentTag) {
       const makeNewCell = cellGenerator[matchingTag];
-      const cell = makeNewCell(cellUuid);
-      console.log("hello cell", cell);
-      cellDispatch(
-        cellActionCreator.transform(cellIndex, "", matchingTag, cell)
-      );
+
+      if (matchingTag === "ol") {
+        const newStart = start ? start + 1 : getStart(textContent);
+        const cell = makeNewCell(cellUuid, newStart);
+
+        cellDispatch(
+          cellActionCreator.transform(
+            cellIndex,
+            "",
+            matchingTag,
+            cell,
+            newStart
+          )
+        );
+      } else {
+        const cell = makeNewCell(cellUuid);
+
+        cellDispatch(
+          cellActionCreator.transform(cellIndex, "", matchingTag, cell)
+        );
+      }
     }
   };
-  /*
-  useEffect(() => {
-    let start = 1;
 
-    if (tag === "ol") start = parseInt(text.replace(".", ""));
-
-    cellDispatch(cellActionCreator.transform(cellIndex, "", tag));
-  }, [tag]);
-  */
   const saveCursorPosition = () => {
     if (!inputRef) {
       return null;

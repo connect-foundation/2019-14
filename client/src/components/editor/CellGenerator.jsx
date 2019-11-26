@@ -4,6 +4,7 @@ import HeaderCell from "./HeaderCell";
 import TerminalCell from "./TerminalCell";
 import QuoteCell from "./QuoteCell";
 import CodeCell from "./CodeCell";
+import ListCell from "./ListCell";
 
 const headerGenerator = (uuid) => <HeaderCell cellUuid={uuid} />;
 
@@ -23,6 +24,18 @@ const cellGenerator = {
   [CELL_TAG.TERMINAL]: (uuid) => <TerminalCell cellUuid={uuid} />,
 
   [CELL_TAG.BLOCKQUOTE]: (uuid) => <QuoteCell cellUuid={uuid} />,
+
+  ul: (uuid) => (
+    <ul cellUuid={"ul" + uuid}>
+      <ListCell cellUuid={uuid} />
+    </ul>
+  ),
+
+  ol: (uuid, start) => (
+    <ol cellUuid={"ol" + uuid} start={start}>
+      <ListCell cellUuid={uuid} />
+    </ol>
+  ),
 
   code: (uuid) => <CodeCell cellUuid={uuid} />,
 

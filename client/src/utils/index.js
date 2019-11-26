@@ -1,4 +1,5 @@
 import getType from "./getType";
+import getStart from "./getStart";
 import UuidManager from "./UuidManager";
 import HandlerManager from "./HandlerManager";
 
@@ -38,4 +39,4 @@ utils.splice = {
   },
 };
 
-export { utils, getType, UuidManager, HandlerManager };
+export { utils, getType, getStart, UuidManager, HandlerManager };
