@@ -1,13 +1,12 @@
-import React, { useRef, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import propTypes from "prop-types";
 
 import MarkdownWrapper from "./style/MarkdownWrapper";
+import cellGenerator from "./CellGenerator";
 import getType from "../../utils/getType";
-import CELL_TAG from "../../enums/CELL_TAG";
-import { PLACEHOLDER } from "../../enums";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
-import cellGenerator from "./CellGenerator";
+import { PLACEHOLDER } from "../../enums";
 
 const useCellState = () => {
   const { state } = useContext(CellContext);
@@ -98,7 +97,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
     cellDispatch(cellActionCreator.transform(cellIndex, "", tag));
   }, [tag]);
-*/
+  */
   const saveCursorPosition = () => {
     if (!inputRef) {
       return null;

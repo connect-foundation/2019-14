@@ -2,6 +2,7 @@ import React from "react";
 import CELL_TAG from "../../enums/CELL_TAG";
 import HeaderCell from "./HeaderCell";
 import TerminalCell from "./TerminalCell";
+import QuoteCell from "./QuoteCell";
 
 const headerGenerator = (uuid) => <HeaderCell cellUuid={uuid} />;
 
@@ -19,6 +20,8 @@ const cellGenerator = {
   [CELL_TAG.HEADING.H6]: headerGenerator,
 
   [CELL_TAG.TERMINAL]: (uuid) => <TerminalCell cellUuid={uuid} />,
+
+  [CELL_TAG.BLOCKQUOTE]: (uuid) => <QuoteCell cellUuid={uuid} />,
 };
 
 export default cellGenerator;
