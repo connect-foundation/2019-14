@@ -1,3 +1,5 @@
+import CELL_TAG from "../enums/CELL_TAG";
+
 const CELL_ACTION = {
   INIT: "cell/init",
   NEW: "cell/new",
@@ -19,28 +21,28 @@ const CELL_ACTION = {
 const cellActionCreator = {
   /**
    * 셀의 데이터를 초기화시킨다.
-   * @param {Cell} renderTarget 초기화할 셀을 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
+   * @param {Cell} createMarkdownCell 초기화할 셀을 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
    * @param {Number} index 초기화할 셀의 index
    * - 파라미터로 넘기지 않으면 기본값 0
    */
-  init(renderTarget, index) {
+  init(createMarkdownCell, index = 0) {
     return {
       type: CELL_ACTION.INIT,
-      renderTarget,
-      index: index || 0,
-      tag: "",
+      createMarkdownCell,
+      tag: CELL_TAG.DEFAULT,
+      index,
     };
   },
 
   /**
    * 셀을 생성한다.
-   * @param {Cell} renderTarget: 새 셀 컴포넌트를 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
+   * @param {Cell} createMarkdownCell: 새 셀 컴포넌트를 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
    */
-  new(renderTarget) {
+  new(createMarkdownCell) {
     return {
       type: CELL_ACTION.NEW,
-      renderTarget,
-      tag: "",
+      createMarkdownCell,
+      tag: CELL_TAG.DEFAULT,
     };
   },
 
@@ -104,13 +106,15 @@ const cellActionCreator = {
    * @param {Number} index 변경할 Cell의 인덱스
    * @param {String} text 변경할 Cell의 텍스트
    * @param {String} tag 변경할 Cell의 태그
+   * @param {React.element} cell 변경할 Cell 요소
    */
-  transform(index, text, tag) {
+  transform(index, text, tag, cell) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
       index,
       text,
       tag,
+      cell,
     };
   },
 

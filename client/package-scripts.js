@@ -1,12 +1,24 @@
 function test(params) {
-  return `mocha --recursive ${params}`;
+  return `jest ${params}`;
 }
 
 module.exports = {
   scripts: {
     default: {
-      script: "node index.js",
+      script: "serve -l 7070 dist",
       description: "Start app with 'npm start or nps'",
+    },
+    build: {
+      default: {
+        script: "webpack --config webpack.production.config.js",
+        description: "Start client build",
+      },
+    },
+    dev: {
+      default: {
+        script: "webpack-dev-server",
+        description: "Start dev server for local testing",
+      },
     },
     lint: {
       default: {

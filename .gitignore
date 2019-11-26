@@ -18,3 +18,9 @@ local.env
 
 # ssl관련 인증서 디렉토리
 ssl
+
+# npm lock file
+package-lock.json
+
+# yarn lock file
+yarn.lock

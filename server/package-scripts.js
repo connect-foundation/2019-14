@@ -8,6 +8,10 @@ module.exports = {
       script: "node bin/index.js",
       description: "Start app",
     },
+    production: {
+      script: "NODE_ENV=production node bin/index.js",
+      description: "Start production app",
+    },
     lint: {
       default: {
         script: "nps lint.code",

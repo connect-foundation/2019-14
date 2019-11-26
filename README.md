@@ -1,16 +1,23 @@
-# 2019-14.
-
 # Boost Writer
 
 ---
 
 > 문서를 작성하며 직접 코드를 돌려보고, 그 과정과 결과까지 알 수 있게 도와주는 테크니컬 라이팅 서비스 입니다.
+> 노션과 비슷한 문서 작성 경험을 제공하고 주피터와 비슷한 터미널을 지원하여 기술 문서를 작성하는데 도움을 줍니다.
 
 ## Structure
 
 ---
 
-  ![]()
+### 인프라 구성
+
+- Docker Server : Docker daemon이 가동중인 서버. 유저 터미널 환경을 컨터이너로 관리한다.
+- Docker Private Registry : 유저가 만든 터미널 환경을 이미지로 관리한다.
+- Production Server : express 서버 및 클라이언트 배포 서버
+- DB Server
+- Nginx
+
+![infra](https://user-images.githubusercontent.com/4661295/69394024-2c33e580-0d1e-11ea-8c7a-49cec33aeea7.jpg)
 
 ## Feature
 
@@ -26,7 +33,7 @@
 
   ## Heading
 
-  ---
+  ***
 
   - Unordered List
 
@@ -38,7 +45,7 @@
 
   - Unordered List
 
-  ---
+  ***
 
   - Ordered List
 
@@ -52,7 +59,7 @@
   2. Ordered List
   3. Ordered List
 
-  ---
+  ***
 
   - Blockquote
 
@@ -77,8 +84,6 @@
   $$$ Terminal
   ```
 
-  ![]()
-
 - 작성한 문서 공유 기능
   - 링크를 통한 문서 공유 기능
 
@@ -88,24 +93,20 @@
 
 #### 권태욱
 
-[개인 홈페이지]()
+[Notion](https://www.notion.so/imurukevol/538cebd586e04ce5ab1c3ee1e5bda02f)
 
-[깃헙]()
+[GitHub](https://github.com/ImuruKevol)
 
 #### 김윤환
 
-[개인 홈페이지]()
-
-[깃헙]()
+[GitHub](https://github.com/DrizzlingCattus)
 
 #### 박다정
 
-[개인 홈페이지]()
+[개인 홈페이지](https://dimss.tistory.com/)
 
-[깃헙]()
+[GitHub](https://github.com/dimsssss)
 
 #### 윤준환
 
-[개인 홈페이지]()
-
-[깃헙]()
+[GitHub](https://github.com/RBJH)
