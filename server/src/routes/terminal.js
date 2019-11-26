@@ -1,6 +1,5 @@
 const debug = require("debug")("boostwriter:routes:terminal");
 const express = require("express");
-const { DockerApi } = require("../api/docker");
 const { StreamResolver } = require("../utils/stream-resolver");
 const { utils } = require("../utils");
 
@@ -74,6 +73,19 @@ router.patch("/", async (req, res) => {
     const docker = req.app.get("docker");
     const { containerId } = req.body;
     const result = await terminalController.terminalStart(docker, containerId);
+
+    res.status(201).json({ containerId: result });
+  } catch (error) {
+    // HTTP STATUS CODE 409 mean conflict
+    res.status(409).json(error);
+  }
+});
+
+router.delete("/", async (req, res) => {
+  try {
+    const docker = req.app.get("docker");
+    const { containerId } = req.body;
+    const result = await terminalController.terminalStop(docker, containerId);
 
     res.status(201).json({ containerId: result });
   } catch (error) {
