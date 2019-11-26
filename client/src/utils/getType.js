@@ -13,9 +13,9 @@ const MARKDOWN_REGEXP = {
 
   code: /^(\s{4,}\s*)|\s{0,3}`{3,}/g,
 
-  hr: /^\s{0,3}-{3,}|\*{3,}|_{3,}/g,
+  hr: /^\s{0,3}-{3,}|\*{3,}|_{3,}\s*/g,
 
-  terminal: /^\$\$\$\s*/,
+  terminal: /^\s{0,3}\${3,}\s*/,
 };
 
 const getType = (textContent) => {

@@ -22,6 +22,10 @@ const cellGenerator = {
   [CELL_TAG.TERMINAL]: (uuid) => <TerminalCell cellUuid={uuid} />,
 
   [CELL_TAG.BLOCKQUOTE]: (uuid) => <QuoteCell cellUuid={uuid} />,
+
+  hr: (uuid) => (
+    <hr cellUuid={uuid} noshade="noshade" style={{ borderColor: "silver" }} />
+  ),
 };
 
 export default cellGenerator;
