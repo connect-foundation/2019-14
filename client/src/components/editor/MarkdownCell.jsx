@@ -123,6 +123,11 @@ const MarkdownCell = ({ cellUuid }) => {
 
       inputRef.current.normalize();
     }
+    const isSaved = (e) => {
+      e.preventDefault();
+      e.returnValue = "정말로 닫으시겠습니까?";
+    };
+    window.addEventListener("beforeunload", isSaved);
   }, []);
 
   const onKeyPress = (e) => {
