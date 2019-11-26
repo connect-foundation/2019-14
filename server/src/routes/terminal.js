@@ -28,7 +28,7 @@ const resolveDockerStream = async (stream) => {
 };
 
 const dockerOptions = {
-  hhost: process.env.REMOTE_DOCKER_IP,
+  host: process.env.REMOTE_DOCKER_IP,
   port: process.env.REMOTE_DOCKER_PORT,
   caPath: process.env.SSL_CA_PATH,
   certPath: process.env.SSL_CERT_PATH,
