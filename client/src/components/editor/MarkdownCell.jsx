@@ -57,17 +57,17 @@ const MarkdownCell = ({ cellUuid }) => {
   const focus = {
     next: (e) => {
       if (cellIndex < cellState.cells.length - 1) {
-        const { innerHTML } = e.target;
+        const { textContent } = e.target;
         saveCursorPosition();
-        cellDispatch(cellActionCreator.input(cellUuid, innerHTML));
+        cellDispatch(cellActionCreator.input(cellUuid, textContent));
         cellDispatch(cellActionCreator.focusNext());
       }
     },
     prev: (e) => {
       if (currentIndex > 0) {
-        const { innerHTML } = e.target;
+        const { textContent } = e.target;
         saveCursorPosition();
-        cellDispatch(cellActionCreator.input(cellUuid, innerHTML));
+        cellDispatch(cellActionCreator.input(cellUuid, textContent));
         cellDispatch(cellActionCreator.focusPrev());
       }
     },
@@ -83,9 +83,9 @@ const MarkdownCell = ({ cellUuid }) => {
     inputRef = cellState.inputRef;
     handlerManager.initHandler();
     handlerManager.setHandler(EVENT_TYPE.ENTER, (e) => {
-      const { innerHTML } = e.target;
+      const { textContent } = e.target;
       saveCursorPosition();
-      cellDispatch(cellActionCreator.input(cellUuid, innerHTML));
+      cellDispatch(cellActionCreator.input(cellUuid, textContent));
       newCell();
     });
     handlerManager.setHandler(EVENT_TYPE.ARROW_UP, focus.prev);
@@ -123,11 +123,14 @@ const MarkdownCell = ({ cellUuid }) => {
 
       inputRef.current.normalize();
     }
-    const isSaved = (e) => {
-      e.preventDefault();
-      e.returnValue = "정말로 닫으시겠습니까?";
-    };
-    window.addEventListener("beforeunload", isSaved);
+    /**
+     * 거슬려서 잠시 주석
+     */
+    // const isSaved = (e) => {
+    //   e.preventDefault();
+    //   e.returnValue = "정말로 닫으시겠습니까?";
+    // };
+    // window.addEventListener("beforeunload", isSaved);
   }, []);
 
   const onKeyPress = (e) => {
@@ -145,6 +148,15 @@ const MarkdownCell = ({ cellUuid }) => {
     }
   };
 
+  const htmlText = () => {
+    /**
+     * @todo text에 대한 보안장치 필요
+     * @todo text에 대해 원하는 것 외에는 전부 유니코드로 바꾸는 로직 필요
+     * - placeholder의 key 배열에 해당하는 태그 외에는 전부 변환한다던가
+     */
+    return { __html: text };
+  };
+
   const renderTarget = (
     <MarkdownWrapper
       as={currentTag}
@@ -153,9 +165,8 @@ const MarkdownCell = ({ cellUuid }) => {
       onKeyPress={onKeyPress}
       ref={inputRef || null}
       suppressContentEditableWarning
-    >
-      {text}
-    </MarkdownWrapper>
+      dangerouslySetInnerHTML={htmlText()}
+    />
   );
 
   return renderTarget;
