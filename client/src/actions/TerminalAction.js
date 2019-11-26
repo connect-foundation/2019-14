@@ -3,22 +3,20 @@ const TERMINAL_ACTION = {
   EVAL_INPUT: "terminal/eval-input",
   EVAL_ALL: "terminal/eval-all",
   FOCUS_CHANGE: "terminal/focus-change",
+  CHANGE_TEXT: "terminal/change-text",
 };
 
 const terminalActionCreator = {
   /**
-   * 새로운 REPL cell을 생성한다.
-   * 새롭게 생성된 cell로 포커스가 된다.
+   * Enter를 누를시에 사용된다.
+   * 새로운 REPL cell을 현재 위치에 생성한다.
+   * 마지막 위치로 포거스 된다.
    * @param {Number} index index위치에 새로운 REPL cell을 위한 데이터들을 생성한다.
    * @param {String} inputText inputText 초기화값이다.
-   * - index가 -1이면 맨 마지막 index위치에 붙힌다.
-   * - inputText가 null이면 currentText로 대체하고 currentText는 ""로 초기화된다.
    */
-  createNewRepl(index = -1, inputText = null) {
+  createNewRepl() {
     return {
       type: TERMINAL_ACTION.NEW_REPL,
-      index,
-      inputText,
     };
   },
 
@@ -54,6 +52,13 @@ const terminalActionCreator = {
     return {
       type: TERMINAL_ACTION.FOCUS_CHANGE,
       to,
+    };
+  },
+
+  changeCurrentText(text) {
+    return {
+      type: TERMINAL_ACTION.CHANGE_TEXT,
+      text,
     };
   },
 };
