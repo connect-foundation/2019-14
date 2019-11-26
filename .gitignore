@@ -21,3 +21,6 @@ ssl
 
 # npm lock file
 package-lock.json
+
+# yarn lock file
+yarn.lock
