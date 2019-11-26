@@ -5,6 +5,7 @@
  */
 
 require("../src/env-loader").appendEnv("remote");
+
 const debug = require("debug")("boostwriter:index");
 const http = require("http");
 const app = require("../src/app");
@@ -15,6 +16,25 @@ const app = require("../src/app");
 
 const port = process.env.EXPRESS_PORT || 3000;
 app.set("port", port);
+
+/**
+ * Docker를 사용하기 위한 설정
+ */
+
+const { DockerApi } = require("../src/api/docker");
+
+const dockerOptions = {
+  host: process.env.REMOTE_DOCKER_IP,
+  port: process.env.REMOTE_DOCKER_PORT,
+  caPath: process.env.SSL_CA_PATH,
+  certPath: process.env.SSL_CERT_PATH,
+  keyPath: process.env.SSL_KEY_PATH,
+};
+
+const docker = new DockerApi(dockerOptions);
+docker.init();
+
+app.set("docker", docker);
 
 /**
  * Create HTTP server.
