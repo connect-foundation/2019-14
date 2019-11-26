@@ -10,22 +10,32 @@ const terminalReducerHandler = {
 
     const replCount = prevState.replCount + 1;
 
-    if (index === -1) {
+    const isLastIndex = index === -1;
+    if (isLastIndex) {
       index = replCount;
     }
 
-    if (inputText === null) {
+    const isUsingCurrentText = inputText === null;
+    if (isUsingCurrentText) {
       inputText = prevState.currentText;
     }
 
     const inputTexts = splice.addBefore(prevState.inputTexts, index, inputText);
+    const isActives = splice.addBefore(prevState.isActives, index, false);
+
     const outputTexts = splice.addBefore(prevState.outputTexts, index, "");
+    const isLoadings = splice.addBefore(prevState.isLoadings, index, true);
 
     return {
       focusIndex: index,
       currentText: "",
+
       inputTexts,
+      isActives,
+
       outputTexts,
+      isLoadings,
+
       replCount,
     };
   },

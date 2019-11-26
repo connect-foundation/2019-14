@@ -10,8 +10,11 @@ const makeInitState = () => {
   return {
     focusIndex: 0,
     currentText: "",
+
     inputTexts: [],
     outputTexts: [],
+    isLoadings: [],
+
     replCount: 0,
   };
 };
