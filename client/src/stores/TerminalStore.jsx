@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useReducer } from "react";
 import propTypes from "prop-types";
 import terminalReducer from "../reducers/TerminalReducer";
-import { useReducerAsync } from "../utils";
 
 const TerminalContext = React.createContext();
 const TerminalDispatchContext = React.createContext();
@@ -12,6 +11,8 @@ const makeInitState = () => {
     currentText: "",
 
     inputTexts: [],
+    isActives: [],
+
     outputTexts: [],
     isLoadings: [],
 
@@ -20,7 +21,7 @@ const makeInitState = () => {
 };
 
 const TerminalStore = ({ children }) => {
-  const [terminalState, dispatch] = useReducerAsync(
+  const [terminalState, dispatch] = useReducer(
     terminalReducer,
     makeInitState()
   );
