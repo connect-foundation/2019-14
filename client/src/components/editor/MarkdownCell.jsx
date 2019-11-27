@@ -2,11 +2,11 @@ import React, { useEffect, useContext } from "react";
 import propTypes from "prop-types";
 
 import MarkdownWrapper from "./style/MarkdownWrapper";
+import { PLACEHOLDER, EVENT_TYPE } from "../../enums";
 import cellGenerator from "./CellGenerator";
-import { getType, getStart, handlerManager } from "../../utils/";
+import { getType, getStart, handlerManager } from "../../utils";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
-import { PLACEHOLDER, EVENT_TYPE } from "../../enums";
 
 const useCellState = () => {
   const { state } = useContext(CellContext);

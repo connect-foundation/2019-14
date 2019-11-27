@@ -1,20 +1,9 @@
+import TestStore from "../TestStore";
 import {
   TERMINAL_SETTING_ACTION,
   terminalSettingActionCreator as tsActionCreator,
 } from "../../src/actions/TerminalSettingAction";
-import terminalSettingReducer from "../../src/reducers/TerminalSettingReducer.js";
-
-class TestStore {
-  constructor(reducer, state = {}) {
-    this.state = state;
-    this.reducer = reducer;
-  }
-
-  dispatch(action) {
-    this.state = this.reducer(this.state, action);
-    return this.state;
-  }
-};
+import terminalSettingReducer from "../../src/reducers/TerminalSettingReducer";
 
 const testcases = {
   open: [
@@ -29,7 +18,6 @@ const testcases = {
 };
 
 describe("Terminal Setting Side Window", () => {
-
   it("open window", () => {
     testcases.open.map((testcase) => {
       const { init, answer } = testcase;
@@ -39,4 +27,3 @@ describe("Terminal Setting Side Window", () => {
     });
   });
 });
-
