@@ -4,6 +4,7 @@ const TERMINAL_ACTION = {
   EVAL_ALL: "terminal/eval-all",
   FOCUS_CHANGE: "terminal/focus-change",
   CHANGE_TEXT: "terminal/change-text",
+  UPDATE_OUTPUT: "terminal/update-output",
 };
 
 const terminalActionCreator = {
@@ -11,8 +12,6 @@ const terminalActionCreator = {
    * Enter를 누를시에 사용된다.
    * 새로운 REPL cell을 현재 위치에 생성한다.
    * 마지막 위치로 포거스 된다.
-   * @param {Number} index index위치에 새로운 REPL cell을 위한 데이터들을 생성한다.
-   * @param {String} inputText inputText 초기화값이다.
    */
   createNewRepl() {
     return {
@@ -55,9 +54,26 @@ const terminalActionCreator = {
     };
   },
 
+  /**
+   * REPL 입력값을 업데이트한다.
+   * @param {String} text 업데이트될 REPL의 입력값이다.
+   */
   changeCurrentText(text) {
     return {
       type: TERMINAL_ACTION.CHANGE_TEXT,
+      text,
+    };
+  },
+
+  /**
+   * REPL 출력값을 업데이트한다.
+   * @param {Number} index 업데이트될 REPL cell index다.
+   * @param {String} text 업데이트될 REPL 출력값이다.
+   */
+  updateOutputText(index, text) {
+    return {
+      type: TERMINAL_ACTION.UPDATE_OUTPUT,
+      index,
       text,
     };
   },
