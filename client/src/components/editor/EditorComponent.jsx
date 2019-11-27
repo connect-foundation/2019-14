@@ -22,10 +22,7 @@ const EditorComponent = () => {
 
   return (
     <>
-      {cells.map((cell, cellIndex) => {
-        if (state.currentIndex === cellIndex) {
-          return <div key={uuid()}>{cell}</div>;
-        }
+      {cells.map((cell) => {
         return <div key={uuid()}>{cell}</div>;
       })}
     </>
