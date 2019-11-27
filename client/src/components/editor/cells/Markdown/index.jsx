@@ -25,33 +25,40 @@ const MarkdownCell = ({ cellUuid }) => {
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
+  const text = state.texts[cellIndex];
+  const currentTag = state.tags[cellIndex];
 
   if (currentIndex === cellIndex) {
     inputRef = state.inputRef;
-    const keydownHandlers = {
-      [EVENT_TYPE.ENTER]: (e) => {
-        const { textContent } = e.target;
-        const componentCallback = (uuid) => <MarkdownCell cellUuid={uuid} />;
-        saveCursorPosition(dispatch, inputRef);
-        dispatch(cellActionCreator.input(cellUuid, textContent));
-        newCell(dispatch, componentCallback);
-      },
-      [EVENT_TYPE.ARROW_UP]: (e) => {
-        if (isContinuePrev(cellIndex)) {
-          focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
-        }
-      },
-      [EVENT_TYPE.ARROW_DOWN]: (e) => {
-        if (isContinueNext(cellIndex, state.cells.length)) {
-          focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
-        }
-      },
-    };
-    handlerManager.attachKeydownEvent(window, keydownHandlers);
-  }
 
-  const text = state.texts[cellIndex];
-  const currentTag = state.tags[cellIndex];
+    const enterEvent = (e) => {
+      const { textContent } = e.target;
+      const componentCallback = (uuid) => <MarkdownCell cellUuid={uuid} />;
+      saveCursorPosition(dispatch, inputRef);
+      dispatch(cellActionCreator.input(cellUuid, textContent));
+      newCell(dispatch, componentCallback);
+    };
+
+    const arrowUpEvent = (e) => {
+      if (isContinuePrev(cellIndex)) {
+        focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
+      }
+    };
+
+    const arrowDownEvent = (e) => {
+      if (isContinueNext(cellIndex, state.cells.length)) {
+        focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
+      }
+    };
+
+    const keydownHandlers = {
+      [EVENT_TYPE.ENTER]: enterEvent,
+      [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
+      [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+    };
+
+    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex);
+  }
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
