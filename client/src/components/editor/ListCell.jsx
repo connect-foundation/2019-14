@@ -4,9 +4,9 @@ import MarkdownWrapper from "./style/MarkdownWrapper";
 import { CellContext } from "../../stores/CellStore";
 import { useCellState } from "../../utils/";
 
-const HeaderCell = React.forwardRef(({ cellUuid }, ref) => {
+const ListCell = React.forwardRef(({ cellUuid }, ref) => {
   const { state } = useContext(CellContext);
-  const { tag, text, placeholder } = useCellState(state, cellUuid);
+  const { text, placeholder } = useCellState(state, cellUuid);
   const inputRef = useRef();
 
   useImperativeHandle(ref, () => ({
@@ -17,8 +17,7 @@ const HeaderCell = React.forwardRef(({ cellUuid }, ref) => {
 
   return (
     <MarkdownWrapper
-      as={tag}
-      isQuote={false}
+      as="li"
       placeholder={placeholder}
       // onKeyDown={keyDownHandler}
       // onKeyPress={onKeyPress}
@@ -32,4 +31,4 @@ const HeaderCell = React.forwardRef(({ cellUuid }, ref) => {
   );
 });
 
-export default HeaderCell;
+export default ListCell;

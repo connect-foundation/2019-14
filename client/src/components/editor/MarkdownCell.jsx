@@ -2,12 +2,11 @@ import React, { useEffect, useContext } from "react";
 import propTypes from "prop-types";
 
 import MarkdownWrapper from "./style/MarkdownWrapper";
-import getType from "../../utils/getType";
 import { PLACEHOLDER, EVENT_TYPE } from "../../enums";
+import cellGenerator from "./CellGenerator";
+import { getType, getStart, handlerManager } from "../../utils";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
-import cellGenerator from "./CellGenerator";
-import { handlerManager } from "../../utils";
 
 const useCellState = () => {
   const { state } = useContext(CellContext);
@@ -100,7 +99,7 @@ const setCursorPosition = () => {
 const MarkdownCell = ({ cellUuid }) => {
   const cellDispatch = useCellDispatch();
   const cellState = useCellState();
-  const { currentIndex, uuidManager, cursor } = cellState;
+  const { currentIndex, uuidManager, start, cursor } = cellState;
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
@@ -157,11 +156,27 @@ const MarkdownCell = ({ cellUuid }) => {
 
     if (matchingTag && matchingTag !== currentTag) {
       const makeNewCell = cellGenerator[matchingTag];
-      const cell = makeNewCell(cellUuid);
-      // console.log("hello cell", cell);
-      cellDispatch(
-        cellActionCreator.transform(cellIndex, "", matchingTag, cell)
-      );
+
+      if (matchingTag === "ol") {
+        const newStart = start ? start + 1 : getStart(textContent);
+        const cell = makeNewCell(cellUuid, newStart);
+
+        cellDispatch(
+          cellActionCreator.transform(
+            cellIndex,
+            "",
+            matchingTag,
+            cell,
+            newStart
+          )
+        );
+      } else {
+        const cell = makeNewCell(cellUuid);
+
+        cellDispatch(
+          cellActionCreator.transform(cellIndex, "", matchingTag, cell)
+        );
+      }
     }
   };
 

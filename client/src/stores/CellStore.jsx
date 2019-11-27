@@ -18,6 +18,7 @@ const CellStore = ({ children }) => {
       start: 0,
       end: 0,
     },
+    start: null,
   });
 
   return (

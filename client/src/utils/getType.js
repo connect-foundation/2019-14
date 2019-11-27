@@ -7,15 +7,15 @@ const MARKDOWN_REGEXP = {
   h6: /^\s{0,3}#{6}\s*/g,
 
   ul: /^\s{0,3}(-|\*|\+)\s*/g,
-  ol: /^\s{0,3}\d+.\s*/g,
+  ol: /^\s{0,3}\d+\.\s*/g,
 
   blockquote: /^\s{0,3}>\s*/g,
 
   code: /^(\s{4,}\s*)|\s{0,3}`{3,}/g,
 
-  hr: /^\s{0,3}-{3,}|\*{3,}|_{3,}/g,
+  hr: /^\s{0,3}-{3,}|\*{3,}|_{3,}\s*/g,
 
-  terminal: /^\$\$\$\s*/,
+  terminal: /^\s{0,3}\${3,}\s*/,
 };
 
 const getType = (textContent) => {
