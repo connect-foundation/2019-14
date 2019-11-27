@@ -1,4 +1,4 @@
-import { PLACEHOLDER } from "../enums/";
+import { PLACEHOLDER } from "../enums";
 
 const useCellState = (state, cellUuid) => {
   const { texts, tags, uuidManager } = state;
