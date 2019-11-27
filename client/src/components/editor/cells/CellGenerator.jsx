@@ -11,12 +11,12 @@ const quoteGenerator = (uuid) => <QuoteCell cellUuid={uuid} />;
 const codeGenerator = (uuid) => <CodeCell cellUuid={uuid} />;
 
 const unorderedListGenerator = (uuid) => (
-  <ul cellUuid={`ul${uuid}`}>
+  <ul>
     <ListCell cellUuid={uuid} />
   </ul>
 );
 const orderedListGenerator = (uuid, start) => (
-  <ol cellUuid={`ol${uuid}`} start={start}>
+  <ol start={start}>
     <ListCell cellUuid={uuid} />
   </ol>
 );
