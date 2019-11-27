@@ -206,7 +206,8 @@ class DockerApi {
       name: defaultTagName,
       Tty: true,
     });
-    this.startContainer(newContainerInfo.id);
+    // TODO startContainer 결과를 합쳐서 리턴 할 것
+    await this.startContainer(newContainerInfo.id);
     return newContainerInfo.id;
   }
 
