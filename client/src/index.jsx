@@ -4,11 +4,14 @@ import { createGlobalStyle } from "styled-components";
 import EditorPage from "./pages/EditorPage";
 
 const GlobalStyle = createGlobalStyle`
-    body {
-        font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
+  body {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 19px;
+    color: #e5e5e6;
+
+    margin: 0;
+    padding: 0;
+  }
 `;
 
 function App() {
