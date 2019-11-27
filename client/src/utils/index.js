@@ -1,7 +1,7 @@
 import getType from "./getType";
 import UuidManager from "./UuidManager";
-import HandlerManager from "./HandlerManager";
 import useReducerAsync from "./useReducerAsync";
+import handlerManager from "./HandlerManager";
 
 const utils = {};
 utils.splice = {
@@ -65,4 +65,4 @@ utils.deepCopy = (obj) => {
   return result;
 };
 
-export { utils, getType, UuidManager, HandlerManager, useReducerAsync };
+export { utils, getType, UuidManager, handlerManager, useReducerAsync };

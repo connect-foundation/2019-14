@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { EVENT_TYPE, THEME } from "../../enums";
-import { utils } from "../../utils";
+import { utils, handlerManager } from "../../utils";
 import { terminalActionCreator as action } from "../../actions/TerminalAction";
 import {
   TerminalStore,
@@ -48,19 +48,16 @@ const ReplOutputComponent = ({ text, isLoading }) => {
 };
 
 ReplOutputWrapper.propTypes = {
-  text: PropTypes.string,
   isLoading: PropTypes.bool,
+  text: PropTypes.string,
 };
 
-const handlers = {};
 const addHandlers = (focusHandler) => {
-  handlers.terminal = focusHandler;
-
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      handlers.terminal[EVENT_TYPE.ENTER](e);
-    }
-  });
+  handlerManager.initHandler();
+  handlerManager.setHandler(EVENT_TYPE.ENTER, (e) =>
+    focusHandler[EVENT_TYPE.ENTER](e)
+  );
+  handlerManager.setWindowKeydownEvent();
 };
 
 const ReplCell = ({ inputText, outputText, isActive, isLoading }) => {
@@ -119,7 +116,6 @@ const ReplContainer = () => {
   const focusHandlers = {
     [EVENT_TYPE.ENTER]: (e) => {
       e.preventDefault();
-
       dispatchAsync(action.createNewRepl());
     },
   };
