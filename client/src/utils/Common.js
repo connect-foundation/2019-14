@@ -1,4 +1,5 @@
 const utils = {};
+
 utils.splice = {
   /**
    * @param {Array} array 데이터를 끼워넣을 배열

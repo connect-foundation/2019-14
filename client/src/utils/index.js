@@ -4,7 +4,7 @@ import UuidManager from "./UuidManager";
 import useReducerAsync from "./useReducerAsync";
 import handlerManager from "./HandlerManager";
 import useCellState from "./useCellState";
-import Request from "./Request";
+import request from "./Request";
 import utils from "./Common";
 
 export {
@@ -15,5 +15,5 @@ export {
   handlerManager,
   useCellState,
   useReducerAsync,
-  Request,
+  request,
 };
