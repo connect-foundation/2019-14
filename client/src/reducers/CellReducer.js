@@ -46,6 +46,7 @@ const cellReducerHandler = {
 
     return {
       ...state,
+      currentIndex: currentIndex + 1,
       cells,
       texts,
       tags,
@@ -53,8 +54,10 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.INPUT]: (state, action) => {
-    const { currentIndex } = state;
-    const texts = splice.change(state.texts, currentIndex, action.text);
+    const { uuidManager } = state;
+    const { text, cellUuid } = action;
+    const index = uuidManager.findIndex(cellUuid);
+    const texts = splice.change(state.texts, index, text);
 
     return {
       ...state,
@@ -76,7 +79,10 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.FOCUS.MOVE]: (state, { index }) => {
+  [CELL_ACTION.FOCUS.MOVE]: (state, { cellUuid }) => {
+    const { uuidManager } = state;
+    const index = uuidManager.findIndex(cellUuid);
+
     return {
       ...state,
       currentIndex: index,

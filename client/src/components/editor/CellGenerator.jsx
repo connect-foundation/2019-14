@@ -1,25 +1,25 @@
 import React from "react";
 import CELL_TAG from "../../enums/CELL_TAG";
-import HeaderCell from "./HeaderCell";
+import HeadingCell from "./HeadingCell";
 import TerminalCell from "./TerminalCell";
 import QuoteCell from "./QuoteCell";
 import CodeCell from "./CodeCell";
 import ListCell from "./ListCell";
 
-const headerGenerator = (uuid) => <HeaderCell cellUuid={uuid} />;
+const headingGenerator = (uuid) => <HeadingCell cellUuid={uuid} />;
 
 const cellGenerator = {
-  [CELL_TAG.HEADING.H1]: headerGenerator,
+  [CELL_TAG.HEADING.H1]: headingGenerator,
 
-  [CELL_TAG.HEADING.H2]: headerGenerator,
+  [CELL_TAG.HEADING.H2]: headingGenerator,
 
-  [CELL_TAG.HEADING.H3]: headerGenerator,
+  [CELL_TAG.HEADING.H3]: headingGenerator,
 
-  [CELL_TAG.HEADING.H4]: headerGenerator,
+  [CELL_TAG.HEADING.H4]: headingGenerator,
 
-  [CELL_TAG.HEADING.H5]: headerGenerator,
+  [CELL_TAG.HEADING.H5]: headingGenerator,
 
-  [CELL_TAG.HEADING.H6]: headerGenerator,
+  [CELL_TAG.HEADING.H6]: headingGenerator,
 
   [CELL_TAG.TERMINAL]: (uuid) => <TerminalCell cellUuid={uuid} />,
 
