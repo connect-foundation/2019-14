@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { THEME } from "../enums";
 import { CellStore } from "../stores/CellStore";
 import EditorComponent from "../components/editor/EditorComponent";
 import EditorHeader from "../components/editor/header/EditorHeader";
@@ -13,6 +14,8 @@ const EditorWindowLayout = styled.div`
   flex-flow: column;
 
   height: 100vh;
+
+  background-color: ${THEME.DARK.THEME_COLOR_2};
 `;
 
 const MarkdownWindowLayout = styled.div`
@@ -21,6 +24,8 @@ const MarkdownWindowLayout = styled.div`
   padding: 0;
 
   height: 100%;
+
+  max-height: 100%;
 
   overflow: auto;
 `;
