@@ -1,10 +1,9 @@
 import React from "react";
-import CELL_TAG from "../../enums/CELL_TAG";
-import HeadingCell from "./HeadingCell";
-import TerminalCell from "./TerminalCell";
-import QuoteCell from "./QuoteCell";
-import CodeCell from "./CodeCell";
-import ListCell from "./ListCell";
+import HeadingCell from "./Heading";
+import TerminalCell from "./Terminal";
+import QuoteCell from "./Quote";
+import CodeCell from "./Code";
+import ListCell from "./List";
 
 const headingGenerator = (uuid) => <HeadingCell cellUuid={uuid} />;
 const terminalGenerator = (uuid) => <TerminalCell cellUuid={uuid} />;
@@ -12,12 +11,12 @@ const quoteGenerator = (uuid) => <QuoteCell cellUuid={uuid} />;
 const codeGenerator = (uuid) => <CodeCell cellUuid={uuid} />;
 
 const unorderedListGenerator = (uuid) => (
-  <ul cellUuid={"ul" + uuid}>
+  <ul cellUuid={`ul${uuid}`}>
     <ListCell cellUuid={uuid} />
   </ul>
 );
 const orderedListGenerator = (uuid, start) => (
-  <ol cellUuid={"ol" + uuid} start={start}>
+  <ol cellUuid={`ol${uuid}`} start={start}>
     <ListCell cellUuid={uuid} />
   </ol>
 );

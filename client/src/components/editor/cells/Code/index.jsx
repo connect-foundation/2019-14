@@ -1,8 +1,8 @@
 import React, { useRef, useContext, useImperativeHandle } from "react";
 
-import MarkdownWrapper from "./style/MarkdownWrapper";
-import { CellContext } from "../../stores/CellStore";
-import { useCellState } from "../../utils/";
+import MarkdownWrapper from "../../style/MarkdownWrapper";
+import { CellContext } from "../../../../stores/CellStore";
+import { useCellState } from "../../../../utils";
 
 const CodeCell = React.forwardRef(({ cellUuid }, ref) => {
   const { state } = useContext(CellContext);

@@ -81,7 +81,7 @@ const clearWindowKeydownEvent = (target) => {
 };
 
 const setWindowKeydownEvent = (target) => {
-  clearWindowKeydownEvent();
+  clearWindowKeydownEvent(target);
   target.addEventListener("keydown", customKeydownEventHandler);
 };
 

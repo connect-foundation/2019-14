@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef } from "react";
 import { uuid } from "uuidv4";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
-import MarkdownCell from "./MarkdownCell";
+import MarkdownCell from "./cells/Markdown";
 
 const EditorComponent = () => {
   const { state } = useContext(CellContext);

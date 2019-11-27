@@ -1,14 +1,14 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { EVENT_TYPE, THEME } from "../../enums";
-import { utils, handlerManager } from "../../utils";
-import { terminalActionCreator as action } from "../../actions/TerminalAction";
+import { EVENT_TYPE, THEME } from "../../../../enums";
+import { utils, handlerManager } from "../../../../utils";
+import { terminalActionCreator as action } from "../../../../actions/TerminalAction";
 import {
   TerminalStore,
   TerminalContext,
   TerminalDispatchContext,
-} from "../../stores/TerminalStore";
+} from "../../../../stores/TerminalStore";
 
 const { splice } = utils;
 
@@ -17,7 +17,7 @@ const ReplInputWrapper = styled.p.attrs(() => ({
 }))`
   height: 10px;
   padding: 10px;
-  background: ${THEME.DARK_IVORY.THEME_COLOR_5};
+  background: ${THEME.DARK.THEME_COLOR_5};
 `;
 
 const ReplOutputWrapper = styled.p`
