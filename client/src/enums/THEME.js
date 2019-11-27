@@ -15,6 +15,11 @@ const THEME = {
     THEME_COLOR_5: "#FAFAFA",
   },
 
+  DARK_TEMP: {
+    THEME_COLOR_3: "#2f3437",
+    THEME_COLOR_4: "#3f4447",
+  },
+
   DARK_IVORY: {
     THEME_COLOR_1: "#1C1C1A",
     THEME_COLOR_2: "#2F2F2F",
