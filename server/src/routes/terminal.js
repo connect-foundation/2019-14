@@ -7,6 +7,12 @@ const { wrapAsync } = utils;
 
 const router = express.Router();
 
+const {
+  createDefaultTerminal,
+  startTerminal,
+  stopTerminal,
+} = require("../controller/terminal");
+
 const deleteDockerPrefix = (rawString) => {
   return rawString.slice(8);
 };
@@ -26,9 +32,6 @@ const resolveDockerStream = async (stream) => {
   return rawString;
 };
 
-const Terminal = require("../controller/terminal");
-
-const terminalController = new Terminal();
 router.post(
   "/command/not-pending",
   wrapAsync(async (req, res) => {
@@ -49,48 +52,38 @@ router.post(
   })
 );
 
-router.post("/", async (req, res) => {
-  try {
-    const docker = req.app.get("docker");
-    const result = await terminalController.createDefaultTerminal(
-      docker,
-      "ubuntu"
-    );
+router
+  .route("/")
+  .post(
+    wrapAsync(async (req, res) => {
+      const docker = req.app.get("docker");
+      const result = await createDefaultTerminal(docker, "ubuntu");
 
-    if (!result) {
-      res.status(400).json({ message: "not created terminal" });
-      return;
-    }
-    res.status(201).json({ containerId: result });
-    return;
-  } catch (error) {
-    res.json(error);
-  }
-});
+      if (!result) {
+        res.status(400).json({ message: "not created terminal" });
+        return;
+      }
 
-router.patch("/", async (req, res) => {
-  try {
-    const docker = req.app.get("docker");
-    const { containerId } = req.body;
-    const result = await terminalController.startTerminal(docker, containerId);
+      res.status(201).json({ containerId: result });
+    })
+  )
+  .patch(
+    wrapAsync(async (req, res) => {
+      const docker = req.app.get("docker");
+      const { containerId } = req.body;
+      const result = await startTerminal(docker, containerId);
 
-    res.status(201).json({ containerId: result });
-  } catch (error) {
-    // HTTP STATUS CODE 409 mean conflict
-    res.status(409).json(error);
-  }
-});
+      res.status(200).json(result);
+    })
+  )
+  .delete(
+    wrapAsync(async (req, res) => {
+      const docker = req.app.get("docker");
+      const { containerId } = req.body;
+      const result = await stopTerminal(docker, containerId);
 
-router.delete("/", async (req, res) => {
-  try {
-    const docker = req.app.get("docker");
-    const { containerId } = req.body;
-    const result = await terminalController.stopTerminal(docker, containerId);
+      res.status(200).json(result);
+    })
+  );
 
-    res.status(201).json({ containerId: result });
-  } catch (error) {
-    // HTTP STATUS CODE 409 mean conflict
-    res.status(409).json(error);
-  }
-});
 module.exports = router;
