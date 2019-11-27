@@ -76,17 +76,27 @@ const customKeydownEventHandler = (e) => {
   }
 };
 
-const clearWindowKeydownEvent = () => {
-  window.removeEventListener("keydown", customKeydownEventHandler);
+const clearWindowKeydownEvent = (target) => {
+  target.removeEventListener("keydown", customKeydownEventHandler);
 };
 
-const setWindowKeydownEvent = () => {
+const setWindowKeydownEvent = (target) => {
   clearWindowKeydownEvent();
-  window.addEventListener("keydown", customKeydownEventHandler);
+  target.addEventListener("keydown", customKeydownEventHandler);
+};
+
+const attachKeydownEvent = (target, keydownHandlers) => {
+  initHandler();
+  Object.keys(keydownHandlers).forEach((key) => {
+    const keydownHandler = keydownHandlers[key];
+    setHandler(key, keydownHandler);
+  });
+  setWindowKeydownEvent(target);
 };
 
 export default {
   handler,
+  attachKeydownEvent,
   initHandler,
   setHandler,
   setWindowKeydownEvent,

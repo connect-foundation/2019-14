@@ -3,7 +3,7 @@ import propTypes from "prop-types";
 
 import MarkdownWrapper from "./style/MarkdownWrapper";
 import getType from "../../utils/getType";
-import { PLACEHOLDER, EVENT_TYPE, CELL_TAG } from "../../enums";
+import { PLACEHOLDER, EVENT_TYPE } from "../../enums";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
 import cellGenerator from "./CellGenerator";
@@ -32,6 +32,71 @@ const getSelection = () => {
   return cursor;
 };
 
+const saveCursorPosition = (cellDispatch, inputRef) => {
+  if (!inputRef) {
+    return null;
+  }
+
+  const currentCursor = getSelection();
+  cellDispatch(
+    cellActionCreator.moveCursor(currentCursor.start, currentCursor.end)
+  );
+
+  return null;
+};
+
+const newCell = (cellDispatch) => {
+  cellDispatch(
+    cellActionCreator.new((uuid) => <MarkdownCell cellUuid={uuid} />)
+  );
+};
+
+const saveText = (cellUuid, textContent, cellDispatch, inputRef) => {
+  saveCursorPosition(cellDispatch, inputRef);
+  cellDispatch(cellActionCreator.input(cellUuid, textContent));
+};
+
+const isContinueNext = (cellIndex, cellLength) => {
+  if (cellIndex < cellLength - 1) {
+    return true;
+  }
+  return false;
+};
+
+const isContinuePrev = (cellIndex) => {
+  if (cellIndex > 0) {
+    return true;
+  }
+  return false;
+};
+
+const focusNext = (cellUuid, textContent, cellDispatch, inputRef) => {
+  saveText(cellUuid, textContent, cellDispatch, inputRef);
+  cellDispatch(cellActionCreator.focusNext());
+};
+
+const focusPrev = (cellUuid, textContent, cellDispatch, inputRef) => {
+  saveText(cellUuid, textContent, cellDispatch, inputRef);
+  cellDispatch(cellActionCreator.focusPrev());
+};
+
+const createCursor = (text, cursor) => {
+  const cursorFront = text.slice(0, cursor.start);
+  const cursorBack = text.slice(cursor.start, text.length);
+  const content = `${cursorFront}<span id="cursorCaret"></span>${cursorBack}`;
+  return content;
+};
+
+const setCursorPosition = () => {
+  const selection = window.getSelection();
+  const range = selection.getRangeAt(0);
+  const cursorCaret = document.querySelector("#cursorCaret");
+  range.selectNode(cursorCaret);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  range.deleteContents();
+};
+
 const MarkdownCell = ({ cellUuid }) => {
   const cellDispatch = useCellDispatch();
   const cellState = useCellState();
@@ -40,59 +105,27 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const cellIndex = uuidManager.findIndex(cellUuid);
 
-  const saveCursorPosition = () => {
-    if (!inputRef) {
-      return null;
-    }
-
-    const currentCursor = getSelection();
-
-    cellDispatch(
-      cellActionCreator.moveCursor(currentCursor.start, currentCursor.end)
-    );
-
-    return null;
-  };
-
-  const focus = {
-    next: (e) => {
-      if (cellIndex < cellState.cells.length - 1) {
-        const { textContent } = e.target;
-        saveCursorPosition();
-        cellDispatch(cellActionCreator.input(cellUuid, textContent));
-        cellDispatch(cellActionCreator.focusNext());
-      }
-    },
-    prev: (e) => {
-      if (currentIndex > 0) {
-        const { textContent } = e.target;
-        saveCursorPosition();
-        cellDispatch(cellActionCreator.input(cellUuid, textContent));
-        cellDispatch(cellActionCreator.focusPrev());
-      }
-    },
-  };
-
-  const newCell = () => {
-    cellDispatch(
-      cellActionCreator.new((uuid) => <MarkdownCell cellUuid={uuid} />)
-    );
-  };
-
   if (currentIndex === cellIndex) {
     inputRef = cellState.inputRef;
-    handlerManager.initHandler();
-    handlerManager.setHandler(EVENT_TYPE.ENTER, (e) => {
-      const { textContent } = e.target;
-      saveCursorPosition();
-      cellDispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell();
-    });
-    handlerManager.setHandler(EVENT_TYPE.ARROW_UP, focus.prev);
-    handlerManager.setHandler(EVENT_TYPE.ARROW_DOWN, focus.next);
-    handlerManager.setHandler(EVENT_TYPE.TAB, focus.next);
-    handlerManager.setHandler(EVENT_TYPE.SHIFT_TAB, focus.prev);
-    handlerManager.setWindowKeydownEvent();
+    const keydownHandlers = {
+      [EVENT_TYPE.ENTER]: (e) => {
+        const { textContent } = e.target;
+        saveCursorPosition(cellDispatch, inputRef);
+        cellDispatch(cellActionCreator.input(cellUuid, textContent));
+        newCell(cellDispatch);
+      },
+      [EVENT_TYPE.ARROW_UP]: (e) => {
+        if (isContinuePrev(cellIndex)) {
+          focusPrev(cellUuid, e.target.textContent, cellDispatch, inputRef);
+        }
+      },
+      [EVENT_TYPE.ARROW_DOWN]: (e) => {
+        if (isContinueNext(cellIndex, cellState.cells.length)) {
+          focusNext(cellUuid, e.target.textContent, cellDispatch, inputRef);
+        }
+      },
+    };
+    handlerManager.attachKeydownEvent(window, keydownHandlers);
   }
 
   const text = cellState.texts[cellIndex];
@@ -102,25 +135,9 @@ const MarkdownCell = ({ cellUuid }) => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
 
-      const cursorFront = text.slice(0, cursor.start);
-      const cursorBack = text.slice(cursor.start, text.length);
-
-      const content = `${cursorFront}<span id="cursorCaret"></span>${cursorBack}`;
-
+      const content = createCursor(text, cursor);
       inputRef.current.innerHTML = content;
-
-      const selection = window.getSelection();
-      const range = selection.getRangeAt(0);
-
-      const cursorCaret = document.querySelector("#cursorCaret");
-
-      range.selectNode(cursorCaret);
-
-      selection.removeAllRanges();
-      selection.addRange(range);
-
-      range.deleteContents();
-
+      setCursorPosition();
       inputRef.current.normalize();
     }
     /**
@@ -141,7 +158,7 @@ const MarkdownCell = ({ cellUuid }) => {
     if (matchingTag && matchingTag !== currentTag) {
       const makeNewCell = cellGenerator[matchingTag];
       const cell = makeNewCell(cellUuid);
-      console.log("hello cell", cell);
+      // console.log("hello cell", cell);
       cellDispatch(
         cellActionCreator.transform(cellIndex, "", matchingTag, cell)
       );
@@ -164,7 +181,7 @@ const MarkdownCell = ({ cellUuid }) => {
       contentEditable
       onKeyPress={onKeyPress}
       ref={inputRef || null}
-      suppressContentEditableWarning
+      // suppressContentEditableWarning
       dangerouslySetInnerHTML={htmlText()}
     />
   );
