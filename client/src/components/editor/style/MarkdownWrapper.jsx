@@ -16,9 +16,8 @@ const MarkdownWrapper = styled.p`
     cursor: text;
   }
 
-  border-left: ${(props) => (props.isQuote ? "0.25rem solid silver" : null)};
-  padding-left: ${(props) => (props.isQuote ? "0.5rem" : null)};
-  background-color: ${(props) => (props.isCode ? "silver" : null)};}
+  border-left: ${({ isQuote }) => isQuote && "0.25rem solid silver"};
+  padding-left: ${({ isQuote }) => isQuote && "0.5rem"};
 `;
 
 export default MarkdownWrapper;
