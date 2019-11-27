@@ -110,13 +110,14 @@ const cellActionCreator = {
    * @param {String} tag 변경할 Cell의 태그
    * @param {React.element} cell 변경할 Cell 요소
    */
-  transform(index, text, tag, cell) {
+  transform(index, text, tag, cell, start) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
       index,
       text,
       tag,
       cell,
+      start: start || null,
     };
   },
 

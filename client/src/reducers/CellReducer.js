@@ -97,7 +97,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
-    const { index, text, tag, cell } = action;
+    const { index, text, tag, cell, start } = action;
 
     const texts = splice.change(state.texts, index, text);
 
@@ -110,6 +110,7 @@ const cellReducerHandler = {
       texts,
       tags,
       cells,
+      start,
     };
   },
 
