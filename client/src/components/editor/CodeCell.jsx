@@ -4,7 +4,7 @@ import MarkdownWrapper from "./style/MarkdownWrapper";
 import { CellContext } from "../../stores/CellStore";
 import { useCellState } from "../../utils/";
 
-const HeaderCell = React.forwardRef(({ cellUuid }, ref) => {
+const CodeCell = React.forwardRef(({ cellUuid }, ref) => {
   const { state } = useContext(CellContext);
   const { tag, text, placeholder } = useCellState(state, cellUuid);
   const inputRef = useRef();
@@ -18,7 +18,6 @@ const HeaderCell = React.forwardRef(({ cellUuid }, ref) => {
   return (
     <MarkdownWrapper
       as={tag}
-      isQuote={false}
       placeholder={placeholder}
       // onKeyDown={keyDownHandler}
       // onKeyPress={onKeyPress}
@@ -32,4 +31,4 @@ const HeaderCell = React.forwardRef(({ cellUuid }, ref) => {
   );
 });
 
-export default HeaderCell;
+export default CodeCell;
