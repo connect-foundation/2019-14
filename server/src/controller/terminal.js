@@ -1,6 +1,4 @@
-function Terminal() {}
-
-Terminal.prototype.createDefaultTerminal = async (
+const createDefaultTerminal = async (
   dockerInstance,
   baseImageName = "ubuntu"
 ) => {
@@ -8,14 +6,18 @@ Terminal.prototype.createDefaultTerminal = async (
   return containerId;
 };
 
-Terminal.prototype.startTerminal = async (dockerInstance, containerId) => {
+const startTerminal = async (dockerInstance, containerId) => {
   const result = await dockerInstance.startContainer(containerId);
   return result;
 };
 
-Terminal.prototype.stopTerminal = async (dockerInstance, containerId) => {
+const stopTerminal = async (dockerInstance, containerId) => {
   const result = await dockerInstance.stopContainer(containerId);
   return result;
 };
 
-module.exports = Terminal;
+module.exports = {
+  createDefaultTerminal,
+  startTerminal,
+  stopTerminal,
+};
