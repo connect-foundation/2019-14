@@ -8,14 +8,14 @@ import React, {
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import createDebug from "debug";
-import { EVENT_TYPE, THEME } from "../../enums";
-import { utils, handlerManager, request } from "../../utils";
-import { terminalActionCreator as action } from "../../actions/TerminalAction";
+import { EVENT_TYPE, THEME } from "../../../../enums";
+import { utils, handlerManager, request } from "../../../../utils";
+import { terminalActionCreator as action } from "../../../../actions/TerminalAction";
 import {
   TerminalStore,
   TerminalContext,
   TerminalDispatchContext,
-} from "../../stores/TerminalStore";
+} from "../../../../stores/TerminalStore";
 
 const debug = createDebug("boost:terminal-cell");
 

@@ -1,10 +1,10 @@
 import React, { useRef, useContext, useImperativeHandle } from "react";
 
-import MarkdownWrapper from "./style/MarkdownWrapper";
-import { CellContext } from "../../stores/CellStore";
-import { useCellState } from "../../utils/";
+import MarkdownWrapper from "../../style/MarkdownWrapper";
+import { CellContext } from "../../../../stores/CellStore";
+import { useCellState } from "../../../../utils";
 
-const QuoteCell = React.forwardRef(({ cellUuid }, ref) => {
+const HeaderCell = React.forwardRef(({ cellUuid }, ref) => {
   const { state } = useContext(CellContext);
   const { tag, text, placeholder } = useCellState(state, cellUuid);
   const inputRef = useRef();
@@ -18,7 +18,7 @@ const QuoteCell = React.forwardRef(({ cellUuid }, ref) => {
   return (
     <MarkdownWrapper
       as={tag}
-      isQuote={true}
+      isQuote={false}
       placeholder={placeholder}
       // onKeyDown={keyDownHandler}
       // onKeyPress={onKeyPress}
@@ -32,4 +32,4 @@ const QuoteCell = React.forwardRef(({ cellUuid }, ref) => {
   );
 });
 
-export default QuoteCell;
+export default HeaderCell;

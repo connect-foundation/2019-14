@@ -36,13 +36,14 @@ const cellActionCreator = {
 
   /**
    * 셀을 생성한다.
-   * @param {Cell} createMarkdownCell: 새 셀 컴포넌트를 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
+   * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
+   * @param {String} tag 셀의 타입(태그). 생략시 default input 셀이 생성된다.
    */
-  new(createMarkdownCell) {
+  new(createMarkdownCell, tag = CELL_TAG.DEFAULT) {
     return {
       type: CELL_ACTION.NEW,
       createMarkdownCell,
-      tag: CELL_TAG.DEFAULT,
+      tag,
     };
   },
 

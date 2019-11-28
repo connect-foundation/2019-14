@@ -1,12 +1,12 @@
 import React, { useRef, useContext, useImperativeHandle } from "react";
 
-import MarkdownWrapper from "./style/MarkdownWrapper";
-import { CellContext } from "../../stores/CellStore";
-import { useCellState } from "../../utils/";
+import MarkdownWrapper from "../../style/MarkdownWrapper";
+import { CellContext } from "../../../../stores/CellStore";
+import { useCellState } from "../../../../utils";
 
-const ListCell = React.forwardRef(({ cellUuid }, ref) => {
+const QuoteCell = React.forwardRef(({ cellUuid }, ref) => {
   const { state } = useContext(CellContext);
-  const { text, placeholder } = useCellState(state, cellUuid);
+  const { tag, text, placeholder } = useCellState(state, cellUuid);
   const inputRef = useRef();
 
   useImperativeHandle(ref, () => ({
@@ -17,7 +17,8 @@ const ListCell = React.forwardRef(({ cellUuid }, ref) => {
 
   return (
     <MarkdownWrapper
-      as="li"
+      as={tag}
+      isQuote
       placeholder={placeholder}
       // onKeyDown={keyDownHandler}
       // onKeyPress={onKeyPress}
@@ -31,4 +32,4 @@ const ListCell = React.forwardRef(({ cellUuid }, ref) => {
   );
 });
 
-export default ListCell;
+export default QuoteCell;

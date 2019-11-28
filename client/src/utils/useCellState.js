@@ -1,24 +1,25 @@
 import { PLACEHOLDER } from "../enums";
 
 const useCellState = (state, cellUuid) => {
-  const { texts, tags, uuidManager } = state;
+  const { currentIndex, texts, tags, uuidManager } = state;
 
-  const index = uuidManager.findIndex(cellUuid);
+  const cellIndex = uuidManager.findIndex(cellUuid);
 
-  if (index < 0) {
+  if (cellIndex < 0) {
     // TODO: attach debug
     return null;
   }
 
-  const tag = tags[index];
+  const tag = tags[cellIndex];
   const placeholder = PLACEHOLDER[tag];
-  const text = texts[index];
+  const text = texts[cellIndex];
 
   return {
-    index,
+    currentIndex,
+    cellIndex,
     tag,
-    text,
     placeholder,
+    text,
   };
 };
 
