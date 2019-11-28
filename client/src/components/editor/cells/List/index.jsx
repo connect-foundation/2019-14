@@ -9,6 +9,7 @@ import { EVENT_TYPE } from "../../../../enums";
 import { useCellState, handlerManager } from "../../../../utils";
 
 import {
+  newCell,
   saveCursorPosition,
   isContinuePrev,
   isContinueNext,
@@ -17,7 +18,19 @@ import {
   setCursorPosition,
   createCursor,
 } from "../Markdown/handler";
-import { newCell } from "./handler";
+// import {  } from "./handler";
+import { cellGenerator, setGenerator } from "../CellGenerator";
+
+setGenerator("ul", (uuid) => (
+  <ul>
+    <ListCell cellUuid={uuid} />
+  </ul>
+));
+setGenerator("ol", (uuid, start) => (
+  <ol start={start}>
+    <ListCell cellUuid={uuid} />
+  </ol>
+));
 
 // const ListCell = React.forwardRef(({ cellUuid }, ref) => {
 const ListCell = ({ cellUuid }) => {
@@ -40,12 +53,17 @@ const ListCell = ({ cellUuid }) => {
   //   },
   // }));
 
-  if (currentIndex === cellIndex) {
-    inputRef = state.inputRef;
+  const enterEvent = (e) => {
+    const { textContent } = e.target;
+    const componentCallback = cellGenerator.ul;
+    saveCursorPosition(dispatch, inputRef);
+    dispatch(cellActionCreator.input(cellUuid, textContent));
+    newCell(dispatch, componentCallback, "ul");
+  };
 
-    const enterEvent = (e) => {
-      const { textContent } = e.target;
-      /*
+  const enterEvent = (e) => {
+    const { textContent } = e.target;
+    /*
       e.target.insertAdjacentHTML(
         "afterend",
         renderToString(
@@ -59,43 +77,46 @@ const ListCell = ({ cellUuid }) => {
         )
       );
       */
-      const isOrderedList = tag == "ol";
+    const isOrderedList = tag == "ol";
 
-      const component = (uuid) =>
-        isOrderedList ? (
-          <ol start={newStart}>
-            <ListCell cellUuid={uuid} />
-          </ol>
-        ) : (
-          <ul>
-            <ListCell cellUuid={uuid} />
-          </ul>
-        );
+    const component = (uuid) =>
+      isOrderedList ? (
+        <ol start={newStart}>
+          <ListCell cellUuid={uuid} />
+        </ol>
+      ) : (
+        <ul>
+          <ListCell cellUuid={uuid} />
+        </ul>
+      );
 
-      const componentCallback = (uuid) => component(uuid);
+    const componentCallback = (uuid) => component(uuid);
 
-      saveCursorPosition(dispatch, inputRef);
-      dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(dispatch, componentCallback, tag, newStart);
-    };
+    saveCursorPosition(dispatch, inputRef);
+    dispatch(cellActionCreator.input(cellUuid, textContent));
+    newCell(dispatch, componentCallback, tag, newStart);
+  };
 
-    const arrowUpEvent = (e) => {
-      if (isContinuePrev(cellIndex)) {
-        focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
-      }
-    };
+  const arrowUpEvent = (e) => {
+    if (isContinuePrev(cellIndex)) {
+      focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
+    }
+  };
 
-    const arrowDownEvent = (e) => {
-      if (isContinueNext(cellIndex, state.cells.length)) {
-        focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
-      }
-    };
+  const arrowDownEvent = (e) => {
+    if (isContinueNext(cellIndex, state.cells.length)) {
+      focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
+    }
+  };
 
-    const keydownHandlers = {
-      [EVENT_TYPE.ENTER]: enterEvent,
-      [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
-      [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
-    };
+  const keydownHandlers = {
+    [EVENT_TYPE.ENTER]: enterEvent,
+    [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
+    [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+  };
+
+  if (currentIndex === cellIndex) {
+    inputRef = state.inputRef;
 
     handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, "li");
   }
@@ -104,23 +125,37 @@ const ListCell = ({ cellUuid }) => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
 
-      // const content = createCursor(text, state.cursor);
-      // inputRef.current.innerHTML = content;
-      // setCursorPosition();
-      // inputRef.current.normalize();
+      if (text.length > 0) {
+        const content = createCursor(text, state.cursor);
+        inputRef.current.innerHTML = content;
+        setCursorPosition();
+        inputRef.current.normalize();
+      }
     }
   }, [inputRef]);
+
+  const onClick = () => {
+    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, tag);
+  };
+
+  const htmlText = () => {
+    /**
+     * @todo text에 대한 보안장치 필요
+     * @todo text에 대해 원하는 것 외에는 전부 유니코드로 바꾸는 로직 필요
+     * - placeholder의 key 배열에 해당하는 태그 외에는 전부 변환한다던가
+     */
+    return { __html: text };
+  };
 
   return (
     <MarkdownWrapper
       as="li"
-      placeholder={placeholder}
-      ref={inputRef || null}
-      suppressContentEditableWarning
       contentEditable
-    >
-      {text}
-    </MarkdownWrapper>
+      placeholder={placeholder}
+      onClick={onClick}
+      ref={inputRef || null}
+      dangerouslySetInnerHTML={htmlText()}
+    />
   );
 };
 

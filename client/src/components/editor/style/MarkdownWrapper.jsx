@@ -14,7 +14,12 @@ const MarkdownWrapper = styled.p`
   }
   &:hover {
     cursor: text;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
   }
+
+  margin: 0;
+
+  padding: 0.2em;
 
   border-left: ${({ isQuote }) => isQuote && "0.25rem solid silver"};
   padding-left: ${({ isQuote }) => isQuote && "0.5rem"};

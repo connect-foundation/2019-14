@@ -5,7 +5,7 @@ import { CellStore } from "../stores/CellStore";
 import EditorComponent from "../components/editor/EditorComponent";
 import EditorHeader from "../components/editor/header/EditorHeader";
 import EditorToolbar from "../components/editor/toolbar/ToolBar";
-import TerminalSetting from "../components/editor/side-window/TerminalSetting";
+// import TerminalSetting from "../components/editor/side-window/TerminalSetting";
 
 const EditorWindowLayout = styled.div`
   position: relative;
@@ -15,19 +15,50 @@ const EditorWindowLayout = styled.div`
 
   height: 100vh;
 
-  background-color: ${THEME.DARK.THEME_COLOR_2};
+  background-color: ${THEME.VS_CODE.EDITOR};
+`;
+
+const scrollStyle = `
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #de8438;
+    outline: 1px solid ${THEME.VS_CODE.EDITOR};
+  }
+
+  body::-webkit-scrollbar-track {
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-button:vertical:increment {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-button:vertical:decrement {
+    background: transparent;
+  }
 `;
 
 const MarkdownWindowLayout = styled.div`
   position: relative;
 
   padding: 0;
+  padding-left: 0.5em;
 
   height: 100%;
 
-  max-height: 100%;
+  overflow-y: auto;
 
-  overflow: auto;
+  ${scrollStyle}
+`;
+
+const HeaderLayout = styled.div`
+  background-color: ${THEME.VS_CODE.HEADER};
 `;
 
 const EditorPage = () => {
@@ -35,11 +66,12 @@ const EditorPage = () => {
     <>
       <CellStore>
         <EditorWindowLayout>
-          <EditorHeader />
-          <EditorToolbar />
+          <HeaderLayout>
+            <EditorHeader />
+            <EditorToolbar />
+          </HeaderLayout>
           <MarkdownWindowLayout>
             <EditorComponent />
-            <TerminalSetting />
           </MarkdownWindowLayout>
         </EditorWindowLayout>
       </CellStore>

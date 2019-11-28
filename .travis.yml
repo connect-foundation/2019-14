@@ -57,13 +57,8 @@ jobs:
     before_script:
     - cd $TRAVIS_BUILD_DIR/client
 
-  - stage: release
-    name: "release to production like server"
-    script:
-    - . ./travis-release.sh
-
-  - stage: production
-    name: "deploy to production server"
+  - stage: release 
+    name: "deploy server to release server"
     script:
     - >
       sshpass -p "$PROD_USER_PASSWORD"
@@ -85,7 +80,35 @@ jobs:
       sshpass -p $PROD_USER_PASSWORD
       ssh -p $PROD_SERVER_PORT -o StrictHostKeyChecking=no 
       $PROD_USER_ID@$PROD_SERVER_HOST "cd client && npm start"
-    name: "client deploy"
+    name: "deploy client to release server"
+    before_script:
+    - cd $TRAVIS_BUILD_DIR/client
+    - npm start build
+
+  - stage: production
+    name: "deploy server to production server"
+    script:
+    - >
+      sshpass -p "$PROD_USER_PASSWORD"
+      scp -P $PROD_SERVER_PORT -r -o StrictHostKeyChecking=no 
+      ./ $PROD_USER_ID@$PROD_SERVER_HOST:/home/boost/server
+    - >
+      sshpass -p "$PROD_USER_PASSWORD"
+      ssh -p $PROD_SERVER_PORT -o StrictHostKeyChecking=no 
+      $PROD_USER_ID@$PROD_SERVER_HOST "cd server && npm start production"
+    before_script:
+    - cd $TRAVIS_BUILD_DIR/server
+
+  - script:
+    - >
+      sshpass -p $PROD_USER_PASSWORD
+      scp -P $PROD_SERVER_PORT -r -o StrictHostKeyChecking=no 
+      ./dist $PROD_USER_ID@$PROD_SERVER_HOST:/home/boost/client
+    - >
+      sshpass -p $PROD_USER_PASSWORD
+      ssh -p $PROD_SERVER_PORT -o StrictHostKeyChecking=no 
+      $PROD_USER_ID@$PROD_SERVER_HOST "cd client && npm start"
+    name: "deploy client to production server"
     before_script:
     - cd $TRAVIS_BUILD_DIR/client
     - npm start build

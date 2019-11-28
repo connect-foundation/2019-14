@@ -5,7 +5,6 @@ const DocumentTitleWrapper = styled.div`
   width: 60%;
   border: none;
   outline: none;
-  padding: 1rem;
 `;
 
 export default DocumentTitleWrapper;

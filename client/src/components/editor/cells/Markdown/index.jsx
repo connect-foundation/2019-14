@@ -3,7 +3,7 @@ import propTypes from "prop-types";
 
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
-import cellGenerator from "../CellGenerator";
+import { cellGenerator, setGenerator } from "../CellGenerator";
 import { getType, getStart, handlerManager } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
@@ -18,6 +18,11 @@ import {
   setCursorPosition,
 } from "./handler";
 
+setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
+setGenerator("hr", (uuid) => (
+  <hr cellUuid={uuid} noshade="noshade" style={{ borderColor: "silver" }} />
+));
+
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
@@ -28,35 +33,34 @@ const MarkdownCell = ({ cellUuid }) => {
   const text = state.texts[cellIndex];
   const currentTag = state.tags[cellIndex];
 
+  const enterEvent = (e) => {
+    const { textContent } = e.target;
+    const componentCallback = cellGenerator.p;
+    saveCursorPosition(dispatch, inputRef);
+    dispatch(cellActionCreator.input(cellUuid, textContent));
+    newCell(dispatch, componentCallback);
+  };
+
+  const arrowUpEvent = (e) => {
+    if (isContinuePrev(cellIndex)) {
+      focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
+    }
+  };
+
+  const arrowDownEvent = (e) => {
+    if (isContinueNext(cellIndex, state.cells.length)) {
+      focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
+    }
+  };
+
+  const keydownHandlers = {
+    [EVENT_TYPE.ENTER]: enterEvent,
+    [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
+    [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+  };
+
   if (currentIndex === cellIndex) {
     inputRef = state.inputRef;
-
-    const enterEvent = (e) => {
-      const { textContent } = e.target;
-      const componentCallback = (uuid) => <MarkdownCell cellUuid={uuid} />;
-      saveCursorPosition(dispatch, inputRef);
-      dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(dispatch, componentCallback);
-    };
-
-    const arrowUpEvent = (e) => {
-      if (isContinuePrev(cellIndex)) {
-        focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
-      }
-    };
-
-    const arrowDownEvent = (e) => {
-      if (isContinueNext(cellIndex, state.cells.length)) {
-        focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
-      }
-    };
-
-    const keydownHandlers = {
-      [EVENT_TYPE.ENTER]: enterEvent,
-      [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
-      [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
-    };
-
     handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex);
   }
 
@@ -103,6 +107,10 @@ const MarkdownCell = ({ cellUuid }) => {
     }
   };
 
+  const onClick = () => {
+    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex);
+  };
+
   const htmlText = () => {
     /**
      * @todo text에 대한 보안장치 필요
@@ -118,6 +126,7 @@ const MarkdownCell = ({ cellUuid }) => {
       placeholder={PLACEHOLDER[currentTag]}
       contentEditable
       onKeyUp={onKeyUp}
+      onClick={onClick}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText()}
     />
