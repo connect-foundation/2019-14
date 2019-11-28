@@ -58,8 +58,6 @@ const updateRepl = (prevState) => {
   };
 };
 
-const addNewRepl = (prevState) => {};
-
 const terminalReducerHandler = {
   [TERMINAL_ACTION.NEW_REPL]: (state) => {
     const prevState = deepCopy(state);
@@ -92,11 +90,10 @@ const terminalReducerHandler = {
   [TERMINAL_ACTION.FOCUS_CHANGE]: (state, action) => {
     const nextState = deepCopy(state);
     const { to } = action;
-    const { currentText, focusIndex, replCount } = nextState;
+    const { currentText, focusIndex } = nextState;
 
     const targetIndex = focusIndex + to;
 
-    console.log("fo ta", state, focusIndex, targetIndex);
     const nextCurrent = nextState.inputTexts[targetIndex];
 
     nextState.focusIndex = targetIndex;
