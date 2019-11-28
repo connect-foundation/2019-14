@@ -17,7 +17,7 @@ import {
   TerminalContext,
   TerminalDispatchContext,
 } from "../../../../stores/TerminalStore";
-import { cellGenerator, setGenerator } from "../CellGenerator";
+import { setGenerator } from "../CellGenerator";
 
 setGenerator("terminal", (uuid) => <TerminalCell cellUuid={uuid} />);
 
@@ -114,7 +114,8 @@ ReplInputWrapper.defaultProps = {
 };
 
 const ReplOutputComponent = ({ text, isLoading }) => {
-  return <ReplOutputWrapper>{text}</ReplOutputWrapper>;
+  const outputText = text === "" ? "No output" : text;
+  return <ReplOutputWrapper>{outputText}</ReplOutputWrapper>;
 };
 
 ReplOutputWrapper.propTypes = {
@@ -126,6 +127,12 @@ const addHandlersToManager = (focusHandlers) => {
   handlerManager.initHandler();
   handlerManager.setHandler(EVENT_TYPE.ENTER, (e) =>
     focusHandlers[EVENT_TYPE.ENTER](e)
+  );
+  handlerManager.setHandler(EVENT_TYPE.ARROW_UP, (e) =>
+    focusHandlers[EVENT_TYPE.ARROW_UP](e)
+  );
+  handlerManager.setHandler(EVENT_TYPE.ARROW_DOWN, (e) =>
+    focusHandlers[EVENT_TYPE.ARROW_DOWN](e)
   );
   handlerManager.setWindowKeydownEvent();
 };
@@ -219,6 +226,27 @@ const ReplContainer = () => {
     [EVENT_TYPE.ENTER]: (e) => {
       e.preventDefault();
       dispatchAsync(action.createNewRepl());
+    },
+
+    [EVENT_TYPE.ARROW_UP]: (e) => {
+      e.preventDefault();
+      const isFocusInMiddle = focusIndex >= 0 && focusIndex <= replCount;
+      if (isFocusInMiddle) {
+        debug("Focus Up In Terminal");
+        dispatchAsync(action.focusChange(-1));
+      } else if (focusIndex === replCount) {
+        debug("Focus Up Max");
+      }
+    },
+
+    [EVENT_TYPE.ARROW_DOWN]: (e) => {
+      e.preventDefault();
+      if (focusIndex === replCount) {
+        debug("Focus Down Max");
+      } else if (focusIndex >= 0 && focusIndex < replCount) {
+        debug("Focus Down In Terminal");
+        dispatchAsync(action.focusChange(+1));
+      }
     },
   };
 
