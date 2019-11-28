@@ -8,6 +8,7 @@ import React, {
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import createDebug from "debug";
+
 import { EVENT_TYPE, THEME } from "../../../../enums";
 import { utils, handlerManager, request } from "../../../../utils";
 import { terminalActionCreator as action } from "../../../../actions/TerminalAction";
@@ -29,7 +30,7 @@ const ReplInputWrapper = styled.div`
   padding: 15px;
   margin: 10px;
 
-  background-color: ${THEME.DARK_TEMP.THEME_COLOR_4};
+  background-color: ${THEME.VS_CODE.INNER_BOX};
 `;
 
 const ReplOutputWrapper = styled.div`
@@ -38,7 +39,7 @@ const ReplOutputWrapper = styled.div`
   padding: 15px;
   margin: 10px;
 
-  background: ${THEME.DARK_TEMP.THEME_COLOR_4};
+  background: ${THEME.VS_CODE.INNER_BOX};
 
   white-space: pre-wrap;
 `;
@@ -49,26 +50,33 @@ const TerminalWrapper = styled.div`
   display: flex;
   flex-flow: column;
 
-  background: ${THEME.DARK_TEMP.THEME_COLOR_3};
+  background: ${THEME.VS_CODE.SIDE_MENU};
   width: 100%;
 `;
 
 const ReplPrompt = styled.div`
-  border-right: 5px solid #e4aaaa;
+  border-right: 5px solid #00fe3d;
   padding-right: 10px;
+  width: 5rem;
 `;
 
 const ReplInput = styled.div.attrs((props) => ({
+  spellCheck: false,
   contentEditable: props.isEditorable || false,
 }))`
-  width: 100%;
+  flex-grow: 99;
   margin-left: 20px;
+
+  &:focus {
+    outline: none;
+    border: none;
+  }
 `;
 
 const ReplInputComponent = React.forwardRef(
   ({ text, isEditorable, inputHandler }, ref) => {
     const inputRef = useRef();
-    const prompt = "User";
+    const prompt = "User $";
 
     useImperativeHandle(ref, () => ({
       focus: () => {
