@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef } from "react";
-import { uuid } from "uuidv4";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
 import MarkdownCell from "./cells/Markdown";
@@ -22,8 +21,9 @@ const EditorComponent = () => {
 
   return (
     <>
-      {cells.map((cell) => {
-        return <div key={uuid()}>{cell}</div>;
+      {cells.map((cell, cellIndex) => {
+        const key = `markdown-cell-${cellIndex}`;
+        return <div key={key}>{cell}</div>;
       })}
     </>
   );

@@ -124,7 +124,9 @@ const MarkdownCell = ({ cellUuid }) => {
       contentEditable
       onKeyPress={onKeyPress}
       ref={inputRef || null}
-      // suppressContentEditableWarning
+      onClick={() => {
+        console.log("asdfasdfasdf");
+      }}
       dangerouslySetInnerHTML={htmlText()}
     />
   );

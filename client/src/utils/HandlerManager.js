@@ -100,7 +100,7 @@ const customKeydownEventHandler = (e) => {
  * @param {Element} target custom keydown 이벤트를 초기화할 타겟 엘리먼트
  * - ex) window
  */
-const clearWindowKeydownEvent = (target) => {
+const clearWindowKeydownEvent = (target = window) => {
   target.removeEventListener("keydown", customKeydownEventHandler);
 };
 
@@ -109,7 +109,7 @@ const clearWindowKeydownEvent = (target) => {
  * @param {Element} target custom keydown 이벤트를 붙일 타겟 엘리먼트
  * - ex) window
  */
-const setWindowKeydownEvent = (target) => {
+const setWindowKeydownEvent = (target = window) => {
   clearWindowKeydownEvent(target);
   target.addEventListener("keydown", customKeydownEventHandler);
 };
@@ -128,7 +128,12 @@ const setWindowKeydownEvent = (target) => {
  * @param {String} tag 현재 셀의 타입(태그)
  * - ex) h2
  */
-const attachKeydownEvent = (target, keydownHandlers, index, tag = "") => {
+const attachKeydownEvent = (
+  target = window,
+  keydownHandlers,
+  index,
+  tag = ""
+) => {
   if (tag !== currentCell || index !== currentIndex) {
     currentCell = tag;
     currentIndex = index;
