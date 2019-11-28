@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useRef } from "react";
-import { uuid } from "uuidv4";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
-import MarkdownTransformer from "./MarkdownRenderer";
+import { MarkdownCell } from "./cells";
 
 const EditorComponent = () => {
   const { state } = useContext(CellContext);
@@ -12,7 +11,7 @@ const EditorComponent = () => {
 
   useEffect(() => {
     const renderTargetCallback = (cellUuid) => (
-      <MarkdownTransformer cellUuid={cellUuid} />
+      <MarkdownCell cellUuid={cellUuid} />
     );
     if (state.cells.length === 0) {
       cellDispatch(cellActionCreator.focusAttachRef(inputRef));
@@ -23,10 +22,8 @@ const EditorComponent = () => {
   return (
     <>
       {cells.map((cell, cellIndex) => {
-        if (state.currentIndex === cellIndex) {
-          return <div key={uuid()}>{cell}</div>;
-        }
-        return <div key={uuid()}>{cell}</div>;
+        const key = `markdown-cell-${cellIndex}`;
+        return <div key={key}>{cell}</div>;
       })}
     </>
   );

@@ -1,12 +1,17 @@
 const debug = require("debug")("boostwriter:routes:terminal");
 const express = require("express");
-const { DockerApi } = require("../api/docker");
 const { StreamResolver } = require("../utils/stream-resolver");
 const { utils } = require("../utils");
 
 const { wrapAsync } = utils;
 
 const router = express.Router();
+
+const {
+  createDefaultTerminal,
+  startTerminal,
+  stopTerminal,
+} = require("../controller/terminal");
 
 const deleteDockerPrefix = (rawString) => {
   return rawString.slice(8);
@@ -27,22 +32,11 @@ const resolveDockerStream = async (stream) => {
   return rawString;
 };
 
-const dockerOptions = {
-  host: process.env.REMOTE_DOCKER_IP,
-  port: process.env.REMOTE_DOCKER_PORT,
-  caPath: process.env.SSL_CA_PATH,
-  certPath: process.env.SSL_CERT_PATH,
-  keyPath: process.env.SSL_KEY_PATH,
-};
-
-const dockerClient = new DockerApi(dockerOptions);
-
 router.post(
   "/command/not-pending",
   wrapAsync(async (req, res) => {
     const { containerName, cmd, options } = req.body;
-
-    await dockerClient.init();
+    const dockerClient = req.app.get("docker");
 
     const resultStream = await dockerClient.execByName(containerName, cmd);
     const output = await resolveDockerStream(resultStream);
@@ -58,16 +52,38 @@ router.post(
   })
 );
 
-router.post("/", async (req, res) => {
-  const docker = req.app.get("docker");
-  const result = await docker.createDefaultTerminal("ubuntu");
+router
+  .route("/")
+  .post(
+    wrapAsync(async (req, res) => {
+      const docker = req.app.get("docker");
+      const result = await createDefaultTerminal(docker, "ubuntu");
 
-  if (!result) {
-    res.status(400).json({ message: "not created terminal" });
-    return;
-  }
+      if (!result) {
+        res.status(400).json({ message: "not created terminal" });
+        return;
+      }
 
-  res.status(201).json({ containerId: result });
-});
+      res.status(201).json({ containerId: result });
+    })
+  )
+  .patch(
+    wrapAsync(async (req, res) => {
+      const docker = req.app.get("docker");
+      const { containerId } = req.body;
+      const result = await startTerminal(docker, containerId);
+
+      res.status(200).json(result);
+    })
+  )
+  .delete(
+    wrapAsync(async (req, res) => {
+      const docker = req.app.get("docker");
+      const { containerId } = req.body;
+      const result = await stopTerminal(docker, containerId);
+
+      res.status(200).json(result);
+    })
+  );
 
 module.exports = router;
