@@ -17,7 +17,8 @@ const Header = styled.header`
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
-  height: 3.75rem;
+  height: 10%;
+  align-items: center;
 `;
 
 const EditorHeader = () => {
