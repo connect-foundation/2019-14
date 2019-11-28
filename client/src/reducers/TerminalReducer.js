@@ -94,6 +94,15 @@ const terminalReducerHandler = {
     nextState.currentText = action.text;
     return nextState;
   },
+
+  [TERMINAL_ACTION.UPDATE_OUTPUT]: (state, action) => {
+    const nextState = deepCopy(state);
+    const { index, text } = action;
+
+    nextState.outputTexts = splice.change(nextState.outputTexts, index, text);
+
+    return nextState;
+  },
 };
 
 const terminalReducer = (state, action) => {

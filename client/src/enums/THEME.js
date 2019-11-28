@@ -6,6 +6,11 @@ const THEME = {
     THEME_COLOR_4: "#A3A1A1",
     THEME_COLOR_5: "#FAFAFA",
   },
+
+  DARK_TEMP: {
+    THEME_COLOR_3: "#2f3437",
+    THEME_COLOR_4: "#3f4447",
+  },
 };
 
 export default THEME;

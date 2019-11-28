@@ -197,33 +197,30 @@ class DockerApi {
     // TOOD 초기 하드코딩 값 변경하거나 없앨 것
     const defaultCmd = ["/bin/bash"];
     const defaultTagName = "ubuntu-container-test";
-    try {
-      const newContainerInfo = await this.request.createContainer({
-        AttachStdin: true,
-        AttachStdout: true,
-        AttachStderr: true,
-        Image: baseImageName,
-        Cmd: defaultCmd,
-        name: defaultTagName,
-        Tty: true,
-      });
-      this.startContainer(newContainerInfo.id);
-      return newContainerInfo.id;
-    } catch (error) {
-      throw error;
-    }
+    const newContainerInfo = await this.request.createContainer({
+      AttachStdin: true,
+      AttachStdout: true,
+      AttachStderr: true,
+      Image: baseImageName,
+      Cmd: defaultCmd,
+      name: defaultTagName,
+      Tty: true,
+    });
+    // TODO startContainer 결과를 합쳐서 리턴 할 것
+    await this.startContainer(newContainerInfo.id);
+    return newContainerInfo.id;
   }
 
   async startContainer(containerId) {
     const container = await this.request.getContainer(containerId);
-    container.start((err, data) => {
-      if (err) {
-        throw err;
-      }
+    const result = await container.start();
+    return result;
+  }
 
-      console.log(data);
-      return null;
-    });
+  async stopContainer(containerId) {
+    const container = await this.request.getContainer(containerId);
+    const result = await container.stop();
+    return result;
   }
 }
 
