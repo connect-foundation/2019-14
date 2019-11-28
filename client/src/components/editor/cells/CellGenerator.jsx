@@ -1,4 +1,5 @@
 import React from "react";
+
 import HeadingCell from "./Heading";
 import TerminalCell from "./Terminal";
 import QuoteCell from "./Quote";
