@@ -1,13 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { createGlobalStyle } from "styled-components";
+import { THEME } from "./enums";
 import EditorPage from "./pages/EditorPage";
 
 const GlobalStyle = createGlobalStyle`
   body {
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
     font-size: 19px;
-    color: #e5e5e6;
+    color: ${THEME.VS_CODE.FONT};
 
     margin: 0;
     padding: 0;

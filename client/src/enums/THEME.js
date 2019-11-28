@@ -18,6 +18,7 @@ const THEME = {
     MENU: "#3d3c3a",
     SIDE_MENU: "#333333",
     INNER_BOX: "#363c40",
+    FONT: "#e5e5e6",
   },
 };
 

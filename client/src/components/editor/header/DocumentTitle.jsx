@@ -29,6 +29,7 @@ const DocumentTitleInput = styled.h1`
     }
   }
   &:focus {
+    border: none;
     outline: none;
   }
   &:hover {

@@ -51,7 +51,7 @@ const MarkdownWindowLayout = styled.div`
 
   height: 100%;
 
-  overflow: auto;
+  overflow-y: auto;
 
   ${scrollStyle}
 `;
