@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import HandlerManager from "../../../utils/HandlerManager";
+import EVENT_TYPE from "../../../enums/EVENT_TYPE";
 
 const DocumentTitleInput = styled.div`
   display: inline-block;
@@ -33,11 +35,18 @@ const DocumentTitle = (props) => {
     setState(documentTitle);
   };
 
+  const onClickHandler = (e) => {};
+
+  HandlerManager.initHandler();
+  HandlerManager.setHandler(EVENT_TYPE.ENTER, onClickHandler);
+  HandlerManager.setWindowKeydownEvent();
+
   return (
     <DocumentTitleInput
       contentEditable={props.contentEditable}
       onInput={onInputHandler}
       data-text={props.defaultText}
+      onClick={onClickHandler}
     />
   );
 };
