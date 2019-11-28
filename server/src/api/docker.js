@@ -47,9 +47,9 @@ class DockerApi {
   constructor(options) {
     const defaultOptions = {
       version: "v1.40",
-      caPath: "~/.docker/ca.pem",
-      certPath: "~/.docker/cert.pem",
-      keyPath: "~/.docker/key.pem",
+      caPath: "ca.pem",
+      certPath: "cert.pem",
+      keyPath: "key.pem",
       socketPath: null,
     };
     const requestOptions = {
@@ -87,11 +87,9 @@ class DockerApi {
   }
 
   async execById(containerId, commandString = "") {
-    const isCached = this.isContainerExist(containerId);
+    // const isCached = this.isContainerExist(containerId);
 
-    if (!isCached) {
-      return null;
-    }
+    // TODO cache 처리 추가할 것
 
     const container = await this.request.getContainer(containerId);
 
@@ -199,9 +197,8 @@ class DockerApi {
     // TOOD 초기 하드코딩 값 변경하거나 없앨 것
     const defaultCmd = ["/bin/bash"];
     const defaultTagName = "ubuntu-container-test";
-
     const newContainerInfo = await this.request.createContainer({
-      AttachStdin: false,
+      AttachStdin: true,
       AttachStdout: true,
       AttachStderr: true,
       Image: baseImageName,
@@ -209,8 +206,21 @@ class DockerApi {
       name: defaultTagName,
       Tty: true,
     });
-
+    // TODO startContainer 결과를 합쳐서 리턴 할 것
+    await this.startContainer(newContainerInfo.id);
     return newContainerInfo.id;
+  }
+
+  async startContainer(containerId) {
+    const container = await this.request.getContainer(containerId);
+    const result = await container.start();
+    return result;
+  }
+
+  async stopContainer(containerId) {
+    const container = await this.request.getContainer(containerId);
+    const result = await container.stop();
+    return result;
   }
 }
 

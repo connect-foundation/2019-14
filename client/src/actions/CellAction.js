@@ -1,3 +1,5 @@
+import CELL_TAG from "../enums/CELL_TAG";
+
 const CELL_ACTION = {
   INIT: "cell/init",
   NEW: "cell/new",
@@ -19,36 +21,42 @@ const CELL_ACTION = {
 const cellActionCreator = {
   /**
    * 셀의 데이터를 초기화시킨다.
-   * @param {Cell} renderTarget 초기화할 셀을 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
+   * @param {Cell} createMarkdownCell 초기화할 셀을 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
    * @param {Number} index 초기화할 셀의 index
    * - 파라미터로 넘기지 않으면 기본값 0
    */
-  init(renderTarget, index) {
+  init(createMarkdownCell, index = 0) {
     return {
       type: CELL_ACTION.INIT,
-      renderTarget,
-      index: index || 0,
+      createMarkdownCell,
+      tag: CELL_TAG.DEFAULT,
+      index,
     };
   },
 
   /**
    * 셀을 생성한다.
-   * @param {Cell} renderTarget: 새 셀 컴포넌트를 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
+   * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
+   * @param {String} tag 셀의 타입(태그). 생략시 default input 셀이 생성된다.
    */
-  new(renderTarget) {
+  new(createMarkdownCell, tag = CELL_TAG.DEFAULT, start) {
     return {
       type: CELL_ACTION.NEW,
-      renderTarget,
+      createMarkdownCell,
+      tag,
+      start: start || null,
     };
   },
 
   /**
    * 셀의 텍스트를 변경한다.
+   * @param {Uuid} cellUuid 텍스트를 변경할 셀의 uuid
    * @param {Text} text 변경된 텍스트
    */
-  input(text) {
+  input(cellUuid, text) {
     return {
       type: CELL_ACTION.INPUT,
+      cellUuid,
       text,
     };
   },
@@ -75,13 +83,13 @@ const cellActionCreator = {
   },
 
   /**
-   * 셀 포커스를 인덱스 위치로 이동시킨다.
-   * @param {Number} index 포커스를 이동시킬 인덱스
+   * 셀 포커스를 지정한 위치로 이동시킨다.
+   * @param {Uuid} cellUuid 포커스를 이동시킬 셀의 uuid
    */
-  focusMove(index) {
+  focusMove(cellUuid) {
     return {
       type: CELL_ACTION.FOCUS.MOVE,
-      index,
+      cellUuid,
     };
   },
 
@@ -99,17 +107,19 @@ const cellActionCreator = {
   /**
    * 셀의 속성을 변경한다.
    * - ex) default input cell -> list cell
-   * @param {Cell} renderTarget 변경할 Cell
    * @param {Number} index 변경할 Cell의 인덱스
    * @param {String} text 변경할 Cell의 텍스트
-   * - @todo 현재 무슨 태그인지 저장하기
+   * @param {String} tag 변경할 Cell의 태그
+   * @param {React.element} cell 변경할 Cell 요소
    */
-  transform(renderTarget, index, text) {
+  transform(index, text, tag, cell, start) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
-      renderTarget,
       index,
       text,
+      tag,
+      cell,
+      start: start || null,
     };
   },
 

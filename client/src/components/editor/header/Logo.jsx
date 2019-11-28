@@ -1,8 +1,15 @@
 import React from "react";
-import logoImagePath from "../../../../public/logo1.png";
+import styled from "styled-components";
+import logoImagePath from "../../../../public/BoostWriter.png";
+
+const HeaderLogoImageWrapper = styled.img`
+  width: 150px;
+  height: 70px;
+  filter: invert(1);
+`;
 
 const HeaderLogoImage = () => {
-  return <img alt="logo" src={logoImagePath} />;
+  return <HeaderLogoImageWrapper alt="logo" src={logoImagePath} />;
 };
 
 export default HeaderLogoImage;

@@ -5,6 +5,7 @@
  */
 
 require("../src/env-loader").appendEnv("remote");
+
 const debug = require("debug")("boostwriter:index");
 const http = require("http");
 const app = require("../src/app");
@@ -13,7 +14,7 @@ const app = require("../src/app");
  * Get port from environment and store in Express.
  */
 
-const port = process.env.EXPRESS_PORT;
+const port = process.env.EXPRESS_PORT || 3000;
 app.set("port", port);
 
 /**
