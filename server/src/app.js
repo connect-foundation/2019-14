@@ -2,6 +2,7 @@ const debug = require("debug")("boostwriter:app");
 const createError = require("http-errors");
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 const logger = require("morgan");
 
 /**
@@ -32,6 +33,19 @@ app.set("docker", docker);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+const corsOptionsDelegate = (req, callback) => {
+  const corsOptions = {
+    // pass all origin
+    origin: true,
+    // Access-Control-Allow-Credentials: true
+    credentials: true,
+  };
+  callback(null, corsOptions);
+};
+
+app.use(cors(corsOptionsDelegate));
+
 app.use(cookieParser());
 
 app.use("/", indexRouter);

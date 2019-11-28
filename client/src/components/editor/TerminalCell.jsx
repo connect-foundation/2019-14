@@ -1,8 +1,15 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, {
+  useImperativeHandle,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import createDebug from "debug";
 import { EVENT_TYPE, THEME } from "../../enums";
-import { utils, handlerManager } from "../../utils";
+import { utils, handlerManager, request } from "../../utils";
 import { terminalActionCreator as action } from "../../actions/TerminalAction";
 import {
   TerminalStore,
@@ -10,30 +17,82 @@ import {
   TerminalDispatchContext,
 } from "../../stores/TerminalStore";
 
+const debug = createDebug("boost:terminal-cell");
+
 const { splice } = utils;
 
-const ReplInputWrapper = styled.p.attrs(() => ({
-  contentEditable: true,
-}))`
-  height: 10px;
-  padding: 10px;
-  background: ${THEME.DARK_IVORY.THEME_COLOR_5};
+const ReplInputWrapper = styled.div`
+  display: flex;
+
+  height: 100%;
+
+  padding: 15px;
+  margin: 10px;
+
+  background-color: ${THEME.DARK_TEMP.THEME_COLOR_4};
 `;
 
-const ReplOutputWrapper = styled.p`
-  height: 10px;
-  background: blue;
+const ReplOutputWrapper = styled.div`
+  height: 100%;
+
+  padding: 15px;
+  margin: 10px;
+
+  background: ${THEME.DARK_TEMP.THEME_COLOR_4};
+
+  white-space: pre-wrap;
 `;
 
 const TerminalWrapper = styled.div`
-  background: red;
-  width: 100px;
-  height: 100px;
+  position: relative;
+
+  display: flex;
+  flex-flow: column;
+
+  background: ${THEME.DARK_TEMP.THEME_COLOR_3};
+  width: 100%;
 `;
 
-const ReplInputComponent = ({ text }) => {
-  return <ReplInputWrapper>{text}</ReplInputWrapper>;
-};
+const ReplPrompt = styled.div`
+  border-right: 5px solid #e4aaaa;
+  padding-right: 10px;
+`;
+
+const ReplInput = styled.div.attrs((props) => ({
+  contentEditable: props.isEditorable || false,
+}))`
+  width: 100%;
+  margin-left: 20px;
+`;
+
+const ReplInputComponent = React.forwardRef(
+  ({ text, isEditorable, inputHandler }, ref) => {
+    const inputRef = useRef();
+    const prompt = "User";
+
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        if (!inputRef || !inputRef.current) {
+          return;
+        }
+        inputRef.current.focus();
+      },
+    }));
+
+    return (
+      <ReplInputWrapper>
+        <ReplPrompt>{prompt}</ReplPrompt>
+        <ReplInput
+          ref={inputRef}
+          onInput={inputHandler}
+          isEditorable={isEditorable}
+        >
+          {text}
+        </ReplInput>
+      </ReplInputWrapper>
+    );
+  }
+);
 
 ReplInputWrapper.propTypes = {
   text: PropTypes.string,
@@ -49,18 +108,47 @@ const ReplOutputComponent = ({ text, isLoading }) => {
 
 ReplOutputWrapper.propTypes = {
   isLoading: PropTypes.bool,
-  text: PropTypes.string,
+  text: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 };
 
-const addHandlers = (focusHandler) => {
+const addHandlersToManager = (focusHandlers) => {
   handlerManager.initHandler();
   handlerManager.setHandler(EVENT_TYPE.ENTER, (e) =>
-    focusHandler[EVENT_TYPE.ENTER](e)
+    focusHandlers[EVENT_TYPE.ENTER](e)
   );
   handlerManager.setWindowKeydownEvent();
 };
 
-const ReplCell = ({ inputText, outputText, isActive, isLoading }) => {
+const ReplCell = ({
+  cellIndex,
+  inputText,
+  outputText,
+  isActive,
+  isLoading,
+}) => {
+  const dispatch = useContext(TerminalDispatchContext);
+
+  useEffect(() => {
+    const updateOutputComponent = async () => {
+      const containerName = "zen_liskov";
+      const command = inputText;
+
+      const { data, status } = await request.exec(containerName, command);
+
+      debug("shell command response with", status, data);
+
+      if (status === 200) {
+        const { output } = data;
+        dispatch(action.updateOutputText(cellIndex, output));
+      }
+    };
+
+    const isStartFetching = !isActive && isLoading;
+    if (isStartFetching) {
+      updateOutputComponent();
+    }
+  }, [isLoading]);
+
   return (
     <>
       <ReplInputComponent text={inputText} isActive={isActive} />
@@ -70,6 +158,7 @@ const ReplCell = ({ inputText, outputText, isActive, isLoading }) => {
 };
 
 ReplCell.propTypes = {
+  cellIndex: PropTypes.number.isRequired,
   inputText: PropTypes.string,
   outputText: PropTypes.string,
   isActive: PropTypes.bool,
@@ -93,7 +182,9 @@ const MovableReplCell = ({ inputHandler }) => {
     }
   }, [ref]);
 
-  return <ReplInputWrapper ref={ref} onInput={inputHandler} />;
+  return (
+    <ReplInputComponent ref={ref} inputHandler={inputHandler} isEditorable />
+  );
 };
 
 MovableReplCell.propTypes = {
@@ -126,7 +217,7 @@ const ReplContainer = () => {
   };
 
   useEffect(() => {
-    addHandlers(focusHandlers);
+    addHandlersToManager(focusHandlers);
     setMovable(<MovableReplCell inputHandler={inputHandler} />);
   }, []);
 
@@ -136,6 +227,7 @@ const ReplContainer = () => {
       return (
         <ReplCell
           key={componentKey}
+          cellIndex={index}
           inputText={inputTexts[index]}
           outputText={outputTexts[index]}
           isActive={isActives[index]}

@@ -1,7 +1,9 @@
 import { useState } from "react";
 
 const useReducerAsync = (reducer, initState = {}) => {
-  const [state, setState] = useState(initState);
+  const [state, setState] = useState(() => {
+    return initState;
+  });
 
   const dispatch = async (action) => {
     const promise = reducer(state, action);
