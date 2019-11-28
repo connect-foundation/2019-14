@@ -7,12 +7,13 @@ import StepperButtons from "./StepperButtons";
 const ContentsWrapper = styled.section``;
 
 function Contents() {
-  return;
-  <ContentsWrapper>
-    <Stepper />
-    <StepperContents />
-    <StepperButtons />
-  </ContentsWrapper>;
+  return (
+    <ContentsWrapper>
+      <Stepper />
+      <StepperContents />
+      <StepperButtons />
+    </ContentsWrapper>
+  );
 }
 
 export default Contents;

@@ -28,7 +28,7 @@ const cellReducerHandler = {
 
   [CELL_ACTION.NEW]: (state, action) => {
     const { currentIndex, uuidManager } = state;
-    const { createMarkdownCell } = action;
+    const { createMarkdownCell, start } = action;
     const cellUuid = uuid();
 
     const cells = splice.add(
@@ -50,6 +50,7 @@ const cellReducerHandler = {
       cells,
       texts,
       tags,
+      start,
     };
   },
 

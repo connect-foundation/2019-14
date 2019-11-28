@@ -1,5 +1,5 @@
 const CELL_TAG = {
-  DEFAULT: "",
+  DEFAULT: "p",
   LIST: {
     UL: "ul",
     OL: "ol",
