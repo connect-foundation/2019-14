@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useImperativeHandle } from "react";
 import propTypes from "prop-types";
+import { renderToString } from "react-dom/server";
 
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
@@ -22,11 +23,15 @@ import { newCell } from "./handler";
 const ListCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { currentIndex, cellIndex, text, placeholder } = useCellState(
+  const { currentIndex, cellIndex, text, placeholder, tag } = useCellState(
     state,
     cellUuid
   );
   let inputRef = null;
+
+  const { start } = state;
+  const newStart = start + 1;
+
   // const inputRef = useRef();
 
   // useImperativeHandle(ref, () => ({
@@ -40,14 +45,38 @@ const ListCell = ({ cellUuid }) => {
 
     const enterEvent = (e) => {
       const { textContent } = e.target;
-      const componentCallback = (uuid) => (
-        <ul>
-          <ListCell cellUuid={uuid} />
-        </ul>
+      /*
+      e.target.insertAdjacentHTML(
+        "afterend",
+        renderToString(
+          <MarkdownWrapper
+            as="li"
+            placeholder={placeholder}
+            ref={inputRef || null}
+            suppressContentEditableWarning
+            contentEditable
+          ></MarkdownWrapper>
+        )
       );
+      */
+      const isOrderedList = tag == "ol";
+
+      const component = (uuid) =>
+        isOrderedList ? (
+          <ol start={newStart}>
+            <ListCell cellUuid={uuid} />
+          </ol>
+        ) : (
+          <ul>
+            <ListCell cellUuid={uuid} />
+          </ul>
+        );
+
+      const componentCallback = (uuid) => component(uuid);
+
       saveCursorPosition(dispatch, inputRef);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(dispatch, componentCallback, "ul");
+      newCell(dispatch, componentCallback, tag, newStart);
     };
 
     const arrowUpEvent = (e) => {

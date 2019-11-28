@@ -79,7 +79,7 @@ const MarkdownCell = ({ cellUuid }) => {
     // window.addEventListener("beforeunload", isSaved);
   }, [inputRef]);
 
-  const onKeyPress = (e) => {
+  const onKeyUp = (e) => {
     const { textContent } = e.target;
 
     const matchingTag = getType(textContent);
@@ -87,24 +87,19 @@ const MarkdownCell = ({ cellUuid }) => {
     if (matchingTag && matchingTag !== currentTag) {
       const makeNewCell = cellGenerator[matchingTag];
 
-      if (matchingTag === "ol") {
-        const newStart = start ? start + 1 : getStart(textContent);
-        const cell = makeNewCell(cellUuid, newStart);
+      const isOrderedList = matchingTag === "ol";
 
-        dispatch(
-          cellActionCreator.transform(
-            cellIndex,
-            "",
-            matchingTag,
-            cell,
-            newStart
-          )
-        );
-      } else {
-        const cell = makeNewCell(cellUuid);
+      const newStart = isOrderedList
+        ? start
+          ? start + 1
+          : getStart(textContent)
+        : 0;
 
-        dispatch(cellActionCreator.transform(cellIndex, "", matchingTag, cell));
-      }
+      const cell = makeNewCell(cellUuid, newStart);
+
+      dispatch(
+        cellActionCreator.transform(cellIndex, "", matchingTag, cell, newStart)
+      );
     }
   };
 
@@ -122,7 +117,7 @@ const MarkdownCell = ({ cellUuid }) => {
       as={currentTag}
       placeholder={PLACEHOLDER[currentTag]}
       contentEditable
-      onKeyPress={onKeyPress}
+      onKeyUp={onKeyUp}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText()}
     />
