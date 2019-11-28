@@ -49,7 +49,7 @@ const TerminalWrapper = styled.div`
   display: flex;
   flex-flow: column;
 
-  background: ${THEME.DARK_TEMP.THEME_COLOR_3};
+  background: ${THEME.DARK.THEME_COLOR_2};
   width: 100%;
 `;
 
