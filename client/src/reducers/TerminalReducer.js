@@ -87,7 +87,45 @@ const terminalReducerHandler = {
 
   // [TERMINAL_ACTION.EVAL_ALL]: (state, action) => {},
 
-  // [TERMINAL_ACTION.FOCUS_CHANGE]: (state, action) => {},
+  [TERMINAL_ACTION.FOCUS_CHANGE]: (state, action) => {
+    const nextState = deepCopy(state);
+    const { to } = action;
+    const { currentText, focusIndex } = nextState;
+
+    const targetIndex = focusIndex + to;
+
+    const nextCurrent = nextState.inputTexts[targetIndex];
+
+    nextState.focusIndex = targetIndex;
+
+    nextState.currentText = nextCurrent;
+
+    nextState.inputTexts = splice.change(
+      nextState.inputTexts,
+      targetIndex,
+      currentText
+    );
+    nextState.isActives = splice.change(
+      nextState.isActives,
+      targetIndex,
+      false
+    );
+
+    nextState.outputTexts = splice.change(
+      nextState.outputTexts,
+      targetIndex,
+      ""
+    );
+    nextState.isLoadings = splice.change(
+      nextState.isLoadings,
+      targetIndex,
+      true
+    );
+
+    nextState.replCount = nextState.inputTexts.length;
+
+    return nextState;
+  },
 
   [TERMINAL_ACTION.CHANGE_TEXT]: (state, action) => {
     const nextState = deepCopy(state);

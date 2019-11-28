@@ -9,6 +9,7 @@ import {
   faFileExport,
   faTerminal,
 } from "@fortawesome/free-solid-svg-icons";
+import { THEME } from "../../../enums";
 
 const BUTTON_TYPE = {
   NEW: faFileMedical,
@@ -27,6 +28,7 @@ const ToolBarButtonWrapper = styled.button`
   background: transparent;
   border: transparent;
   cursor: pointer;
+  color: ${THEME.VS_CODE.FONT};
 
   margin-left: ${(props) => (props.isTerminal ? "auto" : "0px")};
 `;
