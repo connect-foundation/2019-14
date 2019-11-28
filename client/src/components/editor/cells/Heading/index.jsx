@@ -87,10 +87,12 @@ const HeadingCell = ({ cellUuid }) => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
 
-      // const content = createCursor(text, state.cursor);
-      // inputRef.current.innerHTML = content;
-      // setCursorPosition();
-      // inputRef.current.normalize();
+      if (text.length > 0) {
+        const content = createCursor(text, state.cursor);
+        inputRef.current.innerHTML = content;
+        setCursorPosition();
+        inputRef.current.normalize();
+      }
     }
   }, [inputRef]);
 
