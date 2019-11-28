@@ -9,7 +9,7 @@ import { EVENT_TYPE } from "../../../../enums";
 import { useCellState, handlerManager } from "../../../../utils";
 
 import {
-  newCell,
+  // newCell,
   saveCursorPosition,
   isContinuePrev,
   isContinueNext,
@@ -18,7 +18,7 @@ import {
   setCursorPosition,
   createCursor,
 } from "../Markdown/handler";
-// import {  } from "./handler";
+import { newCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
 
 setGenerator("ul", (uuid) => (
@@ -52,14 +52,6 @@ const ListCell = ({ cellUuid }) => {
   //     inputRef.current.focus();
   //   },
   // }));
-
-  const enterEvent = (e) => {
-    const { textContent } = e.target;
-    const componentCallback = cellGenerator.ul;
-    saveCursorPosition(dispatch, inputRef);
-    dispatch(cellActionCreator.input(cellUuid, textContent));
-    newCell(dispatch, componentCallback, "ul");
-  };
 
   const enterEvent = (e) => {
     const { textContent } = e.target;
