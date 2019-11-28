@@ -23,6 +23,14 @@ import {
   createCursor,
 } from "../Markdown/handler";
 import MarkdownCell from "../Markdown";
+import { cellGenerator, setGenerator } from "../CellGenerator";
+
+setGenerator("h1", (uuid) => <HeadingCell cellUuid={uuid} />);
+setGenerator("h2", (uuid) => <HeadingCell cellUuid={uuid} />);
+setGenerator("h3", (uuid) => <HeadingCell cellUuid={uuid} />);
+setGenerator("h4", (uuid) => <HeadingCell cellUuid={uuid} />);
+setGenerator("h5", (uuid) => <HeadingCell cellUuid={uuid} />);
+setGenerator("h6", (uuid) => <HeadingCell cellUuid={uuid} />);
 
 // import {  } from "./handler";
 
@@ -45,7 +53,7 @@ const HeadingCell = ({ cellUuid }) => {
 
   const enterEvent = (e) => {
     const { textContent } = e.target;
-    const componentCallback = (uuid) => <MarkdownCell cellUuid={uuid} />;
+    const componentCallback = cellGenerator.p;
     saveCursorPosition(dispatch, inputRef);
     dispatch(cellActionCreator.input(cellUuid, textContent));
     newCell(dispatch, componentCallback);
@@ -72,7 +80,7 @@ const HeadingCell = ({ cellUuid }) => {
   if (currentIndex === cellIndex) {
     inputRef = state.inputRef;
 
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, "hn");
+    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, tag);
   }
 
   useEffect(() => {

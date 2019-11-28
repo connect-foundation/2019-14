@@ -18,6 +18,18 @@ import {
   createCursor,
 } from "../Markdown/handler";
 // import {  } from "./handler";
+import { cellGenerator, setGenerator } from "../CellGenerator";
+
+setGenerator("ul", (uuid) => (
+  <ul>
+    <ListCell cellUuid={uuid} />
+  </ul>
+));
+setGenerator("ol", (uuid, start) => (
+  <ol start={start}>
+    <ListCell cellUuid={uuid} />
+  </ol>
+));
 
 // const ListCell = React.forwardRef(({ cellUuid }, ref) => {
 const ListCell = ({ cellUuid }) => {
@@ -38,11 +50,7 @@ const ListCell = ({ cellUuid }) => {
 
   const enterEvent = (e) => {
     const { textContent } = e.target;
-    const componentCallback = (uuid) => (
-      <ul>
-        <ListCell cellUuid={uuid} />
-      </ul>
-    );
+    const componentCallback = cellGenerator.ul;
     saveCursorPosition(dispatch, inputRef);
     dispatch(cellActionCreator.input(cellUuid, textContent));
     newCell(dispatch, componentCallback, "ul");

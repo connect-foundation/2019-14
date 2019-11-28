@@ -16,6 +16,9 @@ import {
   TerminalContext,
   TerminalDispatchContext,
 } from "../../../../stores/TerminalStore";
+import { cellGenerator, setGenerator } from "../CellGenerator";
+
+setGenerator("terminal", (uuid) => <TerminalCell cellUuid={uuid} />);
 
 const debug = createDebug("boost:terminal-cell");
 

@@ -3,7 +3,7 @@ import propTypes from "prop-types";
 
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
-import cellGenerator from "../CellGenerator";
+import { cellGenerator, setGenerator } from "../CellGenerator";
 import { getType, getStart, handlerManager } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
@@ -18,6 +18,11 @@ import {
   setCursorPosition,
 } from "./handler";
 
+setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
+setGenerator("hr", (uuid) => (
+  <hr cellUuid={uuid} noshade="noshade" style={{ borderColor: "silver" }} />
+));
+
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
@@ -30,7 +35,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const enterEvent = (e) => {
     const { textContent } = e.target;
-    const componentCallback = (uuid) => <MarkdownCell cellUuid={uuid} />;
+    const componentCallback = cellGenerator.p;
     saveCursorPosition(dispatch, inputRef);
     dispatch(cellActionCreator.input(cellUuid, textContent));
     newCell(dispatch, componentCallback);
