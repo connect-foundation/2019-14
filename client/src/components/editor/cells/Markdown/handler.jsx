@@ -24,8 +24,12 @@ const saveCursorPosition = (cellDispatch, inputRef) => {
   return null;
 };
 
-const newCell = (cellDispatch, componentCallback) => {
-  cellDispatch(cellActionCreator.new(componentCallback));
+const newCell = (cellDispatch, componentCallback, tag) => {
+  if (tag) {
+    cellDispatch(cellActionCreator.new(componentCallback, tag));
+  } else {
+    cellDispatch(cellActionCreator.new(componentCallback));
+  }
 };
 
 const saveText = (cellUuid, textContent, cellDispatch, inputRef) => {
@@ -66,12 +70,14 @@ const createCursor = (text, cursor) => {
 
 const setCursorPosition = () => {
   const selection = window.getSelection();
-  const range = selection.getRangeAt(0);
-  const cursorCaret = document.querySelector("#cursorCaret");
-  range.selectNode(cursorCaret);
-  selection.removeAllRanges();
-  selection.addRange(range);
-  range.deleteContents();
+  if (selection.focusNode) {
+    const range = selection.getRangeAt(0);
+    const cursorCaret = document.querySelector("#cursorCaret");
+    range.selectNode(cursorCaret);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    range.deleteContents();
+  }
 };
 
 export {

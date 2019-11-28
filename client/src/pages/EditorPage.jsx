@@ -48,6 +48,7 @@ const MarkdownWindowLayout = styled.div`
   position: relative;
 
   padding: 0;
+  padding-left: 0.5em;
 
   height: 100%;
 
