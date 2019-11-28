@@ -29,7 +29,7 @@ const ReplInputWrapper = styled.div`
   padding: 15px;
   margin: 10px;
 
-  background-color: ${THEME.DARK_TEMP.THEME_COLOR_4};
+  background-color: ${THEME.VS_CODE.INNER_BOX};
 `;
 
 const ReplOutputWrapper = styled.div`
@@ -38,7 +38,7 @@ const ReplOutputWrapper = styled.div`
   padding: 15px;
   margin: 10px;
 
-  background: ${THEME.DARK_TEMP.THEME_COLOR_4};
+  background: ${THEME.VS_CODE.INNER_BOX};
 
   white-space: pre-wrap;
 `;
@@ -49,7 +49,7 @@ const TerminalWrapper = styled.div`
   display: flex;
   flex-flow: column;
 
-  background: ${THEME.DARK.THEME_COLOR_2};
+  background: ${THEME.VS_CODE.SIDE_MENU};
   width: 100%;
 `;
 

@@ -15,7 +15,7 @@ const EditorWindowLayout = styled.div`
 
   height: 100vh;
 
-  background-color: ${THEME.DARK_TEMP.THEME_COLOR_3};
+  background-color: ${THEME.VS_CODE.EDITOR};
 `;
 
 const scrollStyle = `
@@ -28,7 +28,7 @@ const scrollStyle = `
   &::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background-color: #de8438;
-    outline: 1px solid ${THEME.DARK.THEME_COLOR_2};
+    outline: 1px solid ${THEME.VS_CODE.EDITOR};
   }
 
   body::-webkit-scrollbar-track {
@@ -57,7 +57,7 @@ const MarkdownWindowLayout = styled.div`
 `;
 
 const HeaderLayout = styled.div`
-  background-color: ${THEME.DARK_TEMP.THEME_COLOR_4};
+  background-color: ${THEME.VS_CODE.HEADER};
 `;
 
 const EditorPage = () => {
