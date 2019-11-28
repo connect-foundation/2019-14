@@ -80,7 +80,7 @@ const ListCell = ({ cellUuid }) => {
       // setCursorPosition();
       // inputRef.current.normalize();
     }
-  }, []);
+  }, [inputRef]);
 
   return (
     <MarkdownWrapper

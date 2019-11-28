@@ -77,7 +77,7 @@ const MarkdownCell = ({ cellUuid }) => {
     //   e.returnValue = "정말로 닫으시겠습니까?";
     // };
     // window.addEventListener("beforeunload", isSaved);
-  }, []);
+  }, [inputRef]);
 
   const onKeyPress = (e) => {
     const { textContent } = e.target;
@@ -124,9 +124,6 @@ const MarkdownCell = ({ cellUuid }) => {
       contentEditable
       onKeyPress={onKeyPress}
       ref={inputRef || null}
-      onClick={() => {
-        console.log("asdfasdfasdf");
-      }}
       dangerouslySetInnerHTML={htmlText()}
     />
   );
