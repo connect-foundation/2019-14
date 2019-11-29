@@ -93,11 +93,12 @@ const MarkdownCell = ({ cellUuid }) => {
 
       const isOrderedList = matchingTag === "ol";
 
-      const newStart = isOrderedList
-        ? start
-          ? start + 1
-          : getStart(textContent)
-        : 0;
+      let newStart = null;
+      if (isOrderedList) {
+        newStart = start ? start + 1 : getStart(textContent);
+      } else {
+        newStart = 0;
+      }
 
       const cell = makeNewCell(cellUuid, newStart);
 
