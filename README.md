@@ -2,9 +2,8 @@
 
 ---
 
-> 문서를 작성하며 직접 코드를 돌려보고, 그 과정과 결과까지 알 수 있게 도와주는 테크니컬 라이팅 서비스 입니다.
-노션과 비슷한 문서 작성 경험을 제공하고 주피터와 비슷한 터미널을 지원하여 기술 문서를 작성하는데 도움을 줍니다.
-
+> `Boost Writer`는 기술 문서를 작성하며, 바로 코드 수행을 통해 과정과 결과를 확인할 수 있게 도와주는 테크니컬 라이팅 서비스 입니다.  
+> 문서 작성 시 **Notion**과 같은, 확인 및 테스트 간 **Jupyter Notebook**과 같은 UX를 지원해 기술 문서를 작성하는데 도움을 줍니다.
 
 ## Structure
 
@@ -24,69 +23,180 @@
 
 ---
 
-- 위지윅 방식의 마크다운 편집 기능
+- **WYSIWYG 방식의 마크다운 편집 기능**
 
-  - Heading
-
-  ```
-  ## Heading
-  ```
-
-  ## Heading
-
-  ---
-
-  - Unordered List
+  ### Headings
 
   ```
-  - Unordered List
-  + Unordered List
-  * Unordered List
+  # Heading 1
+  ## Heading 2
+  ### Heading 3
+  #### Heading 4
+  ##### Heading 5
+  ###### Heading 6
   ```
 
-  - Unordered List
+![heading](https://user-images.githubusercontent.com/46277703/69843494-15a40600-12ab-11ea-85ea-0db75541fbe2.gif)
 
-  ---
+---
 
-  - Ordered List
+### Unordered List
 
-  ```
-  1. Ordered List
-  2. Ordered List
-  3. Ordered List
-  ```
+```
+- Unordered List
++ Unordered List
+* Unordered List
+```
 
-  1. Ordered List
-  2. Ordered List
-  3. Ordered List
+![ul](https://user-images.githubusercontent.com/46277703/69843876-bb0ba980-12ac-11ea-9b4f-b81528f808c1.gif)
 
-  ---
+---
 
-  - Blockquote
+### Ordered List
 
-  ```
-  > Blockquote
-  ```
+```
+1. Ordered List
+2. Ordered List
+3. Ordered List
+```
 
-  > Blockquote
+![ol](https://user-images.githubusercontent.com/46277703/69843875-ba731300-12ac-11ea-9cba-554cbdfcb2cb.gif)
 
-- 터미널 환경 설정 기능(미구현)
+---
 
-  - OS
-  - Linux Utility
-  - Programming Language
-  - Database
+### Quoting text
 
-- 마크다운에 터미널 문법 지원(미구현)
+```
+> Quote
+```
 
-  - Terminal (구현 예정)
+![quote](https://user-images.githubusercontent.com/46277703/69843619-b5fa2a80-12ab-11ea-962f-42818cf5e62d.gif)
 
-  ```
-  $$$ Terminal
-  ```
+---
 
-- 작성한 문서 공유 기능
-  - 링크를 통한 문서 공유 기능
+### Code
+
+````
+```code
+    code
+````
+
+```
+code
+```
+
+**주의**: 각 언어의 코드 하이라이팅을 지원하지 않습니다. (구현 예정)
+
+---
+
+### HR
+
+```
+---
+***
+___
+```
+
+![hr](https://user-images.githubusercontent.com/46277703/69843837-81d33980-12ac-11ea-8d49-13c9f6707f90.gif)
+
+**주의**: - - -, \* \* \* 등 띄어쓰기를 입력할 경우 WYSIWYG 지원에 따라 Unordered List로 입력됩니다.
+
+### Terminal(Custom)
+
+```
+$$$
+```
+
+![terminal](https://user-images.githubusercontent.com/46277703/69843579-8519f580-12ab-11ea-8c3f-bcc1c7b467bd.gif)
+
+---
+
+## **구현 예정입니다.**
+
+### Bold
+
+```
+**Bold**
+__Bold__
+```
+
+**Bold**
+
+---
+
+### Italic
+
+```
+*Italic*
+_Italic_
+```
+
+_Italic_
+
+---
+
+### Strikethrough
+
+```
+~~Strikethrough~~
+```
+
+~~Strikethrough~~
+
+---
+
+### Quoting code
+
+```
+`code`
+```
+
+`code`
+
+---
+
+### Link
+
+```
+[Link](https://www.naver.com)
+```
+
+[Link](uri)
+
+---
+
+### Image
+
+```
+![Image](uri)
+```
+
+![image](https://recruit.navercorp.com/img/favicon/naver_favicon.ico)
+
+---
+
+- **터미널 환경 설정**
+
+  ### OS
+
+  - Ubuntu
+  - CentOS
+
+  ### Programming Language
+
+  - JavaScript
+  - C/C++
+  - Java
+  - Python
+
+  ### Database
+
+  - MySQL
+  - MariaDB
+  - MongoDB
+
+- **문서 공유**
+  - 링크를 통한 작성한 문서 공유 가능
 
 ## Team
 
