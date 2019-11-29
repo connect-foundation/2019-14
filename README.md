@@ -2,7 +2,7 @@
 
 ---
 
-> 서비스 `Boost Writer`는 개발관련 기술 문서를 작성하며, 바로 코드 수행을 통해 과정과 결과를 확인할 수 있게 도와주는 테크니컬 라이팅 서비스 입니다.  
+> `Boost Writer`는 기술 문서를 작성하며, 바로 코드 수행을 통해 과정과 결과를 확인할 수 있게 도와주는 테크니컬 라이팅 서비스 입니다.  
 > 문서 작성 시 **Notion**과 같은, 확인 및 테스트 간 **Jupyter Notebook**과 같은 UX를 지원해 기술 문서를 작성하는데 도움을 줍니다.
 
 ## Structure
@@ -36,80 +36,78 @@
   ###### Heading 6
   ```
 
-  ## Heading 2
+![heading](https://user-images.githubusercontent.com/46277703/69843494-15a40600-12ab-11ea-85ea-0db75541fbe2.gif)
 
-  ***
+---
 
-  ### Unordered List
+### Unordered List
 
-  ```
-  - Unordered List
-  + Unordered List
-  * Unordered List
-  ```
+```
+- Unordered List
++ Unordered List
+* Unordered List
+```
 
-  - Unordered List
+![ul](https://user-images.githubusercontent.com/46277703/69843876-bb0ba980-12ac-11ea-9b4f-b81528f808c1.gif)
 
-  ***
+---
 
-  ### Ordered List
+### Ordered List
 
-  ```
-  1. Ordered List
-  2. Ordered List
-  3. Ordered List
-  ```
+```
+1. Ordered List
+2. Ordered List
+3. Ordered List
+```
 
-  1. Ordered List
-  2. Ordered List
-  3. Ordered List
+![ol](https://user-images.githubusercontent.com/46277703/69843875-ba731300-12ac-11ea-9cba-554cbdfcb2cb.gif)
 
-  ***
+---
 
-  ### Quoting text
+### Quoting text
 
-  ```
-  > Quote
-  ```
+```
+> Quote
+```
 
-  > Quote
+![quote](https://user-images.githubusercontent.com/46277703/69843619-b5fa2a80-12ab-11ea-962f-42818cf5e62d.gif)
 
-  ***
+---
 
-  ### Code
+### Code
 
-  ````
-  ```code
-      code
-  ````
+````
+```code
+    code
+````
 
-  ```
-  code
-  ```
+```
+code
+```
 
-  **주의**: 각 언어의 코드 하이라이팅을 지원하지 않습니다. (구현 예정)
+**주의**: 각 언어의 코드 하이라이팅을 지원하지 않습니다. (구현 예정)
 
-  ***
+---
 
-  ### HR
+### HR
 
-  ```
-  ---
-  ***
-  ___
-  ```
+```
+---
+***
+___
+```
 
-  ***
+![hr](https://user-images.githubusercontent.com/46277703/69843837-81d33980-12ac-11ea-8d49-13c9f6707f90.gif)
 
-  **주의**: - - -, \* \* \* 등 띄어쓰기를 입력할 경우 WYSIWYG 지원에 따라 Unordered List로 입력됩니다.
+**주의**: - - -, \* \* \* 등 띄어쓰기를 입력할 경우 WYSIWYG 지원에 따라 Unordered List로 입력됩니다.
 
-  ### Terminal(Custom)
+### Terminal(Custom)
 
-  ```
-  $$$
-  ```
+```
+$$$
+```
 
-  ![terminal]()
+![terminal](https://user-images.githubusercontent.com/46277703/69843579-8519f580-12ab-11ea-8c3f-bcc1c7b467bd.gif)
 
 ---
 
