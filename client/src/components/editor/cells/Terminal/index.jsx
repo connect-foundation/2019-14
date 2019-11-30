@@ -11,12 +11,14 @@ import createDebug from "debug";
 
 import { EVENT_TYPE, THEME } from "../../../../enums";
 import { utils, handlerManager, request } from "../../../../utils";
-import { terminalActionCreator as action } from "../../../../actions/TerminalAction";
+import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
 import {
   TerminalStore,
   TerminalContext,
   TerminalDispatchContext,
 } from "../../../../stores/TerminalStore";
+import { cellActionCreator as cellAction } from "../../../../actions/CellAction";
+import { CellDispatchContext } from "../../../../stores/CellStore";
 import { setGenerator } from "../CellGenerator";
 
 setGenerator("terminal", (uuid) => <TerminalCell cellUuid={uuid} />);
@@ -63,7 +65,7 @@ const ReplPrompt = styled.div`
   width: 5rem;
 `;
 
-const ReplInput = styled.div.attrs((props) => ({
+const EditorableReplInput = styled.div.attrs((props) => ({
   spellCheck: false,
   contentEditable: props.isEditorable || false,
 }))`
@@ -93,13 +95,13 @@ const ReplInputComponent = React.forwardRef(
     return (
       <ReplInputWrapper>
         <ReplPrompt>{prompt}</ReplPrompt>
-        <ReplInput
+        <EditorableReplInput
           ref={inputRef}
           onInput={inputHandler}
           isEditorable={isEditorable}
         >
           {text}
-        </ReplInput>
+        </EditorableReplInput>
       </ReplInputWrapper>
     );
   }
@@ -114,8 +116,7 @@ ReplInputWrapper.defaultProps = {
 };
 
 const ReplOutputComponent = ({ text, isLoading }) => {
-  const outputText = text === "" ? "No output" : text;
-  return <ReplOutputWrapper>{outputText}</ReplOutputWrapper>;
+  return <ReplOutputWrapper>{text}</ReplOutputWrapper>;
 };
 
 ReplOutputWrapper.propTypes = {
@@ -144,7 +145,7 @@ const ReplCell = ({
   isActive,
   isLoading,
 }) => {
-  const dispatch = useContext(TerminalDispatchContext);
+  const dispatchToTerminal = useContext(TerminalDispatchContext);
 
   useEffect(() => {
     const updateOutputComponent = async () => {
@@ -157,7 +158,7 @@ const ReplCell = ({
 
       if (status === 200) {
         const { output } = data;
-        dispatch(action.updateOutputText(cellIndex, output));
+        dispatchToTerminal(terminalAction.updateOutputText(cellIndex, output));
       }
     };
 
@@ -190,7 +191,7 @@ ReplCell.defaultProps = {
   isLoading: false,
 };
 
-const MovableReplCell = ({ inputHandler }) => {
+const MovableReplCell = ({ initText, inputHandler }) => {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -201,41 +202,59 @@ const MovableReplCell = ({ inputHandler }) => {
   }, [ref]);
 
   return (
-    <ReplInputComponent ref={ref} inputHandler={inputHandler} isEditorable />
+    <ReplInputComponent
+      ref={ref}
+      inputHandler={inputHandler}
+      text={initText}
+      isEditorable
+    />
   );
 };
 
 MovableReplCell.propTypes = {
   inputHandler: PropTypes.func.isRequired,
+  initText: PropTypes.string.isRequired,
 };
 
 const ReplContainer = () => {
   const [movable, setMovable] = useState(null);
-  const dispatchAsync = useContext(TerminalDispatchContext);
+  const dispatchToTerminal = useContext(TerminalDispatchContext);
+  const dispatchToCell = useContext(CellDispatchContext);
   const { terminalState } = useContext(TerminalContext);
   const {
     focusIndex,
-    replCount,
+    currentText,
+
     inputTexts,
     outputTexts,
+
     isActives,
     isLoadings,
+
+    replCount,
   } = terminalState;
+
+  const inputHandler = (e) => {
+    const text = e.target.textContent;
+    dispatchToTerminal(terminalAction.changeCurrentText(text));
+  };
 
   const focusHandlers = {
     [EVENT_TYPE.ENTER]: (e) => {
       e.preventDefault();
-      dispatchAsync(action.createNewRepl());
+      dispatchToTerminal(terminalAction.createNewRepl(replCount));
     },
 
     [EVENT_TYPE.ARROW_UP]: (e) => {
       e.preventDefault();
-      const isFocusInMiddle = focusIndex >= 0 && focusIndex <= replCount;
-      if (isFocusInMiddle) {
-        debug("Focus Up In Terminal");
-        dispatchAsync(action.focusChange(-1));
-      } else if (focusIndex === replCount) {
-        debug("Focus Up Max");
+      const isFocusTop = focusIndex === 0;
+      if (isFocusTop) {
+        debug("Focus in top");
+        dispatchToTerminal(terminalAction.focusChange());
+        dispatchToCell(cellAction.focusPrev());
+      } else {
+        debug("Focus up", focusIndex);
+        dispatchToTerminal(terminalAction.focusChange(-1));
       }
     },
 
@@ -245,20 +264,22 @@ const ReplContainer = () => {
         debug("Focus Down Max");
       } else if (focusIndex >= 0 && focusIndex < replCount) {
         debug("Focus Down In Terminal");
-        dispatchAsync(action.focusChange(+1));
+        dispatchToTerminal(terminalAction.focusChange(+1));
       }
     },
   };
 
-  const inputHandler = (e) => {
-    const text = e.target.textContent;
-    dispatchAsync(action.changeCurrentText(text));
-  };
+  useEffect(() => {
+    addHandlersToManager(focusHandlers);
+    setMovable(<MovableReplCell initText="" inputHandler={inputHandler} />);
+  }, []);
 
   useEffect(() => {
     addHandlersToManager(focusHandlers);
-    setMovable(<MovableReplCell inputHandler={inputHandler} />);
-  }, []);
+    setMovable(
+      <MovableReplCell initText={currentText} inputHandler={inputHandler} />
+    );
+  }, [focusIndex]);
 
   const renderRepls = () => {
     const repls = inputTexts.map((_, index) => {

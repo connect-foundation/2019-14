@@ -137,6 +137,8 @@ const terminalReducerHandler = {
     const nextState = deepCopy(state);
     const { index, text } = action;
 
+    nextState.isLoadings = splice.change(nextState.isLoadings, index, false);
+    nextState.isActives = splice.change(nextState.isActives, index, true);
     nextState.outputTexts = splice.change(nextState.outputTexts, index, text);
 
     return nextState;
