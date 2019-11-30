@@ -117,15 +117,15 @@ const cellActionCreator = {
   /**
    * 셀의 속성을 변경한다.
    * - ex) default input cell -> list cell
-   * @param {Number} index 변경할 Cell의 인덱스
+   * @param {Uuid} cellUuid 변경할 Cell의 uuid
    * @param {String} text 변경할 Cell의 텍스트
    * @param {String} tag 변경할 Cell의 태그
    * @param {React.element} cell 변경할 Cell 요소
    */
-  transform(index, text, tag, cell, start) {
+  transform(cellUuid, text, tag, cell, start) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
-      index,
+      cellUuid,
       text,
       tag,
       cell,

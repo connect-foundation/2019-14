@@ -112,7 +112,7 @@ const MarkdownCell = ({ cellUuid }) => {
       const cell = makeNewCell(cellUuid, newStart);
 
       dispatch(
-        cellActionCreator.transform(cellIndex, "", matchingTag, cell, newStart)
+        cellActionCreator.transform(cellUuid, "", matchingTag, cell, newStart)
       );
     }
   };

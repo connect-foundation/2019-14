@@ -73,10 +73,6 @@ const cellReducerHandler = {
     };
   },
 
-  /**
-   * @todo
-   * new에서 start를 받는데 이건 어떻게 해야하는지 준환님이랑 상의하기
-   */
   [CELL_ACTION.DELETE]: (state, action) => {
     const { uuidManager } = state;
     const { cellUuid } = action;
@@ -134,12 +130,12 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
-    const { index, text, tag, cell, start } = action;
+    const { cellUuid, text, tag, cell, start } = action;
+    const { uuidManager } = state;
+    const index = uuidManager.findIndex(cellUuid);
 
     const texts = splice.change(state.texts, index, text);
-
     const tags = splice.change(state.tags, index, tag);
-
     const cells = splice.change(state.cells, index, cell);
 
     return {
