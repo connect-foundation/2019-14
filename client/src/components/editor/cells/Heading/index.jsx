@@ -13,7 +13,6 @@ import { EVENT_TYPE } from "../../../../enums";
 import { useCellState, handlerManager } from "../../../../utils";
 
 import {
-  newCell,
   saveCursorPosition,
   isContinuePrev,
   isContinueNext,
@@ -22,7 +21,7 @@ import {
   setCursorPosition,
   createCursor,
 } from "../Markdown/handler";
-import MarkdownCell from "../Markdown";
+import { newCell, initCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
 
 setGenerator("h1", (uuid) => <HeadingCell cellUuid={uuid} />);
@@ -31,8 +30,6 @@ setGenerator("h3", (uuid) => <HeadingCell cellUuid={uuid} />);
 setGenerator("h4", (uuid) => <HeadingCell cellUuid={uuid} />);
 setGenerator("h5", (uuid) => <HeadingCell cellUuid={uuid} />);
 setGenerator("h6", (uuid) => <HeadingCell cellUuid={uuid} />);
-
-// import {  } from "./handler";
 
 // const HeadingCell = React.forwardRef(({ cellUuid }, ref) => {
 const HeadingCell = ({ cellUuid }) => {
@@ -51,12 +48,24 @@ const HeadingCell = ({ cellUuid }) => {
   //   },
   // }));
 
+  const backspaceEvent = (e) => {
+    const { length } = e.target.textContent;
+    if (length === 0) {
+      const componentCallback = cellGenerator.p;
+      initCell(cellUuid, dispatch, componentCallback);
+    }
+  };
+
   const enterEvent = (e) => {
     const { textContent } = e.target;
-    const componentCallback = cellGenerator.p;
-    saveCursorPosition(dispatch, inputRef);
-    dispatch(cellActionCreator.input(cellUuid, textContent));
-    newCell(dispatch, componentCallback);
+    if (textContent.length === 0) {
+      backspaceEvent(e);
+    } else {
+      const componentCallback = cellGenerator.p;
+      saveCursorPosition(dispatch, inputRef);
+      dispatch(cellActionCreator.input(cellUuid, textContent));
+      newCell(dispatch, componentCallback);
+    }
   };
 
   const arrowUpEvent = (e) => {
@@ -75,6 +84,7 @@ const HeadingCell = ({ cellUuid }) => {
     [EVENT_TYPE.ENTER]: enterEvent,
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
   if (currentIndex === cellIndex) {
