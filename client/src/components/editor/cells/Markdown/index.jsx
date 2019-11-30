@@ -39,7 +39,7 @@ const MarkdownCell = ({ cellUuid }) => {
     const componentCallback = cellGenerator.p;
     saveCursorPosition(dispatch, inputRef);
     dispatch(cellActionCreator.input(cellUuid, textContent));
-    newCell(dispatch, componentCallback);
+    newCell(cellUuid, dispatch, componentCallback);
   };
 
   const arrowUpEvent = (e) => {
@@ -119,6 +119,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const onClick = () => {
     handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex);
+    dispatch(cellActionCreator.focusMove(cellUuid));
   };
 
   const htmlText = () => {

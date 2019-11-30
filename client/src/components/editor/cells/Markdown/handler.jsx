@@ -24,11 +24,11 @@ const saveCursorPosition = (cellDispatch, inputRef) => {
   return null;
 };
 
-const newCell = (cellDispatch, componentCallback, tag) => {
+const newCell = (cellUuid, cellDispatch, componentCallback, tag) => {
   if (tag) {
-    cellDispatch(cellActionCreator.new(componentCallback, tag));
+    cellDispatch(cellActionCreator.new(cellUuid, componentCallback, tag));
   } else {
-    cellDispatch(cellActionCreator.new(componentCallback));
+    cellDispatch(cellActionCreator.new(cellUuid, componentCallback));
   }
 };
 

@@ -64,7 +64,7 @@ const HeadingCell = ({ cellUuid }) => {
       const componentCallback = cellGenerator.p;
       saveCursorPosition(dispatch, inputRef);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(dispatch, componentCallback);
+      newCell(cellUuid, dispatch, componentCallback);
     }
   };
 
@@ -108,6 +108,7 @@ const HeadingCell = ({ cellUuid }) => {
 
   const onClick = () => {
     handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, tag);
+    dispatch(cellActionCreator.focusMove(cellUuid));
   };
 
   const htmlText = () => {

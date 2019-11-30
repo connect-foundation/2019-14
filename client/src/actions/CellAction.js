@@ -37,12 +37,15 @@ const cellActionCreator = {
 
   /**
    * 셀을 생성한다.
-   * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
+   * @param {Uuid} cellUuid 새 셀을 생성할 기준 셀의 uuid
+   * - 엔터시 기준 셀의 다음 셀에 셀을 생성한다.
+   * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백
    * @param {String} tag 셀의 타입(태그). 생략시 default input 셀이 생성된다.
    */
-  new(createMarkdownCell, tag = CELL_TAG.DEFAULT) {
+  new(cellUuid, createMarkdownCell, tag = CELL_TAG.DEFAULT) {
     return {
       type: CELL_ACTION.NEW,
+      cellUuid,
       createMarkdownCell,
       tag,
     };
@@ -62,6 +65,7 @@ const cellActionCreator = {
   },
 
   /**
+   * 지정한 셀을 삭제한다.
    * @param {Uuid} cellUuid 삭제할 셀의 uuid
    */
   delete(cellUuid) {

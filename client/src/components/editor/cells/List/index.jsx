@@ -85,7 +85,7 @@ const ListCell = ({ cellUuid }) => {
 
       saveCursorPosition(dispatch, inputRef);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(dispatch, componentCallback, tag);
+      newCell(cellUuid, dispatch, componentCallback, tag);
     }
   };
 
@@ -129,6 +129,7 @@ const ListCell = ({ cellUuid }) => {
 
   const onClick = () => {
     handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, tag);
+    dispatch(cellActionCreator.focusMove(cellUuid));
   };
 
   const htmlText = () => {
