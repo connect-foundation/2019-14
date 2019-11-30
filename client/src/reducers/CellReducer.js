@@ -43,8 +43,19 @@ const cellReducerHandler = {
       : createMarkdownCell(newCellUuid);
 
     const cells = splice.add(state.cells, index, component);
-    const texts = splice.add(state.texts, index, "");
+
+    const originText = state.texts[index];
+    const { cursor } = state;
+    const currentText = originText.slice(0, cursor.start);
+    const newText = originText.slice(cursor.start);
+    let texts = splice.change(state.texts, index, currentText);
+    texts = splice.add(texts, index, newText);
     const tags = splice.add(state.tags, index, tag);
+
+    const newCursor = {
+      start: 0,
+      end: 0,
+    };
 
     uuidManager.uuidArray = splice.add(
       uuidManager.uuidArray,
@@ -60,6 +71,7 @@ const cellReducerHandler = {
       cells,
       texts,
       tags,
+      cursor: newCursor,
       start: newStart,
     };
   },
