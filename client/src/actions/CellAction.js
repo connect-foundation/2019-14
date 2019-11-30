@@ -4,6 +4,7 @@ const CELL_ACTION = {
   INIT: "cell/init",
   NEW: "cell/new",
   INPUT: "cell/input",
+  DELETE: "cell/delete",
   TARGET: {
     TRANSFORM: "cell/target/transform",
   },
@@ -58,6 +59,16 @@ const cellActionCreator = {
       type: CELL_ACTION.INPUT,
       cellUuid,
       text,
+    };
+  },
+
+  /**
+   * @param {Uuid} cellUuid 삭제할 셀의 uuid
+   */
+  delete(cellUuid) {
+    return {
+      type: CELL_ACTION.DELETE,
+      cellUuid,
     };
   },
 

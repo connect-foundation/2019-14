@@ -47,6 +47,17 @@ utils.splice = {
     }
     return [data];
   },
+
+  /**
+   * @param {Array} array 데이터를 삭제할 배열
+   * @param {Number} cur 현재 인덱스
+   */
+  delete: (array, cur) => {
+    if (array.length > 0) {
+      return [...array.slice(0, cur), ...array.slice(cur + 1, array.length)];
+    }
+    return [];
+  },
 };
 
 utils.deepCopy = (obj) => {

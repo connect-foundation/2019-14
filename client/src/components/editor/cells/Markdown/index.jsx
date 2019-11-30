@@ -9,6 +9,7 @@ import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
   newCell,
+  deleteCell,
   saveCursorPosition,
   isContinuePrev,
   focusPrev,
@@ -53,10 +54,18 @@ const MarkdownCell = ({ cellUuid }) => {
     }
   };
 
+  const backspaceEvent = (e) => {
+    const { length } = e.target.textContent;
+    if (length === 0 && cellIndex > 0) {
+      deleteCell(dispatch, cellUuid);
+    }
+  };
+
   const keydownHandlers = {
     [EVENT_TYPE.ENTER]: enterEvent,
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
   if (currentIndex === cellIndex) {
