@@ -18,7 +18,7 @@ import {
   setCursorPosition,
   createCursor,
 } from "../Markdown/handler";
-import { newCell } from "./handler";
+import { newCell, initCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
 
 setGenerator("ul", (uuid) => (
@@ -41,9 +41,6 @@ const ListCell = ({ cellUuid }) => {
     cellUuid
   );
   let inputRef = null;
-
-  const { start } = state;
-  const newStart = start + 1;
 
   // const inputRef = useRef();
 
@@ -69,24 +66,15 @@ const ListCell = ({ cellUuid }) => {
         )
       );
       */
-    const isOrderedList = tag == "ol";
+    const isOrderedList = tag === "ol";
 
-    const component = (uuid) =>
-      isOrderedList ? (
-        <ol start={newStart}>
-          <ListCell cellUuid={uuid} />
-        </ol>
-      ) : (
-        <ul>
-          <ListCell cellUuid={uuid} />
-        </ul>
-      );
-
-    const componentCallback = (uuid) => component(uuid);
+    const componentCallback = isOrderedList
+      ? cellGenerator.ol
+      : cellGenerator.ul;
 
     saveCursorPosition(dispatch, inputRef);
     dispatch(cellActionCreator.input(cellUuid, textContent));
-    newCell(dispatch, componentCallback, tag, newStart);
+    newCell(dispatch, componentCallback, tag);
   };
 
   const arrowUpEvent = (e) => {

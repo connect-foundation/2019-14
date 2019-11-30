@@ -27,17 +27,20 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.NEW]: (state, action) => {
-    const { currentIndex, uuidManager } = state;
-    const { createMarkdownCell, start } = action;
+    const { currentIndex, uuidManager, start } = state;
+    const { createMarkdownCell, tag } = action;
     const cellUuid = uuid();
 
-    const cells = splice.add(
-      state.cells,
-      currentIndex,
-      createMarkdownCell(cellUuid)
-    );
+    const isOrderedList = tag === "ol";
+    const newStart = isOrderedList ? start + 1 : null;
+    const component = isOrderedList
+      ? createMarkdownCell(cellUuid, newStart)
+      : createMarkdownCell(cellUuid);
+
+    const cells = splice.add(state.cells, currentIndex, component);
     const texts = splice.add(state.texts, currentIndex, "");
-    const tags = splice.add(state.tags, currentIndex, action.tag);
+    const tags = splice.add(state.tags, currentIndex, tag);
+
     uuidManager.uuidArray = splice.add(
       uuidManager.uuidArray,
       currentIndex,
@@ -50,7 +53,7 @@ const cellReducerHandler = {
       cells,
       texts,
       tags,
-      start,
+      start: newStart,
     };
   },
 
