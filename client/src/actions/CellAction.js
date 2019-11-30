@@ -23,15 +23,15 @@ const cellActionCreator = {
   /**
    * 셀의 데이터를 초기화시킨다.
    * @param {Cell} createMarkdownCell 초기화할 셀을 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
-   * @param {Number} index 초기화할 셀의 index
-   * - 파라미터로 넘기지 않으면 기본값 0
+   * @param {Uuid} cellUuid 초기화할 셀의 uuid
+   * - 파라미터로 넘기지 않으면 기본값 null
    */
-  init(createMarkdownCell, index = 0) {
+  init(createMarkdownCell, cellUuid) {
     return {
       type: CELL_ACTION.INIT,
       createMarkdownCell,
       tag: CELL_TAG.DEFAULT,
-      index,
+      cellUuid: cellUuid || null,
     };
   },
 

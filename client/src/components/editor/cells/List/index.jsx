@@ -50,6 +50,14 @@ const ListCell = ({ cellUuid }) => {
   //   },
   // }));
 
+  const backspaceEvent = (e) => {
+    const { length } = e.target.textContent;
+    if (length === 0) {
+      const componentCallback = cellGenerator.p;
+      initCell(cellUuid, dispatch, componentCallback);
+    }
+  };
+
   const enterEvent = (e) => {
     const { textContent } = e.target;
     /*
@@ -66,15 +74,19 @@ const ListCell = ({ cellUuid }) => {
         )
       );
       */
-    const isOrderedList = tag === "ol";
+    if (textContent.length === 0) {
+      backspaceEvent(e);
+    } else {
+      const isOrderedList = tag === "ol";
 
-    const componentCallback = isOrderedList
-      ? cellGenerator.ol
-      : cellGenerator.ul;
+      const componentCallback = isOrderedList
+        ? cellGenerator.ol
+        : cellGenerator.ul;
 
-    saveCursorPosition(dispatch, inputRef);
-    dispatch(cellActionCreator.input(cellUuid, textContent));
-    newCell(dispatch, componentCallback, tag);
+      saveCursorPosition(dispatch, inputRef);
+      dispatch(cellActionCreator.input(cellUuid, textContent));
+      newCell(dispatch, componentCallback, tag);
+    }
   };
 
   const arrowUpEvent = (e) => {
@@ -93,6 +105,7 @@ const ListCell = ({ cellUuid }) => {
     [EVENT_TYPE.ENTER]: enterEvent,
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
   if (currentIndex === cellIndex) {

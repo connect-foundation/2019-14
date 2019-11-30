@@ -6,17 +6,21 @@ const { splice } = utils;
 
 const cellReducerHandler = {
   [CELL_ACTION.INIT]: (state, action) => {
-    const { index, createMarkdownCell } = action;
+    const { cellUuid, createMarkdownCell, tag } = action;
     const { uuidManager } = state;
-    const cellUuid = uuid();
-    uuidManager.push(cellUuid);
+    const newUuid = cellUuid || uuid();
+    const index = cellUuid ? uuidManager.findIndex(cellUuid) : 0;
+
+    if (!cellUuid) {
+      uuidManager.push(newUuid);
+    }
     const cells = splice.change(
       state.cells,
       index,
-      createMarkdownCell(cellUuid)
+      createMarkdownCell(newUuid)
     );
     const texts = splice.change(state.texts, index, "");
-    const tags = splice.change(state.tags, index, action.tag);
+    const tags = splice.change(state.tags, index, tag);
 
     return {
       ...state,
