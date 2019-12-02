@@ -186,6 +186,17 @@ const cellReducerHandler = {
     };
   },
 
+  [CELL_ACTION.BLOCK.ALL]: (state) => {
+    const block = {
+      start: 0,
+      end: state.cells.length - 1,
+    };
+    return {
+      ...state,
+      block,
+    };
+  },
+
   [CELL_ACTION.BLOCK.UP]: (state, action) => {
     const { uuidManager, block } = state;
     const { cellUuid } = action;
@@ -311,9 +322,11 @@ const cellReducerHandler = {
     const { cellUuid } = action;
     const index = uuidManager.findIndex(cellUuid);
 
-    /**
-     * cells
-     */
+    if (!state.block.start) {
+      return {
+        ...state,
+      };
+    }
 
     const currentIndex = state.currentIndex + clipboard.texts.length;
 

@@ -15,6 +15,7 @@ const CELL_ACTION = {
     ATTACH: "cell/focus/attach",
   },
   BLOCK: {
+    ALL: "cell/block/all",
     UP: "cell/block/up",
     DOWN: "cell/block/down",
     DELETE: "cell/block/delete",
@@ -145,6 +146,15 @@ const cellActionCreator = {
       tag,
       cell,
       start: start || null,
+    };
+  },
+
+  /**
+   * 모든 셀을 선택한다.
+   */
+  blockAll() {
+    return {
+      type: CELL_ACTION.BLOCK.ALL,
     };
   },
 
