@@ -1,6 +1,7 @@
 import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
 import { utils } from "../utils";
+import { cellGenerator } from "../components/editor/cells/CellGenerator";
 
 const { splice } = utils;
 
@@ -208,6 +209,7 @@ const cellReducerHandler = {
     return {
       ...state,
       block: newBlock,
+      currentIndex: newEnd,
     };
   },
 
@@ -236,6 +238,7 @@ const cellReducerHandler = {
     return {
       ...state,
       block: newBlock,
+      currentIndex: newEnd,
     };
   },
 
@@ -249,15 +252,15 @@ const cellReducerHandler = {
     const tags = splice.blockDelete(state.tags, blockStart, blockEnd);
     uuidManager.blockDelete(blockStart, blockEnd);
 
-    const cursor = {
-      start: 0,
-      end: 0,
-    };
     const emptyBlock = {
       start: null,
       end: null,
     };
     const currentIndex = blockStart - 1 < 0 ? blockStart : blockStart - 1;
+    const cursor = {
+      start: texts[currentIndex].length,
+      end: texts[currentIndex].length,
+    };
 
     return {
       ...state,
@@ -279,6 +282,68 @@ const cellReducerHandler = {
     return {
       ...state,
       cursor,
+    };
+  },
+
+  [CELL_ACTION.CLIPBOARD.COPY]: (state) => {
+    const { texts, tags, block } = state;
+
+    if (!block.start) {
+      return {
+        ...state,
+      };
+    }
+    const blockStart = block.start < block.end ? block.start : block.end;
+    const blockEnd = block.start > block.end ? block.start : block.end;
+
+    const clipboard = {
+      texts: texts.slice(blockStart, blockEnd + 1),
+      tags: tags.slice(blockStart, blockEnd + 1),
+    };
+    return {
+      ...state,
+      clipboard,
+    };
+  },
+
+  [CELL_ACTION.CLIPBOARD.PASTE]: (state, action) => {
+    const { uuidManager, clipboard } = state;
+    const { cellUuid } = action;
+    const index = uuidManager.findIndex(cellUuid);
+
+    /**
+     * cells
+     */
+
+    const currentIndex = state.currentIndex + clipboard.texts.length;
+
+    const cbCells = clipboard.tags.reduce((acc, val) => {
+      /**
+       * @todo ordered list일 경우 추가하기
+       */
+      return cellGenerator[val](uuid());
+    }, []);
+    const cells = splice.blockAdd(state.cells, index, cbCells);
+    const texts = splice.blockAdd(state.texts, index, clipboard.texts);
+    const tags = splice.blockAdd(state.tags, index, clipboard.tags);
+
+    const cursor = {
+      start: texts[currentIndex].length,
+      end: texts[currentIndex].length,
+    };
+
+    const block = {
+      start: null,
+      end: null,
+    };
+
+    return {
+      ...state,
+      cells,
+      texts,
+      tags,
+      cursor,
+      block,
     };
   },
 };

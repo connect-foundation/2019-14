@@ -22,6 +22,10 @@ const CELL_ACTION = {
   CURSOR: {
     MOVE: "cell/cursor/move",
   },
+  CLIPBOARD: {
+    COPY: "cell/clipboard/copy",
+    PASTE: "cell/clipboard/paste",
+  },
 };
 
 const cellActionCreator = {
@@ -184,6 +188,25 @@ const cellActionCreator = {
       type: CELL_ACTION.CURSOR.MOVE,
       selectionStart,
       selectionEnd,
+    };
+  },
+
+  /**
+   * 현재 블록 범위를 클립보드에 저장한다.
+   */
+  copy() {
+    return {
+      type: CELL_ACTION.CLIPBOARD.COPY,
+    };
+  },
+
+  /**
+   * @param {Uuid} cellUuid 붙여넣기를 할 기준 셀의 uuid
+   */
+  paste(cellUuid) {
+    return {
+      type: CELL_ACTION.CLIPBOARD.COPY,
+      cellUuid,
     };
   },
 };
