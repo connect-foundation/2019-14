@@ -77,14 +77,18 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const backspaceEvent = (e) => {
-    const { textContent } = e.target;
-    if (textContent.length === 0 && cellIndex > 0) {
-      deleteCell(dispatch, cellUuid);
-    }
-
-    const cursorPos = getSelection();
-    if (cursorPos.start === 0 && cursorPos.end === 0) {
-      deleteCell(dispatch, cellUuid, textContent);
+    if (state.block) {
+      dispatch(cellActionCreator.blockDelete());
+    } else {
+      const { textContent } = e.target;
+      if (textContent.length === 0 && cellIndex > 0) {
+        deleteCell(dispatch, cellUuid);
+      } else {
+        const cursorPos = getSelection();
+        if (cursorPos.start === 0 && cursorPos.end === 0) {
+          deleteCell(dispatch, cellUuid, textContent);
+        }
+      }
     }
   };
 

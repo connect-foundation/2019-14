@@ -232,6 +232,54 @@ const cellReducerHandler = {
     };
   },
 
+  [CELL_ACTION.BLOCK.DELETE]: (state) => {
+    const { block } = state;
+    const blockStart = block.start < block.end ? block.start : block.end;
+    const blockEnd = block.start > block.end ? block.start : block.end;
+
+    /**
+     * delete
+     * - cells
+     * - texts
+     * - tags
+     * update
+     * - cursor
+     * - block
+     * - currentIndex
+     */
+    const cells = [
+      ...state.cells.slice(0, blockStart),
+      ...state.cells.slice(blockEnd + 1),
+    ];
+    const texts = [
+      ...state.texts.slice(0, blockStart),
+      ...state.texts.slice(blockEnd + 1),
+    ];
+    const tags = [
+      ...state.tags.slice(0, blockStart),
+      ...state.tags.slice(blockEnd + 1),
+    ];
+
+    const cursor = {
+      start: 0,
+      end: 0,
+    };
+    const emptyBlock = {
+      start: null,
+      end: null,
+    };
+    const currentIndex = blockStart - 1 < 0 ? blockStart : blockStart - 1;
+    return {
+      ...state,
+      cells,
+      texts,
+      tags,
+      cursor,
+      block: emptyBlock,
+      currentIndex,
+    };
+  },
+
   [CELL_ACTION.CURSOR.MOVE]: (state, action) => {
     const cursor = {
       start: action.selectionStart,
