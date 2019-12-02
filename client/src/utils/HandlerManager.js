@@ -81,11 +81,13 @@ const customKeydownEventHandler = (e) => {
         break;
       case "ArrowUp":
         e.preventDefault();
-        handler[EVENT_TYPE.ARROW_UP](e);
+        if (e.shiftKey) handler[EVENT_TYPE.SHIFT_ARROW_UP](e);
+        else handler[EVENT_TYPE.ARROW_UP](e);
         break;
       case "ArrowDown":
         e.preventDefault();
-        handler[EVENT_TYPE.ARROW_DOWN](e);
+        if (e.shiftKey) handler[EVENT_TYPE.SHIFT_ARROW_DOWN](e);
+        else handler[EVENT_TYPE.ARROW_DOWN](e);
         break;
       default:
         break;

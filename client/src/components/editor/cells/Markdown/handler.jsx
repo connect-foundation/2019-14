@@ -65,6 +65,14 @@ const focusPrev = (cellUuid, textContent, cellDispatch, inputRef) => {
   cellDispatch(cellActionCreator.focusPrev());
 };
 
+const blockEndUp = (cellUuid, cellDispatch) => {
+  cellDispatch(cellActionCreator.blockUp(cellUuid));
+};
+
+const blockEndDown = (cellUuid, cellDispatch) => {
+  cellDispatch(cellActionCreator.blockDown(cellUuid));
+};
+
 const createCursor = (text, cursor) => {
   const cursorFront = text.slice(0, cursor.start);
   const cursorBack = text.slice(cursor.start, text.length);
@@ -92,6 +100,8 @@ export {
   focusPrev,
   isContinueNext,
   focusNext,
+  blockEndUp,
+  blockEndDown,
   createCursor,
   setCursorPosition,
 };

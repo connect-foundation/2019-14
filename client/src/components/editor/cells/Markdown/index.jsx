@@ -17,6 +17,8 @@ import {
   focusNext,
   createCursor,
   setCursorPosition,
+  blockEndUp,
+  blockEndDown,
 } from "./handler";
 
 setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
@@ -27,13 +29,14 @@ setGenerator("hr", (uuid) => (
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { currentIndex, uuidManager, start, cursor } = state;
+  const { currentIndex, uuidManager, start, cursor, block } = state;
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
   const text = state.texts[cellIndex];
   const currentTag = state.tags[cellIndex];
 
+  // -------------- Handler -----------------------
   const enterEvent = (e) => {
     const { textContent } = e.target;
     const componentCallback = cellGenerator.p;
@@ -48,10 +51,18 @@ const MarkdownCell = ({ cellUuid }) => {
     }
   };
 
+  const shiftArrowUpEvent = () => {
+    blockEndUp(cellUuid, dispatch);
+  };
+
   const arrowDownEvent = (e) => {
     if (isContinueNext(cellIndex, state.cells.length)) {
       focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
     }
+  };
+
+  const shiftArrowDownEvent = () => {
+    blockEndDown(cellUuid, dispatch);
   };
 
   const backspaceEvent = (e) => {
@@ -64,9 +75,13 @@ const MarkdownCell = ({ cellUuid }) => {
   const keydownHandlers = {
     [EVENT_TYPE.ENTER]: enterEvent,
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
+    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+    [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
+
+  // -------------- End -----------------------
 
   if (currentIndex === cellIndex) {
     inputRef = state.inputRef;
@@ -131,9 +146,12 @@ const MarkdownCell = ({ cellUuid }) => {
     return { __html: text };
   };
 
+  const intoShiftBlock = true;
+
   const renderTarget = (
     <MarkdownWrapper
       as={currentTag}
+      intoShiftBlock={intoShiftBlock}
       placeholder={PLACEHOLDER[currentTag]}
       contentEditable
       onKeyUp={onKeyUp}

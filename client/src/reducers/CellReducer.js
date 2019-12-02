@@ -162,6 +162,71 @@ const cellReducerHandler = {
     };
   },
 
+  [CELL_ACTION.BLOCK.UP]: (state, action) => {
+    const { uuidManager, block } = state;
+    const { cellUuid } = action;
+    const index = uuidManager.findIndex(cellUuid);
+
+    const newStart = block.start || index;
+    let newEnd = block.end > 0 ? block.end - 1 : newStart;
+    if (block.end > 0) {
+      newEnd = block.end - 1;
+    } else if (block.end === 0) {
+      newEnd = 0;
+    } else {
+      newEnd = newStart;
+    }
+
+    const newBlock = {
+      start: newStart,
+      end: newEnd,
+    };
+
+    return {
+      ...state,
+      block: newBlock,
+    };
+  },
+
+  [CELL_ACTION.BLOCK.DOWN]: (state, action) => {
+    const { uuidManager, block, cells } = state;
+    const { cellUuid } = action;
+    const index = uuidManager.findIndex(cellUuid);
+
+    const { length } = cells;
+
+    const newStart = block.start || index;
+    let newEnd = block.end < length - 1 ? block.end + 1 : newStart;
+    if (block.end < length - 1) {
+      newEnd = block.end + 1;
+    } else if (block.end === length - 1) {
+      newEnd = length - 1;
+    } else {
+      newEnd = newStart;
+    }
+
+    const newBlock = {
+      start: newStart,
+      end: newEnd,
+    };
+
+    return {
+      ...state,
+      block: newBlock,
+    };
+  },
+
+  [CELL_ACTION.BLOCK.EXIT]: (state) => {
+    const block = {
+      start: null,
+      end: null,
+    };
+    return {
+      ...state,
+      block,
+    };
+  },
+
   [CELL_ACTION.CURSOR.MOVE]: (state, action) => {
     const cursor = {
       start: action.selectionStart,

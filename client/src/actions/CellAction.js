@@ -14,6 +14,11 @@ const CELL_ACTION = {
     MOVE: "cell/focus/move",
     ATTACH: "cell/focus/attach",
   },
+  BLOCK: {
+    UP: "cell/block/up",
+    DOWN: "cell/block/down",
+    EXIT: "cell/block/exit",
+  },
   CURSOR: {
     MOVE: "cell/cursor/move",
   },
@@ -134,6 +139,26 @@ const cellActionCreator = {
       tag,
       cell,
       start: start || null,
+    };
+  },
+
+  blockUp(cellUuid) {
+    return {
+      type: CELL_ACTION.BLOCK.UP,
+      cellUuid,
+    };
+  },
+
+  blockDown(cellUuid) {
+    return {
+      type: CELL_ACTION.BLOCK.DOWN,
+      cellUuid,
+    };
+  },
+
+  blockExit() {
+    return {
+      type: CELL_ACTION.BLOCK.EXIT,
     };
   },
 
