@@ -9,11 +9,7 @@ utils.splice = {
    */
   add: (array, cur, data = null) => {
     if (array.length > 0) {
-      return [
-        ...array.slice(0, cur + 1),
-        data,
-        ...array.slice(cur + 1, array.length),
-      ];
+      return [...array.slice(0, cur + 1), data, ...array.slice(cur + 1)];
     }
     return [data];
   },
@@ -26,7 +22,7 @@ utils.splice = {
    */
   addBefore: (array, cur, data = null) => {
     if (array.length > 0) {
-      return [...array.slice(0, cur), data, ...array.slice(cur, array.length)];
+      return [...array.slice(0, cur), data, ...array.slice(cur)];
     }
     return [data];
   },
@@ -39,11 +35,7 @@ utils.splice = {
    */
   change: (array, cur, data) => {
     if (array.length > 0) {
-      return [
-        ...array.slice(0, cur),
-        data,
-        ...array.slice(cur + 1, array.length),
-      ];
+      return [...array.slice(0, cur), data, ...array.slice(cur + 1)];
     }
     return [data];
   },
@@ -54,7 +46,7 @@ utils.splice = {
    */
   delete: (array, cur) => {
     if (array.length > 0) {
-      return [...array.slice(0, cur), ...array.slice(cur + 1, array.length)];
+      return [...array.slice(0, cur), ...array.slice(cur + 1)];
     }
     return [];
   },

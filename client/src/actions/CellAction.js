@@ -30,12 +30,12 @@ const cellActionCreator = {
    * @param {Uuid} cellUuid 초기화할 셀의 uuid
    * - 파라미터로 넘기지 않으면 기본값 null
    */
-  init(createMarkdownCell, cellUuid) {
+  init(createMarkdownCell, cellUuid = null) {
     return {
       type: CELL_ACTION.INIT,
       createMarkdownCell,
       tag: CELL_TAG.DEFAULT,
-      cellUuid: cellUuid || null,
+      cellUuid,
     };
   },
 

@@ -49,8 +49,8 @@ const HeadingCell = ({ cellUuid }) => {
   // }));
 
   const backspaceEvent = (e) => {
-    const { length } = e.target.textContent;
-    if (length === 0) {
+    const { textContent } = e.target;
+    if (textContent.length === 0) {
       const componentCallback = cellGenerator.p;
       initCell(cellUuid, dispatch, componentCallback);
     }

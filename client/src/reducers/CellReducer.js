@@ -97,18 +97,18 @@ const cellReducerHandler = {
     const texts = splice.delete(state.texts, index);
     const tags = splice.delete(state.tags, index);
     uuidManager.uuidArray = splice.delete(uuidManager.uuidArray, index);
+    const prevIndex = index - 1;
     const cursor = {
-      start: index - 1 >= 0 ? texts[index - 1].length : 0,
-      end: index - 1 >= 0 ? texts[index - 1].length : 0,
+      start: prevIndex >= 0 ? texts[prevIndex].length : 0,
+      end: prevIndex >= 0 ? texts[prevIndex].length : 0,
     };
-    const currentIndex = index - 1;
 
     return {
       ...state,
       cells,
       texts,
       tags,
-      currentIndex,
+      currentIndex: prevIndex,
       cursor,
     };
   },
