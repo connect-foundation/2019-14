@@ -213,7 +213,7 @@ const cellReducerHandler = {
 
     const newStart = block.start || index;
     let newEnd = block.end < length - 1 ? block.end + 1 : newStart;
-    if (block.end && block.end < length - 1) {
+    if (block.end < length - 1) {
       newEnd = block.end + 1;
     } else if (block.end === length - 1) {
       newEnd = length - 1;

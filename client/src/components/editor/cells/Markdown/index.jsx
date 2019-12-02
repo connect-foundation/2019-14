@@ -39,7 +39,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   let intoShiftBlock = false;
 
-  if (block.start && block.end) {
+  if (block.start) {
     const blockStart = block.start < block.end ? block.start : block.end;
     const blockEnd = block.start > block.end ? block.start : block.end;
     if (blockStart <= cellIndex && cellIndex <= blockEnd) {
