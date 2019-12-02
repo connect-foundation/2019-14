@@ -141,6 +141,10 @@ const cellActionCreator = {
     };
   },
 
+  /**
+   * 쉬프트+위 입력시 선택할 셀의 범위를 위로 한 단계 올린다.
+   * @param {Uuid} cellUuid 블록을 시작할 기준 셀의 uuid
+   */
   blockUp(cellUuid) {
     return {
       type: CELL_ACTION.BLOCK.UP,
@@ -148,6 +152,10 @@ const cellActionCreator = {
     };
   },
 
+  /**
+   * 쉬프트+아래 입력시 선택할 셀의 범위를 위로 한 단계 내린다.
+   * @param {Uuid} cellUuid 블록을 시작할 기준 셀의 uuid
+   */
   blockDown(cellUuid) {
     return {
       type: CELL_ACTION.BLOCK.DOWN,
