@@ -17,7 +17,6 @@ const CELL_ACTION = {
   BLOCK: {
     UP: "cell/block/up",
     DOWN: "cell/block/down",
-    EXIT: "cell/block/exit",
   },
   CURSOR: {
     MOVE: "cell/cursor/move",
@@ -153,12 +152,6 @@ const cellActionCreator = {
     return {
       type: CELL_ACTION.BLOCK.DOWN,
       cellUuid,
-    };
-  },
-
-  blockExit() {
-    return {
-      type: CELL_ACTION.BLOCK.EXIT,
     };
   },
 

@@ -114,16 +114,26 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.FOCUS.PREV]: (state) => {
+    const block = {
+      start: null,
+      end: null,
+    };
     return {
       ...state,
       currentIndex: state.currentIndex - 1,
+      block,
     };
   },
 
   [CELL_ACTION.FOCUS.NEXT]: (state) => {
+    const block = {
+      start: null,
+      end: null,
+    };
     return {
       ...state,
       currentIndex: state.currentIndex + 1,
+      block,
     };
   },
 
@@ -197,7 +207,7 @@ const cellReducerHandler = {
 
     const newStart = block.start || index;
     let newEnd = block.end < length - 1 ? block.end + 1 : newStart;
-    if (block.end < length - 1) {
+    if (block.end && block.end < length - 1) {
       newEnd = block.end + 1;
     } else if (block.end === length - 1) {
       newEnd = length - 1;
@@ -213,17 +223,6 @@ const cellReducerHandler = {
     return {
       ...state,
       block: newBlock,
-    };
-  },
-
-  [CELL_ACTION.BLOCK.EXIT]: (state) => {
-    const block = {
-      start: null,
-      end: null,
-    };
-    return {
-      ...state,
-      block,
     };
   },
 

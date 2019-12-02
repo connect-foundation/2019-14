@@ -36,6 +36,16 @@ const MarkdownCell = ({ cellUuid }) => {
   const text = state.texts[cellIndex];
   const currentTag = state.tags[cellIndex];
 
+  let intoShiftBlock = false;
+
+  if (block.start && block.end) {
+    const blockStart = block.start < block.end ? block.start : block.end;
+    const blockEnd = block.start > block.end ? block.start : block.end;
+    if (blockStart <= cellIndex && cellIndex <= blockEnd) {
+      intoShiftBlock = true;
+    }
+  }
+
   // -------------- Handler -----------------------
   const enterEvent = (e) => {
     const { textContent } = e.target;
@@ -145,8 +155,6 @@ const MarkdownCell = ({ cellUuid }) => {
      */
     return { __html: text };
   };
-
-  const intoShiftBlock = true;
 
   const renderTarget = (
     <MarkdownWrapper
