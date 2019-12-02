@@ -98,16 +98,30 @@ const customKeydownEventHandler = (e) => {
         else handler[EVENT_TYPE.ARROW_DOWN](e);
         break;
       case "a":
-        e.preventDefault();
-        if (e.ctrlKey || e.metaKey) handler[EVENT_TYPE.CTRL_A](e);
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          handler[EVENT_TYPE.CTRL_A](e);
+        }
         break;
       case "x":
         // block 상태일 때만 e.preventDefault
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          handler[EVENT_TYPE.CTRL_X](e);
+        }
         break;
       case "c":
         // block 상태일 때만 e.preventDefault
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          handler[EVENT_TYPE.CTRL_C](e);
+        }
         break;
       case "v":
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          handler[EVENT_TYPE.CTRL_V](e);
+        }
         break;
       default:
         break;

@@ -58,7 +58,7 @@ utils.splice = {
    * @returns {Array} 데이터가 변경된 배열
    */
   blockAdd: (array, cur, data) => {
-    return [...array.slice(0, cur), ...data, ...array.slice(cur + 1)];
+    return [...array.slice(0, cur + 1), ...data, ...array.slice(cur + 1)];
   },
 
   /**

@@ -86,6 +86,19 @@ const MarkdownCell = ({ cellUuid }) => {
     dispatch(cellActionCreator.blockAll());
   };
 
+  const ctrlXEvent = () => {
+    dispatch(cellActionCreator.copy());
+    deleteCell(dispatch);
+  };
+
+  const ctrlCEvent = () => {
+    dispatch(cellActionCreator.copy());
+  };
+
+  const ctrlVEvent = () => {
+    dispatch(cellActionCreator.paste(cellUuid));
+  };
+
   const keydownHandlers = {
     [EVENT_TYPE.ENTER]: enterEvent,
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
@@ -94,6 +107,9 @@ const MarkdownCell = ({ cellUuid }) => {
     [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
     [EVENT_TYPE.CTRL_A]: ctrlAEvent,
+    [EVENT_TYPE.CTRL_X]: ctrlXEvent,
+    [EVENT_TYPE.CTRL_C]: ctrlCEvent,
+    [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
   // -------------- End -----------------------

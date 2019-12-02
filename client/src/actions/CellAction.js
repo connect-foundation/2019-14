@@ -208,7 +208,7 @@ const cellActionCreator = {
    */
   paste(cellUuid) {
     return {
-      type: CELL_ACTION.CLIPBOARD.COPY,
+      type: CELL_ACTION.CLIPBOARD.PASTE,
       cellUuid,
     };
   },

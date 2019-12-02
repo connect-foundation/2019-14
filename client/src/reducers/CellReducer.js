@@ -88,7 +88,7 @@ const cellReducerHandler = {
     const { uuidManager, block } = state;
     const { cellUuid, text } = action;
 
-    if (block.start) {
+    if (block.start !== null) {
       const blockStart = block.start < block.end ? block.start : block.end;
       const blockEnd = block.start > block.end ? block.start : block.end;
 
@@ -325,20 +325,18 @@ const cellReducerHandler = {
     const { cellUuid } = action;
     const index = uuidManager.findIndex(cellUuid);
 
-    if (!state.block.start) {
-      return {
-        ...state,
-      };
-    }
-
     const currentIndex = state.currentIndex + clipboard.texts.length;
 
-    const cbCells = clipboard.tags.reduce((acc, val) => {
+    const cbCells = clipboard.tags.reduce((acc, val, i) => {
       /**
        * @todo ordered list일 경우 추가하기
        */
-      return cellGenerator[val](uuid());
+      const newUuid = uuid();
+      uuidManager.push(newUuid, index + i);
+      acc.push(cellGenerator[val](newUuid));
+      return acc;
     }, []);
+
     const cells = splice.blockAdd(state.cells, index, cbCells);
     const texts = splice.blockAdd(state.texts, index, clipboard.texts);
     const tags = splice.blockAdd(state.tags, index, clipboard.tags);
