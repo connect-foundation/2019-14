@@ -8,6 +8,7 @@ import { getType, getStart, handlerManager } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
+  getSelection,
   newCell,
   deleteCell,
   saveCursorPosition,
@@ -76,9 +77,14 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const backspaceEvent = (e) => {
-    const { length } = e.target.textContent;
-    if (length === 0 && cellIndex > 0) {
+    const { textContent } = e.target;
+    if (textContent.length === 0 && cellIndex > 0) {
       deleteCell(dispatch, cellUuid);
+    }
+
+    const cursorPos = getSelection();
+    if (cursorPos.start === 0 && cursorPos.end === 0) {
+      deleteCell(dispatch, cellUuid, textContent);
     }
   };
 

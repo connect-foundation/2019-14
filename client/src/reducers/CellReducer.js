@@ -85,18 +85,23 @@ const cellReducerHandler = {
 
   [CELL_ACTION.DELETE]: (state, action) => {
     const { uuidManager } = state;
-    const { cellUuid } = action;
+    const { cellUuid, text } = action;
     const index = uuidManager.findIndex(cellUuid);
-
-    const cells = splice.delete(state.cells, index);
-    const texts = splice.delete(state.texts, index);
-    const tags = splice.delete(state.tags, index);
     uuidManager.pop(index);
+
     const prevIndex = index - 1;
+    const cells = splice.delete(state.cells, index);
+
     const cursor = {
-      start: prevIndex >= 0 ? texts[prevIndex].length : 0,
-      end: prevIndex >= 0 ? texts[prevIndex].length : 0,
+      start: prevIndex >= 0 ? state.texts[prevIndex].length : 0,
+      end: prevIndex >= 0 ? state.texts[prevIndex].length : 0,
     };
+
+    let texts = splice.delete(state.texts, index);
+    const joinedText = state.texts[prevIndex] + text;
+    texts = splice.change(state.texts, prevIndex, joinedText);
+
+    const tags = splice.delete(state.tags, index);
 
     return {
       ...state,

@@ -71,11 +71,13 @@ const cellActionCreator = {
   /**
    * 지정한 셀을 삭제한다.
    * @param {Uuid} cellUuid 삭제할 셀의 uuid
+   * @param {Text} text 이전 셀로 이동할 텍스트
    */
-  delete(cellUuid) {
+  delete(cellUuid, text = "") {
     return {
       type: CELL_ACTION.DELETE,
       cellUuid,
+      text,
     };
   },
 

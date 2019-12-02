@@ -32,8 +32,12 @@ const newCell = (cellUuid, cellDispatch, componentCallback, tag) => {
   }
 };
 
-const deleteCell = (cellDispatch, cellUuid) => {
-  cellDispatch(cellActionCreator.delete(cellUuid));
+const deleteCell = (cellDispatch, cellUuid, textContent) => {
+  if (textContent) {
+    cellDispatch(cellActionCreator.delete(cellUuid, textContent));
+  } else {
+    cellDispatch(cellActionCreator.delete(cellUuid));
+  }
 };
 
 const saveText = (cellUuid, textContent, cellDispatch, inputRef) => {
@@ -93,6 +97,7 @@ const setCursorPosition = () => {
 };
 
 export {
+  getSelection,
   newCell,
   deleteCell,
   saveCursorPosition,
