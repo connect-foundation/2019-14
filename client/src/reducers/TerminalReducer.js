@@ -58,6 +58,27 @@ const updateRepl = (prevState) => {
   };
 };
 
+const moveMovableTo = (currentState, to, changedIndex) => {
+  const nextState = deepCopy(currentState);
+  const { currentText } = currentState;
+
+  nextState.focusIndex = changedIndex;
+  nextState.currentText = currentState.inputTexts[to];
+
+  // movable repl의 데이터를 repl 데이터로 저장한다
+  nextState.inputTexts = splice.change(nextState.inputTexts, to, currentText);
+  nextState.isActives = splice.change(nextState.isActives, to, false);
+
+  nextState.outputTexts = splice.change(nextState.outputTexts, to, "");
+  nextState.isLoadings = splice.change(nextState.isLoadings, to, true);
+
+  nextState.replCount = nextState.inputTexts.length;
+
+  console.log("focus change to ", nextState);
+
+  return nextState;
+};
+
 const terminalReducerHandler = {
   [TERMINAL_ACTION.NEW_REPL]: (state) => {
     const prevState = deepCopy(state);
@@ -87,43 +108,61 @@ const terminalReducerHandler = {
 
   // [TERMINAL_ACTION.EVAL_ALL]: (state, action) => {},
 
-  [TERMINAL_ACTION.FOCUS_CHANGE]: (state, action) => {
+  [TERMINAL_ACTION.FOCUS_IN]: (state) => {
+    if (state.replCount === 0) {
+      return state;
+    }
     const nextState = deepCopy(state);
-    const { to } = action;
-    const { currentText, focusIndex } = nextState;
 
-    const targetIndex = focusIndex + to;
+    nextState.replCount = nextState.inputTexts.length;
+    nextState.focusIndex = nextState.replCount;
+    nextState.currentText = "";
 
-    const nextCurrent = nextState.inputTexts[targetIndex];
+    console.log("focus in to ", nextState);
 
-    nextState.focusIndex = targetIndex;
+    return nextState;
+  },
 
-    nextState.currentText = nextCurrent;
+  [TERMINAL_ACTION.FOCUS_OUT]: (state) => {
+    const nextState = deepCopy(state);
+    const { focusIndex, currentText } = nextState;
 
-    nextState.inputTexts = splice.change(
+    nextState.inputTexts = splice.addBefore(
       nextState.inputTexts,
-      targetIndex,
+      focusIndex,
       currentText
     );
-    nextState.isActives = splice.change(
+    nextState.isActives = splice.addBefore(
       nextState.isActives,
-      targetIndex,
+      focusIndex,
       false
     );
 
-    nextState.outputTexts = splice.change(
+    nextState.outputTexts = splice.addBefore(
       nextState.outputTexts,
-      targetIndex,
+      focusIndex,
       ""
     );
-    nextState.isLoadings = splice.change(
+    nextState.isLoadings = splice.addBefore(
       nextState.isLoadings,
-      targetIndex,
+      focusIndex,
       true
     );
 
-    nextState.replCount = nextState.inputTexts.length;
+    return nextState;
+  },
 
+  [TERMINAL_ACTION.FOCUS_PREV]: (state) => {
+    const up = state.focusIndex - 1;
+    const nextFocusIndex = up;
+    const nextState = moveMovableTo(state, up, nextFocusIndex);
+    return nextState;
+  },
+
+  [TERMINAL_ACTION.FOCUS_NEXT]: (state) => {
+    const down = state.focusIndex;
+    const nextFocusIndex = down + 1;
+    const nextState = moveMovableTo(state, down, nextFocusIndex);
     return nextState;
   },
 

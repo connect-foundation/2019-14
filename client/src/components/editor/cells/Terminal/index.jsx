@@ -9,16 +9,15 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import createDebug from "debug";
 
-import { EVENT_TYPE, THEME } from "../../../../enums";
+import { CELL_TAG, EVENT_TYPE, THEME } from "../../../../enums";
 import { utils, handlerManager, request } from "../../../../utils";
 import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
 import {
-  TerminalStore,
   TerminalContext,
   TerminalDispatchContext,
 } from "../../../../stores/TerminalStore";
 import { cellActionCreator as cellAction } from "../../../../actions/CellAction";
-import { CellDispatchContext } from "../../../../stores/CellStore";
+import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { setGenerator } from "../CellGenerator";
 
 setGenerator("terminal", (uuid) => <TerminalCell cellUuid={uuid} />);
@@ -68,6 +67,7 @@ const ReplPrompt = styled.div`
 const EditorableReplInput = styled.div.attrs((props) => ({
   spellCheck: false,
   contentEditable: props.isEditorable || false,
+  suppressContentEditableWarning: true,
 }))`
   flex-grow: 99;
   margin-left: 20px;
@@ -124,18 +124,14 @@ ReplOutputWrapper.propTypes = {
   text: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 };
 
-const addHandlersToManager = (focusHandlers) => {
-  handlerManager.initHandler();
-  handlerManager.setHandler(EVENT_TYPE.ENTER, (e) =>
-    focusHandlers[EVENT_TYPE.ENTER](e)
+const addHandlersToManager = (cellIndex, focusHandlers) => {
+  console.log("addhandler", cellIndex);
+  handlerManager.attachKeydownEvent(
+    window,
+    focusHandlers,
+    cellIndex,
+    CELL_TAG.TERMINAL
   );
-  handlerManager.setHandler(EVENT_TYPE.ARROW_UP, (e) =>
-    focusHandlers[EVENT_TYPE.ARROW_UP](e)
-  );
-  handlerManager.setHandler(EVENT_TYPE.ARROW_DOWN, (e) =>
-    focusHandlers[EVENT_TYPE.ARROW_DOWN](e)
-  );
-  handlerManager.setWindowKeydownEvent();
 };
 
 const ReplCell = ({
@@ -216,7 +212,7 @@ MovableReplCell.propTypes = {
   initText: PropTypes.string.isRequired,
 };
 
-const ReplContainer = () => {
+const ReplContainer = ({ cellIndex, isCellFocus }) => {
   const [movable, setMovable] = useState(null);
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const dispatchToCell = useContext(CellDispatchContext);
@@ -242,6 +238,7 @@ const ReplContainer = () => {
   const focusHandlers = {
     [EVENT_TYPE.ENTER]: (e) => {
       e.preventDefault();
+      console.log("terminal enter");
       dispatchToTerminal(terminalAction.createNewRepl(replCount));
     },
 
@@ -250,11 +247,11 @@ const ReplContainer = () => {
       const isFocusTop = focusIndex === 0;
       if (isFocusTop) {
         debug("Focus in top");
-        dispatchToTerminal(terminalAction.focusChange());
+        dispatchToTerminal(terminalAction.focusOut());
         dispatchToCell(cellAction.focusPrev());
       } else {
-        debug("Focus up", focusIndex);
-        dispatchToTerminal(terminalAction.focusChange(-1));
+        debug("Focus prev", focusIndex);
+        dispatchToTerminal(terminalAction.focusPrev());
       }
     },
 
@@ -264,21 +261,19 @@ const ReplContainer = () => {
         debug("Focus Down Max");
       } else if (focusIndex >= 0 && focusIndex < replCount) {
         debug("Focus Down In Terminal");
-        dispatchToTerminal(terminalAction.focusChange(+1));
+        dispatchToTerminal(terminalAction.focusNext());
       }
     },
   };
 
   useEffect(() => {
-    addHandlersToManager(focusHandlers);
-    setMovable(<MovableReplCell initText="" inputHandler={inputHandler} />);
-  }, []);
-
-  useEffect(() => {
-    addHandlersToManager(focusHandlers);
-    setMovable(
-      <MovableReplCell initText={currentText} inputHandler={inputHandler} />
-    );
+    console.log("hello useEffect", focusIndex);
+    if (isCellFocus) {
+      addHandlersToManager(cellIndex, focusHandlers);
+      setMovable(
+        <MovableReplCell initText={currentText} inputHandler={inputHandler} />
+      );
+    }
   }, [focusIndex]);
 
   const renderRepls = () => {
@@ -300,6 +295,9 @@ const ReplContainer = () => {
     if (isFirstRender) {
       return movable;
     }
+    if (!isCellFocus) {
+      return repls;
+    }
     return splice.addBefore(repls, focusIndex, movable);
   };
 
@@ -307,12 +305,21 @@ const ReplContainer = () => {
 };
 
 const TerminalCell = ({ cellUuid }) => {
+  const { state } = useContext(CellContext);
+  const dispatchToTerminal = useContext(TerminalDispatchContext);
+  const { uuidManager, currentIndex } = state;
+  const cellIndex = uuidManager.findIndex(cellUuid);
+
+  const isCellFocus = cellIndex === currentIndex;
+  if (isCellFocus) {
+    console.log("hello focus in", currentIndex, cellIndex);
+    dispatchToTerminal(terminalAction.focusIn());
+  }
+
   return (
-    <TerminalStore>
-      <TerminalWrapper>
-        <ReplContainer />
-      </TerminalWrapper>
-    </TerminalStore>
+    <TerminalWrapper>
+      <ReplContainer cellIndex={cellIndex} isCellFocus={isCellFocus} />
+    </TerminalWrapper>
   );
 };
 

@@ -2,7 +2,13 @@ const TERMINAL_ACTION = {
   NEW_REPL: "terminal/new-repl",
   EVAL_INPUT: "terminal/eval-input",
   EVAL_ALL: "terminal/eval-all",
+
+  FOCUS_IN: "terminal/focus-in",
+  FOCUS_PREV: "terminal/focus-prev",
+  FOCUS_NEXT: "terminal/focus-next",
+  FOCUS_OUT: "terminal/focus-out",
   FOCUS_CHANGE: "terminal/focus-change",
+
   CHANGE_TEXT: "terminal/change-text",
   UPDATE_OUTPUT: "terminal/update-output",
 };
@@ -41,16 +47,33 @@ const terminalActionCreator = {
     };
   },
 
+  focusIn() {
+    return {
+      type: TERMINAL_ACTION.FOCUS_IN,
+    };
+  },
+
+  focusOut() {
+    return {
+      type: TERMINAL_ACTION.FOCUS_OUT,
+    };
+  },
+
   /**
    * REPL 입력 포커스를 변경한다.
    * @param {Number} to 포커스될 REPL cell index다.
    * - to === -1 이면, 제일 마지막 REPL에 포커스 된다.
    * - 클릭, 화살표 위/아래키를 누를때 동작한다.
    */
-  focusChange(to) {
+  focusPrev() {
     return {
-      type: TERMINAL_ACTION.FOCUS_CHANGE,
-      to,
+      type: TERMINAL_ACTION.FOCUS_PREV,
+    };
+  },
+
+  focusNext() {
+    return {
+      type: TERMINAL_ACTION.FOCUS_NEXT,
     };
   },
 

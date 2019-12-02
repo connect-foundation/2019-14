@@ -38,11 +38,11 @@ const initHandler = () => {
 /**
  * 현재 등록되어 있는 핸들러들의 셀 타입
  */
-let currentCell = null;
+const currentCell = null;
 /**
  * 현재 등록되어 있는 핸들러들의 셀 인덱스
  */
-let currentIndex = null;
+const currentIndex = null;
 
 /**
  * 핸들러를 등록한다.
@@ -130,20 +130,18 @@ const setWindowKeydownEvent = (target = window) => {
  */
 const attachKeydownEvent = (
   target = window,
-  keydownHandlers,
-  index,
-  tag = ""
+  keydownHandlers
+  // index
+  // tag = ""
 ) => {
-  if (tag !== currentCell || index !== currentIndex) {
-    currentCell = tag;
-    currentIndex = index;
-    initHandler();
-    Object.keys(keydownHandlers).forEach((key) => {
-      const keydownHandler = keydownHandlers[key];
-      setHandler(key, keydownHandler);
-    });
-    setWindowKeydownEvent(target);
-  }
+  // currentCell = tag;
+  // currentIndex = index;
+  initHandler();
+  Object.keys(keydownHandlers).forEach((key) => {
+    const keydownHandler = keydownHandlers[key];
+    setHandler(key, keydownHandler);
+  });
+  setWindowKeydownEvent(target);
 };
 
 export default {

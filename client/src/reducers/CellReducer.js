@@ -67,6 +67,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.FOCUS.PREV]: (state) => {
+    console.log("hello cell focus prev", state.currentIndex);
     return {
       ...state,
       currentIndex: state.currentIndex - 1,
@@ -74,6 +75,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.FOCUS.NEXT]: (state) => {
+    console.log("hello cell focus next", state.currentIndex);
     return {
       ...state,
       currentIndex: state.currentIndex + 1,
