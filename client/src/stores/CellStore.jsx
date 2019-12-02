@@ -18,6 +18,10 @@ const CellStore = ({ children }) => {
       start: 0,
       end: 0,
     },
+    block: {
+      start: null,
+      end: null,
+    },
     start: null,
   });
 

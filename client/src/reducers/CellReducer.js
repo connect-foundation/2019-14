@@ -6,17 +6,21 @@ const { splice } = utils;
 
 const cellReducerHandler = {
   [CELL_ACTION.INIT]: (state, action) => {
-    const { index, createMarkdownCell } = action;
+    const { cellUuid, createMarkdownCell, tag } = action;
     const { uuidManager } = state;
-    const cellUuid = uuid();
-    uuidManager.push(cellUuid);
+    const newUuid = cellUuid || uuid();
+    const index = cellUuid ? uuidManager.findIndex(cellUuid) : 0;
+
+    if (!cellUuid) {
+      uuidManager.push(newUuid);
+    }
     const cells = splice.change(
       state.cells,
       index,
-      createMarkdownCell(cellUuid)
+      createMarkdownCell(newUuid)
     );
     const texts = splice.change(state.texts, index, "");
-    const tags = splice.change(state.tags, index, action.tag);
+    const tags = splice.change(state.tags, index, tag);
 
     return {
       ...state,
@@ -27,30 +31,48 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.NEW]: (state, action) => {
-    const { currentIndex, uuidManager } = state;
-    const { createMarkdownCell, start } = action;
-    const cellUuid = uuid();
+    const { uuidManager, start } = state;
+    const { cellUuid, createMarkdownCell, tag } = action;
+    const index = uuidManager.findIndex(cellUuid);
+    const newCellUuid = uuid();
 
-    const cells = splice.add(
-      state.cells,
-      currentIndex,
-      createMarkdownCell(cellUuid)
-    );
-    const texts = splice.add(state.texts, currentIndex, "");
-    const tags = splice.add(state.tags, currentIndex, action.tag);
+    const isOrderedList = tag === "ol";
+    const newStart = isOrderedList ? start + 1 : null;
+    const component = isOrderedList
+      ? createMarkdownCell(newCellUuid, newStart)
+      : createMarkdownCell(newCellUuid);
+
+    const cells = splice.add(state.cells, index, component);
+
+    const originText = state.texts[index];
+    const { cursor } = state;
+    const currentText = originText.slice(0, cursor.start);
+    const newText = originText.slice(cursor.start);
+    let texts = splice.change(state.texts, index, currentText);
+    texts = splice.add(texts, index, newText);
+    const tags = splice.add(state.tags, index, tag);
+
+    const newCursor = {
+      start: 0,
+      end: 0,
+    };
+
     uuidManager.uuidArray = splice.add(
       uuidManager.uuidArray,
-      currentIndex,
-      cellUuid
+      index,
+      newCellUuid
     );
+
+    const currentIndex = index + 1;
 
     return {
       ...state,
-      currentIndex: currentIndex + 1,
+      currentIndex,
       cells,
       texts,
       tags,
-      start,
+      cursor: newCursor,
+      start: newStart,
     };
   },
 
@@ -66,19 +88,52 @@ const cellReducerHandler = {
     };
   },
 
+  [CELL_ACTION.DELETE]: (state, action) => {
+    const { uuidManager } = state;
+    const { cellUuid } = action;
+    const index = uuidManager.findIndex(cellUuid);
+
+    const cells = splice.delete(state.cells, index);
+    const texts = splice.delete(state.texts, index);
+    const tags = splice.delete(state.tags, index);
+    uuidManager.uuidArray = splice.delete(uuidManager.uuidArray, index);
+    const prevIndex = index - 1;
+    const cursor = {
+      start: prevIndex >= 0 ? texts[prevIndex].length : 0,
+      end: prevIndex >= 0 ? texts[prevIndex].length : 0,
+    };
+
+    return {
+      ...state,
+      cells,
+      texts,
+      tags,
+      currentIndex: prevIndex,
+      cursor,
+    };
+  },
+
   [CELL_ACTION.FOCUS.PREV]: (state) => {
-    console.log("hello cell focus prev", state.currentIndex);
+    const block = {
+      start: null,
+      end: null,
+    };
     return {
       ...state,
       currentIndex: state.currentIndex - 1,
+      block,
     };
   },
 
   [CELL_ACTION.FOCUS.NEXT]: (state) => {
-    console.log("hello cell focus next", state.currentIndex);
+    const block = {
+      start: null,
+      end: null,
+    };
     return {
       ...state,
       currentIndex: state.currentIndex + 1,
+      block,
     };
   },
 
@@ -100,12 +155,12 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
-    const { index, text, tag, cell, start } = action;
+    const { cellUuid, text, tag, cell, start } = action;
+    const { uuidManager } = state;
+    const index = uuidManager.findIndex(cellUuid);
 
     const texts = splice.change(state.texts, index, text);
-
     const tags = splice.change(state.tags, index, tag);
-
     const cells = splice.change(state.cells, index, cell);
 
     return {
@@ -114,6 +169,60 @@ const cellReducerHandler = {
       tags,
       cells,
       start,
+    };
+  },
+
+  [CELL_ACTION.BLOCK.UP]: (state, action) => {
+    const { uuidManager, block } = state;
+    const { cellUuid } = action;
+    const index = uuidManager.findIndex(cellUuid);
+
+    const newStart = block.start || index;
+    let newEnd = block.end > 0 ? block.end - 1 : newStart;
+    if (block.end > 0) {
+      newEnd = block.end - 1;
+    } else if (block.end === 0) {
+      newEnd = 0;
+    } else {
+      newEnd = newStart;
+    }
+
+    const newBlock = {
+      start: newStart,
+      end: newEnd,
+    };
+
+    return {
+      ...state,
+      block: newBlock,
+    };
+  },
+
+  [CELL_ACTION.BLOCK.DOWN]: (state, action) => {
+    const { uuidManager, block, cells } = state;
+    const { cellUuid } = action;
+    const index = uuidManager.findIndex(cellUuid);
+
+    const { length } = cells;
+
+    const newStart = block.start || index;
+    let newEnd = block.end < length - 1 ? block.end + 1 : newStart;
+    if (block.end && block.end < length - 1) {
+      newEnd = block.end + 1;
+    } else if (block.end === length - 1) {
+      newEnd = length - 1;
+    } else {
+      newEnd = newStart;
+    }
+
+    const newBlock = {
+      start: newStart,
+      end: newEnd,
+    };
+
+    return {
+      ...state,
+      block: newBlock,
     };
   },
 

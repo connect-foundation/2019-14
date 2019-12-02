@@ -4,6 +4,7 @@ const CELL_ACTION = {
   INIT: "cell/init",
   NEW: "cell/new",
   INPUT: "cell/input",
+  DELETE: "cell/delete",
   TARGET: {
     TRANSFORM: "cell/target/transform",
   },
@@ -12,6 +13,10 @@ const CELL_ACTION = {
     NEXT: "cell/focus/next",
     MOVE: "cell/focus/move",
     ATTACH: "cell/focus/attach",
+  },
+  BLOCK: {
+    UP: "cell/block/up",
+    DOWN: "cell/block/down",
   },
   CURSOR: {
     MOVE: "cell/cursor/move",
@@ -22,29 +27,31 @@ const cellActionCreator = {
   /**
    * 셀의 데이터를 초기화시킨다.
    * @param {Cell} createMarkdownCell 초기화할 셀을 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
-   * @param {Number} index 초기화할 셀의 index
-   * - 파라미터로 넘기지 않으면 기본값 0
+   * @param {Uuid} cellUuid 초기화할 셀의 uuid
+   * - 파라미터로 넘기지 않으면 기본값 null
    */
-  init(createMarkdownCell, index = 0) {
+  init(createMarkdownCell, cellUuid = null) {
     return {
       type: CELL_ACTION.INIT,
       createMarkdownCell,
       tag: CELL_TAG.DEFAULT,
-      index,
+      cellUuid,
     };
   },
 
   /**
    * 셀을 생성한다.
-   * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
+   * @param {Uuid} cellUuid 새 셀을 생성할 기준 셀의 uuid
+   * - 엔터시 기준 셀의 다음 셀에 셀을 생성한다.
+   * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백
    * @param {String} tag 셀의 타입(태그). 생략시 default input 셀이 생성된다.
    */
-  new(createMarkdownCell, tag = CELL_TAG.DEFAULT, start) {
+  new(cellUuid, createMarkdownCell, tag = CELL_TAG.DEFAULT) {
     return {
       type: CELL_ACTION.NEW,
+      cellUuid,
       createMarkdownCell,
       tag,
-      start: start || null,
     };
   },
 
@@ -58,6 +65,17 @@ const cellActionCreator = {
       type: CELL_ACTION.INPUT,
       cellUuid,
       text,
+    };
+  },
+
+  /**
+   * 지정한 셀을 삭제한다.
+   * @param {Uuid} cellUuid 삭제할 셀의 uuid
+   */
+  delete(cellUuid) {
+    return {
+      type: CELL_ACTION.DELETE,
+      cellUuid,
     };
   },
 
@@ -107,19 +125,33 @@ const cellActionCreator = {
   /**
    * 셀의 속성을 변경한다.
    * - ex) default input cell -> list cell
-   * @param {Number} index 변경할 Cell의 인덱스
+   * @param {Uuid} cellUuid 변경할 Cell의 uuid
    * @param {String} text 변경할 Cell의 텍스트
    * @param {String} tag 변경할 Cell의 태그
    * @param {React.element} cell 변경할 Cell 요소
    */
-  transform(index, text, tag, cell, start) {
+  transform(cellUuid, text, tag, cell, start) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
-      index,
+      cellUuid,
       text,
       tag,
       cell,
       start: start || null,
+    };
+  },
+
+  blockUp(cellUuid) {
+    return {
+      type: CELL_ACTION.BLOCK.UP,
+      cellUuid,
+    };
+  },
+
+  blockDown(cellUuid) {
+    return {
+      type: CELL_ACTION.BLOCK.DOWN,
+      cellUuid,
     };
   },
 

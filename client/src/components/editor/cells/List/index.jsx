@@ -18,7 +18,7 @@ import {
   setCursorPosition,
   createCursor,
 } from "../Markdown/handler";
-import { newCell } from "./handler";
+import { newCell, initCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
 
 setGenerator("ul", (uuid) => (
@@ -42,9 +42,6 @@ const ListCell = ({ cellUuid }) => {
   );
   let inputRef = null;
 
-  const { start } = state;
-  const newStart = start + 1;
-
   // const inputRef = useRef();
 
   // useImperativeHandle(ref, () => ({
@@ -52,6 +49,14 @@ const ListCell = ({ cellUuid }) => {
   //     inputRef.current.focus();
   //   },
   // }));
+
+  const backspaceEvent = (e) => {
+    const { length } = e.target.textContent;
+    if (length === 0) {
+      const componentCallback = cellGenerator.p;
+      initCell(cellUuid, dispatch, componentCallback);
+    }
+  };
 
   const enterEvent = (e) => {
     const { textContent } = e.target;
@@ -69,24 +74,19 @@ const ListCell = ({ cellUuid }) => {
         )
       );
       */
-    const isOrderedList = tag == "ol";
+    if (textContent.length === 0) {
+      backspaceEvent(e);
+    } else {
+      const isOrderedList = tag === "ol";
 
-    const component = (uuid) =>
-      isOrderedList ? (
-        <ol start={newStart}>
-          <ListCell cellUuid={uuid} />
-        </ol>
-      ) : (
-        <ul>
-          <ListCell cellUuid={uuid} />
-        </ul>
-      );
+      const componentCallback = isOrderedList
+        ? cellGenerator.ol
+        : cellGenerator.ul;
 
-    const componentCallback = (uuid) => component(uuid);
-
-    saveCursorPosition(dispatch, inputRef);
-    dispatch(cellActionCreator.input(cellUuid, textContent));
-    newCell(dispatch, componentCallback, tag, newStart);
+      saveCursorPosition(dispatch, inputRef);
+      dispatch(cellActionCreator.input(cellUuid, textContent));
+      newCell(cellUuid, dispatch, componentCallback, tag);
+    }
   };
 
   const arrowUpEvent = (e) => {
@@ -105,6 +105,7 @@ const ListCell = ({ cellUuid }) => {
     [EVENT_TYPE.ENTER]: enterEvent,
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
   if (currentIndex === cellIndex) {
@@ -128,6 +129,7 @@ const ListCell = ({ cellUuid }) => {
 
   const onClick = () => {
     handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, tag);
+    dispatch(cellActionCreator.focusMove(cellUuid));
   };
 
   const htmlText = () => {
