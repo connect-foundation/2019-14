@@ -34,6 +34,14 @@ UuidManager.prototype.pop = function(index) {
 };
 
 /**
+ * @param {Number} start 삭제할 데이터의 시작 인덱스
+ * @param {Number} end 삭제할 데이터의 끝 인덱스
+ */
+UuidManager.prototype.blockDelete = function(start, end) {
+  this.uuidArray = splice.blockDelete(this.uuidArray, start, end);
+};
+
+/**
  * uuid를 이용하여 인덱스를 검색한다.
  * @param {Uuid} uuid 인덱스를 검색할 uuid
  * @returns {Number} uuid를 이용하여 검색한 인덱스를 리턴한다. 존재하지 않을시 -1.

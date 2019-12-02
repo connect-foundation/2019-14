@@ -50,6 +50,15 @@ utils.splice = {
     }
     return [];
   },
+
+  /**
+   * @param {Array} array 데이터를 삭제할 배열
+   * @param {Number} start 삭제할 시작 인덱스
+   * @param {Number} end 삭제할 끝 인덱스
+   */
+  blockDelete: (array, start, end) => {
+    return [...array.slice(0, start), ...array.slice(end + 1)];
+  },
 };
 
 utils.deepCopy = (obj) => {

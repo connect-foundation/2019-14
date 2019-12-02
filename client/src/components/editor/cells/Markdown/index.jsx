@@ -12,9 +12,7 @@ import {
   newCell,
   deleteCell,
   saveCursorPosition,
-  isContinuePrev,
   focusPrev,
-  isContinueNext,
   focusNext,
   createCursor,
   setCursorPosition,
@@ -57,9 +55,7 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const arrowUpEvent = (e) => {
-    if (isContinuePrev(cellIndex)) {
-      focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
-    }
+    focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
   };
 
   const shiftArrowUpEvent = () => {
@@ -67,9 +63,7 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const arrowDownEvent = (e) => {
-    if (isContinueNext(cellIndex, state.cells.length)) {
-      focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
-    }
+    focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
   };
 
   const shiftArrowDownEvent = () => {

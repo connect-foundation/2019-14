@@ -45,20 +45,6 @@ const saveText = (cellUuid, textContent, cellDispatch, inputRef) => {
   cellDispatch(cellActionCreator.input(cellUuid, textContent));
 };
 
-const isContinueNext = (cellIndex, cellLength) => {
-  if (cellIndex < cellLength - 1) {
-    return true;
-  }
-  return false;
-};
-
-const isContinuePrev = (cellIndex) => {
-  if (cellIndex > 0) {
-    return true;
-  }
-  return false;
-};
-
 const focusNext = (cellUuid, textContent, cellDispatch, inputRef) => {
   saveText(cellUuid, textContent, cellDispatch, inputRef);
   cellDispatch(cellActionCreator.focusNext());
@@ -101,9 +87,7 @@ export {
   newCell,
   deleteCell,
   saveCursorPosition,
-  isContinuePrev,
   focusPrev,
-  isContinueNext,
   focusNext,
   blockEndUp,
   blockEndDown,

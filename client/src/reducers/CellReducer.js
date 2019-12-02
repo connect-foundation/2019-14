@@ -118,9 +118,12 @@ const cellReducerHandler = {
       start: null,
       end: null,
     };
+    const { currentIndex } = state;
+    const nextIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
+
     return {
       ...state,
-      currentIndex: state.currentIndex - 1,
+      currentIndex: nextIndex,
       block,
     };
   },
@@ -130,9 +133,13 @@ const cellReducerHandler = {
       start: null,
       end: null,
     };
+    const { currentIndex } = state;
+    const nextIndex =
+      currentIndex < state.cells.length - 1 ? currentIndex + 1 : currentIndex;
+
     return {
       ...state,
-      currentIndex: state.currentIndex + 1,
+      currentIndex: nextIndex,
       block,
     };
   },
@@ -233,32 +240,14 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.BLOCK.DELETE]: (state) => {
-    const { block } = state;
+    const { block, uuidManager } = state;
     const blockStart = block.start < block.end ? block.start : block.end;
     const blockEnd = block.start > block.end ? block.start : block.end;
 
-    /**
-     * delete
-     * - cells
-     * - texts
-     * - tags
-     * update
-     * - cursor
-     * - block
-     * - currentIndex
-     */
-    const cells = [
-      ...state.cells.slice(0, blockStart),
-      ...state.cells.slice(blockEnd + 1),
-    ];
-    const texts = [
-      ...state.texts.slice(0, blockStart),
-      ...state.texts.slice(blockEnd + 1),
-    ];
-    const tags = [
-      ...state.tags.slice(0, blockStart),
-      ...state.tags.slice(blockEnd + 1),
-    ];
+    const cells = splice.blockDelete(state.cells, blockStart, blockEnd);
+    const texts = splice.blockDelete(state.texts, blockStart, blockEnd);
+    const tags = splice.blockDelete(state.tags, blockStart, blockEnd);
+    uuidManager.blockDelete(blockStart, blockEnd);
 
     const cursor = {
       start: 0,
@@ -269,6 +258,7 @@ const cellReducerHandler = {
       end: null,
     };
     const currentIndex = blockStart - 1 < 0 ? blockStart : blockStart - 1;
+
     return {
       ...state,
       cells,
