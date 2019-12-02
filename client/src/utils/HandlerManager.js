@@ -99,6 +99,7 @@ const customKeydownEventHandler = (e) => {
         break;
       case "a":
         e.preventDefault();
+        if (e.ctrlKey || e.metaKey) handler[EVENT_TYPE.CTRL_A](e);
         break;
       case "x":
         // block 상태일 때만 e.preventDefault

@@ -37,7 +37,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   let intoShiftBlock = false;
 
-  if (block.start) {
+  if (block.start !== null) {
     const blockStart = block.start < block.end ? block.start : block.end;
     const blockEnd = block.start > block.end ? block.start : block.end;
     if (blockStart <= cellIndex && cellIndex <= blockEnd) {
@@ -71,19 +71,19 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const backspaceEvent = (e) => {
-    if (state.block) {
-      dispatch(cellActionCreator.blockDelete());
+    const { textContent } = e.target;
+    if (textContent.length === 0 && cellIndex > 0) {
+      deleteCell(dispatch, cellUuid);
     } else {
-      const { textContent } = e.target;
-      if (textContent.length === 0 && cellIndex > 0) {
-        deleteCell(dispatch, cellUuid);
-      } else {
-        const cursorPos = getSelection();
-        if (cursorPos.start === 0 && cursorPos.end === 0) {
-          deleteCell(dispatch, cellUuid, textContent);
-        }
+      const cursorPos = getSelection();
+      if (cursorPos.start === 0 && cursorPos.end === 0) {
+        deleteCell(dispatch, cellUuid, textContent);
       }
     }
+  };
+
+  const ctrlAEvent = () => {
+    dispatch(cellActionCreator.blockAll());
   };
 
   const keydownHandlers = {
@@ -93,6 +93,7 @@ const MarkdownCell = ({ cellUuid }) => {
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
     [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
+    [EVENT_TYPE.CTRL_A]: ctrlAEvent,
   };
 
   // -------------- End -----------------------

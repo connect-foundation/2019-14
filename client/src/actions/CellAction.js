@@ -18,7 +18,6 @@ const CELL_ACTION = {
     ALL: "cell/block/all",
     UP: "cell/block/up",
     DOWN: "cell/block/down",
-    DELETE: "cell/block/delete",
   },
   CURSOR: {
     MOVE: "cell/cursor/move",
@@ -177,12 +176,6 @@ const cellActionCreator = {
     return {
       type: CELL_ACTION.BLOCK.DOWN,
       cellUuid,
-    };
-  },
-
-  blockDelete() {
-    return {
-      type: CELL_ACTION.BLOCK.DELETE,
     };
   },
 

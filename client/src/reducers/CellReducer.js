@@ -48,8 +48,8 @@ const cellReducerHandler = {
 
     const originText = state.texts[index];
     const { cursor } = state;
-    const currentText = originText.slice(0, cursor.start);
-    const newText = originText.slice(cursor.start);
+    const currentText = originText ? originText.slice(0, cursor.start) : "";
+    const newText = originText ? originText.slice(cursor.start) : "";
     let texts = splice.change(state.texts, index, currentText);
     texts = splice.add(texts, index, newText);
     const tags = splice.add(state.tags, index, tag);
@@ -85,8 +85,39 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.DELETE]: (state, action) => {
-    const { uuidManager } = state;
+    const { uuidManager, block } = state;
     const { cellUuid, text } = action;
+
+    if (block.start) {
+      const blockStart = block.start < block.end ? block.start : block.end;
+      const blockEnd = block.start > block.end ? block.start : block.end;
+
+      const cells = splice.blockDelete(state.cells, blockStart, blockEnd);
+      const texts = splice.blockDelete(state.texts, blockStart, blockEnd);
+      const tags = splice.blockDelete(state.tags, blockStart, blockEnd);
+      uuidManager.blockDelete(blockStart, blockEnd);
+
+      const emptyBlock = {
+        start: null,
+        end: null,
+      };
+      const currentIndex = blockStart - 1 < 0 ? blockStart : blockStart - 1;
+      const cursor = {
+        start: texts[currentIndex] ? texts[currentIndex].length : 0,
+        end: texts[currentIndex] ? texts[currentIndex].length : 0,
+      };
+
+      return {
+        ...state,
+        cells,
+        texts,
+        tags,
+        cursor,
+        block: emptyBlock,
+        currentIndex,
+      };
+    }
+
     const index = uuidManager.findIndex(cellUuid);
     uuidManager.pop(index);
 
@@ -191,9 +222,12 @@ const cellReducerHandler = {
       start: 0,
       end: state.cells.length - 1,
     };
+    const currentIndex = state.cells.length - 1;
+
     return {
       ...state,
       block,
+      currentIndex,
     };
   },
 
@@ -250,37 +284,6 @@ const cellReducerHandler = {
       ...state,
       block: newBlock,
       currentIndex: newEnd,
-    };
-  },
-
-  [CELL_ACTION.BLOCK.DELETE]: (state) => {
-    const { block, uuidManager } = state;
-    const blockStart = block.start < block.end ? block.start : block.end;
-    const blockEnd = block.start > block.end ? block.start : block.end;
-
-    const cells = splice.blockDelete(state.cells, blockStart, blockEnd);
-    const texts = splice.blockDelete(state.texts, blockStart, blockEnd);
-    const tags = splice.blockDelete(state.tags, blockStart, blockEnd);
-    uuidManager.blockDelete(blockStart, blockEnd);
-
-    const emptyBlock = {
-      start: null,
-      end: null,
-    };
-    const currentIndex = blockStart - 1 < 0 ? blockStart : blockStart - 1;
-    const cursor = {
-      start: texts[currentIndex].length,
-      end: texts[currentIndex].length,
-    };
-
-    return {
-      ...state,
-      cells,
-      texts,
-      tags,
-      cursor,
-      block: emptyBlock,
-      currentIndex,
     };
   },
 
