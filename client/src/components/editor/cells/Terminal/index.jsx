@@ -125,7 +125,6 @@ ReplOutputWrapper.propTypes = {
 };
 
 const addHandlersToManager = (cellIndex, focusHandlers) => {
-  console.log("addhandler", cellIndex);
   handlerManager.attachKeydownEvent(
     window,
     focusHandlers,
@@ -187,8 +186,9 @@ ReplCell.defaultProps = {
   isLoading: false,
 };
 
-const MovableReplCell = ({ initText, inputHandler }) => {
+const MovableReplCell = ({ initText }) => {
   const ref = useRef(null);
+  const dispatchToTerminal = useContext(TerminalDispatchContext);
 
   useEffect(() => {
     const isComponentFocus = ref && ref.current;
@@ -196,6 +196,11 @@ const MovableReplCell = ({ initText, inputHandler }) => {
       ref.current.focus();
     }
   }, [ref]);
+
+  const inputHandler = (e) => {
+    const text = e.target.textContent;
+    dispatchToTerminal(terminalAction.changeCurrentText(text));
+  };
 
   return (
     <ReplInputComponent
@@ -208,8 +213,33 @@ const MovableReplCell = ({ initText, inputHandler }) => {
 };
 
 MovableReplCell.propTypes = {
-  inputHandler: PropTypes.func.isRequired,
   initText: PropTypes.string.isRequired,
+};
+
+const renderReplList = (cellIndex, terminalState) => {
+  const {
+    inputTexts,
+    outputTexts,
+
+    isActives,
+    isLoadings,
+  } = terminalState;
+
+  const replList = inputTexts.map((_, index) => {
+    const componentKey = `${cellIndex}/repl/${index}`;
+    return (
+      <ReplCell
+        key={componentKey}
+        cellIndex={index}
+        inputText={inputTexts[index]}
+        outputText={outputTexts[index]}
+        isActive={isActives[index]}
+        isLoading={isLoadings[index]}
+      />
+    );
+  });
+
+  return replList;
 };
 
 const ReplContainer = ({ cellIndex, isCellFocus }) => {
@@ -217,28 +247,11 @@ const ReplContainer = ({ cellIndex, isCellFocus }) => {
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const dispatchToCell = useContext(CellDispatchContext);
   const { terminalState } = useContext(TerminalContext);
-  const {
-    focusIndex,
-    currentText,
-
-    inputTexts,
-    outputTexts,
-
-    isActives,
-    isLoadings,
-
-    replCount,
-  } = terminalState;
-
-  const inputHandler = (e) => {
-    const text = e.target.textContent;
-    dispatchToTerminal(terminalAction.changeCurrentText(text));
-  };
+  const { focusIndex, currentText, replCount } = terminalState;
 
   const focusHandlers = {
     [EVENT_TYPE.ENTER]: (e) => {
       e.preventDefault();
-      console.log("terminal enter");
       dispatchToTerminal(terminalAction.createNewRepl(replCount));
     },
 
@@ -267,41 +280,29 @@ const ReplContainer = ({ cellIndex, isCellFocus }) => {
   };
 
   useEffect(() => {
-    console.log("hello useEffect", focusIndex);
     if (isCellFocus) {
       addHandlersToManager(cellIndex, focusHandlers);
-      setMovable(
-        <MovableReplCell initText={currentText} inputHandler={inputHandler} />
-      );
+      setMovable(<MovableReplCell initText={currentText} />);
     }
   }, [focusIndex]);
 
-  const renderRepls = () => {
-    const repls = inputTexts.map((_, index) => {
-      const componentKey = `repl/${index}`;
-      return (
-        <ReplCell
-          key={componentKey}
-          cellIndex={index}
-          inputText={inputTexts[index]}
-          outputText={outputTexts[index]}
-          isActive={isActives[index]}
-          isLoading={isLoadings[index]}
-        />
-      );
-    });
+  const isFirstRender = movable && replCount === 0;
+  if (isFirstRender) {
+    return <>{movable}</>;
+  }
 
-    const isFirstRender = movable && replCount === 0;
-    if (isFirstRender) {
-      return movable;
-    }
-    if (!isCellFocus) {
-      return repls;
-    }
-    return splice.addBefore(repls, focusIndex, movable);
-  };
+  const replList = renderReplList(cellIndex, terminalState);
+  if (!isCellFocus) {
+    return <>{replList}</>;
+  }
 
-  return <>{renderRepls()}</>;
+  const replsWithMovable = splice.addBefore(replList, focusIndex, movable);
+  return <>{replsWithMovable}</>;
+};
+
+ReplContainer.propTypes = {
+  cellIndex: PropTypes.number.isRequired,
+  isCellFocus: PropTypes.bool.isRequired,
 };
 
 const TerminalCell = ({ cellUuid }) => {
@@ -312,7 +313,6 @@ const TerminalCell = ({ cellUuid }) => {
 
   const isCellFocus = cellIndex === currentIndex;
   if (isCellFocus) {
-    console.log("hello focus in", currentIndex, cellIndex);
     dispatchToTerminal(terminalAction.focusIn());
   }
 
