@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import Header from "./Header";
 import Contents from "./Contents";
+import { TerminalSettingStore } from "../../../stores/TerminalSetting";
 
 const TermialSettingDrawerWrapper = styled.section`
   width: 20rem;
@@ -12,10 +13,12 @@ const TermialSettingDrawerWrapper = styled.section`
 
 const TerminalSettingDrawer = () => {
   return (
-    <TermialSettingDrawerWrapper>
-      <Header />
-      <Contents />
-    </TermialSettingDrawerWrapper>
+    <TerminalSettingStore>
+      <TermialSettingDrawerWrapper>
+        <Header />
+        <Contents />
+      </TermialSettingDrawerWrapper>
+    </TerminalSettingStore>
   );
 };
 
