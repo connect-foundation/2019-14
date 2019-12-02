@@ -9,11 +9,7 @@ utils.splice = {
    */
   add: (array, cur, data = null) => {
     if (array.length > 0) {
-      return [
-        ...array.slice(0, cur + 1),
-        data,
-        ...array.slice(cur + 1, array.length),
-      ];
+      return [...array.slice(0, cur + 1), data, ...array.slice(cur + 1)];
     }
     return [data];
   },
@@ -26,7 +22,7 @@ utils.splice = {
    */
   addBefore: (array, cur, data = null) => {
     if (array.length > 0) {
-      return [...array.slice(0, cur), data, ...array.slice(cur, array.length)];
+      return [...array.slice(0, cur), data, ...array.slice(cur)];
     }
     return [data];
   },
@@ -39,13 +35,20 @@ utils.splice = {
    */
   change: (array, cur, data) => {
     if (array.length > 0) {
-      return [
-        ...array.slice(0, cur),
-        data,
-        ...array.slice(cur + 1, array.length),
-      ];
+      return [...array.slice(0, cur), data, ...array.slice(cur + 1)];
     }
     return [data];
+  },
+
+  /**
+   * @param {Array} array 데이터를 삭제할 배열
+   * @param {Number} cur 현재 인덱스
+   */
+  delete: (array, cur) => {
+    if (array.length > 0) {
+      return [...array.slice(0, cur), ...array.slice(cur + 1)];
+    }
+    return [];
   },
 };
 
