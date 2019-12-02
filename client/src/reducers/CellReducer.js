@@ -35,6 +35,7 @@ const cellReducerHandler = {
     const { cellUuid, createMarkdownCell, tag } = action;
     const index = uuidManager.findIndex(cellUuid);
     const newCellUuid = uuid();
+    uuidManager.push(newCellUuid, index);
 
     const isOrderedList = tag === "ol";
     const newStart = isOrderedList ? start + 1 : null;
@@ -56,12 +57,6 @@ const cellReducerHandler = {
       start: 0,
       end: 0,
     };
-
-    uuidManager.uuidArray = splice.add(
-      uuidManager.uuidArray,
-      index,
-      newCellUuid
-    );
 
     const currentIndex = index + 1;
 
@@ -96,7 +91,7 @@ const cellReducerHandler = {
     const cells = splice.delete(state.cells, index);
     const texts = splice.delete(state.texts, index);
     const tags = splice.delete(state.tags, index);
-    uuidManager.uuidArray = splice.delete(uuidManager.uuidArray, index);
+    uuidManager.pop(index);
     const prevIndex = index - 1;
     const cursor = {
       start: prevIndex >= 0 ? texts[prevIndex].length : 0,
