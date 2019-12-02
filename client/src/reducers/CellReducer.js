@@ -141,9 +141,15 @@ const cellReducerHandler = {
     const { uuidManager } = state;
     const index = uuidManager.findIndex(cellUuid);
 
+    const block = {
+      start: null,
+      end: null,
+    };
+
     return {
       ...state,
       currentIndex: index,
+      block,
     };
   },
 
