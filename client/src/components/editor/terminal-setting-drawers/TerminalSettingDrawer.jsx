@@ -13,12 +13,10 @@ const TermialSettingDrawerWrapper = styled.section`
 
 const TerminalSettingDrawer = () => {
   return (
-    <TerminalSettingStore>
-      <TermialSettingDrawerWrapper>
-        <Header />
-        <Contents />
-      </TermialSettingDrawerWrapper>
-    </TerminalSettingStore>
+    <TermialSettingDrawerWrapper>
+      <Header />
+      <Contents />
+    </TermialSettingDrawerWrapper>
   );
 };
 
