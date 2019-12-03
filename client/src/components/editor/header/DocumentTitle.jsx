@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import HandlerManager from "../../../utils/HandlerManager";
+import { useKey } from "../../../utils";
 import EVENT_TYPE from "../../../enums/EVENT_TYPE";
 
 const DocumentTitleInput = styled.h1`
@@ -42,17 +42,25 @@ const DocumentTitleInput = styled.h1`
 
 const DocumentTitle = (props) => {
   const [state, setState] = useState("");
+  const [isFocus, setIsFocus] = useState(false);
 
   const onInputHandler = (e) => {
     const documentTitle = e.currentTarget.textContent;
     setState(documentTitle);
   };
 
-  const onClickHandler = (e) => {};
+  const onClickHandler = () => {
+    setIsFocus(true);
+  };
 
-  HandlerManager.initHandler();
-  HandlerManager.setHandler(EVENT_TYPE.ENTER, onClickHandler);
-  HandlerManager.setWindowKeydownEvent();
+  const onBlurHandler = () => {
+    setIsFocus(false);
+  };
+
+  // TODO: isFocus is required for useKey
+  // HandlerManager.initHandler();
+  // HandlerManager.setHandler(EVENT_TYPE.ENTER, onClickHandler);
+  // HandlerManager.setWindowKeydownEvent();
 
   return (
     <DocumentTitleInput
@@ -60,6 +68,7 @@ const DocumentTitle = (props) => {
       onInput={onInputHandler}
       data-text={props.defaultText}
       onClick={onClickHandler}
+      onBlur={onBlurHandler}
     />
   );
 };

@@ -1,10 +1,10 @@
-import React, { useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import propTypes from "prop-types";
 
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import { getType, getStart, handlerManager } from "../../../../utils";
+import { getType, getStart, useKey } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -93,9 +93,9 @@ const MarkdownCell = ({ cellUuid }) => {
 
   // -------------- End -----------------------
 
-  if (currentIndex === cellIndex) {
+  const isFocus = currentIndex === cellIndex;
+  if (isFocus) {
     inputRef = state.inputRef;
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex);
   }
 
   useEffect(() => {
@@ -116,6 +116,30 @@ const MarkdownCell = ({ cellUuid }) => {
     // };
     // window.addEventListener("beforeunload", isSaved);
   }, [inputRef]);
+
+  useKey(EVENT_TYPE.ENTER, keydownHandlers[EVENT_TYPE.ENTER], isFocus);
+
+  useKey(EVENT_TYPE.ARROW_UP, keydownHandlers[EVENT_TYPE.ARROW_UP], isFocus);
+
+  useKey(
+    EVENT_TYPE.ARROW_DOWN,
+    keydownHandlers[EVENT_TYPE.ARROW_DOWN],
+    isFocus
+  );
+
+  useKey(
+    EVENT_TYPE.SHIFT_ARROW_UP,
+    keydownHandlers[EVENT_TYPE.SHIFT_ARROW_UP],
+    isFocus
+  );
+
+  useKey(
+    EVENT_TYPE.SHIFT_ARROW_DOWN,
+    keydownHandlers[EVENT_TYPE.SHIFT_ARROW_DOWN],
+    isFocus
+  );
+
+  useKey(EVENT_TYPE.BACKSPACE, keydownHandlers[EVENT_TYPE.BACKSPACE], isFocus);
 
   const onKeyUp = (e) => {
     const { textContent } = e.target;
@@ -143,7 +167,6 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const onClick = () => {
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex);
     dispatch(cellActionCreator.focusMove(cellUuid));
   };
 
@@ -161,11 +184,11 @@ const MarkdownCell = ({ cellUuid }) => {
       as={currentTag}
       intoShiftBlock={intoShiftBlock}
       placeholder={PLACEHOLDER[currentTag]}
-      contentEditable
       onKeyUp={onKeyUp}
       onClick={onClick}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText()}
+      contentEditable
     />
   );
 

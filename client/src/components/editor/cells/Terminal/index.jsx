@@ -10,7 +10,7 @@ import styled from "styled-components";
 import createDebug from "debug";
 
 import { CELL_TAG, EVENT_TYPE, THEME } from "../../../../enums";
-import { utils, handlerManager, request } from "../../../../utils";
+import { utils, useKey, request } from "../../../../utils";
 import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
 import {
   TerminalContext,
@@ -124,13 +124,11 @@ ReplOutputWrapper.propTypes = {
   text: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 };
 
-const addHandlersToManager = (cellIndex, focusHandlers) => {
-  handlerManager.attachKeydownEvent(
-    window,
-    focusHandlers,
-    cellIndex,
-    CELL_TAG.TERMINAL
-  );
+const useKeys = (focusHandlers, isFocus, deps) => {
+  const E = EVENT_TYPE;
+  useKey(E.ENTER, focusHandlers[E.ENTER], isFocus, deps);
+  useKey(E.ARROW_UP, focusHandlers[E.ARROW_UP], isFocus, deps);
+  useKey(E.ARROW_DOWN, focusHandlers[E.ARROW_DOWN], isFocus, deps);
 };
 
 const ReplCell = ({
@@ -279,9 +277,10 @@ const ReplContainer = ({ cellIndex, isCellFocus }) => {
     },
   };
 
+  useKeys(focusHandlers, isCellFocus, [focusIndex]);
+
   useEffect(() => {
     if (isCellFocus) {
-      addHandlersToManager(cellIndex, focusHandlers);
       setMovable(<MovableReplCell initText={currentText} />);
     }
   }, [focusIndex]);
@@ -313,6 +312,7 @@ const TerminalCell = ({ cellUuid }) => {
 
   const isCellFocus = cellIndex === currentIndex;
   if (isCellFocus) {
+    debug("Terminal cell focus in");
     dispatchToTerminal(terminalAction.focusIn());
   }
 

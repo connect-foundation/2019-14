@@ -1,16 +1,11 @@
-import React, {
-  useRef,
-  useEffect,
-  useContext,
-  useImperativeHandle,
-} from "react";
+import React, { useEffect, useContext } from "react";
 import propTypes from "prop-types";
 
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import { EVENT_TYPE } from "../../../../enums";
-import { useCellState, handlerManager } from "../../../../utils";
+import { useCellState, useKey } from "../../../../utils";
 
 import {
   saveCursorPosition,
@@ -31,6 +26,14 @@ setGenerator("h4", (uuid) => <HeadingCell cellUuid={uuid} />);
 setGenerator("h5", (uuid) => <HeadingCell cellUuid={uuid} />);
 setGenerator("h6", (uuid) => <HeadingCell cellUuid={uuid} />);
 
+const useKeys = (keydownHandlers, isFocus) => {
+  const E = EVENT_TYPE;
+  useKey(E.ENTER, keydownHandlers[E.ENTER], isFocus);
+  useKey(E.ARROW_UP, keydownHandlers[E.ARROW_UP], isFocus);
+  useKey(E.ARROW_DOWN, keydownHandlers[E.ARROW_DOWN], isFocus);
+  useKey(E.BACKSPACE, keydownHandlers[E.BACKSPACE], isFocus);
+};
+
 // const HeadingCell = React.forwardRef(({ cellUuid }, ref) => {
 const HeadingCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
@@ -40,13 +43,6 @@ const HeadingCell = ({ cellUuid }) => {
     cellUuid
   );
   let inputRef = null;
-  // const inputRef = useRef();
-
-  // useImperativeHandle(ref, () => ({
-  //   focus: () => {
-  //     inputRef.current.focus();
-  //   },
-  // }));
 
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
@@ -87,11 +83,12 @@ const HeadingCell = ({ cellUuid }) => {
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
-  if (currentIndex === cellIndex) {
+  const isFocus = currentIndex === cellIndex;
+  if (isFocus) {
     inputRef = state.inputRef;
-
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, tag);
   }
+
+  useKeys(keydownHandlers, isFocus);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
