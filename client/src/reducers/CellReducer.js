@@ -58,11 +58,6 @@ const cellReducerHandler = {
       end: 0,
     };
 
-    const block = {
-      start: null,
-      end: null,
-    };
-
     const currentIndex = index + 1;
 
     return {
@@ -73,7 +68,6 @@ const cellReducerHandler = {
       tags,
       cursor: newCursor,
       start: newStart,
-      block,
     };
   },
 
@@ -150,25 +144,16 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.FOCUS.PREV]: (state) => {
-    const block = {
-      start: null,
-      end: null,
-    };
     const { currentIndex } = state;
     const nextIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
 
     return {
       ...state,
       currentIndex: nextIndex,
-      block,
     };
   },
 
   [CELL_ACTION.FOCUS.NEXT]: (state) => {
-    const block = {
-      start: null,
-      end: null,
-    };
     const { currentIndex } = state;
     const nextIndex =
       currentIndex < state.cells.length - 1 ? currentIndex + 1 : currentIndex;
@@ -176,7 +161,6 @@ const cellReducerHandler = {
     return {
       ...state,
       currentIndex: nextIndex,
-      block,
     };
   },
 
@@ -189,16 +173,10 @@ const cellReducerHandler = {
       end: pos,
     };
 
-    const block = {
-      start: null,
-      end: null,
-    };
-
     return {
       ...state,
       currentIndex: index,
       cursor,
-      block,
     };
   },
 
@@ -296,6 +274,17 @@ const cellReducerHandler = {
     };
   },
 
+  [CELL_ACTION.BLOCK.RELEASE]: (state) => {
+    const block = {
+      start: null,
+      end: null,
+    };
+    return {
+      ...state,
+      block,
+    };
+  },
+
   [CELL_ACTION.CURSOR.MOVE]: (state, action) => {
     const cursor = {
       start: action.selectionStart,
@@ -353,18 +342,12 @@ const cellReducerHandler = {
       end: texts[currentIndex].length,
     };
 
-    const block = {
-      start: null,
-      end: null,
-    };
-
     return {
       ...state,
       cells,
       texts,
       tags,
       cursor,
-      block,
     };
   },
 };

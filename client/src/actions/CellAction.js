@@ -18,6 +18,7 @@ const CELL_ACTION = {
     ALL: "cell/block/all",
     UP: "cell/block/up",
     DOWN: "cell/block/down",
+    RELEASE: "cell/block/release",
   },
   CURSOR: {
     MOVE: "cell/cursor/move",
@@ -176,6 +177,15 @@ const cellActionCreator = {
     return {
       type: CELL_ACTION.BLOCK.DOWN,
       cellUuid,
+    };
+  },
+
+  /**
+   * 블록 범위를 해제한다.
+   */
+  blockRelease() {
+    return {
+      type: CELL_ACTION.BLOCK.RELEASE,
     };
   },
 

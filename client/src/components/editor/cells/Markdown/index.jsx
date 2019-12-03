@@ -23,6 +23,7 @@ import {
   setCursorPosition,
   blockEndUp,
   blockEndDown,
+  blockRelease,
 } from "./handler";
 
 setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
@@ -57,10 +58,12 @@ const MarkdownCell = ({ cellUuid }) => {
     saveCursorPosition(dispatch);
     dispatch(cellActionCreator.input(cellUuid, textContent));
     newCell(cellUuid, dispatch, componentCallback);
+    blockRelease(dispatch);
   };
 
   const arrowUpEvent = () => {
     focusPrev(dispatch);
+    blockRelease(dispatch);
   };
 
   const shiftArrowUpEvent = () => {
@@ -69,6 +72,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const arrowDownEvent = () => {
     focusNext(dispatch);
+    blockRelease(dispatch);
   };
 
   const shiftArrowDownEvent = () => {
@@ -102,6 +106,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const ctrlVEvent = () => {
     dispatch(cellActionCreator.paste(cellUuid));
+    blockRelease(dispatch);
   };
 
   const keydownHandlers = {
@@ -171,6 +176,7 @@ const MarkdownCell = ({ cellUuid }) => {
   const onClick = () => {
     handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex);
     dispatch(cellActionCreator.focusMove(cellUuid));
+    blockRelease(dispatch);
   };
 
   const onBlur = (e) => {

@@ -53,6 +53,10 @@ const blockEndDown = (cellUuid, cellDispatch) => {
   cellDispatch(cellActionCreator.blockDown(cellUuid));
 };
 
+const blockRelease = (cellDispatch) => {
+  cellDispatch(cellActionCreator.blockRelease());
+};
+
 const createCursor = (text, cursor) => {
   const cursorFront = text.slice(0, cursor.start);
   const cursorBack = text.slice(cursor.start, text.length);
@@ -81,6 +85,7 @@ export {
   focusNext,
   blockEndUp,
   blockEndDown,
+  blockRelease,
   createCursor,
   setCursorPosition,
 };
