@@ -5,25 +5,18 @@ const TerminalSettingContext = React.createContext();
 const TerminalSettingDispatch = React.createContext();
 
 function TerminalSettingStore({ children }) {
-  const defaultValue = {
-    OS: ["ubuntu", "centos"],
-    PL: ["javascript", "python"],
-    DB: ["mysql", "mongodb"],
+  const initValue = {
+    selectedOs: [],
+    selectedPl: [],
+    selectedDb: [],
+
+    currentStep: "OS",
   };
 
-  const initvalue = {
-    os: [],
-    pl: [],
-    db: [],
-  };
-
-  const [state, dispatch] = useReducer(terminalSettingReducer, initvalue);
+  const [state, dispatch] = useReducer(terminalSettingReducer, initValue);
 
   return (
-    <TerminalSettingContext.Provider
-      value={{ state }}
-      defaultValue={defaultValue}
-    >
+    <TerminalSettingContext.Provider value={{ state }}>
       <TerminalSettingDispatch.Provider value={dispatch}>
         {children}
       </TerminalSettingDispatch.Provider>
