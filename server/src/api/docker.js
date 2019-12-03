@@ -206,21 +206,22 @@ class DockerApi {
       name: defaultTagName,
       Tty: true,
     });
-    // TODO startContainer 결과를 합쳐서 리턴 할 것
-    await this.startContainer(newContainerInfo.id);
     return newContainerInfo.id;
   }
 
-  async startContainer(containerId) {
-    const container = await this.request.getContainer(containerId);
+  async startContainer(container) {
     const result = await container.start();
     return result;
   }
 
-  async stopContainer(containerId) {
-    const container = await this.request.getContainer(containerId);
+  async stopContainer(container) {
     const result = await container.stop();
     return result;
+  }
+
+  async getContainer(containerId) {
+    const container = await this.request.getContainer(containerId);
+    return container;
   }
 }
 

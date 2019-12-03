@@ -3,16 +3,20 @@ const createDefaultTerminal = async (
   baseImageName = "ubuntu"
 ) => {
   const containerId = await dockerInstance.createDefaultTerminal(baseImageName);
-  return containerId;
+  const container = await dockerInstance.getContainer(containerId);
+  const result = await dockerInstance.startContainer(container);
+  return result;
 };
 
 const startTerminal = async (dockerInstance, containerId) => {
-  const result = await dockerInstance.startContainer(containerId);
+  const container = await dockerInstance.getContainer(containerId);
+  const result = await dockerInstance.startContainer(container);
   return result;
 };
 
 const stopTerminal = async (dockerInstance, containerId) => {
-  const result = await dockerInstance.stopContainer(containerId);
+  const container = await dockerInstance.getContainer(containerId);
+  const result = await dockerInstance.stopContainer(container);
   return result;
 };
 
