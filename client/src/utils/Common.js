@@ -57,7 +57,7 @@ utils.splice = {
    * @param {Array} data 삽입할 배열
    * @returns {Array} 데이터가 변경된 배열
    */
-  blockAdd: (array, cur, data) => {
+  pushArray: (array, cur, data) => {
     return [...array.slice(0, cur + 1), ...data, ...array.slice(cur + 1)];
   },
 
@@ -66,7 +66,7 @@ utils.splice = {
    * @param {Number} start 삭제할 시작 인덱스
    * @param {Number} end 삭제할 끝 인덱스
    */
-  blockDelete: (array, start, end) => {
+  popArray: (array, start, end) => {
     return [...array.slice(0, start), ...array.slice(end + 1)];
   },
 };

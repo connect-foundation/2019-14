@@ -92,10 +92,10 @@ const cellReducerHandler = {
       const blockStart = block.start < block.end ? block.start : block.end;
       const blockEnd = block.start > block.end ? block.start : block.end;
 
-      const cells = splice.blockDelete(state.cells, blockStart, blockEnd);
-      const texts = splice.blockDelete(state.texts, blockStart, blockEnd);
-      const tags = splice.blockDelete(state.tags, blockStart, blockEnd);
-      uuidManager.blockDelete(blockStart, blockEnd);
+      const cells = splice.popArray(state.cells, blockStart, blockEnd);
+      const texts = splice.popArray(state.texts, blockStart, blockEnd);
+      const tags = splice.popArray(state.tags, blockStart, blockEnd);
+      uuidManager.popArray(blockStart, blockEnd);
 
       const emptyBlock = {
         start: null,
@@ -266,7 +266,7 @@ const cellReducerHandler = {
     const { length } = cells;
 
     const newStart = block.start || index;
-    let newEnd = block.end < length - 1 ? block.end + 1 : newStart;
+    let newEnd = null;
     if (block.end < length - 1) {
       newEnd = block.end + 1;
     } else if (block.end === length - 1) {
@@ -303,9 +303,7 @@ const cellReducerHandler = {
     const { texts, tags, block } = state;
 
     if (!block.start) {
-      return {
-        ...state,
-      };
+      return state;
     }
     const blockStart = block.start < block.end ? block.start : block.end;
     const blockEnd = block.start > block.end ? block.start : block.end;
@@ -337,9 +335,9 @@ const cellReducerHandler = {
       return acc;
     }, []);
 
-    const cells = splice.blockAdd(state.cells, index, cbCells);
-    const texts = splice.blockAdd(state.texts, index, clipboard.texts);
-    const tags = splice.blockAdd(state.tags, index, clipboard.tags);
+    const cells = splice.pushArray(state.cells, index, cbCells);
+    const texts = splice.pushArray(state.texts, index, clipboard.texts);
+    const tags = splice.pushArray(state.tags, index, clipboard.tags);
 
     const cursor = {
       start: texts[currentIndex].length,

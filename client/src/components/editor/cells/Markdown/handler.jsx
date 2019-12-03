@@ -25,19 +25,11 @@ const saveCursorPosition = (cellDispatch, inputRef) => {
 };
 
 const newCell = (cellUuid, cellDispatch, componentCallback, tag) => {
-  if (tag) {
-    cellDispatch(cellActionCreator.new(cellUuid, componentCallback, tag));
-  } else {
-    cellDispatch(cellActionCreator.new(cellUuid, componentCallback));
-  }
+  cellDispatch(cellActionCreator.new(cellUuid, componentCallback, tag));
 };
 
 const deleteCell = (cellDispatch, cellUuid, textContent) => {
-  if (textContent) {
-    cellDispatch(cellActionCreator.delete(cellUuid, textContent));
-  } else {
-    cellDispatch(cellActionCreator.delete(cellUuid));
-  }
+  cellDispatch(cellActionCreator.delete(cellUuid, textContent));
 };
 
 const saveText = (cellUuid, textContent, cellDispatch, inputRef) => {
