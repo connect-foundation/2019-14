@@ -4,7 +4,7 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import { getType, getStart, useKey } from "../../../../utils";
+import { getType, getStart, useKeys } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -138,29 +138,7 @@ const MarkdownCell = ({ cellUuid }) => {
     // window.addEventListener("beforeunload", isSaved);
   }, [inputRef]);
 
-  useKey(EVENT_TYPE.ENTER, keydownHandlers[EVENT_TYPE.ENTER], isFocus);
-
-  useKey(EVENT_TYPE.ARROW_UP, keydownHandlers[EVENT_TYPE.ARROW_UP], isFocus);
-
-  useKey(
-    EVENT_TYPE.ARROW_DOWN,
-    keydownHandlers[EVENT_TYPE.ARROW_DOWN],
-    isFocus
-  );
-
-  useKey(
-    EVENT_TYPE.SHIFT_ARROW_UP,
-    keydownHandlers[EVENT_TYPE.SHIFT_ARROW_UP],
-    isFocus
-  );
-
-  useKey(
-    EVENT_TYPE.SHIFT_ARROW_DOWN,
-    keydownHandlers[EVENT_TYPE.SHIFT_ARROW_DOWN],
-    isFocus
-  );
-
-  useKey(EVENT_TYPE.BACKSPACE, keydownHandlers[EVENT_TYPE.BACKSPACE], isFocus);
+  useKeys(keydownHandlers, isFocus);
 
   const onKeyUp = (e) => {
     const { textContent } = e.target;
