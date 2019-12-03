@@ -15,11 +15,16 @@ const CELL_ACTION = {
     ATTACH: "cell/focus/attach",
   },
   BLOCK: {
+    ALL: "cell/block/all",
     UP: "cell/block/up",
     DOWN: "cell/block/down",
   },
   CURSOR: {
     MOVE: "cell/cursor/move",
+  },
+  CLIPBOARD: {
+    COPY: "cell/clipboard/copy",
+    PASTE: "cell/clipboard/paste",
   },
 };
 
@@ -71,11 +76,13 @@ const cellActionCreator = {
   /**
    * 지정한 셀을 삭제한다.
    * @param {Uuid} cellUuid 삭제할 셀의 uuid
+   * @param {Text} text 이전 셀로 이동할 텍스트
    */
-  delete(cellUuid) {
+  delete(cellUuid, text = "") {
     return {
       type: CELL_ACTION.DELETE,
       cellUuid,
+      text,
     };
   },
 
@@ -141,6 +148,19 @@ const cellActionCreator = {
     };
   },
 
+  /**
+   * 모든 셀을 선택한다.
+   */
+  blockAll() {
+    return {
+      type: CELL_ACTION.BLOCK.ALL,
+    };
+  },
+
+  /**
+   * 쉬프트+위 입력시 선택할 셀의 범위를 위로 한 단계 올린다.
+   * @param {Uuid} cellUuid 블록을 시작할 기준 셀의 uuid
+   */
   blockUp(cellUuid) {
     return {
       type: CELL_ACTION.BLOCK.UP,
@@ -148,6 +168,10 @@ const cellActionCreator = {
     };
   },
 
+  /**
+   * 쉬프트+아래 입력시 선택할 셀의 범위를 위로 한 단계 내린다.
+   * @param {Uuid} cellUuid 블록을 시작할 기준 셀의 uuid
+   */
   blockDown(cellUuid) {
     return {
       type: CELL_ACTION.BLOCK.DOWN,
@@ -167,6 +191,25 @@ const cellActionCreator = {
       type: CELL_ACTION.CURSOR.MOVE,
       selectionStart,
       selectionEnd,
+    };
+  },
+
+  /**
+   * 현재 블록 범위를 클립보드에 저장한다.
+   */
+  copy() {
+    return {
+      type: CELL_ACTION.CLIPBOARD.COPY,
+    };
+  },
+
+  /**
+   * @param {Uuid} cellUuid 붙여넣기를 할 기준 셀의 uuid
+   */
+  paste(cellUuid) {
+    return {
+      type: CELL_ACTION.CLIPBOARD.PASTE,
+      cellUuid,
     };
   },
 };

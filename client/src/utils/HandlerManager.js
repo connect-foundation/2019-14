@@ -104,11 +104,9 @@ const useKey = (keyEvent, handler, isFocus, deps = []) => {
   const keydownHandler = makeKeyHandler[keyEvent](handler);
   useEffect(() => {
     if (isFocus) {
-      console.log("focus the useKey", keyEvent, isFocus);
       window.addEventListener("keydown", keydownHandler);
     }
     return () => {
-      console.log("focus out useKey", keyEvent, isFocus);
       window.removeEventListener("keydown", keydownHandler);
     };
   }, [isFocus, ...deps]);

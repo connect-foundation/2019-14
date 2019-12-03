@@ -8,12 +8,11 @@ import { getType, getStart, useKey } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
+  getSelection,
   newCell,
   deleteCell,
   saveCursorPosition,
-  isContinuePrev,
   focusPrev,
-  isContinueNext,
   focusNext,
   createCursor,
   setCursorPosition,
@@ -38,7 +37,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   let intoShiftBlock = false;
 
-  if (block.start && block.end) {
+  if (block.start !== null) {
     const blockStart = block.start < block.end ? block.start : block.end;
     const blockEnd = block.start > block.end ? block.start : block.end;
     if (blockStart <= cellIndex && cellIndex <= blockEnd) {
@@ -56,9 +55,7 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const arrowUpEvent = (e) => {
-    if (isContinuePrev(cellIndex)) {
-      focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
-    }
+    focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
   };
 
   const shiftArrowUpEvent = () => {
@@ -66,9 +63,7 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const arrowDownEvent = (e) => {
-    if (isContinueNext(cellIndex, state.cells.length)) {
-      focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
-    }
+    focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
   };
 
   const shiftArrowDownEvent = () => {
@@ -76,10 +71,32 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const backspaceEvent = (e) => {
-    const { length } = e.target.textContent;
-    if (length === 0 && cellIndex > 0) {
+    const { textContent } = e.target;
+    if (textContent.length === 0 && cellIndex > 0) {
       deleteCell(dispatch, cellUuid);
+    } else {
+      const cursorPos = getSelection();
+      if (cursorPos.start === 0 && cursorPos.end === 0) {
+        deleteCell(dispatch, cellUuid, textContent);
+      }
     }
+  };
+
+  const ctrlAEvent = () => {
+    dispatch(cellActionCreator.blockAll());
+  };
+
+  const ctrlXEvent = () => {
+    dispatch(cellActionCreator.copy());
+    deleteCell(dispatch);
+  };
+
+  const ctrlCEvent = () => {
+    dispatch(cellActionCreator.copy());
+  };
+
+  const ctrlVEvent = () => {
+    dispatch(cellActionCreator.paste(cellUuid));
   };
 
   const keydownHandlers = {
@@ -89,6 +106,10 @@ const MarkdownCell = ({ cellUuid }) => {
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
     [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
+    [EVENT_TYPE.CTRL_A]: ctrlAEvent,
+    [EVENT_TYPE.CTRL_X]: ctrlXEvent,
+    [EVENT_TYPE.CTRL_C]: ctrlCEvent,
+    [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
   // -------------- End -----------------------

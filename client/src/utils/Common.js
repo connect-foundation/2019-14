@@ -50,6 +50,25 @@ utils.splice = {
     }
     return [];
   },
+
+  /**
+   * @param {Array} array 데이터를 변경할 배열
+   * @param {Number} cur 현재 인덱스
+   * @param {Array} data 삽입할 배열
+   * @returns {Array} 데이터가 변경된 배열
+   */
+  pushArray: (array, cur, data) => {
+    return [...array.slice(0, cur + 1), ...data, ...array.slice(cur + 1)];
+  },
+
+  /**
+   * @param {Array} array 데이터를 삭제할 배열
+   * @param {Number} start 삭제할 시작 인덱스
+   * @param {Number} end 삭제할 끝 인덱스
+   */
+  popArray: (array, start, end) => {
+    return [...array.slice(0, start), ...array.slice(end + 1)];
+  },
 };
 
 utils.deepCopy = (obj) => {

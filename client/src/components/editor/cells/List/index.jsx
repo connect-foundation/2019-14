@@ -11,8 +11,6 @@ import { useCellState, useKey } from "../../../../utils";
 import {
   // newCell,
   saveCursorPosition,
-  isContinuePrev,
-  isContinueNext,
   focusPrev,
   focusNext,
   setCursorPosition,
@@ -98,15 +96,11 @@ const ListCell = ({ cellUuid }) => {
   };
 
   const arrowUpEvent = (e) => {
-    if (isContinuePrev(cellIndex)) {
-      focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
-    }
+    focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
   };
 
   const arrowDownEvent = (e) => {
-    if (isContinueNext(cellIndex, state.cells.length)) {
-      focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
-    }
+    focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
   };
 
   const keydownHandlers = {

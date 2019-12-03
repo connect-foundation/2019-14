@@ -1,6 +1,7 @@
 import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
 import { utils } from "../utils";
+import { cellGenerator } from "../components/editor/cells/CellGenerator";
 
 const { splice } = utils;
 
@@ -35,6 +36,7 @@ const cellReducerHandler = {
     const { cellUuid, createMarkdownCell, tag } = action;
     const index = uuidManager.findIndex(cellUuid);
     const newCellUuid = uuid();
+    uuidManager.push(newCellUuid, index);
 
     const isOrderedList = tag === "ol";
     const newStart = isOrderedList ? start + 1 : null;
@@ -46,8 +48,8 @@ const cellReducerHandler = {
 
     const originText = state.texts[index];
     const { cursor } = state;
-    const currentText = originText.slice(0, cursor.start);
-    const newText = originText.slice(cursor.start);
+    const currentText = originText ? originText.slice(0, cursor.start) : "";
+    const newText = originText ? originText.slice(cursor.start) : "";
     let texts = splice.change(state.texts, index, currentText);
     texts = splice.add(texts, index, newText);
     const tags = splice.add(state.tags, index, tag);
@@ -56,12 +58,6 @@ const cellReducerHandler = {
       start: 0,
       end: 0,
     };
-
-    uuidManager.uuidArray = splice.add(
-      uuidManager.uuidArray,
-      index,
-      newCellUuid
-    );
 
     const currentIndex = index + 1;
 
@@ -89,19 +85,55 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.DELETE]: (state, action) => {
-    const { uuidManager } = state;
-    const { cellUuid } = action;
-    const index = uuidManager.findIndex(cellUuid);
+    const { uuidManager, block } = state;
+    const { cellUuid, text } = action;
 
-    const cells = splice.delete(state.cells, index);
-    const texts = splice.delete(state.texts, index);
-    const tags = splice.delete(state.tags, index);
-    uuidManager.uuidArray = splice.delete(uuidManager.uuidArray, index);
+    if (block.start !== null) {
+      const blockStart = block.start < block.end ? block.start : block.end;
+      const blockEnd = block.start > block.end ? block.start : block.end;
+
+      const cells = splice.popArray(state.cells, blockStart, blockEnd);
+      const texts = splice.popArray(state.texts, blockStart, blockEnd);
+      const tags = splice.popArray(state.tags, blockStart, blockEnd);
+      uuidManager.blockDelete(blockStart, blockEnd);
+
+      const emptyBlock = {
+        start: null,
+        end: null,
+      };
+      const currentIndex = blockStart - 1 < 0 ? blockStart : blockStart - 1;
+      const cursor = {
+        start: texts[currentIndex] ? texts[currentIndex].length : 0,
+        end: texts[currentIndex] ? texts[currentIndex].length : 0,
+      };
+
+      return {
+        ...state,
+        cells,
+        texts,
+        tags,
+        cursor,
+        block: emptyBlock,
+        currentIndex,
+      };
+    }
+
+    const index = uuidManager.findIndex(cellUuid);
+    uuidManager.pop(index);
+
     const prevIndex = index - 1;
+    const cells = splice.delete(state.cells, index);
+
     const cursor = {
-      start: prevIndex >= 0 ? texts[prevIndex].length : 0,
-      end: prevIndex >= 0 ? texts[prevIndex].length : 0,
+      start: prevIndex >= 0 ? state.texts[prevIndex].length : 0,
+      end: prevIndex >= 0 ? state.texts[prevIndex].length : 0,
     };
+
+    let texts = splice.delete(state.texts, index);
+    const joinedText = state.texts[prevIndex] + text;
+    texts = splice.change(texts, prevIndex, joinedText);
+
+    const tags = splice.delete(state.tags, index);
 
     return {
       ...state,
@@ -118,9 +150,12 @@ const cellReducerHandler = {
       start: null,
       end: null,
     };
+    const { currentIndex } = state;
+    const nextIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
+
     return {
       ...state,
-      currentIndex: state.currentIndex - 1,
+      currentIndex: nextIndex,
       block,
     };
   },
@@ -130,9 +165,13 @@ const cellReducerHandler = {
       start: null,
       end: null,
     };
+    const { currentIndex } = state;
+    const nextIndex =
+      currentIndex < state.cells.length - 1 ? currentIndex + 1 : currentIndex;
+
     return {
       ...state,
-      currentIndex: state.currentIndex + 1,
+      currentIndex: nextIndex,
       block,
     };
   },
@@ -141,9 +180,15 @@ const cellReducerHandler = {
     const { uuidManager } = state;
     const index = uuidManager.findIndex(cellUuid);
 
+    const block = {
+      start: null,
+      end: null,
+    };
+
     return {
       ...state,
       currentIndex: index,
+      block,
     };
   },
 
@@ -172,6 +217,20 @@ const cellReducerHandler = {
     };
   },
 
+  [CELL_ACTION.BLOCK.ALL]: (state) => {
+    const block = {
+      start: 0,
+      end: state.cells.length - 1,
+    };
+    const currentIndex = state.cells.length - 1;
+
+    return {
+      ...state,
+      block,
+      currentIndex,
+    };
+  },
+
   [CELL_ACTION.BLOCK.UP]: (state, action) => {
     const { uuidManager, block } = state;
     const { cellUuid } = action;
@@ -195,6 +254,7 @@ const cellReducerHandler = {
     return {
       ...state,
       block: newBlock,
+      currentIndex: newEnd,
     };
   },
 
@@ -205,9 +265,9 @@ const cellReducerHandler = {
 
     const { length } = cells;
 
-    const newStart = block.start || index;
-    let newEnd = block.end < length - 1 ? block.end + 1 : newStart;
-    if (block.end && block.end < length - 1) {
+    const newStart = block.start !== null ? block.start : index;
+    let newEnd = null;
+    if (block.end < length - 1) {
       newEnd = block.end + 1;
     } else if (block.end === length - 1) {
       newEnd = length - 1;
@@ -223,6 +283,7 @@ const cellReducerHandler = {
     return {
       ...state,
       block: newBlock,
+      currentIndex: newEnd,
     };
   },
 
@@ -235,6 +296,66 @@ const cellReducerHandler = {
     return {
       ...state,
       cursor,
+    };
+  },
+
+  [CELL_ACTION.CLIPBOARD.COPY]: (state) => {
+    const { texts, tags, block } = state;
+
+    if (!block.start) {
+      return state;
+    }
+    const blockStart = block.start < block.end ? block.start : block.end;
+    const blockEnd = block.start > block.end ? block.start : block.end;
+
+    const clipboard = {
+      texts: texts.slice(blockStart, blockEnd + 1),
+      tags: tags.slice(blockStart, blockEnd + 1),
+    };
+    return {
+      ...state,
+      clipboard,
+    };
+  },
+
+  [CELL_ACTION.CLIPBOARD.PASTE]: (state, action) => {
+    const { uuidManager, clipboard } = state;
+    const { cellUuid } = action;
+    const index = uuidManager.findIndex(cellUuid);
+
+    const currentIndex = state.currentIndex + clipboard.texts.length;
+
+    const cbCells = clipboard.tags.reduce((acc, val, i) => {
+      /**
+       * @todo ordered list일 경우 추가하기
+       */
+      const newUuid = uuid();
+      uuidManager.push(newUuid, index + i);
+      acc.push(cellGenerator[val](newUuid));
+      return acc;
+    }, []);
+
+    const cells = splice.pushArray(state.cells, index, cbCells);
+    const texts = splice.pushArray(state.texts, index, clipboard.texts);
+    const tags = splice.pushArray(state.tags, index, clipboard.tags);
+
+    const cursor = {
+      start: texts[currentIndex].length,
+      end: texts[currentIndex].length,
+    };
+
+    const block = {
+      start: null,
+      end: null,
+    };
+
+    return {
+      ...state,
+      cells,
+      texts,
+      tags,
+      cursor,
+      block,
     };
   },
 };
