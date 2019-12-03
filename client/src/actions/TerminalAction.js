@@ -1,4 +1,6 @@
 const TERMINAL_ACTION = {
+  NEW_TERMINAL: "terminal/new",
+
   NEW_REPL: "terminal/new-repl",
   EVAL_INPUT: "terminal/eval-input",
   EVAL_ALL: "terminal/eval-all",
@@ -7,13 +9,20 @@ const TERMINAL_ACTION = {
   FOCUS_PREV: "terminal/focus-prev",
   FOCUS_NEXT: "terminal/focus-next",
   FOCUS_OUT: "terminal/focus-out",
-  FOCUS_CHANGE: "terminal/focus-change",
 
   CHANGE_TEXT: "terminal/change-text",
   UPDATE_OUTPUT: "terminal/update-output",
 };
 
 const terminalActionCreator = {
+  createNewTerminal(cellUuid, cellIndex) {
+    return {
+      type: TERMINAL_ACTION.NEW_TERMINAL,
+      cellUuid,
+      cellIndex,
+    };
+  },
+
   /**
    * Enter를 누를시에 사용된다.
    * 새로운 REPL cell을 현재 위치에 생성한다.
@@ -47,9 +56,10 @@ const terminalActionCreator = {
     };
   },
 
-  focusIn() {
+  focusIn(cellUuid) {
     return {
       type: TERMINAL_ACTION.FOCUS_IN,
+      cellUuid,
     };
   },
 

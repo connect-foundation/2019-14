@@ -157,7 +157,9 @@ const MarkdownCell = ({ cellUuid }) => {
         newStart = 0;
       }
 
-      const cell = makeNewCell(cellUuid, newStart);
+      const cell = makeNewCell(cellUuid, {
+        start: newStart,
+      });
 
       dispatch(
         cellActionCreator.transform(cellUuid, "", matchingTag, cell, newStart)

@@ -5,12 +5,14 @@ import createDebug from "debug";
 
 import { THEME } from "../../../../enums";
 import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
-import { TerminalDispatchContext } from "../../../../stores/TerminalStore";
+import { dispatchToTerminal } from "../../../../stores/TerminalStore";
 import { CellContext } from "../../../../stores/CellStore";
 import { setGenerator } from "../CellGenerator";
 import ReplContainer from "./ReplContainer";
 
-setGenerator("terminal", (uuid) => <TerminalCell cellUuid={uuid} />);
+setGenerator("terminal", (uuid) => {
+  return <TerminalCell cellUuid={uuid} />;
+});
 
 const debug = createDebug("boost:component:terminal-cell");
 
@@ -26,14 +28,13 @@ const TerminalWrapper = styled.div`
 
 const TerminalCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
-  const dispatchToTerminal = useContext(TerminalDispatchContext);
   const { uuidManager, currentIndex } = state;
   const cellIndex = uuidManager.findIndex(cellUuid);
 
   const isCellFocus = cellIndex === currentIndex;
   if (isCellFocus) {
-    debug("Terminal cell focus in");
-    dispatchToTerminal(terminalAction.focusIn());
+    debug(`Terminal cell ${cellIndex} focus in`);
+    dispatchToTerminal(terminalAction.focusIn(cellUuid));
   }
 
   return (

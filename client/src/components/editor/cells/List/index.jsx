@@ -24,8 +24,8 @@ setGenerator("ul", (uuid) => (
     <ListCell cellUuid={uuid} />
   </ul>
 ));
-setGenerator("ol", (uuid, start) => (
-  <ol start={start}>
+setGenerator("ol", (uuid, options) => (
+  <ol start={options.start}>
     <ListCell cellUuid={uuid} />
   </ol>
 ));
