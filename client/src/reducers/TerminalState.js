@@ -25,7 +25,7 @@ class TerminalState {
     this.replCount = other.replCount || 0;
   }
 
-  setIds(cellUuid, cellIndex) {
+  setIds(cellUuid) {
     this.cellUuid = cellUuid;
   }
 
