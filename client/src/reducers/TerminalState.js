@@ -40,6 +40,8 @@ class TerminalState {
     this.outputTexts = [...this.outputTexts, ""];
     this.isLoadings = [...this.isLoadings, true];
 
+    this.currentText = "";
+
     this.replCount += 1;
   }
 
