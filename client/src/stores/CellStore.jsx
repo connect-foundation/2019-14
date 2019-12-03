@@ -14,6 +14,10 @@ const CellStore = ({ children }) => {
     cells: [],
     texts: [],
     tags: [],
+    clipboard: {
+      texts: [],
+      tags: [],
+    },
     cursor: {
       start: 0,
       end: 0,

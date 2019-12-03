@@ -23,7 +23,7 @@ const EditorComponent = () => {
     <>
       {cells.map((cell, cellIndex) => {
         const key = `markdown-cell-${cellIndex}`;
-        return <div key={key}>{cell}</div>;
+        return <React.Fragment key={key}>{cell}</React.Fragment>;
       })}
     </>
   );

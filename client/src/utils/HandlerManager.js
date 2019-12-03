@@ -17,6 +17,10 @@ let handler = {
   [EVENT_TYPE.SHIFT_TAB]: null,
   [EVENT_TYPE.ARROW_UP]: null,
   [EVENT_TYPE.ARROW_DOWN]: null,
+  [EVENT_TYPE.CTRL_A]: null,
+  [EVENT_TYPE.CTRL_X]: null,
+  [EVENT_TYPE.CTRL_C]: null,
+  [EVENT_TYPE.CTRL_V]: null,
 };
 
 /**
@@ -32,6 +36,10 @@ const initHandler = () => {
     [EVENT_TYPE.SHIFT_TAB]: null,
     [EVENT_TYPE.ARROW_UP]: null,
     [EVENT_TYPE.ARROW_DOWN]: null,
+    [EVENT_TYPE.CTRL_A]: null,
+    [EVENT_TYPE.CTRL_X]: null,
+    [EVENT_TYPE.CTRL_C]: null,
+    [EVENT_TYPE.CTRL_V]: null,
   };
 };
 
@@ -88,6 +96,32 @@ const customKeydownEventHandler = (e) => {
         e.preventDefault();
         if (e.shiftKey) handler[EVENT_TYPE.SHIFT_ARROW_DOWN](e);
         else handler[EVENT_TYPE.ARROW_DOWN](e);
+        break;
+      case "a":
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          handler[EVENT_TYPE.CTRL_A](e);
+        }
+        break;
+      case "x":
+        // block 상태일 때만 e.preventDefault
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          handler[EVENT_TYPE.CTRL_X](e);
+        }
+        break;
+      case "c":
+        // block 상태일 때만 e.preventDefault
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          handler[EVENT_TYPE.CTRL_C](e);
+        }
+        break;
+      case "v":
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          handler[EVENT_TYPE.CTRL_V](e);
+        }
         break;
       default:
         break;
