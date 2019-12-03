@@ -1,6 +1,6 @@
 import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
-import { utils } from "../utils";
+import { utils, uuidManager } from "../utils";
 import { cellGenerator } from "../components/editor/cells/CellGenerator";
 
 const { splice } = utils;
@@ -8,7 +8,6 @@ const { splice } = utils;
 const cellReducerHandler = {
   [CELL_ACTION.INIT]: (state, action) => {
     const { cellUuid, createMarkdownCell, tag } = action;
-    const { uuidManager } = state;
     const newUuid = cellUuid || uuid();
     const index = cellUuid ? uuidManager.findIndex(cellUuid) : 0;
 
@@ -32,7 +31,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.NEW]: (state, action) => {
-    const { uuidManager, start } = state;
+    const { start } = state;
     const { cellUuid, createMarkdownCell, tag } = action;
     const index = uuidManager.findIndex(cellUuid);
     const newCellUuid = uuid();
@@ -79,7 +78,6 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.INPUT]: (state, action) => {
-    const { uuidManager } = state;
     const { text, cellUuid } = action;
     const index = uuidManager.findIndex(cellUuid);
     const texts = splice.change(state.texts, index, text);
@@ -91,7 +89,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.DELETE]: (state, action) => {
-    const { uuidManager, block } = state;
+    const { block } = state;
     const { cellUuid, text } = action;
 
     if (block.start !== null) {
@@ -183,7 +181,6 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.FOCUS.MOVE]: (state, { cellUuid }) => {
-    const { uuidManager } = state;
     const index = uuidManager.findIndex(cellUuid);
 
     const pos = state.texts[index].length;
@@ -214,7 +211,6 @@ const cellReducerHandler = {
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
     const { cellUuid, text, tag, cell, start } = action;
-    const { uuidManager } = state;
     const index = uuidManager.findIndex(cellUuid);
 
     const texts = splice.change(state.texts, index, text);
@@ -245,7 +241,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.BLOCK.UP]: (state, action) => {
-    const { uuidManager, block } = state;
+    const { block } = state;
     const { cellUuid } = action;
     const index = uuidManager.findIndex(cellUuid);
 
@@ -272,7 +268,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.BLOCK.DOWN]: (state, action) => {
-    const { uuidManager, block, cells } = state;
+    const { block, cells } = state;
     const { cellUuid } = action;
     const index = uuidManager.findIndex(cellUuid);
 
@@ -332,7 +328,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.CLIPBOARD.PASTE]: (state, action) => {
-    const { uuidManager, clipboard } = state;
+    const { clipboard } = state;
     const { cellUuid } = action;
     const index = uuidManager.findIndex(cellUuid);
 

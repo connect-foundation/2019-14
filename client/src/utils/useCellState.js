@@ -1,7 +1,8 @@
 import { PLACEHOLDER } from "../enums";
+import uuidManager from "./UuidManager";
 
 const useCellState = (state, cellUuid) => {
-  const { currentIndex, texts, tags, uuidManager } = state;
+  const { currentIndex, texts, tags } = state;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
 

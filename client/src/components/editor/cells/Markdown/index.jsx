@@ -4,7 +4,12 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import { getType, getStart, handlerManager } from "../../../../utils";
+import {
+  getType,
+  getStart,
+  handlerManager,
+  uuidManager,
+} from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -28,7 +33,7 @@ setGenerator("hr", (uuid) => (
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { currentIndex, uuidManager, start, cursor, block } = state;
+  const { currentIndex, start, cursor, block } = state;
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
