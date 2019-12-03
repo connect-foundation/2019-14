@@ -59,6 +59,11 @@ const cellReducerHandler = {
       end: 0,
     };
 
+    const block = {
+      start: null,
+      end: null,
+    };
+
     const currentIndex = index + 1;
 
     return {
@@ -69,6 +74,7 @@ const cellReducerHandler = {
       tags,
       cursor: newCursor,
       start: newStart,
+      block,
     };
   },
 
