@@ -18,7 +18,7 @@ function UuidManager() {
  * - 생략시 맨 뒤에 삽입한다.
  */
 UuidManager.prototype.push = function(uuid, index) {
-  if (index) {
+  if (index !== undefined) {
     this.uuidArray = splice.add(this.uuidArray, index, uuid);
   } else {
     this.uuidArray.push(uuid);
@@ -38,7 +38,7 @@ UuidManager.prototype.pop = function(index) {
  * @param {Number} end 삭제할 데이터의 끝 인덱스
  */
 UuidManager.prototype.blockDelete = function(start, end) {
-  this.uuidArray = splice.blockDelete(this.uuidArray, start, end);
+  this.uuidArray = splice.popArray(this.uuidArray, start, end);
 };
 
 /**
