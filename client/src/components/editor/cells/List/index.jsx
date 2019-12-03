@@ -87,12 +87,12 @@ const ListCell = ({ cellUuid }) => {
     }
   };
 
-  const arrowUpEvent = (e) => {
-    focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
+  const arrowUpEvent = () => {
+    focusPrev(dispatch, inputRef);
   };
 
-  const arrowDownEvent = (e) => {
-    focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
+  const arrowDownEvent = () => {
+    focusNext(dispatch, inputRef);
   };
 
   const keydownHandlers = {

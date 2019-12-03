@@ -49,21 +49,21 @@ const MarkdownCell = ({ cellUuid }) => {
   const enterEvent = (e) => {
     const { textContent } = e.target;
     const componentCallback = cellGenerator.p;
-    saveCursorPosition(dispatch, inputRef);
+    saveCursorPosition(dispatch);
     dispatch(cellActionCreator.input(cellUuid, textContent));
     newCell(cellUuid, dispatch, componentCallback);
   };
 
-  const arrowUpEvent = (e) => {
-    focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
+  const arrowUpEvent = () => {
+    focusPrev(dispatch);
   };
 
   const shiftArrowUpEvent = () => {
     blockEndUp(cellUuid, dispatch);
   };
 
-  const arrowDownEvent = (e) => {
-    focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
+  const arrowDownEvent = () => {
+    focusNext(dispatch);
   };
 
   const shiftArrowDownEvent = () => {
@@ -168,6 +168,11 @@ const MarkdownCell = ({ cellUuid }) => {
     dispatch(cellActionCreator.focusMove(cellUuid));
   };
 
+  const onBlur = (e) => {
+    const { innerHTML } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, innerHTML));
+  };
+
   const htmlText = () => {
     /**
      * @todo text에 대한 보안장치 필요
@@ -185,6 +190,7 @@ const MarkdownCell = ({ cellUuid }) => {
       contentEditable
       onKeyUp={onKeyUp}
       onClick={onClick}
+      onBlur={onBlur}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText()}
     />

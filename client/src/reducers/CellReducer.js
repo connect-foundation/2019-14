@@ -180,6 +180,12 @@ const cellReducerHandler = {
     const { uuidManager } = state;
     const index = uuidManager.findIndex(cellUuid);
 
+    const pos = state.texts[index].length;
+    const cursor = {
+      start: pos,
+      end: pos,
+    };
+
     const block = {
       start: null,
       end: null,
@@ -188,6 +194,7 @@ const cellReducerHandler = {
     return {
       ...state,
       currentIndex: index,
+      cursor,
       block,
     };
   },
