@@ -17,12 +17,18 @@ const StepperButtons = () => {
   const dispatch = useContext(TerminalSettingDispatch);
 
   const clickHandler = (e) => {
-    dispatch(terminalSettingActionCreator.selectOS("ubuntu"));
+    if (e.target.textContent === "prev") {
+      dispatch(terminalSettingActionCreator.prevStep(state.currentIndex));
+    } else {
+      dispatch(terminalSettingActionCreator.nextStep(state.currentIndex));
+    }
   };
+
+  console.log(state.currentIndex);
 
   return (
     <StepperButtonsWrapper>
-      <button>prev</button>
+      <button onClick={clickHandler}>prev</button>
       <button onClick={clickHandler}>next</button>
     </StepperButtonsWrapper>
   );

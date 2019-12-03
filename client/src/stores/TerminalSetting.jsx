@@ -10,6 +10,7 @@ function TerminalSettingStore({ children }) {
     selectedPl: [],
     selectedDb: [],
 
+    currentIndex: 0,
     currentStep: "OS",
   };
 

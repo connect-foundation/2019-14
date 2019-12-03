@@ -4,6 +4,10 @@ const TERMINAL_SETTING_ACTION = {
     PL: "terminal-setting/select/pl",
     DB: "terminal-setting/select/db",
   },
+  MOVE: {
+    PREV: "terminal-setting/move/prev",
+    NEXT: "terminal-setting/move/next",
+  },
 };
 
 const terminalSettingActionCreator = {
@@ -17,6 +21,14 @@ const terminalSettingActionCreator = {
 
   selectDB() {
     return { type: TERMINAL_SETTING_ACTION.SELECT.DB };
+  },
+
+  prevStep(index) {
+    return { type: TERMINAL_SETTING_ACTION.MOVE.PREV, index };
+  },
+
+  nextStep(index) {
+    return { type: TERMINAL_SETTING_ACTION.MOVE.NEXT, index };
   },
 };
 
