@@ -38,7 +38,7 @@ UuidManager.prototype.pop = function(index) {
  * @param {Number} end 삭제할 데이터의 끝 인덱스
  */
 UuidManager.prototype.blockDelete = function(start, end) {
-  this.uuidArray = splice.blockDelete(this.uuidArray, start, end);
+  this.uuidArray = splice.popArray(this.uuidArray, start, end);
 };
 
 /**

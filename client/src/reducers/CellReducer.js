@@ -95,7 +95,7 @@ const cellReducerHandler = {
       const cells = splice.popArray(state.cells, blockStart, blockEnd);
       const texts = splice.popArray(state.texts, blockStart, blockEnd);
       const tags = splice.popArray(state.tags, blockStart, blockEnd);
-      uuidManager.popArray(blockStart, blockEnd);
+      uuidManager.blockDelete(blockStart, blockEnd);
 
       const emptyBlock = {
         start: null,
@@ -131,7 +131,7 @@ const cellReducerHandler = {
 
     let texts = splice.delete(state.texts, index);
     const joinedText = state.texts[prevIndex] + text;
-    texts = splice.change(state.texts, prevIndex, joinedText);
+    texts = splice.change(texts, prevIndex, joinedText);
 
     const tags = splice.delete(state.tags, index);
 
