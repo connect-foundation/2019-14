@@ -18,7 +18,7 @@ function UuidManager() {
  * - 생략시 맨 뒤에 삽입한다.
  */
 UuidManager.prototype.push = function(uuid, index) {
-  if (index) {
+  if (index !== undefined) {
     this.uuidArray = splice.add(this.uuidArray, index, uuid);
   } else {
     this.uuidArray.push(uuid);
