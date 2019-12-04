@@ -33,12 +33,12 @@ CellManager.prototype.delete = function(index, flag) {
 };
 
 CellManager.prototype.pushArray = function(index, dataObj) {
-  if (dataObj.cell !== undefined)
-    this.cells = splice.pushArray(this.cells, index, dataObj.cell);
-  if (dataObj.text !== undefined)
-    this.texts = splice.pushArray(this.texts, index, dataObj.text);
-  if (dataObj.tag !== undefined)
-    this.tags = splice.pushArray(this.tags, index, dataObj.tag);
+  if (dataObj.cells !== undefined)
+    this.cells = splice.pushArray(this.cells, index, dataObj.cells);
+  if (dataObj.texts !== undefined)
+    this.texts = splice.pushArray(this.texts, index, dataObj.texts);
+  if (dataObj.tags !== undefined)
+    this.tags = splice.pushArray(this.tags, index, dataObj.tags);
 };
 
 CellManager.prototype.popArray = function(start, end, flag) {

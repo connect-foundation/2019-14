@@ -1,3 +1,4 @@
+import { uuid } from "uuidv4";
 import { uuidManager } from "../../utils";
 
 const initUuid = (cellUuid, newCellUuid) => {
@@ -17,8 +18,9 @@ const initCell = (cellUuid, cellManager, dataObj) => {
   });
 };
 
-const newUuid = (index, newCellUuid) => {
-  uuidManager.push(newCellUuid, index);
+const newUuid = (cellUuid) => {
+  const index = uuidManager.findIndex(cellUuid);
+  uuidManager.push(uuid(), index);
 };
 
 const newCell = (cellUuid, cellManager, dataObj) => {

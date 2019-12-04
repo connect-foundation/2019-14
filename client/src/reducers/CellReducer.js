@@ -1,20 +1,16 @@
 import createDebug from "debug";
 import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
-import { utils, uuidManager } from "../utils";
-import { cellGenerator } from "../components/editor/cells/CellGenerator";
-import { common, focus, block, target } from "./CellReducerHandler";
+import { common, focus, block, target, clipboard } from "./CellReducerHandler";
 
 const debug = createDebug("boost:reducer:cell");
-
-const { splice } = utils;
 
 const cellReducerHandler = {
   [CELL_ACTION.INIT]: (state, action) => {
     const { cellUuid, createMarkdownCell, tag } = action;
-    const newUuid = cellUuid || uuid();
+    const newCellUuid = cellUuid || uuid();
 
-    common.initUuid(cellUuid, newUuid);
+    common.initUuid(cellUuid, newCellUuid);
     common.initCell(cellUuid, state.cellManager, {
       cell: createMarkdownCell,
       text: "",
@@ -29,10 +25,8 @@ const cellReducerHandler = {
   [CELL_ACTION.NEW]: (state, action) => {
     const { start, cursor, cellManager } = state;
     const { cellUuid, createMarkdownCell, tag } = action;
-    const index = uuidManager.findIndex(cellUuid);
-    const newCellUuid = uuid();
 
-    common.newUuid(index, newCellUuid);
+    common.newUuid(cellUuid);
 
     const result = common.newCell(cellUuid, cellManager, {
       createCellCallback: createMarkdownCell,
@@ -198,56 +192,28 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.CLIPBOARD.COPY]: (state) => {
-    const { texts, tags, block } = state;
-
-    if (!block.start) {
+    if (!state.block.start) {
       return state;
     }
-    const blockStart = block.start < block.end ? block.start : block.end;
-    const blockEnd = block.start > block.end ? block.start : block.end;
-
-    const clipboard = {
-      texts: texts.slice(blockStart, blockEnd + 1),
-      tags: tags.slice(blockStart, blockEnd + 1),
-    };
+    const result = clipboard.copy(state.cellManager, state.block);
     return {
       ...state,
-      clipboard,
+      ...result,
     };
   },
 
   [CELL_ACTION.CLIPBOARD.PASTE]: (state, action) => {
-    const { clipboard } = state;
+    const { cellManager } = state;
     const { cellUuid } = action;
-    const index = uuidManager.findIndex(cellUuid);
 
-    const currentIndex = state.currentIndex + clipboard.texts.length;
-
-    const cbCells = clipboard.tags.reduce((acc, val, i) => {
-      /**
-       * @todo ordered list일 경우 추가하기
-       */
-      const newUuid = uuid();
-      uuidManager.push(newUuid, index + i);
-      acc.push(cellGenerator[val](newUuid));
-      return acc;
-    }, []);
-
-    const cells = splice.pushArray(state.cells, index, cbCells);
-    const texts = splice.pushArray(state.texts, index, clipboard.texts);
-    const tags = splice.pushArray(state.tags, index, clipboard.tags);
-
-    const cursor = {
-      start: texts[currentIndex].length,
-      end: texts[currentIndex].length,
+    const dataObj = {
+      clipboard: state.clipboard,
     };
+    const result = clipboard.paste(cellUuid, cellManager, dataObj);
 
     return {
       ...state,
-      cells,
-      texts,
-      tags,
-      cursor,
+      ...result,
     };
   },
 };
