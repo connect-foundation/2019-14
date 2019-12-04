@@ -3,7 +3,7 @@ import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
 import { utils, uuidManager } from "../utils";
 import { cellGenerator } from "../components/editor/cells/CellGenerator";
-import { common, focus, block } from "./CellReducerHandler";
+import { common, focus, block, target } from "./CellReducerHandler";
 
 const debug = createDebug("boost:reducer:cell");
 
@@ -132,18 +132,11 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
-    const { cellUuid, text, tag, cell, start } = action;
-    const index = uuidManager.findIndex(cellUuid);
-
-    const texts = splice.change(state.texts, index, text);
-    const tags = splice.change(state.tags, index, tag);
-    const cells = splice.change(state.cells, index, cell);
+    const { cellUuid, cell, text, tag, start } = action;
+    target.transform(cellUuid, state.cellManager, { cell, text, tag });
 
     return {
       ...state,
-      texts,
-      tags,
-      cells,
       start,
     };
   },
