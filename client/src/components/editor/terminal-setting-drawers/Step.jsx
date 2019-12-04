@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDatabase } from "@fortawesome/free-solid-svg-icons";
 import { faUbuntu, faJs } from "@fortawesome/free-brands-svg-icons";
+
+import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
+import {
+  TerminalSettingContext,
+  TerminalSettingDispatch,
+} from "../../../stores/TerminalSetting";
 
 const STEP_TYPE = {
   OS: faUbuntu,
@@ -21,8 +27,15 @@ const StepWrapper = styled.div`
 `;
 
 const Step = ({ icon }) => {
+  const { state } = useContext(TerminalSettingContext);
+  const { dispatch } = useContext(TerminalSettingDispatch);
+
+  const clickEventHandler = (e) => {
+    dispatch(terminalSettingActionCreator.selectStep());
+  };
+
   return (
-    <StepWrapper>
+    <StepWrapper onClick={clickEventHandler}>
       <FontAwesomeIcon icon={icon} />
     </StepWrapper>
   );

@@ -1,12 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 
-// TODO 임시 파일 나중에 지울것
-const tempData = {
-  OS: ["ubuntu", "centos", "macos"],
-  PL: ["js", "java", "c"],
-  DB: ["mysql", "mssql", "oracle"],
-};
+import TERMINAL_SETTING_STEP from "../../../enums/TERMINAL_SETTING_STEP";
+import StepperContent from "./StepperContent";
+import { TerminalSettingContext } from "../../../stores/TerminalSetting";
 
 const StepperContentListWrapper = styled.ul`
   list-style-type: none;
@@ -15,12 +12,22 @@ const StepperContentListWrapper = styled.ul`
 `;
 
 const StepperContentList = () => {
+  const { state } = useContext(TerminalSettingContext);
+
+  const step = state.currentStep;
+
   const getSettings = () => {
-    return Object.values(tempData.OS).map((element, index) => {
-      return <li key={index}>{element}</li>;
+    return TERMINAL_SETTING_STEP[step].list.map((element, index) => {
+      return <StepperContent key={index} element={element} />;
     });
   };
-  return <StepperContentListWrapper>{getSettings()}</StepperContentListWrapper>;
+
+  return (
+    <StepperContentListWrapper>
+      <h2>{TERMINAL_SETTING_STEP[step].type}</h2>
+      {getSettings()}
+    </StepperContentListWrapper>
+  );
 };
 
 export default StepperContentList;
