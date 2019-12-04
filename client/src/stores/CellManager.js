@@ -26,10 +26,25 @@ CellManager.prototype.change = function(index, dataObj) {
     this.tags = splice.change(this.tags, index, dataObj.tag);
 };
 
-CellManager.prototype.delete = function(index, dataObj) {
-  if (dataObj.cell) this.cells = splice.delete(this.cells, index);
-  if (dataObj.text) this.texts = splice.delete(this.texts, index);
-  if (dataObj.tag) this.tags = splice.delete(this.tags, index);
+CellManager.prototype.delete = function(index, flag) {
+  if (flag.cell) this.cells = splice.delete(this.cells, index);
+  if (flag.text) this.texts = splice.delete(this.texts, index);
+  if (flag.tag) this.tags = splice.delete(this.tags, index);
+};
+
+CellManager.prototype.pushArray = function(index, dataObj) {
+  if (dataObj.cell !== undefined)
+    this.cells = splice.pushArray(this.cells, index, dataObj.cell);
+  if (dataObj.text !== undefined)
+    this.texts = splice.pushArray(this.texts, index, dataObj.text);
+  if (dataObj.tag !== undefined)
+    this.tags = splice.pushArray(this.tags, index, dataObj.tag);
+};
+
+CellManager.prototype.popArray = function(start, end, flag) {
+  if (flag.cell) this.cells = splice.popArray(this.cells, start, end);
+  if (flag.text) this.texts = splice.popArray(this.texts, start, end);
+  if (flag.tag) this.tags = splice.popArray(this.tags, start, end);
 };
 
 CellManager.prototype.save = function() {};

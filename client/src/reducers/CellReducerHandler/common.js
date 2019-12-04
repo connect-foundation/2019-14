@@ -1,7 +1,4 @@
-import { uuid } from "uuidv4";
-import { utils, uuidManager } from "../../utils";
-
-const { splice } = utils;
+import { uuidManager } from "../../utils";
 
 const initUuid = (cellUuid, newCellUuid) => {
   if (!cellUuid) {

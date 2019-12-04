@@ -3,7 +3,7 @@ import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
 import { utils, uuidManager } from "../utils";
 import { cellGenerator } from "../components/editor/cells/CellGenerator";
-import { common } from "./CellReducerHandler";
+import { common, block } from "./CellReducerHandler";
 
 const debug = createDebug("boost:reducer:cell");
 
@@ -65,41 +65,18 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.DELETE]: (state, action) => {
-    const { block, cellManager } = state;
+    const { cellManager } = state;
     const { cellUuid, text } = action;
 
-    if (block.start !== null) {
-      const blockStart = block.start < block.end ? block.start : block.end;
-      const blockEnd = block.start > block.end ? block.start : block.end;
+    if (state.block.start !== null) {
+      const result = block.blockDelete(cellManager, { block: state.block });
 
-      const cells = splice.popArray(state.cells, blockStart, blockEnd);
-      const texts = splice.popArray(state.texts, blockStart, blockEnd);
-      const tags = splice.popArray(state.tags, blockStart, blockEnd);
-      uuidManager.blockDelete(blockStart, blockEnd);
+      debug("Cells delete for Block", result);
 
-      const emptyBlock = {
-        start: null,
-        end: null,
-      };
-      const currentIndex = blockStart - 1 < 0 ? blockStart : blockStart - 1;
-      const cursor = {
-        start: texts[currentIndex] ? texts[currentIndex].length : 0,
-        end: texts[currentIndex] ? texts[currentIndex].length : 0,
-      };
-
-      const nextState = {
+      return {
         ...state,
-        cells,
-        texts,
-        tags,
-        cursor,
-        block: emptyBlock,
-        currentIndex,
+        ...result,
       };
-
-      debug("Cell delete", nextState);
-
-      return nextState;
     }
 
     const result = common.deleteCell(cellUuid, cellManager, { text });
