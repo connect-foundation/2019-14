@@ -1,6 +1,7 @@
 import React, { useReducer } from "react";
 import propTypes from "prop-types";
 import cellReducer from "../reducers/CellReducer";
+import CellManager from "./CellManager";
 
 const CellContext = React.createContext();
 const CellDispatchContext = React.createContext();
@@ -9,6 +10,7 @@ const CellStore = ({ children }) => {
   const [state, dispatch] = useReducer(cellReducer, {
     currentIndex: 0,
     inputRef: null,
+    cellManager: new CellManager(),
     cells: [],
     texts: [],
     tags: [],

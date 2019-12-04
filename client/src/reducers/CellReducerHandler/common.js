@@ -12,19 +12,11 @@ const initUuid = (cellUuid, newCellUuid) => {
 const initCell = (cellUuid, cellManager, dataObj) => {
   const index = cellUuid ? uuidManager.findIndex(cellUuid) : 0;
   const targetUuid = uuidManager.uuidArray[index];
-  const cells = splice.change(
-    cellManager.cells,
-    index,
-    dataObj.cell(targetUuid)
-  );
-  const texts = splice.change(cellManager.texts, index, dataObj.text);
-  const tags = splice.change(cellManager.tags, index, dataObj.tag);
-
-  return {
-    cells,
-    texts,
-    tags,
-  };
+  cellManager.change(index, {
+    cell: dataObj.cell(targetUuid),
+    text: dataObj.text,
+    tag: dataObj.tag,
+  });
 };
 
 const newUuid = (index, newCellUuid) => {
@@ -34,21 +26,26 @@ const newUuid = (index, newCellUuid) => {
 const newCell = (cellUuid, cellManager, dataObj) => {
   const { createCellCallback, cursor, tag, start } = dataObj;
   const index = uuidManager.findIndex(cellUuid);
+  const uuidArray = uuidManager.getUuidArray();
 
   const isOrderedList = tag === "ol";
   const newStart = isOrderedList ? start + 1 : null;
-  const newCellUuid = uuidManager.uuidArray[index + 1];
+  const newCellUuid = uuidArray[index + 1];
   const cell = isOrderedList
     ? createCellCallback(newCellUuid, newStart)
     : createCellCallback(newCellUuid);
 
-  const cells = splice.add(cellManager.cells, index, cell);
   const originText = cellManager.texts[index];
   const currentText = originText ? originText.slice(0, cursor.start) : "";
+  cellManager.change(index, { text: currentText });
+
   const newText = originText ? originText.slice(cursor.start) : "";
-  let texts = splice.change(cellManager.texts, index, currentText);
-  texts = splice.add(texts, index, newText);
-  const tags = splice.add(cellManager.tags, index, tag);
+  const data = {
+    cell,
+    text: newText,
+    tag,
+  };
+  cellManager.add(index, data);
 
   const newCursor = {
     start: 0,
@@ -58,9 +55,6 @@ const newCell = (cellUuid, cellManager, dataObj) => {
   const currentIndex = index + 1;
 
   return {
-    cells,
-    texts,
-    tags,
     cursor: newCursor,
     currentIndex,
     start: newStart,

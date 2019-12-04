@@ -5,6 +5,10 @@ const { splice } = utils;
 // eslint-disable-next-line import/no-mutable-exports
 let uuidArray = [];
 
+const getUuidArray = function() {
+  return uuidArray;
+};
+
 /**
  * uuid를 맨 뒤에 추가한다.
  * @param {Uuid} uuid uuid 모듈을 사용하여 생성한 uuid
@@ -46,7 +50,7 @@ const findIndex = function(uuid) {
 };
 
 export default {
-  uuidArray,
+  getUuidArray,
   push,
   pop,
   blockDelete,

@@ -15,35 +15,31 @@ const cellReducerHandler = {
     const newUuid = cellUuid || uuid();
 
     common.initUuid(cellUuid, newUuid);
-    const result = common.initCell(
-      cellUuid,
-      { cells: state.cells, texts: state.texts, tags: state.tags },
-      { cell: createMarkdownCell, text: "", tag }
-    );
+    common.initCell(cellUuid, state.cellManager, {
+      cell: createMarkdownCell,
+      text: "",
+      tag,
+    });
 
-    const nextState = {
-      ...state,
-      ...result,
-    };
+    debug("Init cell next state", state.cellManager);
 
-    debug("Init cell next state", nextState);
-
-    return nextState;
+    return state;
   },
 
   [CELL_ACTION.NEW]: (state, action) => {
-    const { start, cursor } = state;
+    const { start, cursor, cellManager } = state;
     const { cellUuid, createMarkdownCell, tag } = action;
     const index = uuidManager.findIndex(cellUuid);
     const newCellUuid = uuid();
 
     common.newUuid(index, newCellUuid);
 
-    const result = common.newCell(
-      cellUuid,
-      { cells: state.cells, texts: state.texts, tags: state.tags },
-      { createCellCallback: createMarkdownCell, cursor, tag, start }
-    );
+    const result = common.newCell(cellUuid, cellManager, {
+      createCellCallback: createMarkdownCell,
+      cursor,
+      tag,
+      start,
+    });
 
     const nextState = {
       ...state,
@@ -62,7 +58,7 @@ const cellReducerHandler = {
       action.text
     );
 
-    debug("Cell Change text", index, text);
+    // debug("Cell Change text", index, text);
 
     return {
       ...state,
@@ -161,9 +157,10 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.FOCUS.MOVE]: (state, { cellUuid }) => {
+    const { cellManager } = state;
     const index = uuidManager.findIndex(cellUuid);
 
-    const pos = state.texts[index].length;
+    const pos = cellManager.texts[index].length;
     const cursor = {
       start: pos,
       end: pos,

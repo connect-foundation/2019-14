@@ -29,11 +29,11 @@ setGenerator("hr", (uuid) => (
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { currentIndex, start, cursor, block } = state;
+  const { currentIndex, start, cursor, block, cellManager } = state;
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
-  const text = state.texts[cellIndex];
+  const text = cellManager.texts[cellIndex];
   const currentTag = state.tags[cellIndex];
 
   let intoShiftBlock = false;
