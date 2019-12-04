@@ -3,7 +3,7 @@ import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
 import { utils, uuidManager } from "../utils";
 import { cellGenerator } from "../components/editor/cells/CellGenerator";
-import { common, block } from "./CellReducerHandler";
+import { common, focus, block } from "./CellReducerHandler";
 
 const debug = createDebug("boost:reducer:cell");
 
@@ -80,6 +80,9 @@ const cellReducerHandler = {
     }
 
     const result = common.deleteCell(cellUuid, cellManager, { text });
+
+    debug("Cell delete", result);
+
     return {
       ...state,
       ...result,
@@ -88,7 +91,7 @@ const cellReducerHandler = {
 
   [CELL_ACTION.FOCUS.PREV]: (state) => {
     const { currentIndex } = state;
-    const nextIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
+    const nextIndex = focus.prev(currentIndex);
 
     debug(`Cell focus prev ${currentIndex} to ${nextIndex}`);
 
@@ -99,11 +102,10 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.FOCUS.NEXT]: (state) => {
-    const { currentIndex } = state;
-    const nextIndex =
-      currentIndex < state.cells.length - 1 ? currentIndex + 1 : currentIndex;
+    const { currentIndex, cellManager } = state;
+    const nextIndex = focus.next(currentIndex, cellManager.cells.length);
 
-    debug(`Cell focus prev ${currentIndex} to ${nextIndex}`);
+    debug(`Cell focus next ${currentIndex} to ${nextIndex}`);
 
     return {
       ...state,
@@ -113,18 +115,12 @@ const cellReducerHandler = {
 
   [CELL_ACTION.FOCUS.MOVE]: (state, { cellUuid }) => {
     const { cellManager } = state;
-    const index = uuidManager.findIndex(cellUuid);
 
-    const pos = cellManager.texts[index].length;
-    const cursor = {
-      start: pos,
-      end: pos,
-    };
+    const result = focus.move(cellUuid, cellManager);
 
     return {
       ...state,
-      currentIndex: index,
-      cursor,
+      ...result,
     };
   },
 
