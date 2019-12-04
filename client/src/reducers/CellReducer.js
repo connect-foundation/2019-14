@@ -2,6 +2,7 @@ import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
 import { utils, uuidManager } from "../utils";
 import { cellGenerator } from "../components/editor/cells/CellGenerator";
+import { common } from "./CellReducerHandler";
 
 const { splice } = utils;
 
@@ -9,76 +10,50 @@ const cellReducerHandler = {
   [CELL_ACTION.INIT]: (state, action) => {
     const { cellUuid, createMarkdownCell, tag } = action;
     const newUuid = cellUuid || uuid();
-    const index = cellUuid ? uuidManager.findIndex(cellUuid) : 0;
 
-    if (!cellUuid) {
-      uuidManager.push(newUuid);
-    }
-    const cells = splice.change(
-      state.cells,
-      index,
-      createMarkdownCell(newUuid)
+    common.initUuid(cellUuid, newUuid);
+    const result = common.initCell(
+      cellUuid,
+      { cells: state.cells, texts: state.texts, tags: state.tags },
+      { cell: createMarkdownCell, text: "", tag }
     );
-    const texts = splice.change(state.texts, index, "");
-    const tags = splice.change(state.tags, index, tag);
 
     return {
       ...state,
-      cells,
-      texts,
-      tags,
+      ...result,
     };
   },
 
   [CELL_ACTION.NEW]: (state, action) => {
-    const { start } = state;
+    const { start, cursor } = state;
     const { cellUuid, createMarkdownCell, tag } = action;
     const index = uuidManager.findIndex(cellUuid);
     const newCellUuid = uuid();
-    uuidManager.push(newCellUuid, index);
 
-    const isOrderedList = tag === "ol";
-    const newStart = isOrderedList ? start + 1 : null;
-    const component = isOrderedList
-      ? createMarkdownCell(newCellUuid, newStart)
-      : createMarkdownCell(newCellUuid);
+    common.newUuid(index, newCellUuid);
 
-    const cells = splice.add(state.cells, index, component);
-
-    const originText = state.texts[index];
-    const { cursor } = state;
-    const currentText = originText ? originText.slice(0, cursor.start) : "";
-    const newText = originText ? originText.slice(cursor.start) : "";
-    let texts = splice.change(state.texts, index, currentText);
-    texts = splice.add(texts, index, newText);
-    const tags = splice.add(state.tags, index, tag);
-
-    const newCursor = {
-      start: 0,
-      end: 0,
-    };
-
-    const currentIndex = index + 1;
+    const result = common.newCell(
+      cellUuid,
+      { cells: state.cells, texts: state.texts, tags: state.tags },
+      { createCellCallback: createMarkdownCell, cursor, tag, start }
+    );
 
     return {
       ...state,
-      currentIndex,
-      cells,
-      texts,
-      tags,
-      cursor: newCursor,
-      start: newStart,
+      ...result,
     };
   },
 
   [CELL_ACTION.INPUT]: (state, action) => {
-    const { text, cellUuid } = action;
-    const index = uuidManager.findIndex(cellUuid);
-    const texts = splice.change(state.texts, index, text);
+    const result = common.inputText(
+      action.cellUuid,
+      { texts: state.texts },
+      action.text
+    );
 
     return {
       ...state,
-      texts,
+      ...result,
     };
   },
 
