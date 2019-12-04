@@ -9,10 +9,6 @@ let dispatchToTerminal = null;
 
 const makeInitState = () => {
   return new TerminalState();
-  // return {
-  //  terminalFocusIndex: 0,
-  //  terminals: [],
-  // };
 };
 
 const TerminalStore = ({ children }) => {
