@@ -52,11 +52,9 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.INPUT]: (state, action) => {
-    const result = common.inputText(
-      action.cellUuid,
-      { texts: state.texts },
-      action.text
-    );
+    const { cellManager } = state;
+    const { cellUuid, text } = action;
+    const result = common.inputText(cellUuid, cellManager, { text });
 
     // debug("Cell Change text", index, text);
 
@@ -67,7 +65,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.DELETE]: (state, action) => {
-    const { block } = state;
+    const { block, cellManager } = state;
     const { cellUuid, text } = action;
 
     if (block.start !== null) {
@@ -104,30 +102,10 @@ const cellReducerHandler = {
       return nextState;
     }
 
-    const index = uuidManager.findIndex(cellUuid);
-    uuidManager.pop(index);
-
-    const prevIndex = index - 1;
-    const cells = splice.delete(state.cells, index);
-
-    const cursor = {
-      start: prevIndex >= 0 ? state.texts[prevIndex].length : 0,
-      end: prevIndex >= 0 ? state.texts[prevIndex].length : 0,
-    };
-
-    let texts = splice.delete(state.texts, index);
-    const joinedText = state.texts[prevIndex] + text;
-    texts = splice.change(texts, prevIndex, joinedText);
-
-    const tags = splice.delete(state.tags, index);
-
+    const result = common.deleteCell(cellUuid, cellManager, { text });
     return {
       ...state,
-      cells,
-      texts,
-      tags,
-      currentIndex: prevIndex,
-      cursor,
+      ...result,
     };
   },
 

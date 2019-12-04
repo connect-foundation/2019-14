@@ -10,8 +10,9 @@ const initUuid = (cellUuid, newCellUuid) => {
 };
 
 const initCell = (cellUuid, cellManager, dataObj) => {
+  const uuidArray = uuidManager.getUuidArray();
   const index = cellUuid ? uuidManager.findIndex(cellUuid) : 0;
-  const targetUuid = uuidManager.uuidArray[index];
+  const targetUuid = uuidArray[index];
   cellManager.change(index, {
     cell: dataObj.cell(targetUuid),
     text: dataObj.text,
@@ -61,11 +62,36 @@ const newCell = (cellUuid, cellManager, dataObj) => {
   };
 };
 
-const inputText = (cellUuid, cellManager, text) => {
+const inputText = (cellUuid, cellManager, dataObj) => {
+  const { text } = dataObj;
   const index = uuidManager.findIndex(cellUuid);
-  const texts = splice.change(cellManager.texts, index, text);
+  cellManager.change(index, { text });
+};
+
+const deleteCell = (cellUuid, cellManager, dataObj) => {
+  const { text } = dataObj;
+  const index = uuidManager.findIndex(cellUuid);
+  const prevIndex = index - 1;
+
+  uuidManager.pop(index);
+
+  const cursor = {
+    start: prevIndex >= 0 ? cellManager.texts[prevIndex].length : 0,
+    end: prevIndex >= 0 ? cellManager.texts[prevIndex].length : 0,
+  };
+  const joinedText = cellManager.texts[prevIndex] + text;
+
+  const flag = {
+    cell: true,
+    text: true,
+    tag: true,
+  };
+  cellManager.delete(index, flag);
+  cellManager.change(index, { text: joinedText });
+
   return {
-    texts,
+    cursor,
+    currentIndex: prevIndex,
   };
 };
 
@@ -75,4 +101,5 @@ export default {
   newUuid,
   newCell,
   inputText,
+  deleteCell,
 };
