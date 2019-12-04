@@ -142,83 +142,46 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.BLOCK.ALL]: (state) => {
-    const block = {
-      start: 0,
-      end: state.cells.length - 1,
-    };
-    const currentIndex = state.cells.length - 1;
+    const { cells } = state.cellManager;
+    const result = block.selectAllBlock(cells.length - 1);
 
     return {
       ...state,
-      block,
-      currentIndex,
+      ...result,
     };
   },
 
   [CELL_ACTION.BLOCK.UP]: (state, action) => {
-    const { block } = state;
-    const { cellUuid } = action;
-    const index = uuidManager.findIndex(cellUuid);
-
-    const newStart = block.start || index;
-    let newEnd = block.end > 0 ? block.end - 1 : newStart;
-    if (block.end > 0) {
-      newEnd = block.end - 1;
-    } else if (block.end === 0) {
-      newEnd = 0;
-    } else {
-      newEnd = newStart;
-    }
-
-    const newBlock = {
-      start: newStart,
-      end: newEnd,
-    };
+    const result = block.blockRangeUp(action.cellUuid, state.block);
 
     return {
       ...state,
-      block: newBlock,
-      currentIndex: newEnd,
+      ...result,
     };
   },
 
   [CELL_ACTION.BLOCK.DOWN]: (state, action) => {
-    const { block, cells } = state;
-    const { cellUuid } = action;
-    const index = uuidManager.findIndex(cellUuid);
-
-    const { length } = cells;
-
-    const newStart = block.start !== null ? block.start : index;
-    let newEnd = null;
-    if (block.end < length - 1) {
-      newEnd = block.end + 1;
-    } else if (block.end === length - 1) {
-      newEnd = length - 1;
-    } else {
-      newEnd = newStart;
-    }
-
-    const newBlock = {
-      start: newStart,
-      end: newEnd,
-    };
+    const { cells } = state.cellManager;
+    const result = block.blockRangeDown(
+      action.cellUuid,
+      state.block,
+      cells.length
+    );
 
     return {
       ...state,
-      block: newBlock,
-      currentIndex: newEnd,
+      ...result,
     };
   },
 
   [CELL_ACTION.BLOCK.RELEASE]: (state) => {
-    const block = {
+    const emptyBlock = {
       start: null,
       end: null,
     };
     return {
       ...state,
-      block,
+      block: emptyBlock,
     };
   },
 
