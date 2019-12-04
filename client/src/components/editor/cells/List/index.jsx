@@ -6,7 +6,7 @@ import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import { EVENT_TYPE } from "../../../../enums";
-import { useCellState, handlerManager } from "../../../../utils";
+import { useCellState, useKey } from "../../../../utils";
 
 import {
   // newCell,
@@ -24,11 +24,19 @@ setGenerator("ul", (uuid) => (
     <ListCell cellUuid={uuid} />
   </ul>
 ));
-setGenerator("ol", (uuid, start) => (
-  <ol start={start}>
+setGenerator("ol", (uuid, options) => (
+  <ol start={options.start}>
     <ListCell cellUuid={uuid} />
   </ol>
 ));
+
+const useKeys = (keydownHandlers, isFocus) => {
+  const E = EVENT_TYPE;
+  useKey(E.ENTER, keydownHandlers[E.ENTER], isFocus);
+  useKey(E.ARROW_UP, keydownHandlers[E.ARROW_UP], isFocus);
+  useKey(E.ARROW_DOWN, keydownHandlers[E.ARROW_DOWN], isFocus);
+  useKey(E.BACKSPACE, keydownHandlers[E.BACKSPACE], isFocus);
+};
 
 // const ListCell = React.forwardRef(({ cellUuid }, ref) => {
 const ListCell = ({ cellUuid }) => {
@@ -102,11 +110,12 @@ const ListCell = ({ cellUuid }) => {
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
-  if (currentIndex === cellIndex) {
+  const isFocus = currentIndex === cellIndex;
+  if (isFocus) {
     inputRef = state.inputRef;
-
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, "li");
   }
+
+  useKeys(keydownHandlers, isFocus);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {

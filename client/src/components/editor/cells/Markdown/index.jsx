@@ -4,12 +4,7 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import {
-  getType,
-  getStart,
-  handlerManager,
-  uuidManager,
-} from "../../../../utils";
+import { getType, getStart, useKeys, uuidManager } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -124,9 +119,9 @@ const MarkdownCell = ({ cellUuid }) => {
 
   // -------------- End -----------------------
 
-  if (currentIndex === cellIndex) {
+  const isFocus = currentIndex === cellIndex;
+  if (isFocus) {
     inputRef = state.inputRef;
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex);
   }
 
   useEffect(() => {
@@ -148,6 +143,8 @@ const MarkdownCell = ({ cellUuid }) => {
     // window.addEventListener("beforeunload", isSaved);
   }, [inputRef]);
 
+  useKeys(keydownHandlers, isFocus);
+
   const onKeyUp = (e) => {
     const { textContent } = e.target;
 
@@ -165,7 +162,9 @@ const MarkdownCell = ({ cellUuid }) => {
         newStart = 0;
       }
 
-      const cell = makeNewCell(cellUuid, newStart);
+      const cell = makeNewCell(cellUuid, {
+        start: newStart,
+      });
 
       dispatch(
         cellActionCreator.transform(cellUuid, "", matchingTag, cell, newStart)
@@ -174,7 +173,6 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const onClick = () => {
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex);
     dispatch(cellActionCreator.focusMove(cellUuid));
     blockRelease(dispatch);
   };
@@ -198,12 +196,12 @@ const MarkdownCell = ({ cellUuid }) => {
       as={currentTag}
       intoShiftBlock={intoShiftBlock}
       placeholder={PLACEHOLDER[currentTag]}
-      contentEditable
       onKeyUp={onKeyUp}
       onClick={onClick}
       onBlur={onBlur}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText()}
+      contentEditable
     />
   );
 

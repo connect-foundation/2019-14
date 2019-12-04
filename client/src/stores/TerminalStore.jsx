@@ -1,23 +1,18 @@
 import React, { useReducer } from "react";
 import propTypes from "prop-types";
 import terminalReducer from "../reducers/TerminalReducer";
+import TerminalState from "../reducers/TerminalState";
 
 const TerminalContext = React.createContext();
 const TerminalDispatchContext = React.createContext();
+let dispatchToTerminal = null;
 
 const makeInitState = () => {
-  return {
-    focusIndex: 0,
-    currentText: "",
-
-    inputTexts: [],
-    isActives: [],
-
-    outputTexts: [],
-    isLoadings: [],
-
-    replCount: 0,
-  };
+  return new TerminalState();
+  // return {
+  //  terminalFocusIndex: 0,
+  //  terminals: [],
+  // };
 };
 
 const TerminalStore = ({ children }) => {
@@ -25,6 +20,10 @@ const TerminalStore = ({ children }) => {
     terminalReducer,
     makeInitState()
   );
+
+  if (!dispatchToTerminal) {
+    dispatchToTerminal = dispatch;
+  }
 
   return (
     <TerminalContext.Provider value={{ terminalState }}>
@@ -43,4 +42,9 @@ TerminalStore.propTypes = {
   children: propTypes.element,
 };
 
-export { TerminalStore, TerminalContext, TerminalDispatchContext };
+export {
+  TerminalStore,
+  TerminalContext,
+  TerminalDispatchContext,
+  dispatchToTerminal,
+};

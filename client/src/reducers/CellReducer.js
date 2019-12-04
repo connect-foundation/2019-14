@@ -1,8 +1,11 @@
+import createDebug from "debug";
 import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
 import { utils, uuidManager } from "../utils";
 import { cellGenerator } from "../components/editor/cells/CellGenerator";
 import { common } from "./CellReducerHandler";
+
+const debug = createDebug("boost:reducer:cell");
 
 const { splice } = utils;
 
@@ -18,10 +21,14 @@ const cellReducerHandler = {
       { cell: createMarkdownCell, text: "", tag }
     );
 
-    return {
+    const nextState = {
       ...state,
       ...result,
     };
+
+    debug("Init cell next state", nextState);
+
+    return nextState;
   },
 
   [CELL_ACTION.NEW]: (state, action) => {
@@ -38,10 +45,14 @@ const cellReducerHandler = {
       { createCellCallback: createMarkdownCell, cursor, tag, start }
     );
 
-    return {
+    const nextState = {
       ...state,
       ...result,
     };
+
+    debug("New cell", nextState);
+
+    return nextState;
   },
 
   [CELL_ACTION.INPUT]: (state, action) => {
@@ -50,6 +61,8 @@ const cellReducerHandler = {
       { texts: state.texts },
       action.text
     );
+
+    debug("Cell Change text", index, text);
 
     return {
       ...state,
@@ -80,7 +93,7 @@ const cellReducerHandler = {
         end: texts[currentIndex] ? texts[currentIndex].length : 0,
       };
 
-      return {
+      const nextState = {
         ...state,
         cells,
         texts,
@@ -89,6 +102,10 @@ const cellReducerHandler = {
         block: emptyBlock,
         currentIndex,
       };
+
+      debug("Cell delete", nextState);
+
+      return nextState;
     }
 
     const index = uuidManager.findIndex(cellUuid);
@@ -122,6 +139,8 @@ const cellReducerHandler = {
     const { currentIndex } = state;
     const nextIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
 
+    debug(`Cell focus prev ${currentIndex} to ${nextIndex}`);
+
     return {
       ...state,
       currentIndex: nextIndex,
@@ -132,6 +151,8 @@ const cellReducerHandler = {
     const { currentIndex } = state;
     const nextIndex =
       currentIndex < state.cells.length - 1 ? currentIndex + 1 : currentIndex;
+
+    debug(`Cell focus prev ${currentIndex} to ${nextIndex}`);
 
     return {
       ...state,
