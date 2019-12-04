@@ -4,14 +4,18 @@ import terminalSettingReducer from "./../reducers/TerminalSetting";
 const TerminalSettingContext = React.createContext();
 const TerminalSettingDispatch = React.createContext();
 
+// TODO: currentIndex Step 조정
 function TerminalSettingStore({ children }) {
   const initValue = {
-    selectedOs: [],
-    selectedPl: [],
-    selectedDb: [],
+    OS: [],
+    PL: [],
+    DB: [],
 
-    currentIndex: 0,
-    currentStep: "OS",
+    osInputStatus: [false, false],
+    plCheckboxStatus: [false, false],
+    dbCheckboxStatus: [false, false],
+
+    currentStep: 0,
   };
 
   const [state, dispatch] = useReducer(terminalSettingReducer, initValue);

@@ -18,13 +18,11 @@ const StepperButtons = () => {
 
   const clickHandler = (e) => {
     if (e.target.textContent === "prev") {
-      dispatch(terminalSettingActionCreator.prevStep(state.currentIndex));
+      dispatch(terminalSettingActionCreator.prevStep(state.currentStep));
     } else {
-      dispatch(terminalSettingActionCreator.nextStep(state.currentIndex));
+      dispatch(terminalSettingActionCreator.nextStep(state.currentStep));
     }
   };
-
-  console.log(state.currentIndex);
 
   return (
     <StepperButtonsWrapper>

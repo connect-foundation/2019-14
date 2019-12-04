@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 
-import TERMINAL_SETTING_LISTS from "../../../enums/TERMINAL_SETTING_LIST";
+import TERMINAL_SETTING_STEP from "../../../enums/TERMINAL_SETTING_STEP";
+import StepperContent from "./StepperContent";
 import { TerminalSettingContext } from "../../../stores/TerminalSetting";
 
 const StepperContentListWrapper = styled.ul`
@@ -16,12 +17,17 @@ const StepperContentList = () => {
   const step = state.currentStep;
 
   const getSettings = () => {
-    return TERMINAL_SETTING_LISTS[step].map((element, index) => {
-      return <li key={index}>{element}</li>;
+    return TERMINAL_SETTING_STEP[step].list.map((element, index) => {
+      return <StepperContent key={index} element={element} />;
     });
   };
 
-  return <StepperContentListWrapper>{getSettings()}</StepperContentListWrapper>;
+  return (
+    <StepperContentListWrapper>
+      <h2>{TERMINAL_SETTING_STEP[step].type}</h2>
+      {getSettings()}
+    </StepperContentListWrapper>
+  );
 };
 
 export default StepperContentList;
