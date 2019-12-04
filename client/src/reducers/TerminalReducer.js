@@ -1,143 +1,103 @@
 import { TERMINAL_ACTION } from "../actions/TerminalAction";
-import { utils } from "../utils";
+import TerminalState from "./TerminalState";
 
-const { deepCopy, splice } = utils;
-
-const appendNewRepl = (prevState) => {
-  const {
-    inputTexts,
-    isActives,
-    outputTexts,
-    isLoadings,
-    currentText,
-  } = prevState;
-
-  const nextInputs = [...inputTexts, currentText];
-  const nextActives = [...isActives, false];
-
-  const nextOutputs = [...outputTexts, ""];
-  const nextLoadings = [...isLoadings, true];
-
-  return {
-    inputTexts: nextInputs,
-    isActives: nextActives,
-    outputTexts: nextOutputs,
-    isLoadings: nextLoadings,
-  };
-};
-
-const updateRepl = (prevState) => {
-  const {
-    inputTexts,
-    isActives,
-    outputTexts,
-    isLoadings,
-    focusIndex,
-    currentText,
-  } = prevState;
-
-  const nextInputs = splice.change(inputTexts, focusIndex, currentText);
-
-  // 하위 terminal input cell은 재평가된다
-  const leadingActives = isActives.slice(0, focusIndex);
-  const followingActives = isActives.slice(focusIndex).map(() => false);
-  const nextActives = leadingActives.concat(followingActives);
-
-  const nextOutputs = splice.change(outputTexts, focusIndex, "");
-
-  // 하위 terminal input cell이 재평가되면 output도 변한다.
-  const leadingLoadings = isLoadings.slice(0, focusIndex);
-  const followingLoadings = isLoadings.slice(focusIndex).map(() => true);
-  const nextLoadings = leadingLoadings.concat(followingLoadings);
-
-  return {
-    inputTexts: nextInputs,
-    isActives: nextActives,
-    outputTexts: nextOutputs,
-    isLoadings: nextLoadings,
-  };
+const copyState = (state) => {
+  return new TerminalState(state);
 };
 
 const terminalReducerHandler = {
-  [TERMINAL_ACTION.NEW_REPL]: (state) => {
-    const prevState = deepCopy(state);
+  [TERMINAL_ACTION.NEW_TERMINAL]: (state, action) => {
+    const nextState = copyState(state);
+    const { cellUuid } = action;
 
-    const isLastIndex = prevState.focusIndex >= prevState.replCount;
-    let replCount = null;
-    let nextRepls = null;
-    if (isLastIndex) {
-      replCount = prevState.replCount + 1;
-      nextRepls = appendNewRepl(prevState);
+    nextState.setIds(cellUuid);
+
+    return nextState;
+  },
+
+  [TERMINAL_ACTION.NEW_REPL]: (state) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+    const { focusIndex, replCount } = currentTerminal;
+
+    const isBottomRepl = focusIndex >= replCount;
+    if (isBottomRepl) {
+      currentTerminal.appendNewRepl();
     } else {
-      replCount = prevState.replCount;
-      nextRepls = updateRepl(prevState);
+      // when focus in middle or top
+      currentTerminal.insertReplTo();
     }
 
-    return {
-      focusIndex: replCount,
-      currentText: "",
+    currentTerminal.focusBottom();
 
-      ...nextRepls,
+    // TODO: 다른 하위 터미널의 인풋도 다시 평가해야한다.
 
-      replCount,
-    };
+    return nextState;
   },
 
   // [TERMINAL_ACTION.EVAL_INPUT]: (state, action) => {},
 
   // [TERMINAL_ACTION.EVAL_ALL]: (state, action) => {},
 
-  [TERMINAL_ACTION.FOCUS_CHANGE]: (state, action) => {
-    const nextState = deepCopy(state);
-    const { to } = action;
-    const { currentText, focusIndex } = nextState;
+  [TERMINAL_ACTION.FOCUS_IN]: (state) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
 
-    const targetIndex = focusIndex + to;
+    if (currentTerminal.replCount === 0) {
+      return nextState;
+    }
 
-    const nextCurrent = nextState.inputTexts[targetIndex];
+    currentTerminal.focusIn();
 
-    nextState.focusIndex = targetIndex;
+    return nextState;
+  },
 
-    nextState.currentText = nextCurrent;
+  [TERMINAL_ACTION.FOCUS_OUT]: (state) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
 
-    nextState.inputTexts = splice.change(
-      nextState.inputTexts,
-      targetIndex,
-      currentText
-    );
-    nextState.isActives = splice.change(
-      nextState.isActives,
-      targetIndex,
-      false
-    );
+    currentTerminal.insertReplTo();
 
-    nextState.outputTexts = splice.change(
-      nextState.outputTexts,
-      targetIndex,
-      ""
-    );
-    nextState.isLoadings = splice.change(
-      nextState.isLoadings,
-      targetIndex,
-      true
-    );
+    return nextState;
+  },
 
-    nextState.replCount = nextState.inputTexts.length;
+  [TERMINAL_ACTION.FOCUS_PREV]: (state) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+
+    const nextFocusIndex = currentTerminal.focusPrev();
+    currentTerminal.replaceReplTo(nextFocusIndex);
+
+    return nextState;
+  },
+
+  [TERMINAL_ACTION.FOCUS_NEXT]: (state) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+    const { focusIndex } = currentTerminal;
+
+    currentTerminal.focusNext();
+    currentTerminal.replaceReplTo(focusIndex);
 
     return nextState;
   },
 
   [TERMINAL_ACTION.CHANGE_TEXT]: (state, action) => {
-    const nextState = deepCopy(state);
-    nextState.currentText = action.text;
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+
+    currentTerminal.changeCurrent(action.text);
+
     return nextState;
   },
 
   [TERMINAL_ACTION.UPDATE_OUTPUT]: (state, action) => {
-    const nextState = deepCopy(state);
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+
     const { index, text } = action;
 
-    nextState.outputTexts = splice.change(nextState.outputTexts, index, text);
+    currentTerminal.updateOutput(index, text);
 
     return nextState;
   },
