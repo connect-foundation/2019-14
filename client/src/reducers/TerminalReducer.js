@@ -117,6 +117,22 @@ const terminalReducerHandler = {
 
     return nextState;
   },
+
+  [TERMINAL_ACTION.DELETE_REPL]: (state) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+    const { focusIndex } = currentTerminal;
+
+    let nextFocusIndex = null;
+    if (focusIndex === 0) {
+      nextFocusIndex = focusIndex;
+    } else {
+      nextFocusIndex = currentTerminal.focusPrev();
+    }
+    currentTerminal.deleteRepl(nextFocusIndex);
+
+    return nextState;
+  },
 };
 
 const terminalReducer = (state, action) => {

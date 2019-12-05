@@ -44,7 +44,11 @@ const InnerTerminalCell = ({ cellUuid }) => {
 
   return (
     <TerminalWrapper>
-      <ReplContainer cellIndex={cellIndex} isCellFocus={isCellFocus} />
+      <ReplContainer
+        cellUuid={cellUuid}
+        cellIndex={cellIndex}
+        isCellFocus={isCellFocus}
+      />
     </TerminalWrapper>
   );
 };
