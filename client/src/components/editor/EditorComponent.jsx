@@ -23,7 +23,8 @@ const EditorComponent = () => {
   return (
     <>
       {cells.map((cell, cellIndex) => {
-        const key = uuidManager.uuidArray[cellIndex];
+        const uuidArray = uuidManager.getUuidArray();
+        const key = uuidArray[cellIndex];
         return <React.Fragment key={key}>{cell}</React.Fragment>;
       })}
     </>
