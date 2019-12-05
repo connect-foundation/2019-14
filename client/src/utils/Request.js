@@ -33,15 +33,21 @@ const request = {
     console.log(response);
     return response;
   },
-  async do(command, method = "get", body = null) {
+  async do(command, method = "GET", data = null) {
     const uri = `${SCHEME}://${BASE_URL}/${PATH[command]}`;
-    const result = await fetch(uri, {
+    let option = {
       method,
       mode: "cors",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+    };
+    const body = JSON.stringify(data);
+    if (method !== "GET") {
+      option = Object.assign(body, { body });
+    }
+    const result = await fetch(uri, {
+      ...option,
     });
     return result;
   },

@@ -236,8 +236,13 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TOOLBAR.LOAD]: (state) => {
+    const { cellManager } = state;
+
+    toolbar.load(cellManager);
+
     return {
       ...state,
+      cellManager,
     };
   },
 };

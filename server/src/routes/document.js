@@ -8,6 +8,6 @@ const { wrapAsync } = utils;
 
 router
   .route("/")
-  // .get()
+  .get(wrapAsync(documentController.load))
   .patch(wrapAsync(documentController.save));
 module.exports = router;

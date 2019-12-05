@@ -2,6 +2,11 @@ import { request } from "../../utils";
 
 const save = (cellManager) => {
   const document = cellManager.createMarkdownDocument();
+  /**
+   * @todo
+   * - request 모듈의 do에 uri에다가 userId를 붙여야댐
+   * - 나중에 추가할 것! 필수!
+   */
   const data = {
     userId: "boost",
     docContent: document,
@@ -16,10 +21,20 @@ const save = (cellManager) => {
       }
     })
     .catch((err) => {
-      // console.log(err);
+      console.log(err);
+    });
+};
+
+const load = (cellManager) => {
+  const result = request.do("LOAD");
+  result
+    .then((res) => res.text())
+    .then((doc) => {
+      cellManager.load(doc);
     });
 };
 
 export default {
   save,
+  load,
 };

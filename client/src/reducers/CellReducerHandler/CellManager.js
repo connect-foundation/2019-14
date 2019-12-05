@@ -1,5 +1,7 @@
+import { uuid } from "uuidv4";
 import { utils } from "../../utils";
 import { CELL_TAG } from "../../enums";
+import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
 const { splice } = utils;
 
@@ -80,6 +82,17 @@ CellManager.prototype.createMarkdownDocument = function() {
 
 CellManager.prototype.save = function() {};
 
-CellManager.prototype.load = function() {};
+CellManager.prototype.load = function(doc) {
+  const array = doc.split("\n");
+  const cell = cellGenerator.p;
+  this.cells = [];
+  this.tags = [];
+  this.texts = array.reduce((acc, val) => {
+    this.cells.push(cell(uuid()));
+    this.tags.push("p");
+    acc.push(val);
+    return acc;
+  }, []);
+};
 
 export default CellManager;

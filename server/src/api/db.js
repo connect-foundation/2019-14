@@ -51,6 +51,15 @@ router.document = {
     const result = await query(queryString, [userId, docContent]);
     return result;
   },
+  async load(userId) {
+    const check = await this.chkExisted(userId);
+    if (check) {
+      const queryString = `select content from editors where user_id = ?`;
+      const result = await query(queryString, [userId]);
+      return result;
+    }
+    return false;
+  },
 };
 
 module.exports = router;
