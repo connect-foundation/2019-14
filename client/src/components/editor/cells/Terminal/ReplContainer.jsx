@@ -46,7 +46,7 @@ const renderReplList = (cellIndex, terminalState) => {
   return replList;
 };
 
-const ReplContainer = ({ cellIndex, isCellFocus }) => {
+const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
   const [movable, setMovable] = useState(null);
   const [isReplFocus, setIsReplFocus] = useState(true);
   const dispatchToTerminal = useContext(TerminalDispatchContext);
@@ -62,6 +62,17 @@ const ReplContainer = ({ cellIndex, isCellFocus }) => {
       } else {
         setIsReplFocus(true);
         dispatchToTerminal(terminalAction.createNewRepl(replCount));
+      }
+    },
+
+    [EVENT_TYPE.BACKSPACE]: (e) => {
+      const { textContent } = e.target;
+      if (textContent.length === 0) {
+        if (replCount === 0) {
+          dispatchToCell(cellAction.delete(cellUuid));
+        } else {
+          dispatchToTerminal(terminalAction.deleteRepl());
+        }
       }
     },
 

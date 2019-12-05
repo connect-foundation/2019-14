@@ -1,5 +1,6 @@
 const debug = require("debug")("boostwriter:routes:terminal");
 const express = require("express");
+const Ssh = require("node-ssh");
 const { StreamResolver } = require("../utils/stream-resolver");
 const { utils } = require("../utils");
 
@@ -35,20 +36,88 @@ const resolveDockerStream = async (stream) => {
 router.post(
   "/command/not-pending",
   wrapAsync(async (req, res) => {
-    const { containerName, cmd, options } = req.body;
+    const { containerId, cmd, options } = req.body;
     const dockerClient = req.app.get("docker");
 
-    const resultStream = await dockerClient.execByName(containerName, cmd);
+    const resultStream = await dockerClient.execById(containerId, cmd);
     const output = await resolveDockerStream(resultStream);
 
     debug(
-      `containerName: ${containerName}`,
+      `containerId: ${containerId}`,
       `command: ${cmd}`,
       `options: ${options}`,
       `result: ${output}`
     );
 
     res.status(200).send({ output });
+  })
+);
+
+router.post(
+  "/command/pending",
+  wrapAsync(async (req, res) => {
+    const { containerId, cmd, stdin } = req.body;
+    const dockerClient = req.app.get("docker");
+
+    const resultStream = await dockerClient.execPendingById(containerId, cmd);
+    if (stdin.length > 0) {
+      resultStream.write(stdin);
+    }
+
+    resultStream.on("data", (chunk) => {
+      const encodedStr = chunk.toString("utf8");
+      debug("pending chunk", encodedStr);
+      res.write(encodedStr);
+    });
+
+    resultStream.on("end", () => {
+      debug("pending is end");
+      res.status(200).end();
+    });
+
+    resultStream.on("error", (err) => {
+      debug("pending is err", err);
+      if (err) {
+        throw err;
+      }
+      res.status(204).end();
+    });
+
+    resultStream.end();
+  })
+);
+
+const containerSsh = new Ssh();
+const password = process.env.REMOTE_SSH_PASSWORD;
+containerSsh.connect({
+  host: process.env.REMOTE_DOCKER_IP,
+  port: process.env.REMOTE_CONTAINER_PORT,
+  tryKeyboard: true,
+  keepaliveInterval: 100 * 1000,
+  keepaliveCountMax: 100,
+  username: "root",
+  password,
+  onKeyboardInteractive: (
+    name,
+    instructions,
+    instructionsLang,
+    prompts,
+    finish
+  ) => {
+    finish([password]);
+  },
+});
+
+router.post(
+  "/command/ssh",
+  wrapAsync(async (req, res) => {
+    const { cmd, stdin } = req.body;
+
+    const result = await containerSsh.execCommand(cmd, { stdin });
+
+    debug("result of ssh", containerSsh, cmd, stdin, result);
+
+    res.status(200).send(result);
   })
 );
 

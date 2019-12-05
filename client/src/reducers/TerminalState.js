@@ -69,6 +69,21 @@ class TerminalState {
     this.outputTexts = splice.change(this.outputTexts, index, outputText);
   }
 
+  deleteRepl(index = this.focusIndex) {
+    // repl input을 movable repl로 변경한다.
+    this.currentText = this.inputTexts[index];
+    this.currentStdin = this.stdinTexts[index];
+
+    this.inputTexts = splice.delete(this.inputTexts, index);
+    this.stdinTexts = splice.delete(this.stdinTexts, index);
+    this.isActives = splice.delete(this.isActives, index);
+
+    this.outputTexts = splice.delete(this.outputTexts, index);
+    this.isLoadings = splice.delete(this.isLoadings, index);
+
+    this.replCount = this.inputTexts.length;
+  }
+
   replaceReplTo(index = this.focusIndex) {
     const toBeInput = this.currentText;
     const toBeStdin = this.currentStdin;

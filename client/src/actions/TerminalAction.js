@@ -13,6 +13,8 @@ const TERMINAL_ACTION = {
   CHANGE_TEXT: "terminal/change-text",
   CHANGE_STDIN_TEXT: "terminal/change-stdin-text",
   UPDATE_OUTPUT: "terminal/update-output",
+
+  DELETE_REPL: "terminal/delete-repl",
 };
 
 const terminalActionCreator = {
@@ -114,6 +116,12 @@ const terminalActionCreator = {
       type: TERMINAL_ACTION.UPDATE_OUTPUT,
       index,
       text,
+    };
+  },
+
+  deleteRepl() {
+    return {
+      type: TERMINAL_ACTION.DELETE_REPL,
     };
   },
 };
