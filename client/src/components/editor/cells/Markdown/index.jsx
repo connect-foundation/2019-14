@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import propTypes from "prop-types";
 
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import { getType, getStart, useKeys } from "../../../../utils";
+import { getType, getStart, useKeys, uuidManager } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -18,6 +18,7 @@ import {
   setCursorPosition,
   blockEndUp,
   blockEndDown,
+  blockRelease,
 } from "./handler";
 
 setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
@@ -28,11 +29,11 @@ setGenerator("hr", (uuid) => (
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { currentIndex, uuidManager, start, cursor, block } = state;
+  const { currentIndex, start, cursor, block, cellManager } = state;
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
-  const text = state.texts[cellIndex];
+  const text = cellManager.texts[cellIndex];
   const currentTag = state.tags[cellIndex];
 
   let intoShiftBlock = false;
@@ -49,21 +50,24 @@ const MarkdownCell = ({ cellUuid }) => {
   const enterEvent = (e) => {
     const { textContent } = e.target;
     const componentCallback = cellGenerator.p;
-    saveCursorPosition(dispatch, inputRef);
+    saveCursorPosition(dispatch);
     dispatch(cellActionCreator.input(cellUuid, textContent));
     newCell(cellUuid, dispatch, componentCallback);
+    blockRelease(dispatch);
   };
 
-  const arrowUpEvent = (e) => {
-    focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
+  const arrowUpEvent = () => {
+    focusPrev(dispatch);
+    blockRelease(dispatch);
   };
 
   const shiftArrowUpEvent = () => {
     blockEndUp(cellUuid, dispatch);
   };
 
-  const arrowDownEvent = (e) => {
-    focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
+  const arrowDownEvent = () => {
+    focusNext(dispatch);
+    blockRelease(dispatch);
   };
 
   const shiftArrowDownEvent = () => {
@@ -97,6 +101,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const ctrlVEvent = () => {
     dispatch(cellActionCreator.paste(cellUuid));
+    blockRelease(dispatch);
   };
 
   const keydownHandlers = {
@@ -169,6 +174,12 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const onClick = () => {
     dispatch(cellActionCreator.focusMove(cellUuid));
+    blockRelease(dispatch);
+  };
+
+  const onBlur = (e) => {
+    const { innerHTML } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, innerHTML));
   };
 
   const htmlText = () => {
@@ -187,6 +198,7 @@ const MarkdownCell = ({ cellUuid }) => {
       placeholder={PLACEHOLDER[currentTag]}
       onKeyUp={onKeyUp}
       onClick={onClick}
+      onBlur={onBlur}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText()}
       contentEditable
