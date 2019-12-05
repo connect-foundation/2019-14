@@ -8,6 +8,7 @@ import { terminalActionCreator as terminalAction } from "../../../../actions/Ter
 import { dispatchToTerminal } from "../../../../stores/TerminalStore";
 import { CellContext } from "../../../../stores/CellStore";
 import { setGenerator } from "../CellGenerator";
+import { uuidManager } from "../../../../utils";
 import ReplContainer from "./ReplContainer";
 
 setGenerator("terminal", (uuid) => {
@@ -28,7 +29,7 @@ const TerminalWrapper = styled.div`
 
 const TerminalCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
-  const { uuidManager, currentIndex } = state;
+  const { currentIndex } = state;
   const cellIndex = uuidManager.findIndex(cellUuid);
 
   const isCellFocus = cellIndex === currentIndex;
