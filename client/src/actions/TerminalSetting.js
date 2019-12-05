@@ -14,31 +14,20 @@ const TERMINAL_SETTING_ACTION = {
     NEXT: "terminal-setting/move/next",
     STEP: "terminal-setting/move/step",
   },
+  HIDE: "terminal-setting/hide",
 };
 
 const terminalSettingActionCreator = {
-  selectOS(os, osInputStatus) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os, osInputStatus };
+  selectOS(os, index) {
+    return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os, index };
   },
 
-  selectPL(pl) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.PL, pl };
+  selectPL(pl, index) {
+    return { type: TERMINAL_SETTING_ACTION.SELECT.PL, pl, index };
   },
 
-  selectDB(db) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.DB, db };
-  },
-
-  unselectOS(os) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os };
-  },
-
-  unselectPL(pl) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.PL, pl };
-  },
-
-  unselectDB(db) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.DB, db };
+  selectDB(db, index) {
+    return { type: TERMINAL_SETTING_ACTION.SELECT.DB, db, index };
   },
 
   prevStep(step) {
