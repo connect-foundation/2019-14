@@ -38,7 +38,6 @@ const terminalActionCreator = {
   /**
    * 터미널 쉘 명령을 평가할 수 있다.
    * @param {String} commandString REPL cell에 입력된 쉘 명령이다.
-   * - 엔터 이벤트를 받을때 호출된다.
    */
   evalInput(commandString) {
     return {
@@ -49,7 +48,6 @@ const terminalActionCreator = {
 
   /**
    * 모든 터미널 쉘 명령을 평가할 수 있다.
-   * - 중간 REPL cell을 변경할때 호출한다.
    */
   evalAll() {
     return {

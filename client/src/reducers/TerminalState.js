@@ -57,6 +57,12 @@ class TerminalState {
     this.replCount += 1;
   }
 
+  evalAllOutput() {
+    this.isLoadings = this.isLoadings.map(() => true);
+    this.isActives = this.isActives.map(() => false);
+    this.outputTexts = this.outputTexts.map(() => "");
+  }
+
   updateOutput(index, outputText) {
     this.isLoadings = splice.change(this.isLoadings, index, false);
     this.isActives = splice.change(this.isActives, index, true);
