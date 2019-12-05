@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useRef } from "react";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
+import { uuidManager } from "../../utils";
 import { MarkdownCell } from "./cells";
 
 const EditorComponent = () => {
   const { state } = useContext(CellContext);
   const cellDispatch = useContext(CellDispatchContext);
-  const { cells, uuidManager } = state;
+  const { cells } = state.cellManager;
   const inputRef = useRef(null);
 
   useEffect(() => {
