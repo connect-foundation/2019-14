@@ -4,6 +4,7 @@ const CELL_ACTION = {
   INIT: "cell/init",
   NEW: "cell/new",
   INPUT: "cell/input",
+  DELETE: "cell/delete",
   TARGET: {
     TRANSFORM: "cell/target/transform",
   },
@@ -13,8 +14,23 @@ const CELL_ACTION = {
     MOVE: "cell/focus/move",
     ATTACH: "cell/focus/attach",
   },
+  BLOCK: {
+    ALL: "cell/block/all",
+    UP: "cell/block/up",
+    DOWN: "cell/block/down",
+    RELEASE: "cell/block/release",
+  },
   CURSOR: {
     MOVE: "cell/cursor/move",
+  },
+  CLIPBOARD: {
+    COPY: "cell/clipboard/copy",
+    PASTE: "cell/clipboard/paste",
+  },
+  TOOLBAR: {
+    SAVE: "cell/toolbar/save",
+    LOAD: "cell/toolbar/load",
+    LOAD_FINISH: "cell/toolbar/load-finish",
   },
 };
 
@@ -22,29 +38,31 @@ const cellActionCreator = {
   /**
    * 셀의 데이터를 초기화시킨다.
    * @param {Cell} createMarkdownCell 초기화할 셀을 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
-   * @param {Number} index 초기화할 셀의 index
-   * - 파라미터로 넘기지 않으면 기본값 0
+   * @param {Uuid} cellUuid 초기화할 셀의 uuid
+   * - 파라미터로 넘기지 않으면 기본값 null
    */
-  init(createMarkdownCell, index = 0) {
+  init(createMarkdownCell, cellUuid = null) {
     return {
       type: CELL_ACTION.INIT,
       createMarkdownCell,
       tag: CELL_TAG.DEFAULT,
-      index,
+      cellUuid,
     };
   },
 
   /**
    * 셀을 생성한다.
-   * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
+   * @param {Uuid} cellUuid 새 셀을 생성할 기준 셀의 uuid
+   * - 엔터시 기준 셀의 다음 셀에 셀을 생성한다.
+   * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백
    * @param {String} tag 셀의 타입(태그). 생략시 default input 셀이 생성된다.
    */
-  new(createMarkdownCell, tag = CELL_TAG.DEFAULT, start) {
+  new(cellUuid, createMarkdownCell, tag = CELL_TAG.DEFAULT) {
     return {
       type: CELL_ACTION.NEW,
+      cellUuid,
       createMarkdownCell,
       tag,
-      start: start || null,
     };
   },
 
@@ -56,6 +74,19 @@ const cellActionCreator = {
   input(cellUuid, text) {
     return {
       type: CELL_ACTION.INPUT,
+      cellUuid,
+      text,
+    };
+  },
+
+  /**
+   * 지정한 셀을 삭제한다.
+   * @param {Uuid} cellUuid 삭제할 셀의 uuid
+   * @param {Text} text 이전 셀로 이동할 텍스트
+   */
+  delete(cellUuid, text = "") {
+    return {
+      type: CELL_ACTION.DELETE,
       cellUuid,
       text,
     };
@@ -107,19 +138,59 @@ const cellActionCreator = {
   /**
    * 셀의 속성을 변경한다.
    * - ex) default input cell -> list cell
-   * @param {Number} index 변경할 Cell의 인덱스
+   * @param {Uuid} cellUuid 변경할 Cell의 uuid
    * @param {String} text 변경할 Cell의 텍스트
    * @param {String} tag 변경할 Cell의 태그
    * @param {React.element} cell 변경할 Cell 요소
    */
-  transform(index, text, tag, cell, start) {
+  transform(cellUuid, text, tag, cell, start) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
-      index,
+      cellUuid,
       text,
       tag,
       cell,
       start: start || null,
+    };
+  },
+
+  /**
+   * 모든 셀을 선택한다.
+   */
+  blockAll() {
+    return {
+      type: CELL_ACTION.BLOCK.ALL,
+    };
+  },
+
+  /**
+   * 쉬프트+위 입력시 선택할 셀의 범위를 위로 한 단계 올린다.
+   * @param {Uuid} cellUuid 블록을 시작할 기준 셀의 uuid
+   */
+  blockUp(cellUuid) {
+    return {
+      type: CELL_ACTION.BLOCK.UP,
+      cellUuid,
+    };
+  },
+
+  /**
+   * 쉬프트+아래 입력시 선택할 셀의 범위를 위로 한 단계 내린다.
+   * @param {Uuid} cellUuid 블록을 시작할 기준 셀의 uuid
+   */
+  blockDown(cellUuid) {
+    return {
+      type: CELL_ACTION.BLOCK.DOWN,
+      cellUuid,
+    };
+  },
+
+  /**
+   * 블록 범위를 해제한다.
+   */
+  blockRelease() {
+    return {
+      type: CELL_ACTION.BLOCK.RELEASE,
     };
   },
 
@@ -135,6 +206,43 @@ const cellActionCreator = {
       type: CELL_ACTION.CURSOR.MOVE,
       selectionStart,
       selectionEnd,
+    };
+  },
+
+  /**
+   * 현재 블록 범위를 클립보드에 저장한다.
+   */
+  copy() {
+    return {
+      type: CELL_ACTION.CLIPBOARD.COPY,
+    };
+  },
+
+  /**
+   * @param {Uuid} cellUuid 붙여넣기를 할 기준 셀의 uuid
+   */
+  paste(cellUuid) {
+    return {
+      type: CELL_ACTION.CLIPBOARD.PASTE,
+      cellUuid,
+    };
+  },
+
+  save() {
+    return {
+      type: CELL_ACTION.TOOLBAR.SAVE,
+    };
+  },
+
+  load() {
+    return {
+      type: CELL_ACTION.TOOLBAR.LOAD,
+    };
+  },
+
+  loadFinish() {
+    return {
+      type: CELL_ACTION.TOOLBAR.LOAD_FINISH,
     };
   },
 };

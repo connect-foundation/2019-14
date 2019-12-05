@@ -1,47 +1,56 @@
 import TestStore from "../TestStore";
 import { terminalActionCreator } from "../../src/actions/TerminalAction";
 import terminalReducer from "../../src/reducers/TerminalReducer";
+import TerminalState from "../../src/reducers/TerminalState";
 import { utils } from "../../src/utils";
 
 const { deepCopy } = utils;
 
 const storeStates = {
-  empty: {
+  empty: new TerminalState({
+    cellUuid: "",
     focusIndex: 0,
     currentText: "current",
     inputTexts: [],
+    stdinTexts: [],
     isActives: [],
     outputTexts: [],
     isLoadings: [],
     replCount: 0,
-  },
-  front: {
+  }),
+  front: new TerminalState({
+    cellUuid: "",
     focusIndex: 0,
     currentText: "current",
     inputTexts: ["one", "two", "three"],
+    stdinTexts: ["", "", ""],
     isActives: [true, true, true],
     outputTexts: ["one1", "two1", "three1"],
     isLoadings: [false, false, false],
     replCount: 3,
-  },
-  middle: {
+  }),
+  middle: new TerminalState({
+    cellUuid: "",
     focusIndex: 2,
     currentText: "current",
     inputTexts: ["one", "two", "three", "four"],
+    stdinTexts: ["", "", "", "", ""],
     isActives: [true, true, true, true],
     outputTexts: ["one1", "two1", "three1", "four1"],
     isLoadings: [false, false, false, false],
     replCount: 4,
-  },
-  end: {
+  }),
+  end: new TerminalState({
+    cellUuid: "",
     focusIndex: 2,
     currentText: "current",
     inputTexts: ["hello", "world"],
+    stdinTexts: ["", ""],
     isActives: [true, true],
     outputTexts: ["hello1", "world1"],
     isLoadings: [false, false],
     replCount: 2,
-  },
+  }),
 };
 
 const testcases = {
@@ -49,9 +58,12 @@ const testcases = {
     {
       storeState: deepCopy(storeStates.empty),
       answer: {
+        cellUuid: "",
         focusIndex: 1,
         currentText: "",
+        currentStdin: "",
         inputTexts: ["current"],
+        stdinTexts: [""],
         isActives: [false],
         outputTexts: [""],
         isLoadings: [true],

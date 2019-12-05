@@ -1,23 +1,13 @@
 import React, { useReducer } from "react";
 import propTypes from "prop-types";
 import terminalReducer from "../reducers/TerminalReducer";
+import TerminalState from "../reducers/TerminalState";
 
 const TerminalContext = React.createContext();
 const TerminalDispatchContext = React.createContext();
 
 const makeInitState = () => {
-  return {
-    focusIndex: 0,
-    currentText: "",
-
-    inputTexts: [],
-    isActives: [],
-
-    outputTexts: [],
-    isLoadings: [],
-
-    replCount: 0,
-  };
+  return new TerminalState();
 };
 
 const TerminalStore = ({ children }) => {
