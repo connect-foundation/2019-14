@@ -1,5 +1,9 @@
 # Boost Writer
 
+Boost Writer Web Page
+
+[https://boostwriter.stenrine.com](https://boostwriter.stenrine.com)
+
 ---
 
 > `Boost Writer`는 기술 문서를 작성하며, 바로 코드 수행을 통해 과정과 결과를 확인할 수 있게 도와주는 테크니컬 라이팅 서비스 입니다.  
@@ -23,18 +27,18 @@
 
 ---
 
-- **WYSIWYG 방식의 마크다운 편집 기능**
+### 1. **WYSIWYG 방식의 마크다운 편집 기능**
 
-  ### Headings
+### Headings
 
-  ```
-  # Heading 1
-  ## Heading 2
-  ### Heading 3
-  #### Heading 4
-  ##### Heading 5
-  ###### Heading 6
-  ```
+```
+# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6
+```
 
 ![heading](https://user-images.githubusercontent.com/46277703/69843494-15a40600-12ab-11ea-85ea-0db75541fbe2.gif)
 
