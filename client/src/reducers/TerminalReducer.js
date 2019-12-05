@@ -37,7 +37,14 @@ const terminalReducerHandler = {
 
   // [TERMINAL_ACTION.EVAL_INPUT]: (state, action) => {},
 
-  // [TERMINAL_ACTION.EVAL_ALL]: (state, action) => {},
+  [TERMINAL_ACTION.EVAL_ALL]: (state) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+
+    currentTerminal.evalAllOutput();
+
+    return nextState;
+  },
 
   [TERMINAL_ACTION.FOCUS_IN]: (state) => {
     const nextState = copyState(state);
@@ -86,7 +93,16 @@ const terminalReducerHandler = {
     const nextState = copyState(state);
     const currentTerminal = nextState;
 
-    currentTerminal.changeCurrent(action.text);
+    currentTerminal.changeCurrentText(action.text);
+
+    return nextState;
+  },
+
+  [TERMINAL_ACTION.CHANGE_STDIN_TEXT]: (state, action) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+
+    currentTerminal.changeCurrentStdin(action.text);
 
     return nextState;
   },

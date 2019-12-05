@@ -1,7 +1,7 @@
 import React, { useReducer } from "react";
 import propTypes from "prop-types";
 import cellReducer from "../reducers/CellReducer";
-import CellManager from "./CellManager";
+import CellManager from "../reducers/CellReducerHandler/CellManager";
 
 const CellContext = React.createContext();
 const CellDispatchContext = React.createContext();

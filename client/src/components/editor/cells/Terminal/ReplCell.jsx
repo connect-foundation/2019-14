@@ -6,6 +6,7 @@ import { request } from "../../../../utils";
 import { TerminalDispatchContext } from "../../../../stores/TerminalStore";
 import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
 import ReplInput from "./ReplInput";
+import StdinInput from "./StdinInput";
 import ReplOutput from "./ReplOutput";
 
 const debug = createDebug("boost:component:repl-cell");
@@ -13,6 +14,7 @@ const debug = createDebug("boost:component:repl-cell");
 const ReplCell = ({
   cellIndex,
   inputText,
+  stdinText,
   outputText,
   isActive,
   isLoading,
@@ -42,7 +44,8 @@ const ReplCell = ({
 
   return (
     <>
-      <ReplInput text={inputText} isActive={isActive} />
+      <ReplInput text={inputText} isActive={isActive} isEditorable={false} />
+      <StdinInput text={stdinText} isActive={isActive} isEditorable={false} />
       <ReplOutput text={outputText} isLoading={isLoading} />
     </>
   );
@@ -51,6 +54,7 @@ const ReplCell = ({
 ReplCell.propTypes = {
   cellIndex: PropTypes.number.isRequired,
   inputText: PropTypes.string,
+  stdinText: PropTypes.string,
   outputText: PropTypes.string,
   isActive: PropTypes.bool,
   isLoading: PropTypes.bool,
@@ -58,6 +62,7 @@ ReplCell.propTypes = {
 
 ReplCell.defaultProps = {
   inputText: "default inputText",
+  stdinText: "default stdinText",
   outputText: "default outputText",
   isActive: true,
   isLoading: false,

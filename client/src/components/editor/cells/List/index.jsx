@@ -9,7 +9,6 @@ import { EVENT_TYPE } from "../../../../enums";
 import { useCellState, useKey } from "../../../../utils";
 
 import {
-  // newCell,
   saveCursorPosition,
   focusPrev,
   focusNext,
@@ -131,7 +130,6 @@ const ListCell = ({ cellUuid }) => {
   }, [inputRef]);
 
   const onClick = () => {
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, tag);
     dispatch(cellActionCreator.focusMove(cellUuid));
   };
 

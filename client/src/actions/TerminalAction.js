@@ -11,6 +11,7 @@ const TERMINAL_ACTION = {
   FOCUS_OUT: "terminal/focus-out",
 
   CHANGE_TEXT: "terminal/change-text",
+  CHANGE_STDIN_TEXT: "terminal/change-stdin-text",
   UPDATE_OUTPUT: "terminal/update-output",
 };
 
@@ -37,7 +38,6 @@ const terminalActionCreator = {
   /**
    * 터미널 쉘 명령을 평가할 수 있다.
    * @param {String} commandString REPL cell에 입력된 쉘 명령이다.
-   * - 엔터 이벤트를 받을때 호출된다.
    */
   evalInput(commandString) {
     return {
@@ -48,7 +48,6 @@ const terminalActionCreator = {
 
   /**
    * 모든 터미널 쉘 명령을 평가할 수 있다.
-   * - 중간 REPL cell을 변경할때 호출한다.
    */
   evalAll() {
     return {
@@ -94,6 +93,13 @@ const terminalActionCreator = {
   changeCurrentText(text) {
     return {
       type: TERMINAL_ACTION.CHANGE_TEXT,
+      text,
+    };
+  },
+
+  changeCurrentStdin(text) {
+    return {
+      type: TERMINAL_ACTION.CHANGE_STDIN_TEXT,
       text,
     };
   },

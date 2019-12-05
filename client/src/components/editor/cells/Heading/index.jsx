@@ -98,7 +98,6 @@ const HeadingCell = ({ cellUuid }) => {
   }, [inputRef]);
 
   const onClick = () => {
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, tag);
     dispatch(cellActionCreator.focusMove(cellUuid));
   };
 
