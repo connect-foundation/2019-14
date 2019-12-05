@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-// import StepperContentTitle from "./StepperContentTitle";
 import StepperContentList from "./StepperContentList";
 
 const StepperContentsWrapper = styled.main`
@@ -11,7 +10,6 @@ const StepperContentsWrapper = styled.main`
 const StepperContents = () => {
   return (
     <StepperContentsWrapper>
-      {/* <StepperContentTitle /> */}
       <StepperContentList />
     </StepperContentsWrapper>
   );
