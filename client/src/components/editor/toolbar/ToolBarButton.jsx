@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -9,7 +9,9 @@ import {
   faFileExport,
   faTerminal,
 } from "@fortawesome/free-solid-svg-icons";
+import { CellDispatchContext } from "../../../stores/CellStore";
 import { THEME } from "../../../enums";
+import { cellActionCreator } from "../../../actions/CellAction";
 
 const BUTTON_TYPE = {
   NEW: faFileMedical,
@@ -35,10 +37,15 @@ const ToolBarButtonWrapper = styled.button`
 
 const ToolBarButton = ({ buttonType }) => {
   const isTerminal = buttonType === "TERMINAL";
+  const cellDispatch = useContext(CellDispatchContext);
+
+  const onClick = () => {
+    cellDispatch(cellActionCreator.save());
+  };
 
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>
-      <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} />
+      <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} onClick={onClick} />
     </ToolBarButtonWrapper>
   );
 };

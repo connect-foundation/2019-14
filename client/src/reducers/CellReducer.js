@@ -1,7 +1,14 @@
 import createDebug from "debug";
 import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
-import { common, focus, block, target, clipboard } from "./CellReducerHandler";
+import {
+  common,
+  focus,
+  block,
+  target,
+  clipboard,
+  toolbar,
+} from "./CellReducerHandler";
 
 const debug = createDebug("boost:reducer:cell");
 
@@ -214,6 +221,22 @@ const cellReducerHandler = {
     return {
       ...state,
       ...result,
+    };
+  },
+
+  [CELL_ACTION.TOOLBAR.SAVE]: (state) => {
+    const { cellManager } = state;
+
+    toolbar.save(cellManager);
+
+    return {
+      ...state,
+    };
+  },
+
+  [CELL_ACTION.TOOLBAR.LOAD]: (state) => {
+    return {
+      ...state,
     };
   },
 };
