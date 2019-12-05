@@ -62,6 +62,10 @@ const terminalSettingHendler = {
   [TERMINAL_SETTING_ACTION.MOVE.STEP]: (state, action) => {
     return { ...state, currentStep: action.step };
   },
+  [TERMINAL_SETTING_ACTION.HIDE]: (state, action) => {
+    console.log("action");
+    return { ...state, isHidden: !state.isHidden };
+  },
 };
 
 const terminalSettingReducer = (state, action) => {

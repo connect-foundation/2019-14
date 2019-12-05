@@ -41,6 +41,10 @@ const terminalSettingActionCreator = {
   selectStep(step) {
     return { type: TERMINAL_SETTING_ACTION.MOVE.STEP, step };
   },
+  hideTerminalSettingView(isHiiden) {
+    console.log("reduce", isHiiden);
+    return { type: TERMINAL_SETTING_ACTION.HIDE, isHiiden };
+  },
 };
 
 export { TERMINAL_SETTING_ACTION, terminalSettingActionCreator };
