@@ -5,7 +5,10 @@ import createDebug from "debug";
 
 import { THEME } from "../../../../enums";
 import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
-import { dispatchToTerminal } from "../../../../stores/TerminalStore";
+import {
+  TerminalDispatchContext,
+  TerminalStore,
+} from "../../../../stores/TerminalStore";
 import { CellContext } from "../../../../stores/CellStore";
 import { setGenerator } from "../CellGenerator";
 import ReplContainer from "./ReplContainer";
@@ -26,8 +29,9 @@ const TerminalWrapper = styled.div`
   width: 100%;
 `;
 
-const TerminalCell = ({ cellUuid }) => {
+const InnerTerminalCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
+  const dispatchToTerminal = useContext(TerminalDispatchContext);
   const { uuidManager, currentIndex } = state;
   const cellIndex = uuidManager.findIndex(cellUuid);
 
@@ -41,6 +45,20 @@ const TerminalCell = ({ cellUuid }) => {
     <TerminalWrapper>
       <ReplContainer cellIndex={cellIndex} isCellFocus={isCellFocus} />
     </TerminalWrapper>
+  );
+};
+
+InnerTerminalCell.propTypes = {
+  cellUuid: PropTypes.string.isRequired,
+};
+
+const TerminalCell = ({ cellUuid }) => {
+  return (
+    <>
+      <TerminalStore>
+        <InnerTerminalCell cellUuid={cellUuid} />
+      </TerminalStore>
+    </>
   );
 };
 

@@ -11,6 +11,7 @@ const TERMINAL_ACTION = {
   FOCUS_OUT: "terminal/focus-out",
 
   CHANGE_TEXT: "terminal/change-text",
+  CHANGE_STDIN_TEXT: "terminal/change-stdin-text",
   UPDATE_OUTPUT: "terminal/update-output",
 };
 
@@ -94,6 +95,13 @@ const terminalActionCreator = {
   changeCurrentText(text) {
     return {
       type: TERMINAL_ACTION.CHANGE_TEXT,
+      text,
+    };
+  },
+
+  changeCurrentStdin(text) {
+    return {
+      type: TERMINAL_ACTION.CHANGE_STDIN_TEXT,
       text,
     };
   },

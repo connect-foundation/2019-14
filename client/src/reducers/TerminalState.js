@@ -6,6 +6,7 @@ class TerminalState {
   constructor(
     other = {
       inputTexts: [],
+      stdinTexts: [],
       isActives: [],
       outputTexts: [],
       isLoadings: [],
@@ -15,8 +16,10 @@ class TerminalState {
 
     this.focusIndex = other.focusIndex || 0;
     this.currentText = other.currentText || "";
+    this.currentStdin = other.currentStdin || "";
 
     this.inputTexts = [...other.inputTexts];
+    this.stdinTexts = [...other.stdinTexts];
     this.isActives = [...other.isActives];
 
     this.outputTexts = [...other.outputTexts];
@@ -35,12 +38,15 @@ class TerminalState {
 
   appendNewRepl() {
     this.inputTexts = [...this.inputTexts, this.currentText];
+    this.currentText = "";
+
+    this.stdinTexts = [...this.stdinTexts, this.currentStdin];
+    this.currentStdin = "";
+
     this.isActives = [...this.isActives, false];
 
     this.outputTexts = [...this.outputTexts, ""];
     this.isLoadings = [...this.isLoadings, true];
-
-    this.currentText = "";
 
     this.replCount += 1;
   }
@@ -59,11 +65,15 @@ class TerminalState {
 
   replaceReplTo(index = this.focusIndex) {
     const toBeInput = this.currentText;
+    const toBeStdin = this.currentStdin;
+
     // repl input을 movable repl로 변경한다.
     this.currentText = this.inputTexts[index];
+    this.currentStdin = this.stdinTexts[index];
 
     // movable repl의 데이터를 repl 데이터로 저장한다
     this.inputTexts = splice.change(this.inputTexts, index, toBeInput);
+    this.stdinTexts = splice.change(this.stdinTexts, index, toBeStdin);
     this.isActives = splice.change(this.isActives, index, false);
 
     this.outputTexts = splice.change(this.outputTexts, index, "");
@@ -72,13 +82,18 @@ class TerminalState {
     this.replCount = this.inputTexts.length;
   }
 
-  changeCurrent(text) {
+  changeCurrentText(text) {
     this.currentText = text;
+  }
+
+  changeCurrentStdin(text) {
+    this.currentStdin = text;
   }
 
   focusIn() {
     this.focusIndex = this.replCount;
     this.currentText = "";
+    this.currentStdin = "";
     this.replCount = this.inputTexts.length;
   }
 
@@ -97,17 +112,10 @@ class TerminalState {
     return this.focusIndex;
   }
 
-  // ///////////////////
-  /* private funtions */
-  // ///////////////////
-
   updateCurrentOutput(index) {
     this.outputTexts = splice.addBefore(this.outputTexts, index, "");
 
-    const upperLoadings = this.isLoadings.slice(0, index);
-    const belowLoadings = this.isLoadings.slice(index).map(() => true);
-
-    this.isLoadings = [...upperLoadings, true, ...belowLoadings];
+    this.isLoadings = splice.addBefore(this.isLoadings, index, true);
   }
 
   updateCurrentInput(index) {
@@ -119,10 +127,15 @@ class TerminalState {
 
     this.currentText = "";
 
-    const upperActives = this.isActives.slice(0, index);
-    const belowActives = this.isActives.slice(index).map(() => false);
+    this.stdinTexts = splice.addBefore(
+      this.stdinTexts,
+      index,
+      this.currentStdin
+    );
 
-    this.isActives = [...upperActives, false, ...belowActives];
+    this.currentStdin = "";
+
+    this.isActives = splice.addBefore(this.isActives, index, false);
   }
 }
 
