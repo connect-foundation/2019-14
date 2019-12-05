@@ -1,22 +1,22 @@
+import { request } from "../../utils";
+
 const save = (cellManager) => {
   const document = cellManager.createMarkdownDocument();
   const data = {
     userId: "boost",
     docContent: document,
   };
-  fetch("http://localhost:9090/api/document", {
-    method: "PATCH",
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  })
+  const result = request.do("SAVE", "PATCH", data);
+
+  result
     .then((res) => {
-      console.log(res);
+      if (res.ok) alert("저장 성공!");
+      else {
+        alert("저장 실패ㅠㅠ");
+      }
     })
     .catch((err) => {
-      console.log(err);
+      // console.log(err);
     });
 };
 
