@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const EditorableReplInput = styled.div.attrs((props) => ({
   spellCheck: false,
-  contentEditable: props.isEditorable || false,
+  contentEditable: props.isEditorable,
   suppressContentEditableWarning: true,
 }))`
   flex-grow: 99;

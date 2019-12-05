@@ -23,7 +23,7 @@ const ReplPrompt = styled.div`
 `;
 
 const ReplInput = React.forwardRef(
-  ({ text, isFocus, isEditorable, inputHandler }, ref) => {
+  ({ text, isEditorable, inputHandler }, ref) => {
     const inputRef = useRef();
     const prompt = "User $";
 
@@ -52,12 +52,13 @@ const ReplInput = React.forwardRef(
 );
 
 ReplInputWrapper.propTypes = {
-  isEditorable: PropTypes.bool.isRequired,
+  isEditorable: PropTypes.bool,
   text: PropTypes.string,
   inputHandler: PropTypes.func,
 };
 
 ReplInputWrapper.defaultProps = {
+  isEditorable: false,
   text: "",
   inputHandler: () => {},
 };
