@@ -26,7 +26,10 @@ const cellReducerHandler = {
 
     debug("Init cell next state", state.cellManager);
 
-    return state;
+    return {
+      ...state,
+      cellManager: state.cellManager,
+    };
   },
 
   [CELL_ACTION.NEW]: (state, action) => {
@@ -229,9 +232,7 @@ const cellReducerHandler = {
 
     toolbar.save(cellManager);
 
-    return {
-      ...state,
-    };
+    return state;
   },
 
   [CELL_ACTION.TOOLBAR.LOAD]: (state) => {

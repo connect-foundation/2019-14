@@ -34,7 +34,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const cellIndex = uuidManager.findIndex(cellUuid);
   const text = cellManager.texts[cellIndex];
-  const currentTag = state.tags[cellIndex];
+  const currentTag = cellManager.tags[cellIndex];
 
   let intoShiftBlock = false;
 

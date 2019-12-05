@@ -86,8 +86,7 @@ const deleteCell = (cellUuid, cellManager, dataObj) => {
     tag: true,
   };
   cellManager.delete(index, flag);
-  cellManager.change(index, { text: joinedText });
-
+  cellManager.change(prevIndex, { text: joinedText });
   return {
     cursor,
     currentIndex: prevIndex,

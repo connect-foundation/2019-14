@@ -56,18 +56,18 @@ const HeadingCell = ({ cellUuid }) => {
       backspaceEvent(e);
     } else {
       const componentCallback = cellGenerator.p;
-      saveCursorPosition(dispatch, inputRef);
+      saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
       newCell(cellUuid, dispatch, componentCallback);
     }
   };
 
   const arrowUpEvent = () => {
-    focusPrev(dispatch, inputRef);
+    focusPrev(dispatch);
   };
 
   const arrowDownEvent = () => {
-    focusNext(dispatch, inputRef);
+    focusNext(dispatch);
   };
 
   const keydownHandlers = {
@@ -101,6 +101,11 @@ const HeadingCell = ({ cellUuid }) => {
     dispatch(cellActionCreator.focusMove(cellUuid));
   };
 
+  const onBlur = (e) => {
+    const { innerHTML } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, innerHTML));
+  };
+
   const htmlText = () => {
     /**
      * @todo text에 대한 보안장치 필요
@@ -117,6 +122,7 @@ const HeadingCell = ({ cellUuid }) => {
       isQuote={false}
       placeholder={placeholder}
       onClick={onClick}
+      onBlur={onBlur}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText()}
     />
