@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef } from "react";
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
+import { uuidManager } from "../../utils";
 import { MarkdownCell } from "./cells";
 
 const EditorComponent = () => {
@@ -22,7 +23,7 @@ const EditorComponent = () => {
   return (
     <>
       {cells.map((cell, cellIndex) => {
-        const key = `markdown-cell-${cellIndex}`;
+        const key = uuidManager.uuidArray[cellIndex];
         return <React.Fragment key={key}>{cell}</React.Fragment>;
       })}
     </>

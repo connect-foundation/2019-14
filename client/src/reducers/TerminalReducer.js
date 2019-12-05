@@ -86,7 +86,16 @@ const terminalReducerHandler = {
     const nextState = copyState(state);
     const currentTerminal = nextState;
 
-    currentTerminal.changeCurrent(action.text);
+    currentTerminal.changeCurrentText(action.text);
+
+    return nextState;
+  },
+
+  [TERMINAL_ACTION.CHANGE_STDIN_TEXT]: (state, action) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+
+    currentTerminal.changeCurrentStdin(action.text);
 
     return nextState;
   },
