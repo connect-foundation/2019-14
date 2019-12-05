@@ -1,7 +1,8 @@
 const save = (cellManager) => {
+  const document = cellManager.createMarkdownDocument();
   const data = {
     userId: "boost",
-    docContent: cellManager.texts[0],
+    docContent: document,
   };
   fetch("http://localhost:9090/api/document", {
     method: "PATCH",
