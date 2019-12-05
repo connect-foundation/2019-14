@@ -236,13 +236,16 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TOOLBAR.LOAD]: (state) => {
-    const { cellManager } = state;
-
-    toolbar.load(cellManager);
-
     return {
       ...state,
-      cellManager,
+      isLoading: true,
+    };
+  },
+
+  [CELL_ACTION.TOOLBAR.LOAD_FINISH]: (state) => {
+    return {
+      ...state,
+      isLoading: false,
     };
   },
 };

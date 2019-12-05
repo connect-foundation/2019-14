@@ -11,6 +11,7 @@ const CellStore = ({ children }) => {
     currentIndex: 0,
     inputRef: null,
     cellManager: new CellManager(),
+    isLoading: false,
     clipboard: {
       texts: [],
       tags: [],

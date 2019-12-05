@@ -4,7 +4,13 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import { getType, getStart, useKeys, uuidManager } from "../../../../utils";
+import {
+  getType,
+  getStart,
+  useKeys,
+  uuidManager,
+  request,
+} from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -29,11 +35,11 @@ setGenerator("hr", (uuid) => (
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { currentIndex, start, cursor, block, cellManager } = state;
+  const { currentIndex, start, cursor, block, cellManager, isLoading } = state;
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
-  const text = cellManager.texts[cellIndex];
+  let text = cellManager.texts[cellIndex];
   const currentTag = cellManager.tags[cellIndex];
 
   let intoShiftBlock = false;
@@ -45,6 +51,20 @@ const MarkdownCell = ({ cellUuid }) => {
       intoShiftBlock = true;
     }
   }
+
+  useEffect(() => {
+    const loadDocument = async () => {
+      const result = await request.do("LOAD");
+      const doc = await result.text();
+      cellManager.load(doc);
+      dispatch(cellActionCreator.loadFinish());
+      text = cellManager.texts[cellIndex];
+    };
+
+    if (isLoading) {
+      loadDocument();
+    }
+  }, [isLoading]);
 
   // -------------- Handler -----------------------
   const enterEvent = (e) => {

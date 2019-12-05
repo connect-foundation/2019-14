@@ -25,16 +25,6 @@ const save = (cellManager) => {
     });
 };
 
-const load = (cellManager) => {
-  const result = request.do("LOAD");
-  result
-    .then((res) => res.text())
-    .then((doc) => {
-      cellManager.load(doc);
-    });
-};
-
 export default {
   save,
-  load,
 };
