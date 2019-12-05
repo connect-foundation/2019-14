@@ -158,45 +158,33 @@ class DockerApi {
     });
   }
 
-  async createCustomTerminal(userTerminalInfo) {
-    if (!userTerminalInfo) {
-      const defaultBaseImage = "ubuntu";
-      return this.createContainer(defaultBaseImage);
-    }
+  async createCustomTerminal(dockerFilePath = __dirname) {
+    const imageTagName = "nicenice";
     // TODO 유저 입력 파싱
     const defaultOptions = {
-      context: __dirname,
+      context: dockerFilePath,
       src: ["Dockerfile"],
     };
 
     const imageTag = {
-      t: "test",
-    };
-
-    const progressCallback = (err) => {
-      if (err) {
-        debug("progress", err);
-      }
-    };
-
-    const finishCallback = (err) => {
-      if (err) {
-        debug("finish", err);
-      }
+      t: imageTagName,
     };
 
     const stream = await this.request.buildImage(defaultOptions, imageTag);
-
-    this.request.modem.followProgress(stream, progressCallback, finishCallback);
-
+    await new Promise((resolve, reject) => {
+      this.request.modem.followProgress(stream, (err, res) => {
+        return err ? reject(err) : resolve(res);
+      });
+    });
+    const result = await this.createDefaultTerminal(imageTagName);
+    return result;
     // TODO: refactor
-    return null;
   }
 
   async createDefaultTerminal(baseImageName) {
     // TOOD 초기 하드코딩 값 변경하거나 없앨 것
     const defaultCmd = ["/bin/bash"];
-    const defaultTagName = "ubuntu-container-test";
+    const defaultTagName = baseImageName;
     const newContainerInfo = await this.request.createContainer({
       AttachStdin: true,
       AttachStdout: true,
