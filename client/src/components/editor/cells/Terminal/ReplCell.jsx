@@ -24,7 +24,7 @@ const ReplCell = ({
   useEffect(() => {
     const updateOutputComponent = async () => {
       // sshd
-      const containerId = "9fe4650b9ae5";
+      // const containerId = "9fe4650b9ae5";
       // ubuntu default
       // const containerId = "d5d08093284f";
       const command = inputText;
