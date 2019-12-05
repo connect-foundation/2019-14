@@ -5,7 +5,6 @@ import TerminalState from "../reducers/TerminalState";
 
 const TerminalContext = React.createContext();
 const TerminalDispatchContext = React.createContext();
-let dispatchToTerminal = null;
 
 const makeInitState = () => {
   return new TerminalState();
@@ -16,10 +15,6 @@ const TerminalStore = ({ children }) => {
     terminalReducer,
     makeInitState()
   );
-
-  if (!dispatchToTerminal) {
-    dispatchToTerminal = dispatch;
-  }
 
   return (
     <TerminalContext.Provider value={{ terminalState }}>
@@ -38,9 +33,4 @@ TerminalStore.propTypes = {
   children: propTypes.element,
 };
 
-export {
-  TerminalStore,
-  TerminalContext,
-  TerminalDispatchContext,
-  dispatchToTerminal,
-};
+export { TerminalStore, TerminalContext, TerminalDispatchContext };

@@ -6,7 +6,7 @@ import { MarkdownCell } from "./cells";
 const EditorComponent = () => {
   const { state } = useContext(CellContext);
   const cellDispatch = useContext(CellDispatchContext);
-  const { cells } = state;
+  const { cells, uuidManager } = state;
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const EditorComponent = () => {
   return (
     <>
       {cells.map((cell, cellIndex) => {
-        const key = `markdown-cell-${cellIndex}`;
+        const key = uuidManager.uuidArray[cellIndex];
         return <React.Fragment key={key}>{cell}</React.Fragment>;
       })}
     </>

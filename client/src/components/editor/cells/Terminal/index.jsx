@@ -6,7 +6,7 @@ import createDebug from "debug";
 import { THEME } from "../../../../enums";
 import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
 import {
-  dispatchToTerminal,
+  TerminalDispatchContext,
   TerminalStore,
 } from "../../../../stores/TerminalStore";
 import { CellContext } from "../../../../stores/CellStore";
@@ -31,6 +31,7 @@ const TerminalWrapper = styled.div`
 
 const InnerTerminalCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
+  const dispatchToTerminal = useContext(TerminalDispatchContext);
   const { uuidManager, currentIndex } = state;
   const cellIndex = uuidManager.findIndex(cellUuid);
 
@@ -53,9 +54,11 @@ InnerTerminalCell.propTypes = {
 
 const TerminalCell = ({ cellUuid }) => {
   return (
-    <TerminalStore>
-      <InnerTerminalCell cellUuid={cellUuid} />
-    </TerminalStore>
+    <>
+      <TerminalStore>
+        <InnerTerminalCell cellUuid={cellUuid} />
+      </TerminalStore>
+    </>
   );
 };
 
