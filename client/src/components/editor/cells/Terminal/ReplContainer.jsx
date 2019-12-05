@@ -58,10 +58,8 @@ const ReplContainer = ({ cellIndex, isCellFocus }) => {
     [EVENT_TYPE.ENTER]: (e) => {
       e.preventDefault();
       if (isReplFocus) {
-        console.log("ReplFocus!");
         setIsReplFocus(false);
       } else {
-        console.log("Repl not Focus!");
         setIsReplFocus(true);
         dispatchToTerminal(terminalAction.createNewRepl(replCount));
       }
@@ -97,6 +95,7 @@ const ReplContainer = ({ cellIndex, isCellFocus }) => {
     if (isCellFocus) {
       setMovable(
         <MovableReplCell
+          key="movable-repl-cell"
           currentText={currentText}
           currentStdin={currentStdin}
           isReplFocus={isReplFocus}
