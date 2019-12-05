@@ -23,15 +23,28 @@ const ReplCell = ({
 
   useEffect(() => {
     const updateOutputComponent = async () => {
-      const containerName = "zen_liskov";
+      // sshd
+      const containerId = "9fe4650b9ae5";
+      // ubuntu default
+      // const containerId = "d5d08093284f";
       const command = inputText;
+      const stdin = stdinText;
 
-      const { data, status } = await request.exec(containerName, command);
+      // const response = null;
+      // if (stdin.length > 0) {
+      //  response = await request.execPending(containerId, command, stdin);
+      // } else {
+      //  response = await request.exec(containerId, command);
+      // }
+
+      // const { data, status } = response;
+
+      const { status, data } = await request.execSsh(command, stdin);
 
       debug("shell command response with", status, data);
 
       if (status === 200) {
-        const { output } = data;
+        const output = data.stdout;
         dispatchToTerminal(terminalAction.updateOutputText(cellIndex, output));
       }
     };
