@@ -5,10 +5,7 @@ import { faDatabase } from "@fortawesome/free-solid-svg-icons";
 import { faUbuntu, faJs } from "@fortawesome/free-brands-svg-icons";
 
 import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
-import {
-  TerminalSettingContext,
-  TerminalSettingDispatch,
-} from "../../../stores/TerminalSetting";
+import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
 
 const STEP_TYPE = {
   OS: faUbuntu,
@@ -26,12 +23,11 @@ const StepWrapper = styled.div`
   background-color: red;
 `;
 
-const Step = ({ icon }) => {
-  const { state } = useContext(TerminalSettingContext);
-  const { dispatch } = useContext(TerminalSettingDispatch);
+const Step = ({ icon, index }) => {
+  const dispatch = useContext(TerminalSettingDispatch);
 
-  const clickEventHandler = (e) => {
-    dispatch(terminalSettingActionCreator.selectStep());
+  const clickEventHandler = () => {
+    dispatch(terminalSettingActionCreator.selectStep(index));
   };
 
   return (

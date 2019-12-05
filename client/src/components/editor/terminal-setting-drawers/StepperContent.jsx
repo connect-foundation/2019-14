@@ -10,30 +10,19 @@ import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
 
 const StepperContentWrapper = styled.li``;
 
-const StepperContent = ({ element }) => {
+const StepperContent = ({ element, index }) => {
   const { state } = useContext(TerminalSettingContext);
   const dispatch = useContext(TerminalSettingDispatch);
 
   const type = state.currentStep ? "checkbox" : "radio";
 
-  //   const isChecked = state[
-  //     TERMINAL_SETTING_STEP[state.currentStep].type
-  //   ].includes(element);
-
-  //   const onClick = (ev) => {
-  //     if (isChecked)
-  //       dispatch(terminalSettingActionCreator.unselectPL(ev.target.textContent));
-  //     else dispatch(terminalSettingActionCreator.selectPL(ev.target.textContent));
-  //   };
-  //  console.log(state.PL);
-  console.log(state);
-  const onClick = (e) => {
+  const onClick = () => {
     if (state.currentStep === 0) {
-      dispatch(terminalSettingActionCreator.selectOS(e.target.value));
+      dispatch(terminalSettingActionCreator.selectOS(element, index));
     } else if (state.currentStep === 1) {
-      dispatch(terminalSettingActionCreator.selectPL(e.target.value));
+      dispatch(terminalSettingActionCreator.selectPL(element, index));
     } else {
-      dispatch(terminalSettingActionCreator.selectDB(e.target.value));
+      dispatch(terminalSettingActionCreator.selectDB(element, index));
     }
   };
 
@@ -44,8 +33,10 @@ const StepperContent = ({ element }) => {
         id={element}
         name={state.currentStep}
         onClick={onClick}
-        checked={state.osInputStatus}
-        defaultChecked={isChecked}
+        checked={
+          // TODO 변수명이 너무 김. 더 짧고 이애하기 쉬운 변수로 수정할 것
+          state[TERMINAL_SETTING_STEP[state.currentStep].type].isChecked[index]
+        }
       />
       <label htmlFor={element}>{element}</label>
     </StepperContentWrapper>
