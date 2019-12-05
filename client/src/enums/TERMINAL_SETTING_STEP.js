@@ -5,7 +5,7 @@ const TERMINAL_SETTING_STEP = {
   },
   1: {
     type: "PL",
-    list: ["javascript", "python"],
+    list: ["nodejs", "python"],
   },
   2: {
     type: "DB",
