@@ -118,7 +118,7 @@ const terminalReducerHandler = {
     return nextState;
   },
 
-  [TERMINAL_ACTION.DELETE_REPL]: (state, action) => {
+  [TERMINAL_ACTION.DELETE_REPL]: (state) => {
     const nextState = copyState(state);
     const currentTerminal = nextState;
     const { focusIndex } = currentTerminal;

@@ -34,7 +34,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const cellIndex = uuidManager.findIndex(cellUuid);
   const text = cellManager.texts[cellIndex];
-  const currentTag = state.tags[cellIndex];
+  const currentTag = cellManager.tags[cellIndex];
 
   let intoShiftBlock = false;
 
@@ -76,13 +76,9 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
-    if (textContent.length === 0 && cellIndex > 0) {
-      deleteCell(dispatch, cellUuid);
-    } else {
-      const cursorPos = getSelection();
-      if (cursorPos.start === 0 && cursorPos.end === 0) {
-        deleteCell(dispatch, cellUuid, textContent);
-      }
+    const cursorPos = getSelection();
+    if (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) {
+      deleteCell(dispatch, cellUuid, textContent);
     }
   };
 

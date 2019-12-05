@@ -13,6 +13,8 @@ const PATH = {
   COMMAND: `${TERMINAL_API}/command/not-pending`,
   COMMAND_PENDING: `${TERMINAL_API}/command/pending`,
   COMMAND_SSH: `${TERMINAL_API}/command/ssh`,
+  SAVE: "api/document",
+  LOAD: "api/document",
 };
 
 const defaultOptions = {
@@ -68,6 +70,24 @@ const request = {
     const response = await axios(options);
     debug("pending response", response);
     return response;
+  },
+  async do(command, method = "GET", data = null) {
+    const uri = `${SCHEME}://${BASE_URL}/${PATH[command]}`;
+    let option = {
+      method,
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const body = JSON.stringify(data);
+    if (method !== "GET") {
+      option = Object.assign(body, { body });
+    }
+    const result = await fetch(uri, {
+      ...option,
+    });
+    return result;
   },
 };
 

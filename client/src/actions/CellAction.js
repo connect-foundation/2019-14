@@ -27,6 +27,10 @@ const CELL_ACTION = {
     COPY: "cell/clipboard/copy",
     PASTE: "cell/clipboard/paste",
   },
+  TOOLBAR: {
+    SAVE: "cell/toolbar/save",
+    LOAD: "cell/toolbar/load",
+  },
 };
 
 const cellActionCreator = {
@@ -220,6 +224,18 @@ const cellActionCreator = {
     return {
       type: CELL_ACTION.CLIPBOARD.PASTE,
       cellUuid,
+    };
+  },
+
+  save() {
+    return {
+      type: CELL_ACTION.TOOLBAR.SAVE,
+    };
+  },
+
+  load() {
+    return {
+      type: CELL_ACTION.TOOLBAR.LOAD,
     };
   },
 };
