@@ -30,6 +30,7 @@ const CELL_ACTION = {
   TOOLBAR: {
     SAVE: "cell/toolbar/save",
     LOAD: "cell/toolbar/load",
+    LOAD_FINISH: "cell/toolbar/load-finish",
   },
 };
 
@@ -236,6 +237,12 @@ const cellActionCreator = {
   load() {
     return {
       type: CELL_ACTION.TOOLBAR.LOAD,
+    };
+  },
+
+  loadFinish() {
+    return {
+      type: CELL_ACTION.TOOLBAR.LOAD_FINISH,
     };
   },
 };

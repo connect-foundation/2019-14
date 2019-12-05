@@ -44,9 +44,9 @@ const StdinInput = React.forwardRef(
 );
 
 StdinInput.propTypes = {
-  text: PropTypes.number.isRequired,
-  inputHandler: PropTypes.string.isRequired,
-  isEditorable: PropTypes.string,
+  text: PropTypes.string.isRequired,
+  inputHandler: PropTypes.func.isRequired,
+  isEditorable: PropTypes.bool,
 };
 
 StdinInput.defaultProps = {

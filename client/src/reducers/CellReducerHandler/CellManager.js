@@ -1,5 +1,5 @@
 import { uuid } from "uuidv4";
-import { utils } from "../../utils";
+import { utils, uuidManager } from "../../utils";
 import { CELL_TAG } from "../../enums";
 import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
@@ -88,9 +88,11 @@ CellManager.prototype.load = function(doc) {
   this.cells = [];
   this.tags = [];
   this.texts = array.reduce((acc, val) => {
-    this.cells.push(cell(uuid()));
+    const newCellUuid = uuid();
+    this.cells.push(cell(newCellUuid));
     this.tags.push("p");
     acc.push(val);
+    uuidManager.push(newCellUuid);
     return acc;
   }, []);
 };
