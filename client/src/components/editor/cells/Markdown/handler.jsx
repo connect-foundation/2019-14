@@ -2,7 +2,14 @@ import { cellActionCreator } from "../../../../actions/CellAction";
 
 const getSelection = () => {
   const selection = window.getSelection();
-
+  /**
+   * @todo 커서 관련 버그
+   * - 인라인 파서 관련해서 충돌 가능성이 매우 높으므로 일단 보류
+   * console.log(selection.focusNode.nodeType);
+   * 노드 타입이 1, 3으로 나뉘고 1은 엘리먼트, 3이 텍스트
+   * 텍스트일 때는 상관 무
+   * 1일 때 offset을 체크하여 0일 때는 맨 앞, 1일 때는 맨 뒤
+   */
   const cursor = {
     start: selection.focusOffset,
     end: selection.focusOffset + selection.rangeCount - 1,
@@ -11,11 +18,7 @@ const getSelection = () => {
   return cursor;
 };
 
-const saveCursorPosition = (cellDispatch, inputRef) => {
-  if (!inputRef) {
-    return null;
-  }
-
+const saveCursorPosition = (cellDispatch) => {
   const currentCursor = getSelection();
   cellDispatch(
     cellActionCreator.moveCursor(currentCursor.start, currentCursor.end)
@@ -24,41 +27,34 @@ const saveCursorPosition = (cellDispatch, inputRef) => {
   return null;
 };
 
-const newCell = (cellDispatch, componentCallback, tag) => {
-  if (tag) {
-    cellDispatch(cellActionCreator.new(componentCallback, tag));
-  } else {
-    cellDispatch(cellActionCreator.new(componentCallback));
-  }
+const newCell = (cellUuid, cellDispatch, componentCallback, tag) => {
+  cellDispatch(cellActionCreator.new(cellUuid, componentCallback, tag));
 };
 
-const saveText = (cellUuid, textContent, cellDispatch, inputRef) => {
-  saveCursorPosition(cellDispatch, inputRef);
-  cellDispatch(cellActionCreator.input(cellUuid, textContent));
+const deleteCell = (cellDispatch, cellUuid, textContent) => {
+  cellDispatch(cellActionCreator.delete(cellUuid, textContent));
 };
 
-const isContinueNext = (cellIndex, cellLength) => {
-  if (cellIndex < cellLength - 1) {
-    return true;
-  }
-  return false;
-};
-
-const isContinuePrev = (cellIndex) => {
-  if (cellIndex > 0) {
-    return true;
-  }
-  return false;
-};
-
-const focusNext = (cellUuid, textContent, cellDispatch, inputRef) => {
-  saveText(cellUuid, textContent, cellDispatch, inputRef);
+const focusNext = (cellDispatch) => {
+  saveCursorPosition(cellDispatch);
   cellDispatch(cellActionCreator.focusNext());
 };
 
-const focusPrev = (cellUuid, textContent, cellDispatch, inputRef) => {
-  saveText(cellUuid, textContent, cellDispatch, inputRef);
+const focusPrev = (cellDispatch) => {
+  saveCursorPosition(cellDispatch);
   cellDispatch(cellActionCreator.focusPrev());
+};
+
+const blockEndUp = (cellUuid, cellDispatch) => {
+  cellDispatch(cellActionCreator.blockUp(cellUuid));
+};
+
+const blockEndDown = (cellUuid, cellDispatch) => {
+  cellDispatch(cellActionCreator.blockDown(cellUuid));
+};
+
+const blockRelease = (cellDispatch) => {
+  cellDispatch(cellActionCreator.blockRelease());
 };
 
 const createCursor = (text, cursor) => {
@@ -81,12 +77,15 @@ const setCursorPosition = () => {
 };
 
 export {
+  getSelection,
   newCell,
+  deleteCell,
   saveCursorPosition,
-  isContinuePrev,
   focusPrev,
-  isContinueNext,
   focusNext,
+  blockEndUp,
+  blockEndDown,
+  blockRelease,
   createCursor,
   setCursorPosition,
 };

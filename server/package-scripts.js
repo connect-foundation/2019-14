@@ -8,6 +8,10 @@ module.exports = {
       script: "node bin/index.js",
       description: "Start app",
     },
+    dev: {
+      script: "nodemon bin/index.js",
+      description: "Start watching app",
+    },
     production: {
       script: "NODE_ENV=production node bin/index.js",
       description: "Start production app",

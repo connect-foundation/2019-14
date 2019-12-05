@@ -6,19 +6,16 @@ import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import { EVENT_TYPE } from "../../../../enums";
-import { useCellState, handlerManager } from "../../../../utils";
+import { useCellState, useKey } from "../../../../utils";
 
 import {
-  // newCell,
   saveCursorPosition,
-  isContinuePrev,
-  isContinueNext,
   focusPrev,
   focusNext,
   setCursorPosition,
   createCursor,
 } from "../Markdown/handler";
-import { newCell } from "./handler";
+import { newCell, initCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
 
 setGenerator("ul", (uuid) => (
@@ -26,11 +23,19 @@ setGenerator("ul", (uuid) => (
     <ListCell cellUuid={uuid} />
   </ul>
 ));
-setGenerator("ol", (uuid, start) => (
-  <ol start={start}>
+setGenerator("ol", (uuid, options) => (
+  <ol start={options.start}>
     <ListCell cellUuid={uuid} />
   </ol>
 ));
+
+const useKeys = (keydownHandlers, isFocus) => {
+  const E = EVENT_TYPE;
+  useKey(E.ENTER, keydownHandlers[E.ENTER], isFocus);
+  useKey(E.ARROW_UP, keydownHandlers[E.ARROW_UP], isFocus);
+  useKey(E.ARROW_DOWN, keydownHandlers[E.ARROW_DOWN], isFocus);
+  useKey(E.BACKSPACE, keydownHandlers[E.BACKSPACE], isFocus);
+};
 
 // const ListCell = React.forwardRef(({ cellUuid }, ref) => {
 const ListCell = ({ cellUuid }) => {
@@ -42,9 +47,6 @@ const ListCell = ({ cellUuid }) => {
   );
   let inputRef = null;
 
-  const { start } = state;
-  const newStart = start + 1;
-
   // const inputRef = useRef();
 
   // useImperativeHandle(ref, () => ({
@@ -52,6 +54,14 @@ const ListCell = ({ cellUuid }) => {
   //     inputRef.current.focus();
   //   },
   // }));
+
+  const backspaceEvent = (e) => {
+    const { length } = e.target.textContent;
+    if (length === 0) {
+      const componentCallback = cellGenerator.p;
+      initCell(cellUuid, dispatch, componentCallback);
+    }
+  };
 
   const enterEvent = (e) => {
     const { textContent } = e.target;
@@ -69,49 +79,42 @@ const ListCell = ({ cellUuid }) => {
         )
       );
       */
-    const isOrderedList = tag == "ol";
+    if (textContent.length === 0) {
+      backspaceEvent(e);
+    } else {
+      const isOrderedList = tag === "ol";
 
-    const component = (uuid) =>
-      isOrderedList ? (
-        <ol start={newStart}>
-          <ListCell cellUuid={uuid} />
-        </ol>
-      ) : (
-        <ul>
-          <ListCell cellUuid={uuid} />
-        </ul>
-      );
+      const componentCallback = isOrderedList
+        ? cellGenerator.ol
+        : cellGenerator.ul;
 
-    const componentCallback = (uuid) => component(uuid);
-
-    saveCursorPosition(dispatch, inputRef);
-    dispatch(cellActionCreator.input(cellUuid, textContent));
-    newCell(dispatch, componentCallback, tag, newStart);
-  };
-
-  const arrowUpEvent = (e) => {
-    if (isContinuePrev(cellIndex)) {
-      focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
+      saveCursorPosition(dispatch);
+      dispatch(cellActionCreator.input(cellUuid, textContent));
+      newCell(cellUuid, dispatch, componentCallback, tag);
     }
   };
 
-  const arrowDownEvent = (e) => {
-    if (isContinueNext(cellIndex, state.cells.length)) {
-      focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
-    }
+  const arrowUpEvent = () => {
+    focusPrev(dispatch);
+  };
+
+  const arrowDownEvent = () => {
+    focusNext(dispatch);
   };
 
   const keydownHandlers = {
     [EVENT_TYPE.ENTER]: enterEvent,
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
-  if (currentIndex === cellIndex) {
+  const isFocus = currentIndex === cellIndex;
+  if (isFocus) {
     inputRef = state.inputRef;
-
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, "li");
   }
+
+  useKeys(keydownHandlers, isFocus);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -127,7 +130,12 @@ const ListCell = ({ cellUuid }) => {
   }, [inputRef]);
 
   const onClick = () => {
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, tag);
+    dispatch(cellActionCreator.focusMove(cellUuid));
+  };
+
+  const onBlur = (e) => {
+    const { innerHTML } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, innerHTML));
   };
 
   const htmlText = () => {
@@ -145,6 +153,7 @@ const ListCell = ({ cellUuid }) => {
       contentEditable
       placeholder={placeholder}
       onClick={onClick}
+      onBlur={onBlur}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText()}
     />
