@@ -34,6 +34,7 @@ const StdinInput = React.forwardRef(
           ref={inputRef}
           onInput={inputHandler}
           isEditorable={isEditorable}
+          data-text="Standard Input"
         >
           {text}
         </EditorableReplInput>

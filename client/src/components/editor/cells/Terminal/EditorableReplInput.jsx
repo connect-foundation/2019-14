@@ -12,6 +12,10 @@ const EditorableReplInput = styled.div.attrs((props) => ({
     outline: none;
     border: none;
   }
+
+  :empty:not(:focus):before {
+    content: attr(data-text);
+  }
 `;
 
 export default EditorableReplInput;
