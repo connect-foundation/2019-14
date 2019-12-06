@@ -69,7 +69,7 @@ const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
       const { textContent } = e.target;
       if (textContent.length === 0) {
         if (replCount === 0) {
-          dispatchToCell(cellAction.delete(cellUuid));
+          dispatchToCell(cellAction.init(null, cellUuid));
         } else {
           dispatchToTerminal(terminalAction.deleteRepl());
         }
