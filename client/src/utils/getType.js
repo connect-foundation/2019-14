@@ -20,14 +20,17 @@ const MARKDOWN_REGEXP = {
 
 const getType = (textContent) => {
   const types = Object.keys(MARKDOWN_REGEXP);
-  const result = types.find((type) => {
+  let findPattern = null;
+  const matchingTag = types.find((type) => {
     const regExp = MARKDOWN_REGEXP[type];
-    if (regExp.exec(textContent)) {
+    const regExpResult = regExp.exec(textContent);
+    if (regExpResult) {
+      findPattern = [...regExpResult];
       return true;
     }
     return false;
   });
-  return result;
+  return { findPattern, matchingTag };
 };
 
 export default getType;

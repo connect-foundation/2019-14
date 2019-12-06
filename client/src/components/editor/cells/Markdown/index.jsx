@@ -148,7 +148,7 @@ const MarkdownCell = ({ cellUuid }) => {
   const onKeyUp = (e) => {
     const { textContent } = e.target;
 
-    const matchingTag = getType(textContent);
+    const { findPattern, matchingTag } = getType(textContent);
 
     if (matchingTag && matchingTag !== currentTag) {
       const makeNewCell = cellGenerator[matchingTag];
@@ -165,9 +165,18 @@ const MarkdownCell = ({ cellUuid }) => {
       const cell = makeNewCell(cellUuid, {
         start: newStart,
       });
-
+      let exceptPatternText = "";
+      if (findPattern) {
+        exceptPatternText = textContent.slice(findPattern[0].length);
+      }
       dispatch(
-        cellActionCreator.transform(cellUuid, "", matchingTag, cell, newStart)
+        cellActionCreator.transform(
+          cellUuid,
+          exceptPatternText,
+          matchingTag,
+          cell,
+          newStart
+        )
       );
     }
   };
@@ -203,6 +212,7 @@ const MarkdownCell = ({ cellUuid }) => {
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText()}
       contentEditable
+      spellCheck={false}
     />
   );
 
