@@ -17,8 +17,8 @@ const TERMINAL_SETTING_ACTION = {
 };
 
 const terminalSettingActionCreator = {
-  selectOS(os, osInputStatus) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os, osInputStatus };
+  selectOS(os) {
+    return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os };
   },
 
   selectPL(pl) {
@@ -26,18 +26,6 @@ const terminalSettingActionCreator = {
   },
 
   selectDB(db) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.DB, db };
-  },
-
-  unselectOS(os) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os };
-  },
-
-  unselectPL(pl) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.PL, pl };
-  },
-
-  unselectDB(db) {
     return { type: TERMINAL_SETTING_ACTION.SELECT.DB, db };
   },
 

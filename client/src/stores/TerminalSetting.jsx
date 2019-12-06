@@ -11,10 +11,6 @@ function TerminalSettingStore({ children }) {
     PL: [],
     DB: [],
 
-    osInputStatus: [false, false],
-    plCheckboxStatus: [false, false],
-    dbCheckboxStatus: [false, false],
-
     currentStep: 0,
   };
 

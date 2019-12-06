@@ -2,49 +2,33 @@ import { TERMINAL_SETTING_ACTION } from "./../actions/TerminalSetting";
 
 const terminalSettingHendler = {
   [TERMINAL_SETTING_ACTION.SELECT.OS]: (state, action) => {
-    // const newOs = state.OS;
+    const newOs = [];
 
-    // newOs.push(action.os);
-    console.log(action);
-    return { ...state, OS: action.os, osInputStatus: action.osInputStatus };
+    newOs.push(action.os);
+
+    return { ...state, OS: newOs };
   },
   [TERMINAL_SETTING_ACTION.SELECT.PL]: (state, action) => {
-    const newPL = [...state.PL];
+    const newPL = state.PL;
 
-    newPL.push(action.pl);
+    const targetIndex = newPL.findIndex((element) => element === action.pl);
+
+    if (targetIndex < 0) newPL.push(action.pl);
+    else newPL.splice(targetIndex, 1);
 
     return { ...state, PL: newPL };
   },
   [TERMINAL_SETTING_ACTION.SELECT.DB]: (state, action) => {
     const newDb = state.DB;
 
-    newDb.push(action.db);
+    const targetIndex = newDb.findIndex((element) => element === action.db);
+
+    if (targetIndex < 0) newDb.push(action.db);
+    else newDb.splice(targetIndex, 1);
 
     return { ...state, DB: newDb };
   },
-  [TERMINAL_SETTING_ACTION.UNSELECT.OS]: (state, action) => {
-    const currentOs = state.OS;
 
-    const newOs = currentOs.filter((element) => {
-      return element === action.os;
-    });
-
-    return { ...state, OS: newOs };
-  },
-  [TERMINAL_SETTING_ACTION.UNSELECT.PL]: (state, action) => {
-    const currentPL = state.PL;
-
-    const newPL = currentPL.filter((element) => {
-      return element !== action.pl;
-    });
-
-    return { ...state, PL: newPL };
-  },
-  [TERMINAL_SETTING_ACTION.UNSELECT.DB]: (state, action) => {
-    const newDb = state.DB;
-
-    return { ...state, DB: newDb };
-  },
   [TERMINAL_SETTING_ACTION.MOVE.PREV]: (state, action) => {
     const minStep = 1;
     if (action.step < minStep) {

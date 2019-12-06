@@ -16,26 +16,21 @@ const StepperContent = ({ element }) => {
 
   const type = state.currentStep ? "checkbox" : "radio";
 
-  //   const isChecked = state[
-  //     TERMINAL_SETTING_STEP[state.currentStep].type
-  //   ].includes(element);
+  const isChecked = state[
+    TERMINAL_SETTING_STEP[state.currentStep].type
+  ].includes(element);
 
-  //   const onClick = (ev) => {
-  //     if (isChecked)
-  //       dispatch(terminalSettingActionCreator.unselectPL(ev.target.textContent));
-  //     else dispatch(terminalSettingActionCreator.selectPL(ev.target.textContent));
-  //   };
-  //  console.log(state.PL);
-  console.log(state);
-  const onClick = (e) => {
+  const onChange = (e) => {
     if (state.currentStep === 0) {
-      dispatch(terminalSettingActionCreator.selectOS(e.target.value));
+      dispatch(terminalSettingActionCreator.selectOS(e.target.id));
     } else if (state.currentStep === 1) {
-      dispatch(terminalSettingActionCreator.selectPL(e.target.value));
+      dispatch(terminalSettingActionCreator.selectPL(e.target.id));
     } else {
-      dispatch(terminalSettingActionCreator.selectDB(e.target.value));
+      dispatch(terminalSettingActionCreator.selectDB(e.target.id));
     }
   };
+
+  console.log(state.OS, state.PL, state.DB);
 
   return (
     <StepperContentWrapper>
@@ -43,9 +38,8 @@ const StepperContent = ({ element }) => {
         type={type}
         id={element}
         name={state.currentStep}
-        onClick={onClick}
-        checked={state.osInputStatus}
-        defaultChecked={isChecked}
+        onChange={onChange}
+        checked={isChecked}
       />
       <label htmlFor={element}>{element}</label>
     </StepperContentWrapper>
