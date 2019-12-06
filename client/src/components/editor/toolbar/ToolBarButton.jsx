@@ -47,12 +47,16 @@ const BUTTON_HANDLER = {
 const ToolBarButtonWrapper = styled.button`
   margin: 0 0.5rem;
   width: 2rem;
-  height: 2rem;
+  height: 3rem;
   font-size: 1.5rem;
   background: transparent;
   border: transparent;
   cursor: pointer;
   color: ${THEME.VS_CODE.FONT};
+
+  div {
+    font-size: 0.3rem;
+  }
 
   margin-left: ${(props) => (props.isTerminal ? "auto" : "0px")};
 `;
@@ -70,6 +74,7 @@ const ToolBarButton = ({ buttonType }) => {
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>
       <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} onClick={onClick} />
+      <div>{buttonType}</div>
     </ToolBarButtonWrapper>
   );
 };
