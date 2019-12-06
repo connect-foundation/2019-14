@@ -12,7 +12,8 @@ const StepperWrapper = styled.header`
 const Stepper = () => {
   const getSteps = () => {
     return Object.values(STEP_TYPE).map((icon, index) => {
-      return <Step icon={icon} key={index} />;
+      const key = `key-${index}`;
+      return <Step icon={icon} key={key} index={index} />;
     });
   };
 

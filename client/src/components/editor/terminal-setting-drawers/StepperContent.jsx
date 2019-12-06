@@ -10,7 +10,7 @@ import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
 
 const StepperContentWrapper = styled.li``;
 
-const StepperContent = ({ element }) => {
+const StepperContent = ({ element, index }) => {
   const { state } = useContext(TerminalSettingContext);
   const dispatch = useContext(TerminalSettingDispatch);
 

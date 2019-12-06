@@ -18,7 +18,8 @@ const StepperContentList = () => {
 
   const getSettings = () => {
     return TERMINAL_SETTING_STEP[step].list.map((element, index) => {
-      return <StepperContent key={index} element={element} />;
+      const newId = `setting-${index}`;
+      return <StepperContent key={newId} element={element} index={index} />;
     });
   };
 

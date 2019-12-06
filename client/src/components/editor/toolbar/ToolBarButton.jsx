@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -9,6 +9,8 @@ import {
   faFileExport,
   faTerminal,
 } from "@fortawesome/free-solid-svg-icons";
+import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
+import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
 import { THEME } from "../../../enums";
 
 const BUTTON_TYPE = {
@@ -35,6 +37,20 @@ const ToolBarButtonWrapper = styled.button`
 
 const ToolBarButton = ({ buttonType }) => {
   const isTerminal = buttonType === "TERMINAL";
+
+  if (isTerminal) {
+    const dispatch = useContext(TerminalSettingDispatch);
+
+    const handler = () => {
+      dispatch(terminalSettingActionCreator.hideTerminalSettingView());
+    };
+
+    return (
+      <ToolBarButtonWrapper type={buttonType} onClick={handler}>
+        <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} />
+      </ToolBarButtonWrapper>
+    );
+  }
 
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>

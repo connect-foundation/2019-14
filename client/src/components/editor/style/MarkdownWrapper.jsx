@@ -21,6 +21,9 @@ const MarkdownWrapper = styled.p`
 
   padding: 0.2em;
 
+  background: ${({ intoShiftBlock }) =>
+    intoShiftBlock && "rgba(128, 0, 255, 0.2)"};
+
   border-left: ${({ isQuote }) => isQuote && "0.25rem solid silver"};
   padding-left: ${({ isQuote }) => isQuote && "0.5rem"};
 `;

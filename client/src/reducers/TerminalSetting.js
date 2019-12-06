@@ -1,4 +1,4 @@
-import { TERMINAL_SETTING_ACTION } from "./../actions/TerminalSetting";
+import { TERMINAL_SETTING_ACTION } from "../actions/TerminalSetting";
 
 const terminalSettingHendler = {
   [TERMINAL_SETTING_ACTION.SELECT.OS]: (state, action) => {
@@ -19,7 +19,12 @@ const terminalSettingHendler = {
     return { ...state, PL: newPL };
   },
   [TERMINAL_SETTING_ACTION.SELECT.DB]: (state, action) => {
-    const newDb = state.DB;
+    const newDB = {
+      kind: [action.pl],
+      isChecked: [...state.DB.isChecked],
+    };
+    // TODO 좀 더 이해하기 쉬운 코드로 바꿀 것
+    newDB.isChecked[action.index] = !newDB.isChecked[action.index];
 
     const targetIndex = newDb.findIndex((element) => element === action.db);
 
@@ -45,6 +50,10 @@ const terminalSettingHendler = {
   },
   [TERMINAL_SETTING_ACTION.MOVE.STEP]: (state, action) => {
     return { ...state, currentStep: action.step };
+  },
+  [TERMINAL_SETTING_ACTION.HIDE]: (state, action) => {
+    console.log("action");
+    return { ...state, isHidden: !state.isHidden };
   },
 };
 

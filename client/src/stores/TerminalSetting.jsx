@@ -1,5 +1,5 @@
 import React, { useReducer } from "react";
-import terminalSettingReducer from "./../reducers/TerminalSetting";
+import terminalSettingReducer from "../reducers/TerminalSetting";
 
 const TerminalSettingContext = React.createContext();
 const TerminalSettingDispatch = React.createContext();

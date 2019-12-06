@@ -24,31 +24,17 @@ const saveCursorPosition = (cellDispatch, inputRef) => {
   return null;
 };
 
-const newCell = (cellDispatch, componentCallback, tag) => {
-  if (tag) {
-    cellDispatch(cellActionCreator.new(componentCallback, tag));
-  } else {
-    cellDispatch(cellActionCreator.new(componentCallback));
-  }
+const newCell = (cellUuid, cellDispatch, componentCallback, tag) => {
+  cellDispatch(cellActionCreator.new(cellUuid, componentCallback, tag));
+};
+
+const deleteCell = (cellDispatch, cellUuid, textContent) => {
+  cellDispatch(cellActionCreator.delete(cellUuid, textContent));
 };
 
 const saveText = (cellUuid, textContent, cellDispatch, inputRef) => {
   saveCursorPosition(cellDispatch, inputRef);
   cellDispatch(cellActionCreator.input(cellUuid, textContent));
-};
-
-const isContinueNext = (cellIndex, cellLength) => {
-  if (cellIndex < cellLength - 1) {
-    return true;
-  }
-  return false;
-};
-
-const isContinuePrev = (cellIndex) => {
-  if (cellIndex > 0) {
-    return true;
-  }
-  return false;
 };
 
 const focusNext = (cellUuid, textContent, cellDispatch, inputRef) => {
@@ -59,6 +45,14 @@ const focusNext = (cellUuid, textContent, cellDispatch, inputRef) => {
 const focusPrev = (cellUuid, textContent, cellDispatch, inputRef) => {
   saveText(cellUuid, textContent, cellDispatch, inputRef);
   cellDispatch(cellActionCreator.focusPrev());
+};
+
+const blockEndUp = (cellUuid, cellDispatch) => {
+  cellDispatch(cellActionCreator.blockUp(cellUuid));
+};
+
+const blockEndDown = (cellUuid, cellDispatch) => {
+  cellDispatch(cellActionCreator.blockDown(cellUuid));
 };
 
 const createCursor = (text, cursor) => {
@@ -81,12 +75,14 @@ const setCursorPosition = () => {
 };
 
 export {
+  getSelection,
   newCell,
+  deleteCell,
   saveCursorPosition,
-  isContinuePrev,
   focusPrev,
-  isContinueNext,
   focusNext,
+  blockEndUp,
+  blockEndDown,
   createCursor,
   setCursorPosition,
 };

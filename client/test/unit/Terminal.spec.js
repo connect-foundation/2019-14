@@ -7,6 +7,7 @@ const { deepCopy } = utils;
 
 const storeStates = {
   empty: {
+    cellUuid: "",
     focusIndex: 0,
     currentText: "current",
     inputTexts: [],
@@ -16,6 +17,7 @@ const storeStates = {
     replCount: 0,
   },
   front: {
+    cellUuid: "",
     focusIndex: 0,
     currentText: "current",
     inputTexts: ["one", "two", "three"],
@@ -25,6 +27,7 @@ const storeStates = {
     replCount: 3,
   },
   middle: {
+    cellUuid: "",
     focusIndex: 2,
     currentText: "current",
     inputTexts: ["one", "two", "three", "four"],
@@ -34,6 +37,7 @@ const storeStates = {
     replCount: 4,
   },
   end: {
+    cellUuid: "",
     focusIndex: 2,
     currentText: "current",
     inputTexts: ["hello", "world"],
@@ -49,6 +53,7 @@ const testcases = {
     {
       storeState: deepCopy(storeStates.empty),
       answer: {
+        cellUuid: "",
         focusIndex: 1,
         currentText: "",
         inputTexts: ["current"],

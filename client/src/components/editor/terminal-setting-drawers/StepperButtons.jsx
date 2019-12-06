@@ -5,6 +5,8 @@ import {
   TerminalSettingDispatch,
   TerminalSettingContext,
 } from "../../../stores/TerminalSetting";
+import { createTerminalFetch } from "../../../utils/Request";
+import { TerminalContext } from "../../../stores/TerminalStore";
 
 const StepperButtonsWrapper = styled.footer`
   display: flex;
@@ -14,6 +16,7 @@ const StepperButtonsWrapper = styled.footer`
 
 const StepperButtons = () => {
   const { state } = useContext(TerminalSettingContext);
+  const { terminalState } = useContext(TerminalContext);
   const dispatch = useContext(TerminalSettingDispatch);
 
   const clickHandler = (e) => {
@@ -24,10 +27,24 @@ const StepperButtons = () => {
     }
   };
 
+  const terminalButtonClickHandler = async () => {
+    // TODO 함수로 분리 할 것
+    let terminalInfo = [];
+
+    Object.values(state).forEach((element) => {
+      if (Array.isArray(element.kind)) {
+        terminalInfo = terminalInfo.concat(element.kind);
+      }
+    });
+    // TODO 받아 온 값을 store에 저장(cell, terminal)
+    const result = await createTerminalFetch(terminalInfo);
+  };
+
   return (
     <StepperButtonsWrapper>
       <button onClick={clickHandler}>prev</button>
       <button onClick={clickHandler}>next</button>
+      <button onClick={terminalButtonClickHandler}>createTerminal</button>
     </StepperButtonsWrapper>
   );
 };

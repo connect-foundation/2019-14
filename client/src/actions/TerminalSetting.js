@@ -14,6 +14,7 @@ const TERMINAL_SETTING_ACTION = {
     NEXT: "terminal-setting/move/next",
     STEP: "terminal-setting/move/step",
   },
+  HIDE: "terminal-setting/hide",
 };
 
 const terminalSettingActionCreator = {
@@ -21,8 +22,8 @@ const terminalSettingActionCreator = {
     return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os };
   },
 
-  selectPL(pl) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.PL, pl };
+  selectPL(pl, index) {
+    return { type: TERMINAL_SETTING_ACTION.SELECT.PL, pl, index };
   },
 
   selectDB(db) {
@@ -39,6 +40,11 @@ const terminalSettingActionCreator = {
 
   selectStep(step) {
     return { type: TERMINAL_SETTING_ACTION.MOVE.STEP, step };
+  },
+
+  hideTerminalSettingView(isHiiden) {
+    console.log("reduce", isHiiden);
+    return { type: TERMINAL_SETTING_ACTION.HIDE, isHiiden };
   },
 };
 
