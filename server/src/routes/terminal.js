@@ -12,6 +12,7 @@ const {
   createDefaultTerminal,
   startTerminal,
   stopTerminal,
+  saveTerminal,
 } = require("../controller/terminal");
 
 const deleteDockerPrefix = (rawString) => {
@@ -154,5 +155,16 @@ router
       res.status(200).json(result);
     })
   );
+
+router.route("/temp").put(
+  wrapAsync(async (req, res) => {
+    const docker = req.app.get("docker");
+    const { containerId } = req.body;
+    console.log(containerId);
+    const result = await saveTerminal(docker, containerId);
+
+    res.status(200).json(result);
+  })
+);
 
 module.exports = router;
