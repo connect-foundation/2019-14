@@ -195,6 +195,7 @@ const MarkdownCell = ({ cellUuid }) => {
     <MarkdownWrapper
       as={currentTag}
       intoShiftBlock={intoShiftBlock}
+      isCurrentCell={cellIndex === currentIndex}
       placeholder={PLACEHOLDER[currentTag]}
       onKeyUp={onKeyUp}
       onClick={onClick}
