@@ -1,7 +1,7 @@
 const debug = require("debug")("boostwriter:api:Docker");
 const fs = require("fs");
 const Docker = require("dockerode");
-
+const uuid = require("uuid/v4");
 const SIGNAL_TYPE = {
   SIGINT: 2,
   SIGKILL: 9,
@@ -158,8 +158,8 @@ class DockerApi {
     });
   }
 
-  async createCustomTerminal(dockerFilePath = __dirname) {
-    const imageTagName = "nicenice";
+  async createCustomTerminal(dockerFilePath) {
+    const imageTagName = uuid();
     // TODO 유저 입력 파싱
     const defaultOptions = {
       context: dockerFilePath,
@@ -170,12 +170,28 @@ class DockerApi {
       t: imageTagName,
     };
 
-    const stream = await this.request.buildImage(defaultOptions, imageTag);
-    await new Promise((resolve, reject) => {
-      this.request.modem.followProgress(stream, (err, res) => {
-        return err ? reject(err) : resolve(res);
-      });
-    });
+    const onProgressCallback = (data) => {
+      console.log("progress", data);
+    };
+
+    const onFishedCallback = (err, data) => {
+      if (err) {
+        throw err;
+      }
+      console.log("finish", data);
+    };
+
+    try {
+      const stream = await this.request.buildImage(defaultOptions, imageTag);
+
+      await this.request.modem.followProgress(
+        stream,
+        onFishedCallback,
+        onProgressCallback
+      );
+    } catch (err) {
+      console.log("catch", err);
+    }
     const result = await this.createDefaultTerminal(imageTagName);
     return result;
     // TODO: refactor
