@@ -10,9 +10,10 @@ import {
   faFileExport,
   faTerminal,
 } from "@fortawesome/free-solid-svg-icons";
-import { CellDispatchContext } from "../../../stores/CellStore";
+import { CellDispatchContext, CellContext } from "../../../stores/CellStore";
 import { THEME } from "../../../enums";
 import { cellActionCreator } from "../../../actions/CellAction";
+import { request } from "../../../utils";
 
 const BUTTON_TYPE = {
   NEW: faFileMedical,
@@ -28,8 +29,15 @@ const BUTTON_HANDLER = {
   SAVE: (cellDispatch) => {
     cellDispatch(cellActionCreator.save());
   },
-  LOAD: (cellDispatch) => {
+  LOAD: (cellDispatch, cellManager) => {
+    const loadDocument = async () => {
+      const result = await request.do("LOAD");
+      const doc = await result.text();
+      cellManager.load(doc);
+      cellDispatch(cellActionCreator.loadFinish());
+    };
     cellDispatch(cellActionCreator.load());
+    loadDocument();
   },
   CODE: () => {},
   SHARE: () => {},
@@ -52,9 +60,11 @@ const ToolBarButtonWrapper = styled.button`
 const ToolBarButton = ({ buttonType }) => {
   const isTerminal = buttonType === "TERMINAL";
   const cellDispatch = useContext(CellDispatchContext);
+  const { state } = useContext(CellContext);
+  const { cellManager } = state;
 
   const onClick = () => {
-    BUTTON_HANDLER[buttonType](cellDispatch);
+    BUTTON_HANDLER[buttonType](cellDispatch, cellManager);
   };
 
   return (

@@ -4,13 +4,7 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import {
-  getType,
-  getStart,
-  useKeys,
-  uuidManager,
-  request,
-} from "../../../../utils";
+import { getType, getStart, useKeys, uuidManager } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -53,17 +47,7 @@ const MarkdownCell = ({ cellUuid }) => {
   }
 
   useEffect(() => {
-    const loadDocument = async () => {
-      const result = await request.do("LOAD");
-      const doc = await result.text();
-      cellManager.load(doc);
-      dispatch(cellActionCreator.loadFinish());
-      text = cellManager.texts[cellIndex];
-    };
-
-    if (isLoading) {
-      loadDocument();
-    }
+    text = !isLoading ? cellManager.texts[cellIndex] : "";
   }, [isLoading]);
 
   // -------------- Handler -----------------------
