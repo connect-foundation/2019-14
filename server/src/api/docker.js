@@ -2,6 +2,7 @@ const debug = require("debug")("boostwriter:api:Docker");
 const fs = require("fs");
 const Docker = require("dockerode");
 const uuid = require("uuid/v4");
+
 const SIGNAL_TYPE = {
   SIGINT: 2,
   SIGKILL: 9,
@@ -229,8 +230,6 @@ class DockerApi {
 
   async saveContainer(containerId) {
     const container = await this.request.getContainer(containerId);
-    this.request;
-
     const result = await container.commit(containerId);
     return result;
   }
