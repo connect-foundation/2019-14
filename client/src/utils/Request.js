@@ -76,8 +76,10 @@ const request = {
     let option = {
       method,
       mode: "cors",
+      gzip: true,
       headers: {
         "Content-Type": "application/json",
+        Connection: "keep-alive",
       },
     };
     const body = JSON.stringify(data);
