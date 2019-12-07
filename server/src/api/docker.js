@@ -1,7 +1,7 @@
 const debug = require("debug")("boostwriter:api:Docker");
 const fs = require("fs");
 const Docker = require("dockerode");
-
+const uuid = require("uuid/v4");
 const SIGNAL_TYPE = {
   SIGINT: 2,
   SIGKILL: 9,
@@ -158,45 +158,49 @@ class DockerApi {
     });
   }
 
-  async createCustomTerminal(userTerminalInfo) {
-    if (!userTerminalInfo) {
-      const defaultBaseImage = "ubuntu";
-      return this.createContainer(defaultBaseImage);
-    }
+  async createCustomTerminal(dockerFilePath) {
+    const imageTagName = uuid();
     // TODO 유저 입력 파싱
     const defaultOptions = {
-      context: __dirname,
+      context: dockerFilePath,
       src: ["Dockerfile"],
     };
 
     const imageTag = {
-      t: "test",
+      t: imageTagName,
     };
 
-    const progressCallback = (err) => {
+    const onProgressCallback = (data) => {
+      console.log("progress", data);
+    };
+
+    const onFishedCallback = (err, data) => {
       if (err) {
-        debug("progress", err);
+        throw err;
       }
+      console.log("finish", data);
     };
 
-    const finishCallback = (err) => {
-      if (err) {
-        debug("finish", err);
-      }
-    };
+    try {
+      const stream = await this.request.buildImage(defaultOptions, imageTag);
 
-    const stream = await this.request.buildImage(defaultOptions, imageTag);
-
-    this.request.modem.followProgress(stream, progressCallback, finishCallback);
-
+      await this.request.modem.followProgress(
+        stream,
+        onFishedCallback,
+        onProgressCallback
+      );
+    } catch (err) {
+      console.log("catch", err);
+    }
+    const result = await this.createDefaultTerminal(imageTagName);
+    return result;
     // TODO: refactor
-    return null;
   }
 
   async createDefaultTerminal(baseImageName) {
     // TOOD 초기 하드코딩 값 변경하거나 없앨 것
     const defaultCmd = ["/bin/bash"];
-    const defaultTagName = "ubuntu-container-test";
+    const defaultTagName = baseImageName;
     const newContainerInfo = await this.request.createContainer({
       AttachStdin: true,
       AttachStdout: true,

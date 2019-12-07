@@ -11,6 +11,8 @@ import {
   faTerminal,
 } from "@fortawesome/free-solid-svg-icons";
 import { CellDispatchContext } from "../../../stores/CellStore";
+import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
+import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
 import { THEME } from "../../../enums";
 import { cellActionCreator } from "../../../actions/CellAction";
 
@@ -56,6 +58,20 @@ const ToolBarButton = ({ buttonType }) => {
   const onClick = () => {
     BUTTON_HANDLER[buttonType](cellDispatch);
   };
+
+  if (isTerminal) {
+    const dispatch = useContext(TerminalSettingDispatch);
+
+    const handler = () => {
+      dispatch(terminalSettingActionCreator.hideTerminalSettingView());
+    };
+
+    return (
+      <ToolBarButtonWrapper type={buttonType} onClick={handler}>
+        <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} />
+      </ToolBarButtonWrapper>
+    );
+  }
 
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>
