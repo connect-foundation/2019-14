@@ -1,29 +1,23 @@
 import React, { useReducer } from "react";
-import terminalSettingReducer from "./../reducers/TerminalSetting";
+import terminalSettingReducer from "../reducers/TerminalSetting";
 
 const TerminalSettingContext = React.createContext();
 const TerminalSettingDispatch = React.createContext();
 
+// TODO: currentIndex Step 조정
 function TerminalSettingStore({ children }) {
-  const defaultValue = {
-    OS: ["ubuntu", "centos"],
-    PL: ["javascript", "python"],
-    DB: ["mysql", "mongodb"],
+  const initValue = {
+    OS: [],
+    PL: [],
+    DB: [],
+
+    currentStep: 0,
   };
 
-  const initvalue = {
-    os: [],
-    pl: [],
-    db: [],
-  };
-
-  const [state, dispatch] = useReducer(terminalSettingReducer, initvalue);
+  const [state, dispatch] = useReducer(terminalSettingReducer, initValue);
 
   return (
-    <TerminalSettingContext.Provider
-      value={{ state }}
-      defaultValue={defaultValue}
-    >
+    <TerminalSettingContext.Provider value={{ state }}>
       <TerminalSettingDispatch.Provider value={dispatch}>
         {children}
       </TerminalSettingDispatch.Provider>

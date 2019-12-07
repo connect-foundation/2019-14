@@ -57,6 +57,20 @@ const ToolBarButton = ({ buttonType }) => {
     BUTTON_HANDLER[buttonType](cellDispatch);
   };
 
+  if (isTerminal) {
+    const dispatch = useContext(TerminalSettingDispatch);
+
+    const handler = () => {
+      dispatch(terminalSettingActionCreator.hideTerminalSettingView());
+    };
+
+    return (
+      <ToolBarButtonWrapper type={buttonType} onClick={handler}>
+        <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} />
+      </ToolBarButtonWrapper>
+    );
+  }
+
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>
       <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} onClick={onClick} />

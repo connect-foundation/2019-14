@@ -1,8 +1,23 @@
+const { writeDockerfile } = require("../api/makeDockerfile");
+
 const createDefaultTerminal = async (
   dockerInstance,
-  baseImageName = "ubuntu"
+  baseImageName = ["ubuntu"]
 ) => {
-  const containerId = await dockerInstance.createDefaultTerminal(baseImageName);
+  const dockerFilePath = `${process.env.INIT_CWD}/dockerfiles/`;
+  // TODO 사용자 도커 환경 정보 파싱(도커파일 규격에 맞는 형식으로)
+  const dockerfile = baseImageName.reduce((accumulate, element) => {
+    return `${accumulate} FROM ${element}\n`;
+  }, "");
+
+  try {
+    await writeDockerfile(dockerfile);
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+
+  const containerId = await dockerInstance.createCustomTerminal(dockerFilePath);
   return containerId;
 };
 

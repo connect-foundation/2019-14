@@ -4,6 +4,17 @@ const TERMINAL_SETTING_ACTION = {
     PL: "terminal-setting/select/pl",
     DB: "terminal-setting/select/db",
   },
+  UNSELECT: {
+    OS: "terminal-setting/unselect/os",
+    PL: "terminal-setting/unselect/pl",
+    DB: "terminal-setting/unselect/db",
+  },
+  MOVE: {
+    PREV: "terminal-setting/move/prev",
+    NEXT: "terminal-setting/move/next",
+    STEP: "terminal-setting/move/step",
+  },
+  HIDE: "terminal-setting/hide",
 };
 
 const terminalSettingActionCreator = {
@@ -11,12 +22,29 @@ const terminalSettingActionCreator = {
     return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os };
   },
 
-  selectPL() {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.PL };
+  selectPL(pl, index) {
+    return { type: TERMINAL_SETTING_ACTION.SELECT.PL, pl, index };
   },
 
-  selectDB() {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.DB };
+  selectDB(db) {
+    return { type: TERMINAL_SETTING_ACTION.SELECT.DB, db };
+  },
+
+  prevStep(step) {
+    return { type: TERMINAL_SETTING_ACTION.MOVE.PREV, step };
+  },
+
+  nextStep(step) {
+    return { type: TERMINAL_SETTING_ACTION.MOVE.NEXT, step };
+  },
+
+  selectStep(step) {
+    return { type: TERMINAL_SETTING_ACTION.MOVE.STEP, step };
+  },
+
+  hideTerminalSettingView(isHiiden) {
+    console.log("reduce", isHiiden);
+    return { type: TERMINAL_SETTING_ACTION.HIDE, isHiiden };
   },
 };
 
