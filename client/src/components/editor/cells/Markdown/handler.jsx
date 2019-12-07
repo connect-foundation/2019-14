@@ -1,4 +1,6 @@
 import { cellActionCreator } from "../../../../actions/CellAction";
+import { getType, getStart } from "../../../../utils";
+import { cellGenerator } from "../CellGenerator";
 
 const getSelection = () => {
   const selection = window.getSelection();
@@ -76,6 +78,40 @@ const setCursorPosition = () => {
   }
 };
 
+const transformCell = (cellUuid, cellDispatch, text, tag, start = null) => {
+  const { findPattern, matchingTag } = getType(text);
+
+  if (matchingTag && matchingTag !== tag) {
+    const makeNewCell = cellGenerator[matchingTag];
+
+    const isOrderedList = matchingTag === "ol";
+
+    let newStart = null;
+    if (isOrderedList) {
+      newStart = start ? start + 1 : getStart(text);
+    } else {
+      newStart = 0;
+    }
+
+    const cell = makeNewCell(cellUuid, {
+      start: newStart,
+    });
+    let exceptPatternText = "";
+    if (findPattern) {
+      exceptPatternText = text.slice(findPattern[0].length);
+    }
+    cellDispatch(
+      cellActionCreator.transform(
+        cellUuid,
+        exceptPatternText,
+        matchingTag,
+        cell,
+        newStart
+      )
+    );
+  }
+};
+
 export {
   getSelection,
   newCell,
@@ -88,4 +124,5 @@ export {
   blockRelease,
   createCursor,
   setCursorPosition,
+  transformCell,
 };

@@ -4,7 +4,7 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import { getType, getStart, useKeys, uuidManager } from "../../../../utils";
+import { useKeys, uuidManager } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -19,6 +19,7 @@ import {
   blockEndUp,
   blockEndDown,
   blockRelease,
+  transformCell,
 } from "./handler";
 
 setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
@@ -48,6 +49,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   useEffect(() => {
     text = !isLoading ? cellManager.texts[cellIndex] : "";
+    transformCell(cellUuid, dispatch, text, currentTag, start);
   }, [isLoading]);
 
   // -------------- Handler -----------------------
@@ -148,37 +150,7 @@ const MarkdownCell = ({ cellUuid }) => {
   const onKeyUp = (e) => {
     const { textContent } = e.target;
 
-    const { findPattern, matchingTag } = getType(textContent);
-
-    if (matchingTag && matchingTag !== currentTag) {
-      const makeNewCell = cellGenerator[matchingTag];
-
-      const isOrderedList = matchingTag === "ol";
-
-      let newStart = null;
-      if (isOrderedList) {
-        newStart = start ? start + 1 : getStart(textContent);
-      } else {
-        newStart = 0;
-      }
-
-      const cell = makeNewCell(cellUuid, {
-        start: newStart,
-      });
-      let exceptPatternText = "";
-      if (findPattern) {
-        exceptPatternText = textContent.slice(findPattern[0].length);
-      }
-      dispatch(
-        cellActionCreator.transform(
-          cellUuid,
-          exceptPatternText,
-          matchingTag,
-          cell,
-          newStart
-        )
-      );
-    }
+    transformCell(cellUuid, dispatch, textContent, currentTag, start);
   };
 
   const onClick = () => {

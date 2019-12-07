@@ -24,7 +24,7 @@ const query = async function(queryString, ...arg) {
     } catch (err) {
       console.log(`[Query Error] ${err}`);
       conn.release();
-      return false;
+      return err;
     }
   } catch (err) {
     console.log("DB Error");
