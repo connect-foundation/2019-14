@@ -1,19 +1,23 @@
-import React, { useEffect, useContext, useImperativeHandle } from "react";
+import React, { useEffect, useContext } from "react";
 import propTypes from "prop-types";
-import { renderToString } from "react-dom/server";
 
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import { EVENT_TYPE } from "../../../../enums";
-import { useCellState, useKey } from "../../../../utils";
+import { useCellState, useKeys } from "../../../../utils";
 
 import {
   saveCursorPosition,
+  deleteCell,
   focusPrev,
   focusNext,
   setCursorPosition,
   createCursor,
+  blockEndUp,
+  blockEndDown,
+  blockRelease,
+  htmlText,
 } from "../Markdown/handler";
 import { newCell, initCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
@@ -23,21 +27,12 @@ setGenerator("ul", (uuid) => (
     <ListCell cellUuid={uuid} />
   </ul>
 ));
-setGenerator("ol", (uuid, options) => (
-  <ol start={options.start}>
+setGenerator("ol", (uuid, start) => (
+  <ol start={start}>
     <ListCell cellUuid={uuid} />
   </ol>
 ));
 
-const useKeys = (keydownHandlers, isFocus) => {
-  const E = EVENT_TYPE;
-  useKey(E.ENTER, keydownHandlers[E.ENTER], isFocus);
-  useKey(E.ARROW_UP, keydownHandlers[E.ARROW_UP], isFocus);
-  useKey(E.ARROW_DOWN, keydownHandlers[E.ARROW_DOWN], isFocus);
-  useKey(E.BACKSPACE, keydownHandlers[E.BACKSPACE], isFocus);
-};
-
-// const ListCell = React.forwardRef(({ cellUuid }, ref) => {
 const ListCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
@@ -45,15 +40,17 @@ const ListCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
+  const { block } = state;
   let inputRef = null;
+  let intoShiftBlock = false;
 
-  // const inputRef = useRef();
-
-  // useImperativeHandle(ref, () => ({
-  //   focus: () => {
-  //     inputRef.current.focus();
-  //   },
-  // }));
+  if (block.start !== null) {
+    const blockStart = block.start < block.end ? block.start : block.end;
+    const blockEnd = block.start > block.end ? block.start : block.end;
+    if (blockStart <= cellIndex && cellIndex <= blockEnd) {
+      intoShiftBlock = true;
+    }
+  }
 
   const backspaceEvent = (e) => {
     const { length } = e.target.textContent;
@@ -92,14 +89,43 @@ const ListCell = ({ cellUuid }) => {
       dispatch(cellActionCreator.input(cellUuid, textContent));
       newCell(cellUuid, dispatch, componentCallback, tag);
     }
+    blockRelease(dispatch);
   };
 
   const arrowUpEvent = () => {
     focusPrev(dispatch);
+    blockRelease(dispatch);
   };
 
   const arrowDownEvent = () => {
     focusNext(dispatch);
+    blockRelease(dispatch);
+  };
+
+  const shiftArrowUpEvent = () => {
+    blockEndUp(cellUuid, dispatch);
+  };
+
+  const shiftArrowDownEvent = () => {
+    blockEndDown(cellUuid, dispatch);
+  };
+
+  const ctrlAEvent = () => {
+    dispatch(cellActionCreator.blockAll());
+  };
+
+  const ctrlXEvent = () => {
+    dispatch(cellActionCreator.copy());
+    deleteCell(dispatch);
+  };
+
+  const ctrlCEvent = () => {
+    dispatch(cellActionCreator.copy());
+  };
+
+  const ctrlVEvent = () => {
+    dispatch(cellActionCreator.paste(cellUuid));
+    blockRelease(dispatch);
   };
 
   const keydownHandlers = {
@@ -107,6 +133,12 @@ const ListCell = ({ cellUuid }) => {
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
+    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
+    [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
+    [EVENT_TYPE.CTRL_A]: ctrlAEvent,
+    [EVENT_TYPE.CTRL_X]: ctrlXEvent,
+    [EVENT_TYPE.CTRL_C]: ctrlCEvent,
+    [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
   const isFocus = currentIndex === cellIndex;
@@ -131,6 +163,7 @@ const ListCell = ({ cellUuid }) => {
 
   const onClick = () => {
     dispatch(cellActionCreator.focusMove(cellUuid));
+    blockRelease(dispatch);
   };
 
   const onBlur = (e) => {
@@ -138,24 +171,17 @@ const ListCell = ({ cellUuid }) => {
     dispatch(cellActionCreator.input(cellUuid, innerHTML));
   };
 
-  const htmlText = () => {
-    /**
-     * @todo text에 대한 보안장치 필요
-     * @todo text에 대해 원하는 것 외에는 전부 유니코드로 바꾸는 로직 필요
-     * - placeholder의 key 배열에 해당하는 태그 외에는 전부 변환한다던가
-     */
-    return { __html: text };
-  };
-
   return (
     <MarkdownWrapper
       as="li"
       contentEditable
+      intoShiftBlock={intoShiftBlock}
       placeholder={placeholder}
       onClick={onClick}
       onBlur={onBlur}
       ref={inputRef || null}
-      dangerouslySetInnerHTML={htmlText()}
+      dangerouslySetInnerHTML={htmlText(text)}
+      spellCheck={false}
     />
   );
 };
