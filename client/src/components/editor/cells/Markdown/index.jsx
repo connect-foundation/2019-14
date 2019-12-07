@@ -84,7 +84,10 @@ const MarkdownCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     const cursorPos = getSelection();
-    if (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) {
+    if (
+      (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) ||
+      state.block.start !== null
+    ) {
       deleteCell(dispatch, cellUuid, textContent);
     }
   };

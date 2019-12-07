@@ -58,6 +58,9 @@ const ListCell = ({ cellUuid }) => {
       const componentCallback = cellGenerator.p;
       initCell(cellUuid, dispatch, componentCallback);
     }
+    if (state.block.start !== null) {
+      deleteCell(dispatch);
+    }
   };
 
   const enterEvent = (e) => {
