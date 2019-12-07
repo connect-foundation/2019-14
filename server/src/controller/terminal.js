@@ -9,7 +9,13 @@ const createDefaultTerminal = async (
   const dockerfile = baseImageName.reduce((accumulate, element) => {
     return `${accumulate} FROM ${element}\n`;
   }, "");
-  await writeDockerfile(dockerfile);
+
+  try {
+    await writeDockerfile(dockerfile);
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
 
   const containerId = await dockerInstance.createCustomTerminal(dockerFilePath);
   return containerId;
