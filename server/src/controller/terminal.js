@@ -25,8 +25,14 @@ const stopTerminal = async (dockerInstance, containerId) => {
   return result;
 };
 
+const saveTerminal = async (dockerInstance, containerId) => {
+  const result = await dockerInstance.saveContainer(containerId);
+  return result;
+};
+
 module.exports = {
   createDefaultTerminal,
   startTerminal,
   stopTerminal,
+  saveTerminal,
 };

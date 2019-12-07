@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
+import propTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFileMedical,
@@ -9,9 +10,9 @@ import {
   faFileExport,
   faTerminal,
 } from "@fortawesome/free-solid-svg-icons";
-import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
-import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
+import { CellDispatchContext } from "../../../stores/CellStore";
 import { THEME } from "../../../enums";
+import { cellActionCreator } from "../../../actions/CellAction";
 
 const BUTTON_TYPE = {
   NEW: faFileMedical,
@@ -20,6 +21,19 @@ const BUTTON_TYPE = {
   CODE: faFileCode,
   SHARE: faFileExport,
   TERMINAL: faTerminal,
+};
+
+const BUTTON_HANDLER = {
+  NEW: () => {},
+  SAVE: (cellDispatch) => {
+    cellDispatch(cellActionCreator.save());
+  },
+  LOAD: (cellDispatch) => {
+    cellDispatch(cellActionCreator.load());
+  },
+  CODE: () => {},
+  SHARE: () => {},
+  TERMINAL: () => {},
 };
 
 const ToolBarButtonWrapper = styled.button`
@@ -37,6 +51,11 @@ const ToolBarButtonWrapper = styled.button`
 
 const ToolBarButton = ({ buttonType }) => {
   const isTerminal = buttonType === "TERMINAL";
+  const cellDispatch = useContext(CellDispatchContext);
+
+  const onClick = () => {
+    BUTTON_HANDLER[buttonType](cellDispatch);
+  };
 
   if (isTerminal) {
     const dispatch = useContext(TerminalSettingDispatch);
@@ -54,9 +73,13 @@ const ToolBarButton = ({ buttonType }) => {
 
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>
-      <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} />
+      <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} onClick={onClick} />
     </ToolBarButtonWrapper>
   );
+};
+
+ToolBarButton.propTypes = {
+  buttonType: propTypes.string.isRequired,
 };
 
 export { ToolBarButton, BUTTON_TYPE };

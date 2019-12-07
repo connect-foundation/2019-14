@@ -1,6 +1,6 @@
 import getType from "./getType";
 import getStart from "./getStart";
-import UuidManager from "./UuidManager";
+import uuidManager from "./UuidManager";
 import useReducerAsync from "./useReducerAsync";
 import { useKey, useKeys } from "./HandlerManager";
 import useCellState from "./useCellState";
@@ -11,7 +11,7 @@ export {
   utils,
   getType,
   getStart,
-  UuidManager,
+  uuidManager,
   useKey,
   useKeys,
   useCellState,

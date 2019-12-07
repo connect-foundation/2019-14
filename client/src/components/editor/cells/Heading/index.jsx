@@ -56,18 +56,18 @@ const HeadingCell = ({ cellUuid }) => {
       backspaceEvent(e);
     } else {
       const componentCallback = cellGenerator.p;
-      saveCursorPosition(dispatch, inputRef);
+      saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
       newCell(cellUuid, dispatch, componentCallback);
     }
   };
 
-  const arrowUpEvent = (e) => {
-    focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
+  const arrowUpEvent = () => {
+    focusPrev(dispatch);
   };
 
-  const arrowDownEvent = (e) => {
-    focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
+  const arrowDownEvent = () => {
+    focusNext(dispatch);
   };
 
   const keydownHandlers = {
@@ -98,8 +98,12 @@ const HeadingCell = ({ cellUuid }) => {
   }, [inputRef]);
 
   const onClick = () => {
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, tag);
     dispatch(cellActionCreator.focusMove(cellUuid));
+  };
+
+  const onBlur = (e) => {
+    const { innerHTML } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, innerHTML));
   };
 
   const htmlText = () => {
@@ -118,6 +122,7 @@ const HeadingCell = ({ cellUuid }) => {
       isQuote={false}
       placeholder={placeholder}
       onClick={onClick}
+      onBlur={onBlur}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText()}
     />

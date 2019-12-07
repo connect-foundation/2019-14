@@ -18,6 +18,7 @@ const CELL_ACTION = {
     ALL: "cell/block/all",
     UP: "cell/block/up",
     DOWN: "cell/block/down",
+    RELEASE: "cell/block/release",
   },
   CURSOR: {
     MOVE: "cell/cursor/move",
@@ -25,6 +26,11 @@ const CELL_ACTION = {
   CLIPBOARD: {
     COPY: "cell/clipboard/copy",
     PASTE: "cell/clipboard/paste",
+  },
+  TOOLBAR: {
+    SAVE: "cell/toolbar/save",
+    LOAD: "cell/toolbar/load",
+    LOAD_FINISH: "cell/toolbar/load-finish",
   },
 };
 
@@ -180,6 +186,15 @@ const cellActionCreator = {
   },
 
   /**
+   * 블록 범위를 해제한다.
+   */
+  blockRelease() {
+    return {
+      type: CELL_ACTION.BLOCK.RELEASE,
+    };
+  },
+
+  /**
    * 커서 이동시 커서 위치 상태를 갱신한다.
    * 블록이 아닌 경우, selectionStart와 selectionEnd가 같은 값을 가진다.
    * - @todo 셀 이동 시에만 갱신할지, 키다운 이벤트에 전부 이동 시킬지는 미정: 추후 결정
@@ -210,6 +225,24 @@ const cellActionCreator = {
     return {
       type: CELL_ACTION.CLIPBOARD.PASTE,
       cellUuid,
+    };
+  },
+
+  save() {
+    return {
+      type: CELL_ACTION.TOOLBAR.SAVE,
+    };
+  },
+
+  load() {
+    return {
+      type: CELL_ACTION.TOOLBAR.LOAD,
+    };
+  },
+
+  loadFinish() {
+    return {
+      type: CELL_ACTION.TOOLBAR.LOAD_FINISH,
     };
   },
 };

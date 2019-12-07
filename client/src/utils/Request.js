@@ -1,12 +1,20 @@
+import createDebug from "debug";
 import axios from "axios";
+
+const debug = createDebug("boost:request");
 
 const SCHEME = "http";
 
 const BASE_URL = "localhost:9090";
 
+const TERMINAL_API = "api/terminal";
+
 const PATH = {
-  COMMAND: "api/terminal/command/not-pending",
-  TERMINAL: "api/terminal",
+  COMMAND: `${TERMINAL_API}/command/not-pending`,
+  COMMAND_PENDING: `${TERMINAL_API}/command/pending`,
+  COMMAND_SSH: `${TERMINAL_API}/command/ssh`,
+  SAVE: "api/document",
+  LOAD: "api/document",
 };
 
 const defaultOptions = {
@@ -24,13 +32,62 @@ const request = {
       method: "POST",
       url: `${SCHEME}://${BASE_URL}/${PATH.COMMAND}`,
       data: {
-        containerName: to,
+        containerId: to,
         cmd: command,
       },
     };
     const response = await axios(options);
-    console.log(response);
+    debug("not-pending response", response);
     return response;
+  },
+
+  async execPending(to, command, stdin) {
+    const options = {
+      ...defaultOptions,
+      method: "POST",
+      url: `${SCHEME}://${BASE_URL}/${PATH.COMMAND_PENDING}`,
+      data: {
+        containerId: to,
+        cmd: command,
+        stdin,
+      },
+    };
+    const response = await axios(options);
+    debug("pending response", response);
+    return response;
+  },
+
+  async execSsh(command, stdin) {
+    const options = {
+      ...defaultOptions,
+      method: "POST",
+      url: `${SCHEME}://${BASE_URL}/${PATH.COMMAND_SSH}`,
+      data: {
+        cmd: command,
+        stdin,
+      },
+    };
+    const response = await axios(options);
+    debug("pending response", response);
+    return response;
+  },
+  async do(command, method = "GET", data = null) {
+    const uri = `${SCHEME}://${BASE_URL}/${PATH[command]}`;
+    let option = {
+      method,
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const body = JSON.stringify(data);
+    if (method !== "GET") {
+      option = Object.assign(body, { body });
+    }
+    const result = await fetch(uri, {
+      ...option,
+    });
+    return result;
   },
 };
 

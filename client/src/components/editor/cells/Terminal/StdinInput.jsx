@@ -5,10 +5,9 @@ import styled from "styled-components";
 import { THEME } from "../../../../enums";
 import EditorableReplInput from "./EditorableReplInput";
 
-const ReplInputWrapper = styled.div`
-  display: flex;
-
-  height: 100%;
+const StdinInputWrapper = styled.div`
+  display: ${({ isHidden }) => (isHidden ? "none" : "flex")};
+  height: 30px;
 
   padding: 15px;
   margin: 10px;
@@ -16,16 +15,9 @@ const ReplInputWrapper = styled.div`
   background-color: ${THEME.VS_CODE.INNER_BOX};
 `;
 
-const ReplPrompt = styled.div`
-  border-right: 5px solid #00fe3d;
-  padding-right: 10px;
-  width: 5rem;
-`;
-
-const ReplInput = React.forwardRef(
+const StdinInput = React.forwardRef(
   ({ text, isEditorable, inputHandler }, ref) => {
     const inputRef = useRef();
-    const prompt = "User $";
 
     useImperativeHandle(ref, () => ({
       focus: () => {
@@ -37,30 +29,28 @@ const ReplInput = React.forwardRef(
     }));
 
     return (
-      <ReplInputWrapper>
-        <ReplPrompt>{prompt}</ReplPrompt>
+      <StdinInputWrapper isHidden={!isEditorable}>
         <EditorableReplInput
           ref={inputRef}
           onInput={inputHandler}
           isEditorable={isEditorable}
+          data-text="Standard Input"
         >
           {text}
         </EditorableReplInput>
-      </ReplInputWrapper>
+      </StdinInputWrapper>
     );
   }
 );
 
-ReplInputWrapper.propTypes = {
+StdinInput.propTypes = {
+  text: PropTypes.string.isRequired,
+  inputHandler: PropTypes.func.isRequired,
   isEditorable: PropTypes.bool,
-  text: PropTypes.string,
-  inputHandler: PropTypes.func,
 };
 
-ReplInputWrapper.defaultProps = {
+StdinInput.defaultProps = {
   isEditorable: false,
-  text: "",
-  inputHandler: () => {},
 };
 
-export default ReplInput;
+export default StdinInput;

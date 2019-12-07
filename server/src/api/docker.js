@@ -226,6 +226,14 @@ class DockerApi {
     const result = await container.stop();
     return result;
   }
+
+  async saveContainer(containerId) {
+    const container = await this.request.getContainer(containerId);
+    this.request;
+
+    const result = await container.commit(containerId);
+    return result;
+  }
 }
 
 module.exports = { DockerApi, SIGNAL_TYPE };

@@ -9,7 +9,6 @@ import { EVENT_TYPE } from "../../../../enums";
 import { useCellState, useKey } from "../../../../utils";
 
 import {
-  // newCell,
   saveCursorPosition,
   focusPrev,
   focusNext,
@@ -89,18 +88,18 @@ const ListCell = ({ cellUuid }) => {
         ? cellGenerator.ol
         : cellGenerator.ul;
 
-      saveCursorPosition(dispatch, inputRef);
+      saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
       newCell(cellUuid, dispatch, componentCallback, tag);
     }
   };
 
-  const arrowUpEvent = (e) => {
-    focusPrev(cellUuid, e.target.textContent, dispatch, inputRef);
+  const arrowUpEvent = () => {
+    focusPrev(dispatch);
   };
 
-  const arrowDownEvent = (e) => {
-    focusNext(cellUuid, e.target.textContent, dispatch, inputRef);
+  const arrowDownEvent = () => {
+    focusNext(dispatch);
   };
 
   const keydownHandlers = {
@@ -131,8 +130,12 @@ const ListCell = ({ cellUuid }) => {
   }, [inputRef]);
 
   const onClick = () => {
-    handlerManager.attachKeydownEvent(window, keydownHandlers, cellIndex, tag);
     dispatch(cellActionCreator.focusMove(cellUuid));
+  };
+
+  const onBlur = (e) => {
+    const { innerHTML } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, innerHTML));
   };
 
   const htmlText = () => {
@@ -150,6 +153,7 @@ const ListCell = ({ cellUuid }) => {
       contentEditable
       placeholder={placeholder}
       onClick={onClick}
+      onBlur={onBlur}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText()}
     />

@@ -21,6 +21,7 @@ const debug = createDebug("boost:component:repl-container");
 const renderReplList = (cellIndex, terminalState) => {
   const {
     inputTexts,
+    stdinTexts,
     outputTexts,
 
     isActives,
@@ -34,6 +35,7 @@ const renderReplList = (cellIndex, terminalState) => {
         key={componentKey}
         cellIndex={index}
         inputText={inputTexts[index]}
+        stdinText={stdinTexts[index]}
         outputText={outputTexts[index]}
         isActive={isActives[index]}
         isLoading={isLoadings[index]}
@@ -44,17 +46,34 @@ const renderReplList = (cellIndex, terminalState) => {
   return replList;
 };
 
-const ReplContainer = ({ cellIndex, isCellFocus }) => {
+const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
   const [movable, setMovable] = useState(null);
+  const [isReplFocus, setIsReplFocus] = useState(true);
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const dispatchToCell = useContext(CellDispatchContext);
   const { terminalState } = useContext(TerminalContext);
-  const { focusIndex, currentText, replCount } = terminalState;
+  const { focusIndex, currentText, currentStdin, replCount } = terminalState;
 
   const focusHandlers = {
     [EVENT_TYPE.ENTER]: (e) => {
       e.preventDefault();
-      dispatchToTerminal(terminalAction.createNewRepl(replCount));
+      if (isReplFocus) {
+        setIsReplFocus(false);
+      } else {
+        setIsReplFocus(true);
+        dispatchToTerminal(terminalAction.createNewRepl(replCount));
+      }
+    },
+
+    [EVENT_TYPE.BACKSPACE]: (e) => {
+      const { textContent } = e.target;
+      if (textContent.length === 0) {
+        if (replCount === 0) {
+          dispatchToCell(cellAction.delete(cellUuid));
+        } else {
+          dispatchToTerminal(terminalAction.deleteRepl());
+        }
+      }
     },
 
     [EVENT_TYPE.ARROW_UP]: (e) => {
@@ -81,13 +100,20 @@ const ReplContainer = ({ cellIndex, isCellFocus }) => {
     },
   };
 
-  useKeys(focusHandlers, isCellFocus, [focusIndex]);
+  useKeys(focusHandlers, isCellFocus, [focusIndex, isReplFocus]);
 
   useEffect(() => {
     if (isCellFocus) {
-      setMovable(<MovableReplCell initText={currentText} />);
+      setMovable(
+        <MovableReplCell
+          key="movable-repl-cell"
+          currentText={currentText}
+          currentStdin={currentStdin}
+          isReplFocus={isReplFocus}
+        />
+      );
     }
-  }, [focusIndex]);
+  }, [focusIndex, isReplFocus]);
 
   const isFirstRender = movable && replCount === 0;
   if (isFirstRender) {

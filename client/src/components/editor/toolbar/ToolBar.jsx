@@ -11,7 +11,8 @@ const ToolBarWrapper = styled.nav`
 const ToolBar = () => {
   const getToolBarButtons = () => {
     return Object.keys(BUTTON_TYPE).map((buttonType, index) => {
-      return <ToolBarButton key={index} buttonType={buttonType} />;
+      const key = `toolbar-button-${index}`;
+      return <ToolBarButton key={key} buttonType={buttonType} />;
     });
   };
 
