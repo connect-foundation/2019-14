@@ -6,6 +6,7 @@ const BASE_URL = "localhost:9090";
 
 const PATH = {
   COMMAND: "api/terminal/command/not-pending",
+  TERMINAL: "api/terminal",
 };
 
 const defaultOptions = {
@@ -34,13 +35,10 @@ const request = {
 };
 
 const createTerminalFetch = async (data) => {
-  const localDomain = "localhost";
-  const port = "3000";
-  const path = "api/terminal";
   const options = {
     ...defaultOptions,
     method: "POST",
-    url: `${SCHEME}://${localDomain}:${port}/${path}`,
+    url: `${SCHEME}://${BASE_URL}/${PATH.TERMINAL}`,
     data: {
       dockerData: data,
     },
