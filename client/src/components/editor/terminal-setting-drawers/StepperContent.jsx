@@ -30,8 +30,6 @@ const StepperContent = ({ element, index }) => {
     }
   };
 
-  console.log(state.OS, state.PL, state.DB);
-
   return (
     <StepperContentWrapper>
       <input

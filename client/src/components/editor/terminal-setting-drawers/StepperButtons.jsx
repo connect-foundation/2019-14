@@ -6,7 +6,6 @@ import {
   TerminalSettingContext,
 } from "../../../stores/TerminalSetting";
 import { createTerminalFetch } from "../../../utils/Request";
-import { TerminalContext } from "../../../stores/TerminalStore";
 
 const StepperButtonsWrapper = styled.footer`
   display: flex;
@@ -16,7 +15,6 @@ const StepperButtonsWrapper = styled.footer`
 
 const StepperButtons = () => {
   const { state } = useContext(TerminalSettingContext);
-  const { terminalState } = useContext(TerminalContext);
   const dispatch = useContext(TerminalSettingDispatch);
 
   const clickHandler = (e) => {
