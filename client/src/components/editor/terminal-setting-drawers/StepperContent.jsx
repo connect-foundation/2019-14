@@ -16,13 +16,17 @@ const StepperContent = ({ element, index }) => {
 
   const type = state.currentStep ? "checkbox" : "radio";
 
-  const onClick = () => {
+  const isChecked = state[
+    TERMINAL_SETTING_STEP[state.currentStep].type
+  ].includes(element);
+
+  const onChange = (e) => {
     if (state.currentStep === 0) {
-      dispatch(terminalSettingActionCreator.selectOS(element, index));
+      dispatch(terminalSettingActionCreator.selectOS(e.target.id));
     } else if (state.currentStep === 1) {
-      dispatch(terminalSettingActionCreator.selectPL(element, index));
+      dispatch(terminalSettingActionCreator.selectPL(e.target.id));
     } else {
-      dispatch(terminalSettingActionCreator.selectDB(element, index));
+      dispatch(terminalSettingActionCreator.selectDB(e.target.id));
     }
   };
 
@@ -32,11 +36,8 @@ const StepperContent = ({ element, index }) => {
         type={type}
         id={element}
         name={state.currentStep}
-        onClick={onClick}
-        checked={
-          // TODO 변수명이 너무 김. 더 짧고 이애하기 쉬운 변수로 수정할 것
-          state[TERMINAL_SETTING_STEP[state.currentStep].type].isChecked[index]
-        }
+        onChange={onChange}
+        checked={isChecked}
       />
       <label htmlFor={element}>{element}</label>
     </StepperContentWrapper>

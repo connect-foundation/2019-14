@@ -18,16 +18,16 @@ const TERMINAL_SETTING_ACTION = {
 };
 
 const terminalSettingActionCreator = {
-  selectOS(os, index) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os, index };
+  selectOS(os) {
+    return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os };
   },
 
   selectPL(pl, index) {
     return { type: TERMINAL_SETTING_ACTION.SELECT.PL, pl, index };
   },
 
-  selectDB(db, index) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.DB, db, index };
+  selectDB(db) {
+    return { type: TERMINAL_SETTING_ACTION.SELECT.DB, db };
   },
 
   prevStep(step) {
@@ -41,6 +41,7 @@ const terminalSettingActionCreator = {
   selectStep(step) {
     return { type: TERMINAL_SETTING_ACTION.MOVE.STEP, step };
   },
+
   hideTerminalSettingView(isHiiden) {
     console.log("reduce", isHiiden);
     return { type: TERMINAL_SETTING_ACTION.HIDE, isHiiden };

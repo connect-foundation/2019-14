@@ -7,19 +7,10 @@ const TerminalSettingDispatch = React.createContext();
 // TODO: currentIndex Step 조정
 function TerminalSettingStore({ children }) {
   const initValue = {
-    OS: {
-      kind: [],
-      isChecked: [false, false],
-    },
-    PL: {
-      kind: [],
-      isChecked: [false, false],
-    },
-    DB: {
-      kind: [],
-      isChecked: [false, false],
-    },
-    isHidden: false,
+    OS: [],
+    PL: [],
+    DB: [],
+
     currentStep: 0,
   };
 
