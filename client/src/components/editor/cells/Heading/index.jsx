@@ -156,6 +156,7 @@ const HeadingCell = ({ cellUuid }) => {
       as={tag}
       contentEditable
       intoShiftBlock={intoShiftBlock}
+      isCurrentCell={cellIndex === currentIndex}
       isQuote={false}
       placeholder={placeholder}
       onClick={onClick}
