@@ -9,23 +9,22 @@ const TermialSettingDrawerWrapper = styled.section`
   width: 20rem;
   height: 100%;
   background-color: silver;
-  right: 0;
   top: 12.5%;
-  position: fixed;
+
+  left: ${({ isHidden }) => {
+    isHidden && "9999rem";
+  }};
 `;
 
 const TerminalSettingDrawer = () => {
   const { state } = useContext(TerminalSettingContext);
-  if (state.isHidden) {
-    return (
-      <TermialSettingDrawerWrapper>
-        <Header />
-        <Contents />
-      </TermialSettingDrawerWrapper>
-    );
-  }
 
-  return <></>;
+  return (
+    <TermialSettingDrawerWrapper isHidden={state.isHidden}>
+      <Header />
+      <Contents />
+    </TermialSettingDrawerWrapper>
+  );
 };
 
 export default TerminalSettingDrawer;

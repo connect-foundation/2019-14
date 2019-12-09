@@ -12,6 +12,8 @@ function TerminalSettingStore({ children }) {
     DB: [],
 
     currentStep: 0,
+
+    isHidden: true,
   };
 
   const [state, dispatch] = useReducer(terminalSettingReducer, initValue);

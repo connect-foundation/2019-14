@@ -126,15 +126,15 @@ router
   .route("/")
   .post(
     wrapAsync(async (req, res) => {
-      const { dockerData } = req.body;
+      const { terminalOption } = req.body;
       const docker = req.app.get("docker");
-      const result = await createDefaultTerminal(docker, dockerData);
+      const result = await createDefaultTerminal(docker, terminalOption);
 
       if (!result) {
         res.status(400).json({ message: "not created terminal" });
         return;
       }
-      console.log(result);
+      console.log(result, "server-route");
       res.status(201).json({ containerId: result });
     })
   )

@@ -1,6 +1,26 @@
 const path = require("path");
 const fs = require("fs").promises;
 
+const parseTerminalOption = (terminalOption) => {
+  let result = `FROM ${terminalOption.OS[0]}`;
+
+  if (!terminalOption.PL.length && !terminalOption.DB.length) return result;
+
+  if (terminalOption.OS[0] === "ubuntu") {
+    result = `${result}\nRUN apt-get update -y && apt-get install -y `;
+  }
+
+  terminalOption.PL.forEach((element) => {
+    result = `${result} ${element}`;
+  });
+
+  terminalOption.DB.forEach((element) => {
+    result = `${result} ${element}`;
+  });
+
+  return result;
+};
+
 // 같은 이름의 파일은 덮어 씀
 const writeDockerfile = async (text) => {
   const data = new Uint8Array(Buffer.from(text));
@@ -29,4 +49,4 @@ const makeDockerfile = async (text) => {
   }
 };
 
-module.exports = { writeDockerfile };
+module.exports = { parseTerminalOption, writeDockerfile };

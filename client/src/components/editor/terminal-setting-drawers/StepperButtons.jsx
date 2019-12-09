@@ -27,15 +27,16 @@ const StepperButtons = () => {
 
   const terminalButtonClickHandler = async () => {
     // TODO 함수로 분리 할 것
-    let terminalInfo = [];
+    const option = {
+      OS: state.OS,
+      PL: state.PL,
+      DB: state.DB,
+    };
 
-    Object.values(state).forEach((element) => {
-      if (Array.isArray(element.kind)) {
-        terminalInfo = terminalInfo.concat(element.kind);
-      }
-    });
     // TODO 받아 온 값을 store에 저장(cell, terminal)
-    const result = await createTerminalFetch(terminalInfo);
+    const result = await createTerminalFetch(option);
+
+    console.log(result);
   };
 
   return (

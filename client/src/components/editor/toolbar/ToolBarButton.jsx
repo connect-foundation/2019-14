@@ -13,6 +13,8 @@ import {
 import { CellDispatchContext } from "../../../stores/CellStore";
 import { THEME } from "../../../enums";
 import { cellActionCreator } from "../../../actions/CellAction";
+import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
+import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
 
 const BUTTON_TYPE = {
   NEW: faFileMedical,
@@ -46,7 +48,7 @@ const ToolBarButtonWrapper = styled.button`
   cursor: pointer;
   color: ${THEME.VS_CODE.FONT};
 
-  margin-left: ${(props) => (props.isTerminal ? "auto" : "0px")};
+  margin-left: ${({ isTerminal }) => isTerminal && "auto"};
 `;
 
 const ToolBarButton = ({ buttonType }) => {
