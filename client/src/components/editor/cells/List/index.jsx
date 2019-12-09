@@ -180,8 +180,9 @@ const ListCell = ({ cellUuid }) => {
   };
 
   const onBlur = (e) => {
-    const { innerHTML } = e.target;
-    dispatch(cellActionCreator.input(cellUuid, innerHTML));
+    const { textContent } = e.target;
+    const cellText = changeSpecialCharacter(textContent);
+    dispatch(cellActionCreator.input(cellUuid, cellText));
   };
 
   return (

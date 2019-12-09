@@ -87,8 +87,7 @@ const MarkdownCell = ({ cellUuid }) => {
       (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) ||
       state.block.start !== null
     ) {
-      const cellText = changeSpecialCharacter(textContent);
-      deleteCell(dispatch, cellUuid, cellText);
+      deleteCell(dispatch, cellUuid, textContent);
     }
   };
 
