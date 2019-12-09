@@ -8,6 +8,7 @@ import { EVENT_TYPE } from "../../../../enums";
 import { useCellState, useKeys } from "../../../../utils";
 
 import {
+  getSelection,
   saveCursorPosition,
   deleteCell,
   focusPrev,
@@ -53,9 +54,14 @@ const ListCell = ({ cellUuid }) => {
   }
 
   const backspaceEvent = (e) => {
-    const { length } = e.target.textContent;
-    if (length === 0) {
+    const { textContent } = e.target;
+    const currentCursor = getSelection();
+    if (
+      textContent.length === 0 ||
+      (currentCursor.start === 0 && currentCursor.end === 0)
+    ) {
       const componentCallback = cellGenerator.p;
+      dispatch(cellActionCreator.input(cellUuid, textContent));
       initCell(cellUuid, dispatch, componentCallback);
     }
     if (state.block.start !== null) {
