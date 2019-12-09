@@ -14,13 +14,12 @@ import {
   saveCursorPosition,
   focusPrev,
   focusNext,
-  createCursor,
-  setCursorPosition,
   blockEndUp,
   blockEndDown,
   blockRelease,
   transformCell,
   htmlText,
+  changeSpecialCharacter,
 } from "./handler";
 
 setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
@@ -88,12 +87,14 @@ const MarkdownCell = ({ cellUuid }) => {
       (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) ||
       state.block.start !== null
     ) {
-      deleteCell(dispatch, cellUuid, textContent);
+      const cellText = changeSpecialCharacter(textContent);
+      deleteCell(dispatch, cellUuid, cellText);
     }
   };
 
   const ctrlAEvent = () => {
     dispatch(cellActionCreator.blockAll());
+    window.getSelection().collapse(inputRef.current.firstChild, 0);
   };
 
   const ctrlXEvent = () => {
@@ -133,11 +134,18 @@ const MarkdownCell = ({ cellUuid }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-
-      const content = createCursor(text, cursor);
-      inputRef.current.innerHTML = content;
-      setCursorPosition();
-      inputRef.current.normalize();
+      const cellText = changeSpecialCharacter(text);
+      if (cellText) {
+        inputRef.current.innerHTML = cellText;
+      } else {
+        const emptyElement = document.createTextNode("");
+        inputRef.current.appendChild(emptyElement);
+      }
+      const caret =
+        cursor.start > inputRef.current.firstChild.length
+          ? inputRef.current.firstChild.length
+          : cursor.start;
+      window.getSelection().collapse(inputRef.current.firstChild, caret);
     }
     /**
      * 거슬려서 잠시 주석
@@ -163,8 +171,9 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const onBlur = (e) => {
-    const { innerHTML } = e.target;
-    dispatch(cellActionCreator.input(cellUuid, innerHTML));
+    const { textContent } = e.target;
+    const cellText = changeSpecialCharacter(textContent);
+    dispatch(cellActionCreator.input(cellUuid, cellText));
   };
 
   const renderTarget = (
@@ -178,6 +187,7 @@ const MarkdownCell = ({ cellUuid }) => {
       onBlur={onBlur}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText(text)}
+      suppressContentEditableWarning
       contentEditable
       spellCheck={false}
     />

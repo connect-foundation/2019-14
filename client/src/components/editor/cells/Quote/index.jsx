@@ -13,8 +13,7 @@ import {
   deleteCell,
   focusPrev,
   focusNext,
-  setCursorPosition,
-  createCursor,
+  changeSpecialCharacter,
   blockEndUp,
   blockEndDown,
   blockRelease,
@@ -32,7 +31,7 @@ const QuoteCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block } = state;
+  const { block, cursor } = state;
   let inputRef = null;
   let intoShiftBlock = false;
 
@@ -93,6 +92,7 @@ const QuoteCell = ({ cellUuid }) => {
 
   const ctrlAEvent = () => {
     dispatch(cellActionCreator.blockAll());
+    window.getSelection().collapse(inputRef.current.firstChild, 0);
   };
 
   const ctrlXEvent = () => {
@@ -132,13 +132,18 @@ const QuoteCell = ({ cellUuid }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-
-      if (text.length > 0) {
-        const content = createCursor(text, state.cursor);
-        inputRef.current.innerHTML = content;
-        setCursorPosition();
-        inputRef.current.normalize();
+      const cellText = changeSpecialCharacter(text);
+      if (cellText) {
+        inputRef.current.innerHTML = cellText;
+      } else {
+        const emptyElement = document.createTextNode("");
+        inputRef.current.appendChild(emptyElement);
       }
+      const caret =
+        cursor.start > inputRef.current.firstChild.length
+          ? inputRef.current.firstChild.length
+          : cursor.start;
+      window.getSelection().collapse(inputRef.current.firstChild, caret);
     }
   }, [inputRef]);
 
