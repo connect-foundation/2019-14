@@ -94,7 +94,6 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const ctrlAEvent = () => {
     dispatch(cellActionCreator.blockAll());
-    window.getSelection().collapse(inputRef.current.firstChild, 0);
   };
 
   const ctrlXEvent = () => {
@@ -157,7 +156,7 @@ const MarkdownCell = ({ cellUuid }) => {
     // window.addEventListener("beforeunload", isSaved);
   }, [inputRef]);
 
-  useKeys(keydownHandlers, isFocus);
+  useKeys(keydownHandlers, isFocus, [block.end]);
 
   const onKeyUp = (e) => {
     const { textContent } = e.target;

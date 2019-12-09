@@ -92,7 +92,6 @@ const QuoteCell = ({ cellUuid }) => {
 
   const ctrlAEvent = () => {
     dispatch(cellActionCreator.blockAll());
-    window.getSelection().collapse(inputRef.current.firstChild, 0);
   };
 
   const ctrlXEvent = () => {
@@ -127,7 +126,7 @@ const QuoteCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus);
+  useKeys(keydownHandlers, isFocus, [block.end]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {

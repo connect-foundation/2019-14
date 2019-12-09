@@ -14,20 +14,8 @@ const debug = createDebug("boost:reducer:cell");
 
 const cellReducerHandler = {
   [CELL_ACTION.INIT]: (state, action) => {
-    const { cellManager } = state;
     const { cellUuid, createMarkdownCell, tag } = action;
     const newCellUuid = cellUuid || uuid();
-
-    if (state.block.start !== null) {
-      const result = block.blockDelete(cellManager, { block: state.block });
-
-      debug("Cells delete for Block", result);
-
-      return {
-        ...state,
-        ...result,
-      };
-    }
 
     common.initUuid(cellUuid, newCellUuid);
     common.initCell(cellUuid, state.cellManager, {
