@@ -24,7 +24,7 @@ const query = async function(queryString, ...arg) {
     } catch (err) {
       console.log(`[Query Error] ${err}`);
       conn.release();
-      return false;
+      return err;
     }
   } catch (err) {
     console.log("DB Error");
@@ -36,8 +36,13 @@ router.document = {
   async chkExisted(userId) {
     const queryString = `select count(*) as result from editors where user_id = ?`;
     const rows = await query(queryString, [userId]);
-    const result = await rows[0].result;
-    if (result > 0) return true;
+    if (rows === "Error: read ECONNRESET") {
+      const retry = await query(queryString, [userId]);
+      if (retry !== true) return false;
+      return retry;
+    }
+    const result = await rows[0];
+    if (result.length && result.length > 0) return true;
     return false;
   },
   async save(userId, docContent) {

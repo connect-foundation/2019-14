@@ -4,13 +4,7 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import {
-  getType,
-  getStart,
-  useKeys,
-  uuidManager,
-  request,
-} from "../../../../utils";
+import { useKeys, uuidManager } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -25,6 +19,8 @@ import {
   blockEndUp,
   blockEndDown,
   blockRelease,
+  transformCell,
+  htmlText,
 } from "./handler";
 
 setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
@@ -53,17 +49,8 @@ const MarkdownCell = ({ cellUuid }) => {
   }
 
   useEffect(() => {
-    const loadDocument = async () => {
-      const result = await request.do("LOAD");
-      const doc = await result.text();
-      cellManager.load(doc);
-      dispatch(cellActionCreator.loadFinish());
-      text = cellManager.texts[cellIndex];
-    };
-
-    if (isLoading) {
-      loadDocument();
-    }
+    text = !isLoading ? cellManager.texts[cellIndex] : "";
+    transformCell(cellUuid, dispatch, text, currentTag, start);
   }, [isLoading]);
 
   // -------------- Handler -----------------------
@@ -164,28 +151,7 @@ const MarkdownCell = ({ cellUuid }) => {
   const onKeyUp = (e) => {
     const { textContent } = e.target;
 
-    const matchingTag = getType(textContent);
-
-    if (matchingTag && matchingTag !== currentTag) {
-      const makeNewCell = cellGenerator[matchingTag];
-
-      const isOrderedList = matchingTag === "ol";
-
-      let newStart = null;
-      if (isOrderedList) {
-        newStart = start ? start + 1 : getStart(textContent);
-      } else {
-        newStart = 0;
-      }
-
-      const cell = makeNewCell(cellUuid, {
-        start: newStart,
-      });
-
-      dispatch(
-        cellActionCreator.transform(cellUuid, "", matchingTag, cell, newStart)
-      );
-    }
+    transformCell(cellUuid, dispatch, textContent, currentTag, start);
   };
 
   const onClick = () => {
@@ -198,26 +164,19 @@ const MarkdownCell = ({ cellUuid }) => {
     dispatch(cellActionCreator.input(cellUuid, innerHTML));
   };
 
-  const htmlText = () => {
-    /**
-     * @todo text에 대한 보안장치 필요
-     * @todo text에 대해 원하는 것 외에는 전부 유니코드로 바꾸는 로직 필요
-     * - placeholder의 key 배열에 해당하는 태그 외에는 전부 변환한다던가
-     */
-    return { __html: text };
-  };
-
   const renderTarget = (
     <MarkdownWrapper
       as={currentTag}
       intoShiftBlock={intoShiftBlock}
+      isCurrentCell={cellIndex === currentIndex}
       placeholder={PLACEHOLDER[currentTag]}
       onKeyUp={onKeyUp}
       onClick={onClick}
       onBlur={onBlur}
       ref={inputRef || null}
-      dangerouslySetInnerHTML={htmlText()}
+      dangerouslySetInnerHTML={htmlText(text)}
       contentEditable
+      spellCheck={false}
     />
   );
 

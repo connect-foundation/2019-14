@@ -1,5 +1,6 @@
 import { uuid } from "uuidv4";
 import { uuidManager } from "../../utils";
+import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
 const initUuid = (cellUuid, newCellUuid) => {
   if (!cellUuid) {
@@ -8,13 +9,14 @@ const initUuid = (cellUuid, newCellUuid) => {
 };
 
 const initCell = (cellUuid, cellManager, dataObj) => {
+  const { cell, text, tag } = dataObj;
   const uuidArray = uuidManager.getUuidArray();
   const index = cellUuid ? uuidManager.findIndex(cellUuid) : 0;
   const targetUuid = uuidArray[index];
   cellManager.change(index, {
-    cell: dataObj.cell(targetUuid),
-    text: dataObj.text,
-    tag: dataObj.tag,
+    cell: cell ? cell(targetUuid) : cellGenerator.p(targetUuid),
+    text,
+    tag,
   });
 };
 
@@ -87,6 +89,14 @@ const deleteCell = (cellUuid, cellManager, dataObj) => {
   };
   cellManager.delete(index, flag);
   cellManager.change(prevIndex, { text: joinedText });
+  if (cellManager.cells.length === 0) {
+    initUuid(null, uuid());
+    initCell(cellUuid, cellManager, {
+      cell: cellGenerator.p,
+      text: "",
+      tag: "p",
+    });
+  }
   return {
     cursor,
     currentIndex: prevIndex,

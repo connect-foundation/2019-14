@@ -87,6 +87,7 @@ CellManager.prototype.load = function(doc) {
   const cell = cellGenerator.p;
   this.cells = [];
   this.tags = [];
+  uuidManager.init();
   this.texts = array.reduce((acc, val) => {
     const newCellUuid = uuid();
     this.cells.push(cell(newCellUuid));
