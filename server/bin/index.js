@@ -7,8 +7,7 @@
 require("../src/env-loader").appendEnv("remote");
 
 const debug = require("debug")("boostwriter:index");
-const http = require("http");
-const app = require("../src/app");
+const { app, server } = require("../src/app");
 
 /**
  * Get port from environment and store in Express.
@@ -17,11 +16,6 @@ const app = require("../src/app");
 const port = process.env.EXPRESS_PORT || 3000;
 app.set("port", port);
 
-/**
- * Create HTTP server.
- */
-
-const server = http.createServer(app);
 /**
  * Event listener for HTTP server "error" event.
  */
