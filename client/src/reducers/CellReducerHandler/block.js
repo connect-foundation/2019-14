@@ -1,4 +1,7 @@
+import { uuid } from "uuidv4";
 import { uuidManager } from "../../utils";
+import common from "./common";
+import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
 const selectAllBlock = (lastCellIndex) => {
   const block = {
@@ -84,6 +87,16 @@ const blockDelete = (cellManager, dataObj) => {
     start: texts[currentIndex] ? texts[currentIndex].length : 0,
     end: texts[currentIndex] ? texts[currentIndex].length : 0,
   };
+
+  if (cellManager.cells.length === 0) {
+    const cellUuid = uuid();
+    common.initUuid(null, cellUuid);
+    common.initCell(cellUuid, cellManager, {
+      cell: cellGenerator.p,
+      text: "",
+      tag: "p",
+    });
+  }
 
   return {
     cursor,

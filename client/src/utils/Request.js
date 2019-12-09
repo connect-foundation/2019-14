@@ -77,13 +77,15 @@ const request = {
     let option = {
       method,
       mode: "cors",
+      gzip: true,
       headers: {
         "Content-Type": "application/json",
+        Connection: "keep-alive",
       },
     };
     const body = JSON.stringify(data);
     if (method !== "GET") {
-      option = Object.assign(body, { body });
+      option = Object.assign(option, { body });
     }
     const result = await fetch(uri, {
       ...option,
