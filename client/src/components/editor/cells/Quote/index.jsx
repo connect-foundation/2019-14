@@ -154,8 +154,7 @@ const QuoteCell = ({ cellUuid }) => {
 
   const onBlur = (e) => {
     const { textContent } = e.target;
-    const cellText = changeSpecialCharacter(textContent);
-    dispatch(cellActionCreator.input(cellUuid, cellText));
+    dispatch(cellActionCreator.input(cellUuid, textContent));
   };
 
   return (

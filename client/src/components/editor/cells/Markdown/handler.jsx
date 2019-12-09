@@ -59,13 +59,6 @@ const changeSpecialCharacter = (html) => {
   return str;
 };
 
-const resetSpecialCharacter = (text) => {
-  let str = text.slice();
-  str = str.replace(/(&lt;)/g, "<");
-  str = str.replace(/(&gt;)/g, ">");
-  return str;
-};
-
 const transformCell = (cellUuid, cellDispatch, text, tag, start = null) => {
   const { findPattern, matchingTag } = getType(text);
 
@@ -121,6 +114,5 @@ export {
   blockRelease,
   transformCell,
   changeSpecialCharacter,
-  resetSpecialCharacter,
   htmlText,
 };
