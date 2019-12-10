@@ -1,4 +1,26 @@
 const fs = require("fs").promises;
+require("../../src/env-loader").appendEnv("remote");
+
+const parseTerminalOption = (terminalOption) => {
+  let result =
+    terminalOption.OS[0] === "ubuntu"
+      ? makeUbuntuTypeTerminalText(terminalOption)
+      : makeCentosTypeTerminalText(terminalOption);
+
+  // docker container ssh 접속을 위한 셋팅
+  result = `${result}\nRUN mkdir /var/run/sshd`;
+  result = `${result}\nRUN echo '${process.env.DOCKER_SSH_ACCOUNT}' | chpasswd`;
+  result = `${result}\nRUN sed -i '${process.env.DOCKER_SSH_CONFIG}' /etc/ssh/sshd_config`;
+
+  result = `${result}\nRUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd`;
+  result = `${result}\nENV NOTVISIBLE "in users profile"`;
+  result = `${result}\nRUN echo "export VISIBLE=now" >> /etc/profile`;
+  result = `${result}\nEXPOSE 22`;
+  result = `${result}\nCMD ["/usr/sbin/sshd", "-D"]`;
+
+  console.log("dockerfile", result);
+  return result;
+};
 
 const makeUbuntuTypeTerminalText = (terminalOption) => {
   let dockerText = `FROM ${terminalOption.OS[0]}:16.04`;
@@ -79,4 +101,4 @@ const makeDockerfile = async (text) => {
   }
 };
 
-module.exports = { writeDockerfile };
+module.exports = { parseTerminalOption, writeDockerfile };
