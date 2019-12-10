@@ -1,5 +1,36 @@
 const fs = require("fs").promises;
 
+const makeUbuntuTypeTerminalText = (terminalOption) => {
+  let dockerText = `FROM ${terminalOption.OS[0]}:16.04`;
+  dockerText = `${dockerText}\nRUN apt-get update && apt-get install -y apt apt-transport-https openssh-server ca-certificates wget`;
+
+  let tmpText = "";
+
+  if (terminalOption.DB.length !== 0) {
+    terminalOption.DB.forEach((element) => {
+      if (element === "mongo") {
+        dockerText = `${dockerText}\nRUN wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -`;
+        dockerText = `${dockerText}\nRUN echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.2 multiverse"
+         | tee /etc/apt/sources.list.d/mongodb-org-4.2.list`;
+        tmpText = `${tmpText} mongodb-org`;
+      }
+
+      if (element === "mysql") {
+        tmpText = `${tmpText} mysql-server`;
+      }
+    });
+  }
+
+  dockerText = `${dockerText}\nRUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y ${tmpText}`;
+
+  if (terminalOption.PL.length !== 0) {
+    terminalOption.PL.forEach((element) => {
+      dockerText = `${dockerText} ${element}`;
+    });
+  }
+  return dockerText;
+};
+
 const makeCentosTypeTerminalText = (terminalOption) => {
   let dockerText = `FROM ${terminalOption.OS[0]}:7`;
   dockerText = `${dockerText}\nRUN yum update -y && yum install -y openssh-server`;
