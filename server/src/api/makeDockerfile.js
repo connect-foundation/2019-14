@@ -74,7 +74,8 @@ const makeCentosTypeTerminalText = (terminalOption) => {
   return dockerText;
 };
 // 같은 이름의 파일은 덮어 씀
-const writeDockerfile = async (text) => {
+const writeDockerfile = async (terminalOption) => {
+  const text = parseTerminalOption(terminalOption);
   const data = new Uint8Array(Buffer.from(text));
   const result = await fs.writeFile(
     `${process.env.INIT_CWD}/dockerfiles/Dockerfile`,
@@ -101,4 +102,4 @@ const makeDockerfile = async (text) => {
   }
 };
 
-module.exports = { parseTerminalOption, writeDockerfile };
+module.exports = { writeDockerfile };
