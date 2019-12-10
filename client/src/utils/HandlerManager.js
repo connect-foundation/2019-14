@@ -186,9 +186,12 @@ const useKey = (keyEvent, handler, isFocus, deps = []) => {
 };
 
 const useKeys = (handlers, isFocus, deps = []) => {
-  const keydownHandlers = Object.entries(handlers).map(([type, handler]) => {
+  const defaultHandlers = [];
+  defaultHandlers.push(makeKeyHandler[EVENT_TYPE.SHIFT_ENTER](() => {}));
+  const cellHandlers = Object.entries(handlers).map(([type, handler]) => {
     return makeKeyHandler[type](handler);
   });
+  const keydownHandlers = [...defaultHandlers, ...cellHandlers];
 
   useEffect(() => {
     if (isFocus) {

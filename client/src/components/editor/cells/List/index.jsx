@@ -8,12 +8,12 @@ import { EVENT_TYPE } from "../../../../enums";
 import { useCellState, useKeys } from "../../../../utils";
 
 import {
+  getSelection,
   saveCursorPosition,
   deleteCell,
   focusPrev,
   focusNext,
-  setCursorPosition,
-  createCursor,
+  changeSpecialCharacter,
   blockEndUp,
   blockEndDown,
   blockRelease,
@@ -27,8 +27,8 @@ setGenerator("ul", (uuid) => (
     <ListCell cellUuid={uuid} />
   </ul>
 ));
-setGenerator("ol", (uuid, options) => (
-  <ol start={options.start}>
+setGenerator("ol", (uuid, start) => (
+  <ol start={start}>
     <ListCell cellUuid={uuid} />
   </ol>
 ));
@@ -40,7 +40,7 @@ const ListCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block } = state;
+  const { block, cursor } = state;
   let inputRef = null;
   let intoShiftBlock = false;
 
@@ -53,10 +53,19 @@ const ListCell = ({ cellUuid }) => {
   }
 
   const backspaceEvent = (e) => {
-    const { length } = e.target.textContent;
-    if (length === 0) {
+    const { textContent } = e.target;
+    const currentCursor = getSelection();
+    const isStartPos =
+      textContent.length === 0 ||
+      (currentCursor.start === 0 && currentCursor.end === 0);
+
+    if (isStartPos) {
       const componentCallback = cellGenerator.p;
+      dispatch(cellActionCreator.input(cellUuid, textContent));
       initCell(cellUuid, dispatch, componentCallback);
+    }
+    if (state.block.start !== null) {
+      deleteCell(dispatch);
     }
   };
 
@@ -146,18 +155,23 @@ const ListCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus);
+  useKeys(keydownHandlers, isFocus, [block.end]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-
-      if (text.length > 0) {
-        const content = createCursor(text, state.cursor);
-        inputRef.current.innerHTML = content;
-        setCursorPosition();
-        inputRef.current.normalize();
+      const cellText = changeSpecialCharacter(text);
+      if (cellText) {
+        inputRef.current.innerHTML = cellText;
+      } else {
+        const emptyElement = document.createTextNode("");
+        inputRef.current.appendChild(emptyElement);
       }
+      const caretOffset =
+        cursor.start > inputRef.current.firstChild.length
+          ? inputRef.current.firstChild.length
+          : cursor.start;
+      window.getSelection().collapse(inputRef.current.firstChild, caretOffset);
     }
   }, [inputRef]);
 
@@ -167,8 +181,8 @@ const ListCell = ({ cellUuid }) => {
   };
 
   const onBlur = (e) => {
-    const { innerHTML } = e.target;
-    dispatch(cellActionCreator.input(cellUuid, innerHTML));
+    const { textContent } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, textContent));
   };
 
   return (
@@ -176,6 +190,7 @@ const ListCell = ({ cellUuid }) => {
       as="li"
       contentEditable
       intoShiftBlock={intoShiftBlock}
+      isCurrentCell={cellIndex === currentIndex}
       placeholder={placeholder}
       onClick={onClick}
       onBlur={onBlur}

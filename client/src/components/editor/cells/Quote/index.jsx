@@ -1,32 +1,29 @@
 import React, { useContext, useEffect } from "react";
 
 import propTypes from "prop-types";
+
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
-import { useCellState, useKey } from "../../../../utils";
 import { EVENT_TYPE } from "../../../../enums";
+import { useCellState, useKeys } from "../../../../utils";
 
 import {
+  getSelection,
   saveCursorPosition,
+  deleteCell,
   focusPrev,
   focusNext,
-  setCursorPosition,
-  createCursor,
+  changeSpecialCharacter,
+  blockEndUp,
+  blockEndDown,
+  blockRelease,
   htmlText,
 } from "../Markdown/handler";
 import { newCell, initCell } from "../Heading/handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
 
 setGenerator("blockquote", (uuid) => <QuoteCell cellUuid={uuid} />);
-
-const useKeys = (keydownHandlers, isFocus) => {
-  const E = EVENT_TYPE;
-  useKey(E.ENTER, keydownHandlers[E.ENTER], isFocus);
-  useKey(E.ARROW_UP, keydownHandlers[E.ARROW_UP], isFocus);
-  useKey(E.ARROW_DOWN, keydownHandlers[E.ARROW_DOWN], isFocus);
-  useKey(E.BACKSPACE, keydownHandlers[E.BACKSPACE], isFocus);
-};
 
 const QuoteCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
@@ -35,13 +32,32 @@ const QuoteCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
+  const { block, cursor } = state;
   let inputRef = null;
+  let intoShiftBlock = false;
+
+  if (block.start !== null) {
+    const blockStart = block.start < block.end ? block.start : block.end;
+    const blockEnd = block.start > block.end ? block.start : block.end;
+    if (blockStart <= cellIndex && cellIndex <= blockEnd) {
+      intoShiftBlock = true;
+    }
+  }
 
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
-    if (textContent.length === 0) {
+    const currentCursor = getSelection();
+    const isStartPos =
+      textContent.length === 0 ||
+      (currentCursor.start === 0 && currentCursor.end === 0);
+
+    if (isStartPos) {
       const componentCallback = cellGenerator.p;
+      dispatch(cellActionCreator.input(cellUuid, textContent));
       initCell(cellUuid, dispatch, componentCallback);
+    }
+    if (state.block.start !== null) {
+      deleteCell(dispatch);
     }
   };
 
@@ -55,14 +71,43 @@ const QuoteCell = ({ cellUuid }) => {
       dispatch(cellActionCreator.input(cellUuid, textContent));
       newCell(cellUuid, dispatch, componentCallback);
     }
+    blockRelease(dispatch);
   };
 
   const arrowUpEvent = () => {
     focusPrev(dispatch);
+    blockRelease(dispatch);
   };
 
   const arrowDownEvent = () => {
     focusNext(dispatch);
+    blockRelease(dispatch);
+  };
+
+  const shiftArrowUpEvent = () => {
+    blockEndUp(cellUuid, dispatch);
+  };
+
+  const shiftArrowDownEvent = () => {
+    blockEndDown(cellUuid, dispatch);
+  };
+
+  const ctrlAEvent = () => {
+    dispatch(cellActionCreator.blockAll());
+  };
+
+  const ctrlXEvent = () => {
+    dispatch(cellActionCreator.copy());
+    deleteCell(dispatch);
+  };
+
+  const ctrlCEvent = () => {
+    dispatch(cellActionCreator.copy());
+  };
+
+  const ctrlVEvent = () => {
+    dispatch(cellActionCreator.paste(cellUuid));
+    blockRelease(dispatch);
   };
 
   const keydownHandlers = {
@@ -70,6 +115,12 @@ const QuoteCell = ({ cellUuid }) => {
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
+    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
+    [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
+    [EVENT_TYPE.CTRL_A]: ctrlAEvent,
+    [EVENT_TYPE.CTRL_X]: ctrlXEvent,
+    [EVENT_TYPE.CTRL_C]: ctrlCEvent,
+    [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
   const isFocus = currentIndex === cellIndex;
@@ -77,34 +128,42 @@ const QuoteCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus);
+  useKeys(keydownHandlers, isFocus, [block.end]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-
-      if (text.length > 0) {
-        const content = createCursor(text, state.cursor);
-        inputRef.current.innerHTML = content;
-        setCursorPosition();
-        inputRef.current.normalize();
+      const cellText = changeSpecialCharacter(text);
+      if (cellText) {
+        inputRef.current.innerHTML = cellText;
+      } else {
+        const emptyElement = document.createTextNode("");
+        inputRef.current.appendChild(emptyElement);
       }
+      const caretOffset =
+        cursor.start > inputRef.current.firstChild.length
+          ? inputRef.current.firstChild.length
+          : cursor.start;
+      window.getSelection().collapse(inputRef.current.firstChild, caretOffset);
     }
   }, [inputRef]);
 
   const onClick = () => {
     dispatch(cellActionCreator.focusMove(cellUuid));
+    blockRelease(dispatch);
   };
 
   const onBlur = (e) => {
-    const { innerHTML } = e.target;
-    dispatch(cellActionCreator.input(cellUuid, innerHTML));
+    const { textContent } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, textContent));
   };
 
   return (
     <MarkdownWrapper
       as={tag}
       contentEditable
+      intoShiftBlock={intoShiftBlock}
+      isCurrentCell={cellIndex === currentIndex}
       isQuote
       placeholder={placeholder}
       onClick={onClick}

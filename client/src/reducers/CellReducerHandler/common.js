@@ -9,13 +9,13 @@ const initUuid = (cellUuid, newCellUuid) => {
 };
 
 const initCell = (cellUuid, cellManager, dataObj) => {
-  const { cell, text, tag } = dataObj;
+  const { cell, tag } = dataObj;
   const uuidArray = uuidManager.getUuidArray();
   const index = cellUuid ? uuidManager.findIndex(cellUuid) : 0;
   const targetUuid = uuidArray[index];
   cellManager.change(index, {
     cell: cell ? cell(targetUuid) : cellGenerator.p(targetUuid),
-    text,
+    text: cellManager.texts[index] || "",
     tag,
   });
 };
