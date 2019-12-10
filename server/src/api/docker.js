@@ -184,6 +184,26 @@ class DockerApi {
     // TODO: refactor
   }
 
+  followProgressAsync(stream) {
+    return new Promise((resolve, reject) => {
+      const onProgress = (data) => {
+        debug("following progress", data);
+        console.log("following progress", data);
+      };
+
+      const onFinish = async (err, data) => {
+        if (err) {
+          console.log("progress finish err", err, data);
+          return reject(err);
+        }
+        debug("finish follow progressing", data);
+        console.log("finish follow progressing", data);
+        resolve(data);
+      };
+      this.request.modem.followProgress(stream, onFinish, onProgress);
+    });
+  }
+
   async createDefaultTerminal(baseImageName) {
     // TOOD 초기 하드코딩 값 변경하거나 없앨 것
     const defaultCmd = ["/bin/bash"];
