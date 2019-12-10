@@ -20,7 +20,6 @@ const cellReducerHandler = {
     common.initUuid(cellUuid, newCellUuid);
     common.initCell(cellUuid, state.cellManager, {
       cell: createMarkdownCell,
-      text: "",
       tag,
     });
 

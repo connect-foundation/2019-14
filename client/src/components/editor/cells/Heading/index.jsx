@@ -8,12 +8,12 @@ import { EVENT_TYPE } from "../../../../enums";
 import { useCellState, useKeys } from "../../../../utils";
 
 import {
+  getSelection,
   saveCursorPosition,
   deleteCell,
   focusPrev,
   focusNext,
-  setCursorPosition,
-  createCursor,
+  changeSpecialCharacter,
   blockEndUp,
   blockEndDown,
   blockRelease,
@@ -36,7 +36,7 @@ const HeadingCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block } = state;
+  const { block, cursor } = state;
   let inputRef = null;
   let intoShiftBlock = false;
 
@@ -50,9 +50,18 @@ const HeadingCell = ({ cellUuid }) => {
 
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
-    if (textContent.length === 0) {
+    const currentCursor = getSelection();
+    const isStartPos =
+      textContent.length === 0 ||
+      (currentCursor.start === 0 && currentCursor.end === 0);
+
+    if (isStartPos) {
       const componentCallback = cellGenerator.p;
+      dispatch(cellActionCreator.input(cellUuid, textContent));
       initCell(cellUuid, dispatch, componentCallback);
+    }
+    if (state.block.start !== null) {
+      deleteCell(dispatch);
     }
   };
 
@@ -123,18 +132,23 @@ const HeadingCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus);
+  useKeys(keydownHandlers, isFocus, [block.end]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-
-      if (text.length > 0) {
-        const content = createCursor(text, state.cursor);
-        inputRef.current.innerHTML = content;
-        setCursorPosition();
-        inputRef.current.normalize();
+      const cellText = changeSpecialCharacter(text);
+      if (cellText) {
+        inputRef.current.innerHTML = cellText;
+      } else {
+        const emptyElement = document.createTextNode("");
+        inputRef.current.appendChild(emptyElement);
       }
+      const caretOffset =
+        cursor.start > inputRef.current.firstChild.length
+          ? inputRef.current.firstChild.length
+          : cursor.start;
+      window.getSelection().collapse(inputRef.current.firstChild, caretOffset);
     }
   }, [inputRef]);
 
@@ -144,8 +158,8 @@ const HeadingCell = ({ cellUuid }) => {
   };
 
   const onBlur = (e) => {
-    const { innerHTML } = e.target;
-    dispatch(cellActionCreator.input(cellUuid, innerHTML));
+    const { textContent } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, textContent));
   };
 
   return (
@@ -153,12 +167,13 @@ const HeadingCell = ({ cellUuid }) => {
       as={tag}
       contentEditable
       intoShiftBlock={intoShiftBlock}
+      isCurrentCell={cellIndex === currentIndex}
       isQuote={false}
       placeholder={placeholder}
       onClick={onClick}
       onBlur={onBlur}
       ref={inputRef || null}
-      dangerouslySetInnerHTML={htmlText()}
+      dangerouslySetInnerHTML={htmlText(text)}
       spellCheck={false}
     />
   );

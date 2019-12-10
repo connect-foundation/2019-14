@@ -14,13 +14,12 @@ import {
   saveCursorPosition,
   focusPrev,
   focusNext,
-  createCursor,
-  setCursorPosition,
   blockEndUp,
   blockEndDown,
   blockRelease,
   transformCell,
   htmlText,
+  changeSpecialCharacter,
 } from "./handler";
 
 setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
@@ -84,7 +83,14 @@ const MarkdownCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     const cursorPos = getSelection();
-    if (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) {
+
+    /**
+     * @todo 블록 부분들은 추후 싹 리팩토링 예정
+     */
+    if (
+      (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) ||
+      state.block.start !== null
+    ) {
       deleteCell(dispatch, cellUuid, textContent);
     }
   };
@@ -130,11 +136,22 @@ const MarkdownCell = ({ cellUuid }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-
-      const content = createCursor(text, cursor);
-      inputRef.current.innerHTML = content;
-      setCursorPosition();
-      inputRef.current.normalize();
+      const cellText = changeSpecialCharacter(text);
+      if (!cellText) {
+        const emptyElement = document.createTextNode("");
+        inputRef.current.appendChild(emptyElement);
+      }
+      // if (cellText) {
+      //   inputRef.current.innerHTML = cellText;
+      // } else {
+      //   const emptyElement = document.createTextNode("");
+      //   inputRef.current.appendChild(emptyElement);
+      // }
+      const caretOffset =
+        cursor.start > inputRef.current.firstChild.length
+          ? inputRef.current.firstChild.length
+          : cursor.start;
+      window.getSelection().collapse(inputRef.current.firstChild, caretOffset);
     }
     /**
      * 거슬려서 잠시 주석
@@ -146,7 +163,7 @@ const MarkdownCell = ({ cellUuid }) => {
     // window.addEventListener("beforeunload", isSaved);
   }, [inputRef]);
 
-  useKeys(keydownHandlers, isFocus);
+  useKeys(keydownHandlers, isFocus, [block.end]);
 
   const onKeyUp = (e) => {
     const { textContent } = e.target;
@@ -160,8 +177,8 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const onBlur = (e) => {
-    const { innerHTML } = e.target;
-    dispatch(cellActionCreator.input(cellUuid, innerHTML));
+    const { textContent } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, textContent));
   };
 
   const renderTarget = (
@@ -175,6 +192,7 @@ const MarkdownCell = ({ cellUuid }) => {
       onBlur={onBlur}
       ref={inputRef || null}
       dangerouslySetInnerHTML={htmlText(text)}
+      suppressContentEditableWarning
       contentEditable
       spellCheck={false}
     />
