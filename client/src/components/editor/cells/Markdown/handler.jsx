@@ -52,7 +52,7 @@ const blockRelease = (cellDispatch) => {
   cellDispatch(cellActionCreator.blockRelease());
 };
 
-const transformCell = (cellUuid, cellDispatch, text, tag, start = null) => {
+const transformCell = (cellUuid, cellDispatch, text, tag) => {
   const { findPattern, matchingTag } = getType(text);
 
   if (matchingTag && matchingTag !== tag) {
@@ -60,16 +60,12 @@ const transformCell = (cellUuid, cellDispatch, text, tag, start = null) => {
 
     const isOrderedList = matchingTag === "ol";
 
-    let newStart = null;
+    let start = null;
     if (isOrderedList) {
-      newStart = start ? start + 1 : getStart(text);
-    } else {
-      newStart = 0;
+      start = getStart(text);
     }
 
-    const cell = makeNewCell(cellUuid, {
-      start: newStart,
-    });
+    const cell = makeNewCell(cellUuid);
     let exceptPatternText = "";
     if (findPattern) {
       exceptPatternText = text.slice(findPattern[0].length);
@@ -80,7 +76,7 @@ const transformCell = (cellUuid, cellDispatch, text, tag, start = null) => {
         exceptPatternText,
         matchingTag,
         cell,
-        newStart
+        start
       )
     );
   }

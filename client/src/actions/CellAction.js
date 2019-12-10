@@ -56,13 +56,15 @@ const cellActionCreator = {
    * - 엔터시 기준 셀의 다음 셀에 셀을 생성한다.
    * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백
    * @param {String} tag 셀의 타입(태그). 생략시 default input 셀이 생성된다.
+   * @param {Number} start ordered list일 경우의 start
    */
-  new(cellUuid, createMarkdownCell, tag = CELL_TAG.DEFAULT) {
+  new(cellUuid, createMarkdownCell, tag = CELL_TAG.DEFAULT, start = null) {
     return {
       type: CELL_ACTION.NEW,
       cellUuid,
       createMarkdownCell,
       tag,
+      start,
     };
   },
 
@@ -142,15 +144,16 @@ const cellActionCreator = {
    * @param {String} text 변경할 Cell의 텍스트
    * @param {String} tag 변경할 Cell의 태그
    * @param {React.element} cell 변경할 Cell 요소
+   * @param {Number} start ordered-list일 경우의 start
    */
-  transform(cellUuid, text, tag, cell, start) {
+  transform(cellUuid, text, tag, cell, start = null) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
       cellUuid,
       text,
       tag,
       cell,
-      start: start || null,
+      start,
     };
   },
 

@@ -6,11 +6,12 @@ import { uuidManager } from "../../utils";
 const copy = (cellManager, block) => {
   const blockStart = block.start < block.end ? block.start : block.end;
   const blockEnd = block.start > block.end ? block.start : block.end;
-  const { texts, tags } = cellManager;
+  const { texts, tags, options } = cellManager;
 
   const clipboard = {
     texts: texts.slice(blockStart, blockEnd + 1),
     tags: tags.slice(blockStart, blockEnd + 1),
+    options: options.slice(blockStart, blockEnd + 1),
   };
 
   return {
@@ -23,9 +24,6 @@ const paste = (index, cellManager, dataObj) => {
   const currentIndex = index + clipboard.texts.length;
 
   const cbCells = clipboard.tags.reduce((acc, val, i) => {
-    /**
-     * @todo ordered list일 경우 추가하기
-     */
     const newUuid = uuid();
     uuidManager.push(newUuid, index + i);
     acc.push(cellGenerator[val](newUuid));
@@ -38,6 +36,10 @@ const paste = (index, cellManager, dataObj) => {
     tags: clipboard.tags,
   };
   cellManager.pushArray(index, data);
+
+  clipboard.options.forEach((opt, i) => {
+    if (opt) cellManager.addOption(index + i + 1, opt);
+  });
 
   const pos = cellManager.texts[currentIndex].length;
   const cursor = {

@@ -28,7 +28,7 @@ setGenerator("hr", (uuid) => (
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { currentIndex, start, cursor, block, cellManager, isLoading } = state;
+  const { currentIndex, cursor, block, cellManager, isLoading } = state;
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
@@ -47,7 +47,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   useEffect(() => {
     text = !isLoading ? cellManager.texts[cellIndex] : "";
-    transformCell(cellUuid, dispatch, text, currentTag, start);
+    transformCell(cellUuid, dispatch, text, currentTag);
   }, [isLoading]);
 
   // -------------- Handler -----------------------
@@ -166,7 +166,7 @@ const MarkdownCell = ({ cellUuid }) => {
   const onKeyUp = (e) => {
     const { textContent } = e.target;
 
-    transformCell(cellUuid, dispatch, textContent, currentTag, start);
+    transformCell(cellUuid, dispatch, textContent, currentTag);
   };
 
   const onClick = () => {

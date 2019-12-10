@@ -9,6 +9,7 @@ function CellManager() {
   this.cells = [];
   this.texts = [];
   this.tags = [];
+  this.options = [];
 }
 
 const TAG_MARKDOWN = {
@@ -53,6 +54,25 @@ CellManager.prototype.delete = function(index, flag) {
   if (flag.cell) this.cells = splice.delete(this.cells, index);
   if (flag.text) this.texts = splice.delete(this.texts, index);
   if (flag.tag) this.tags = splice.delete(this.tags, index);
+};
+
+CellManager.prototype.addOption = function(index, dataObj) {
+  this.options[index] = dataObj;
+};
+
+CellManager.prototype.changeOption = function(index, dataObj) {
+  this.options[index] = {
+    ...this.options[index],
+    ...dataObj,
+  };
+};
+
+CellManager.prototype.deleteOneOption = function(index, key) {
+  delete this.options[index][key];
+};
+
+CellManager.prototype.deleteOption = function(index) {
+  delete this.options[index];
 };
 
 CellManager.prototype.pushArray = function(index, dataObj) {

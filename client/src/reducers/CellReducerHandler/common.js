@@ -18,6 +18,7 @@ const initCell = (cellUuid, cellManager, dataObj) => {
     text: cellManager.texts[index] || "",
     tag,
   });
+  cellManager.deleteOption(index);
 };
 
 const newDefaultEmptyCell = (cellUuid, cellManager) => {
@@ -44,9 +45,10 @@ const newCell = (cellUuid, cellManager, dataObj) => {
   const newStart = isOrderedList ? start + 1 : null;
 
   const newCellUuid = uuidArray[index + 1];
-  const cell = isOrderedList
-    ? createCellCallback(newCellUuid, newStart)
-    : createCellCallback(newCellUuid);
+  const cell = createCellCallback(newCellUuid);
+  if (isOrderedList) {
+    cellManager.addOption(index + 1, { start: newStart });
+  }
 
   const originText = cellManager.texts[index];
   const currentText = originText ? originText.slice(0, cursor.start) : "";
@@ -70,7 +72,6 @@ const newCell = (cellUuid, cellManager, dataObj) => {
   return {
     cursor: newCursor,
     currentIndex,
-    start: newStart,
   };
 };
 

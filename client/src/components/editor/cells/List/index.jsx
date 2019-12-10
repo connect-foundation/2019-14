@@ -16,16 +16,8 @@ import {
 import { newCell, initCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
 
-setGenerator("ul", (uuid) => (
-  <ul>
-    <ListCell cellUuid={uuid} />
-  </ul>
-));
-setGenerator("ol", (uuid, start) => (
-  <ol start={start}>
-    <ListCell cellUuid={uuid} />
-  </ol>
-));
+setGenerator("ul", (uuid) => <ListCell cellUuid={uuid} />);
+setGenerator("ol", (uuid) => <ListCell cellUuid={uuid} />);
 
 const ListCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
@@ -34,7 +26,8 @@ const ListCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block, cursor } = state;
+  const { block, cursor, cellManager } = state;
+  const { start } = cellManager.options[cellIndex];
   let inputRef = null;
   let intoShiftBlock = false;
 
@@ -90,7 +83,7 @@ const ListCell = ({ cellUuid }) => {
 
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback, tag);
+      newCell(cellUuid, dispatch, componentCallback, tag, start);
     }
     blockRelease(dispatch);
   };
@@ -132,7 +125,7 @@ const ListCell = ({ cellUuid }) => {
     dispatch(cellActionCreator.input(cellUuid, textContent));
   };
 
-  return (
+  const renderTarget = (
     <MarkdownWrapper
       as="li"
       contentEditable
@@ -148,6 +141,11 @@ const ListCell = ({ cellUuid }) => {
       {text}
     </MarkdownWrapper>
   );
+
+  if (tag === "ol") {
+    return <ol start={start}>{renderTarget}</ol>;
+  }
+  return <ul>{renderTarget}</ul>;
 };
 
 ListCell.propTypes = {
