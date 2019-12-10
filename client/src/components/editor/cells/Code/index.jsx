@@ -42,6 +42,7 @@ const CodeCellWrapper = styled.p`
 `;
 
 const CodeCell = ({ cellUuid }) => {
+  const [cursorPos, setCursorPos] = useState(0);
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
   const { text, placeholder, cellIndex, currentIndex } = useCellState(
@@ -50,7 +51,7 @@ const CodeCell = ({ cellUuid }) => {
   );
   let inputRef = null;
   let intoShiftBlock = false;
-  const { block, cursor } = state;
+  const { block } = state;
 
   if (block.start !== null) {
     const blockStart = block.start < block.end ? block.start : block.end;
@@ -72,11 +73,8 @@ const CodeCell = ({ cellUuid }) => {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }
-      const caretOffset =
-        cursor.start > inputRef.current.firstChild.length
-          ? inputRef.current.firstChild.length
-          : cursor.start;
-      window.getSelection().collapse(inputRef.current.firstChild, caretOffset);
+
+      window.getSelection().collapse(inputRef.current.firstChild, cursorPos);
     }
   }, [inputRef]);
 
@@ -118,6 +116,8 @@ const CodeCell = ({ cellUuid }) => {
 
   const onBlur = (e) => {
     const { innerText } = e.target;
+    const cursorOffset = window.getSelection().focusOffset;
+    setCursorPos(cursorOffset);
     dispatch(cellActionCreator.input(cellUuid, innerText));
   };
 
