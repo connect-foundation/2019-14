@@ -56,6 +56,7 @@ const MarkdownWindowLayout = styled.div`
   padding: 0;
   padding-left: 0.5em;
 
+  width: 100%;
   height: 100%;
 
   overflow-y: auto;

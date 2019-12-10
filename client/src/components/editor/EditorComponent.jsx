@@ -7,6 +7,7 @@ import { uuidManager } from "../../utils";
 import { MarkdownCell } from "./cells";
 
 const EditorComponentWrapper = styled.section`
+  width: 99%;
   display: flex;
   flex-direction: column;
 `;
