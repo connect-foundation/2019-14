@@ -18,8 +18,6 @@ import {
   blockEndDown,
   blockRelease,
   transformCell,
-  htmlText,
-  changeSpecialCharacter,
 } from "./handler";
 
 setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
@@ -136,17 +134,11 @@ const MarkdownCell = ({ cellUuid }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      const cellText = changeSpecialCharacter(text);
-      if (!cellText) {
+      if (!text) {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }
-      // if (cellText) {
-      //   inputRef.current.innerHTML = cellText;
-      // } else {
-      //   const emptyElement = document.createTextNode("");
-      //   inputRef.current.appendChild(emptyElement);
-      // }
+
       const caretOffset =
         cursor.start > inputRef.current.firstChild.length
           ? inputRef.current.firstChild.length
@@ -184,6 +176,7 @@ const MarkdownCell = ({ cellUuid }) => {
   const renderTarget = (
     <MarkdownWrapper
       as={currentTag}
+      contentEditable
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={cellIndex === currentIndex}
       placeholder={PLACEHOLDER[currentTag]}
@@ -191,11 +184,11 @@ const MarkdownCell = ({ cellUuid }) => {
       onClick={onClick}
       onBlur={onBlur}
       ref={inputRef || null}
-      dangerouslySetInnerHTML={htmlText(text)}
-      suppressContentEditableWarning
-      contentEditable
       spellCheck={false}
-    />
+      suppressContentEditableWarning
+    >
+      {text}
+    </MarkdownWrapper>
   );
 
   return renderTarget;

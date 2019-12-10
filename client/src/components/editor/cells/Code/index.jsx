@@ -5,13 +5,7 @@ import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import { useCellState, useKeys } from "../../../../utils";
 import { setGenerator } from "../CellGenerator";
-import {
-  changeSpecialCharacter,
-  focusPrev,
-  focusNext,
-  blockRelease,
-  htmlText,
-} from "../Markdown/handler";
+import { focusPrev, focusNext, blockRelease } from "../Markdown/handler";
 import { EVENT_TYPE } from "../../../../enums";
 
 setGenerator("code", (uuid) => <CodeCell cellUuid={uuid} />);
@@ -74,10 +68,7 @@ const CodeCell = ({ cellUuid }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      const cellText = changeSpecialCharacter(text);
-      if (cellText) {
-        inputRef.current.innerHTML = cellText;
-      } else {
+      if (!text) {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }
@@ -117,17 +108,19 @@ const CodeCell = ({ cellUuid }) => {
 
   return (
     <CodeCellWrapper
-      placeholder={placeholder}
+      contentEditable
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={cellIndex === currentIndex}
       isQuote={false}
+      placeholder={placeholder}
       onClick={onClick}
       onBlur={onBlur}
       ref={inputRef || null}
-      dangerouslySetInnerHTML={htmlText(text)}
       spellCheck={false}
-      contentEditable
-    />
+      suppressContentEditableWarning
+    >
+      {text}
+    </CodeCellWrapper>
   );
 };
 

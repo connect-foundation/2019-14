@@ -14,11 +14,9 @@ import {
   deleteCell,
   focusPrev,
   focusNext,
-  changeSpecialCharacter,
   blockEndUp,
   blockEndDown,
   blockRelease,
-  htmlText,
 } from "../Markdown/handler";
 import { newCell, initCell } from "../Heading/handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
@@ -133,10 +131,7 @@ const QuoteCell = ({ cellUuid }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      const cellText = changeSpecialCharacter(text);
-      if (cellText) {
-        inputRef.current.innerHTML = cellText;
-      } else {
+      if (!text) {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }
@@ -169,8 +164,8 @@ const QuoteCell = ({ cellUuid }) => {
       onClick={onClick}
       onBlur={onBlur}
       ref={inputRef || null}
-      dangerouslySetInnerHTML={htmlText(text)}
       spellCheck={false}
+      suppressContentEditableWarning
     />
   );
 };
