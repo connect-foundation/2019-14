@@ -12,10 +12,6 @@ import {
   getSelection,
   saveCursorPosition,
   deleteCell,
-  focusPrev,
-  focusNext,
-  blockEndUp,
-  blockEndDown,
   blockRelease,
 } from "../Markdown/handler";
 import { newCell, initCell } from "../Heading/handler";
@@ -72,53 +68,9 @@ const QuoteCell = ({ cellUuid }) => {
     blockRelease(dispatch);
   };
 
-  const arrowUpEvent = () => {
-    focusPrev(dispatch);
-    blockRelease(dispatch);
-  };
-
-  const arrowDownEvent = () => {
-    focusNext(dispatch);
-    blockRelease(dispatch);
-  };
-
-  const shiftArrowUpEvent = () => {
-    blockEndUp(cellUuid, dispatch);
-  };
-
-  const shiftArrowDownEvent = () => {
-    blockEndDown(cellUuid, dispatch);
-  };
-
-  const ctrlAEvent = () => {
-    dispatch(cellActionCreator.blockAll());
-  };
-
-  const ctrlXEvent = () => {
-    dispatch(cellActionCreator.copy());
-    deleteCell(dispatch);
-  };
-
-  const ctrlCEvent = () => {
-    dispatch(cellActionCreator.copy());
-  };
-
-  const ctrlVEvent = () => {
-    dispatch(cellActionCreator.paste(cellUuid));
-    blockRelease(dispatch);
-  };
-
   const keydownHandlers = {
     [EVENT_TYPE.ENTER]: enterEvent,
-    [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
-    [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
-    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
-    [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
-    [EVENT_TYPE.CTRL_A]: ctrlAEvent,
-    [EVENT_TYPE.CTRL_X]: ctrlXEvent,
-    [EVENT_TYPE.CTRL_C]: ctrlCEvent,
-    [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
   const isFocus = currentIndex === cellIndex;
@@ -131,7 +83,7 @@ const QuoteCell = ({ cellUuid }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      if (!text) {
+      if (inputRef.current.firstChild === null) {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }

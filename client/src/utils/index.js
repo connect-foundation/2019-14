@@ -6,6 +6,7 @@ import {
   useKey,
   useKeys,
   attachDefaultHandlers,
+  defaultChecksumAllFalse,
   defaultChecksumAllTrue,
 } from "./HandlerManager";
 import useCellState from "./useCellState";
@@ -20,6 +21,7 @@ export {
   useKey,
   useKeys,
   attachDefaultHandlers,
+  defaultChecksumAllFalse,
   defaultChecksumAllTrue,
   useCellState,
   useReducerAsync,

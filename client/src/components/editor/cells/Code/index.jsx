@@ -4,7 +4,11 @@ import styled from "styled-components";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import { setGenerator, cellGenerator } from "../CellGenerator";
-import { useCellState, useKeys } from "../../../../utils";
+import {
+  useCellState,
+  useKeys,
+  defaultChecksumAllFalse,
+} from "../../../../utils";
 import { EVENT_TYPE } from "../../../../enums";
 import { focusPrev, focusNext } from "../Markdown/handler";
 import { initCell } from "../Heading/handler";
@@ -69,7 +73,7 @@ const CodeCell = ({ cellUuid }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      if (!text) {
+      if (inputRef.current.firstChild === null) {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }
@@ -108,7 +112,7 @@ const CodeCell = ({ cellUuid }) => {
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
-  useKeys(keydownHandlerArray, isFocus);
+  useKeys(keydownHandlerArray, isFocus, [], defaultChecksumAllFalse);
 
   const onClick = () => {
     dispatch(cellActionCreator.focusMove(cellUuid));

@@ -229,6 +229,18 @@ const defaultHandlers = {
   [EVENT_TYPE.CTRL_V]: null,
 };
 
+const defaultChecksumAllFalse = {
+  [EVENT_TYPE.SHIFT_ENTER]: false,
+  [EVENT_TYPE.ARROW_UP]: false,
+  [EVENT_TYPE.ARROW_DOWN]: false,
+  [EVENT_TYPE.SHIFT_ARROW_UP]: false,
+  [EVENT_TYPE.SHIFT_ARROW_DOWN]: false,
+  [EVENT_TYPE.CTRL_A]: false,
+  [EVENT_TYPE.CTRL_X]: false,
+  [EVENT_TYPE.CTRL_C]: false,
+  [EVENT_TYPE.CTRL_V]: false,
+};
+
 const defaultChecksumAllTrue = {
   [EVENT_TYPE.SHIFT_ENTER]: true,
   [EVENT_TYPE.ARROW_UP]: true,
@@ -289,4 +301,10 @@ const useKeys = (
   }, [isFocus, ...deps]);
 };
 
-export { useKey, useKeys, attachDefaultHandlers, defaultChecksumAllTrue };
+export {
+  useKey,
+  useKeys,
+  attachDefaultHandlers,
+  defaultChecksumAllFalse,
+  defaultChecksumAllTrue,
+};
