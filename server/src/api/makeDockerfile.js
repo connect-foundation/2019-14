@@ -1,10 +1,13 @@
-const path = require("path");
 const fs = require("fs").promises;
 
 // 같은 이름의 파일은 덮어 씀
 const writeDockerfile = async (text) => {
   const data = new Uint8Array(Buffer.from(text));
-  await fs.writeFile(`${process.env.INIT_CWD}/dockerfiles/Dockerfile`, data);
+  const result = await fs.writeFile(
+    `${process.env.INIT_CWD}/dockerfiles/Dockerfile`,
+    data
+  );
+  return result;
 };
 
 const makeDockerfile = async (text) => {
