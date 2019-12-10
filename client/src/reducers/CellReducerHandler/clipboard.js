@@ -20,7 +20,6 @@ const copy = (cellManager, block) => {
 
 const paste = (index, cellManager, dataObj) => {
   const { clipboard } = dataObj;
-
   const currentIndex = index + clipboard.texts.length;
 
   const cbCells = clipboard.tags.reduce((acc, val, i) => {

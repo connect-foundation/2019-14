@@ -87,10 +87,11 @@ const HeadingCell = ({ cellUuid }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      if (!text) {
+      if (inputRef.current.firstChild === null) {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }
+
       const caretOffset =
         cursor.start > inputRef.current.firstChild.length
           ? inputRef.current.firstChild.length
@@ -122,7 +123,9 @@ const HeadingCell = ({ cellUuid }) => {
       ref={inputRef || null}
       spellCheck={false}
       suppressContentEditableWarning
-    />
+    >
+      {text}
+    </MarkdownWrapper>
   );
 };
 
