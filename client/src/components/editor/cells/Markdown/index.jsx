@@ -4,12 +4,7 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import {
-  useKeys,
-  uuidManager,
-  attachDefaultHandlers,
-  defaultChecksumAllTrue,
-} from "../../../../utils";
+import { useKeys, uuidManager, attachDefaultHandlers } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -73,7 +68,7 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const shiftArrowUpEvent = () => {
-    blockEndUp(cellUuid, dispatch);
+    blockEndUp(dispatch);
   };
 
   const arrowDownEvent = () => {
@@ -82,7 +77,7 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const shiftArrowDownEvent = () => {
-    blockEndDown(cellUuid, dispatch);
+    blockEndDown(dispatch);
   };
 
   const backspaceEvent = (e) => {
@@ -114,7 +109,7 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const ctrlVEvent = () => {
-    dispatch(cellActionCreator.paste(cellUuid));
+    dispatch(cellActionCreator.paste());
     blockRelease(dispatch);
   };
 
@@ -122,17 +117,17 @@ const MarkdownCell = ({ cellUuid }) => {
     [EVENT_TYPE.SHIFT_ENTER]: shiftEnterEvent,
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
+    [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
     [EVENT_TYPE.CTRL_A]: ctrlAEvent,
     [EVENT_TYPE.CTRL_X]: ctrlXEvent,
     [EVENT_TYPE.CTRL_C]: ctrlCEvent,
+    [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
   const keydownHandlers = {
     [EVENT_TYPE.ENTER]: enterEvent,
-    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
-    [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
-    [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
   const isFocus = currentIndex === cellIndex;
@@ -141,7 +136,7 @@ const MarkdownCell = ({ cellUuid }) => {
   }
 
   attachDefaultHandlers(defaultKeydownHandlers);
-  useKeys(keydownHandlers, isFocus, [block.end], defaultChecksumAllTrue);
+  useKeys(keydownHandlers, isFocus, [block.end]);
   // -------------- End -----------------------
 
   useEffect(() => {

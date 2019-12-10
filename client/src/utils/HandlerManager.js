@@ -229,28 +229,16 @@ const defaultHandlers = {
   [EVENT_TYPE.CTRL_V]: null,
 };
 
-const defaultChecksum = {
-  [EVENT_TYPE.SHIFT_ENTER]: false,
-  [EVENT_TYPE.ARROW_UP]: false,
-  [EVENT_TYPE.ARROW_DOWN]: false,
-  [EVENT_TYPE.SHIFT_ARROW_UP]: false,
-  [EVENT_TYPE.SHIFT_ARROW_DOWN]: false,
-  [EVENT_TYPE.CTRL_A]: false,
-  [EVENT_TYPE.CTRL_X]: false,
-  [EVENT_TYPE.CTRL_C]: false,
-  [EVENT_TYPE.CTRL_V]: false,
-};
-
 const defaultChecksumAllTrue = {
   [EVENT_TYPE.SHIFT_ENTER]: true,
   [EVENT_TYPE.ARROW_UP]: true,
   [EVENT_TYPE.ARROW_DOWN]: true,
-  // [EVENT_TYPE.SHIFT_ARROW_UP]: true,
-  // [EVENT_TYPE.SHIFT_ARROW_DOWN]: true,
+  [EVENT_TYPE.SHIFT_ARROW_UP]: true,
+  [EVENT_TYPE.SHIFT_ARROW_DOWN]: true,
   [EVENT_TYPE.CTRL_A]: true,
   [EVENT_TYPE.CTRL_X]: true,
   [EVENT_TYPE.CTRL_C]: true,
-  // [EVENT_TYPE.CTRL_V]: true,
+  [EVENT_TYPE.CTRL_V]: true,
 };
 
 const attachDefaultHandlers = (handlers) => {
@@ -272,7 +260,12 @@ const useKey = (keyEvent, handler, isFocus, deps = []) => {
   }, [isFocus, ...deps]);
 };
 
-const useKeys = (handlers, isFocus, deps = [], checksum = defaultChecksum) => {
+const useKeys = (
+  handlers,
+  isFocus,
+  deps = [],
+  checksum = defaultChecksumAllTrue
+) => {
   const keydownHandlers = {};
   Object.entries(checksum).forEach(([type, check]) => {
     if (check)

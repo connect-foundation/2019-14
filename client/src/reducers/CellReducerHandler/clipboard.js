@@ -18,9 +18,8 @@ const copy = (cellManager, block) => {
   };
 };
 
-const paste = (cellUuid, cellManager, dataObj) => {
+const paste = (index, cellManager, dataObj) => {
   const { clipboard } = dataObj;
-  const index = uuidManager.findIndex(cellUuid);
 
   const currentIndex = index + clipboard.texts.length;
 

@@ -165,23 +165,19 @@ const cellActionCreator = {
 
   /**
    * 쉬프트+위 입력시 선택할 셀의 범위를 위로 한 단계 올린다.
-   * @param {Uuid} cellUuid 블록을 시작할 기준 셀의 uuid
    */
-  blockUp(cellUuid) {
+  blockUp() {
     return {
       type: CELL_ACTION.BLOCK.UP,
-      cellUuid,
     };
   },
 
   /**
    * 쉬프트+아래 입력시 선택할 셀의 범위를 위로 한 단계 내린다.
-   * @param {Uuid} cellUuid 블록을 시작할 기준 셀의 uuid
    */
-  blockDown(cellUuid) {
+  blockDown() {
     return {
       type: CELL_ACTION.BLOCK.DOWN,
-      cellUuid,
     };
   },
 
@@ -219,12 +215,11 @@ const cellActionCreator = {
   },
 
   /**
-   * @param {Uuid} cellUuid 붙여넣기를 할 기준 셀의 uuid
+   * 현재 셀의 다음 셀부터 클립보드의 내용을 붙여넣기 한다.
    */
-  paste(cellUuid) {
+  paste() {
     return {
       type: CELL_ACTION.CLIPBOARD.PASTE,
-      cellUuid,
     };
   },
 

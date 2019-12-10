@@ -40,12 +40,12 @@ const focusPrev = (cellDispatch) => {
   cellDispatch(cellActionCreator.focusPrev());
 };
 
-const blockEndUp = (cellUuid, cellDispatch) => {
-  cellDispatch(cellActionCreator.blockUp(cellUuid));
+const blockEndUp = (cellDispatch) => {
+  cellDispatch(cellActionCreator.blockUp());
 };
 
-const blockEndDown = (cellUuid, cellDispatch) => {
-  cellDispatch(cellActionCreator.blockDown(cellUuid));
+const blockEndDown = (cellDispatch) => {
+  cellDispatch(cellActionCreator.blockDown());
 };
 
 const blockRelease = (cellDispatch) => {

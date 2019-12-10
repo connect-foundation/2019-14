@@ -152,8 +152,8 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.BLOCK.UP]: (state, action) => {
-    const result = block.blockRangeUp(action.cellUuid, state.block);
+  [CELL_ACTION.BLOCK.UP]: (state) => {
+    const result = block.blockRangeUp(state.currentIndex, state.block);
 
     return {
       ...state,
@@ -161,10 +161,10 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.BLOCK.DOWN]: (state, action) => {
+  [CELL_ACTION.BLOCK.DOWN]: (state) => {
     const { cells } = state.cellManager;
     const result = block.blockRangeDown(
-      action.cellUuid,
+      state.currentIndex,
       state.block,
       cells.length
     );
@@ -199,7 +199,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.CLIPBOARD.COPY]: (state) => {
-    if (!state.block.start) {
+    if (state.block.start === null) {
       return state;
     }
     const result = clipboard.copy(state.cellManager, state.block);
@@ -209,14 +209,13 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.CLIPBOARD.PASTE]: (state, action) => {
-    const { cellManager } = state;
-    const { cellUuid } = action;
+  [CELL_ACTION.CLIPBOARD.PASTE]: (state) => {
+    const { cellManager, currentIndex } = state;
 
     const dataObj = {
       clipboard: state.clipboard,
     };
-    const result = clipboard.paste(cellUuid, cellManager, dataObj);
+    const result = clipboard.paste(currentIndex, cellManager, dataObj);
 
     return {
       ...state,
