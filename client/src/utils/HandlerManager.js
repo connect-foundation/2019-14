@@ -217,6 +217,49 @@ const makeKeyHandler = {
   },
 };
 
+const defaultHandlers = {
+  [EVENT_TYPE.SHIFT_ENTER]: null,
+  [EVENT_TYPE.ARROW_UP]: null,
+  [EVENT_TYPE.ARROW_DOWN]: null,
+  [EVENT_TYPE.SHIFT_ARROW_UP]: null,
+  [EVENT_TYPE.SHIFT_ARROW_DOWN]: null,
+  [EVENT_TYPE.CTRL_A]: null,
+  [EVENT_TYPE.CTRL_X]: null,
+  [EVENT_TYPE.CTRL_C]: null,
+  [EVENT_TYPE.CTRL_V]: null,
+};
+
+const defaultChecksum = {
+  [EVENT_TYPE.SHIFT_ENTER]: false,
+  [EVENT_TYPE.ARROW_UP]: false,
+  [EVENT_TYPE.ARROW_DOWN]: false,
+  [EVENT_TYPE.SHIFT_ARROW_UP]: false,
+  [EVENT_TYPE.SHIFT_ARROW_DOWN]: false,
+  [EVENT_TYPE.CTRL_A]: false,
+  [EVENT_TYPE.CTRL_X]: false,
+  [EVENT_TYPE.CTRL_C]: false,
+  [EVENT_TYPE.CTRL_V]: false,
+};
+
+const defaultChecksumAllTrue = {
+  [EVENT_TYPE.SHIFT_ENTER]: true,
+  [EVENT_TYPE.ARROW_UP]: true,
+  [EVENT_TYPE.ARROW_DOWN]: true,
+  // [EVENT_TYPE.SHIFT_ARROW_UP]: true,
+  // [EVENT_TYPE.SHIFT_ARROW_DOWN]: true,
+  [EVENT_TYPE.CTRL_A]: true,
+  [EVENT_TYPE.CTRL_X]: true,
+  [EVENT_TYPE.CTRL_C]: true,
+  // [EVENT_TYPE.CTRL_V]: true,
+};
+
+const attachDefaultHandlers = (handlers) => {
+  Object.keys(handlers).forEach((key) => {
+    if (!defaultHandlers[key])
+      defaultHandlers[key] = makeKeyHandler[key](handlers[key]);
+  });
+};
+
 const useKey = (keyEvent, handler, isFocus, deps = []) => {
   const keydownHandler = makeKeyHandler[keyEvent](handler);
   useEffect(() => {
@@ -229,26 +272,28 @@ const useKey = (keyEvent, handler, isFocus, deps = []) => {
   }, [isFocus, ...deps]);
 };
 
-const useKeys = (handlers, isFocus, deps = []) => {
-  const defaultHandlers = [];
-  defaultHandlers.push(makeKeyHandler[EVENT_TYPE.SHIFT_ENTER](() => {}));
-  const cellHandlers = Object.entries(handlers).map(([type, handler]) => {
-    return makeKeyHandler[type](handler);
+const useKeys = (handlers, isFocus, deps = [], checksum = defaultChecksum) => {
+  const keydownHandlers = {};
+  Object.entries(checksum).forEach(([type, check]) => {
+    if (check)
+      keydownHandlers[type] = makeKeyHandler[type](defaultHandlers[type]);
   });
-  const keydownHandlers = [...defaultHandlers, ...cellHandlers];
+  Object.entries(handlers).forEach(([type, handler]) => {
+    keydownHandlers[type] = makeKeyHandler[type](handler);
+  });
 
   useEffect(() => {
     if (isFocus) {
-      keydownHandlers.forEach((handler) => {
+      Object.values(keydownHandlers).forEach((handler) => {
         window.addEventListener("keydown", handler);
       });
     }
     return () => {
-      keydownHandlers.forEach((handler) => {
+      Object.values(keydownHandlers).forEach((handler) => {
         window.removeEventListener("keydown", handler);
       });
     };
   }, [isFocus, ...deps]);
 };
 
-export { useKey, useKeys };
+export { useKey, useKeys, attachDefaultHandlers, defaultChecksumAllTrue };

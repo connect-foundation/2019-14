@@ -4,7 +4,12 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import { useKeys, uuidManager } from "../../../../utils";
+import {
+  useKeys,
+  uuidManager,
+  attachDefaultHandlers,
+  defaultChecksumAllTrue,
+} from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -60,6 +65,8 @@ const MarkdownCell = ({ cellUuid }) => {
     blockRelease(dispatch);
   };
 
+  const shiftEnterEvent = () => {};
+
   const arrowUpEvent = () => {
     focusPrev(dispatch);
     blockRelease(dispatch);
@@ -111,25 +118,31 @@ const MarkdownCell = ({ cellUuid }) => {
     blockRelease(dispatch);
   };
 
-  const keydownHandlers = {
-    [EVENT_TYPE.ENTER]: enterEvent,
+  const defaultKeydownHandlers = {
+    [EVENT_TYPE.SHIFT_ENTER]: shiftEnterEvent,
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
-    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
-    [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
-    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
     [EVENT_TYPE.CTRL_A]: ctrlAEvent,
     [EVENT_TYPE.CTRL_X]: ctrlXEvent,
     [EVENT_TYPE.CTRL_C]: ctrlCEvent,
-    [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
-  // -------------- End -----------------------
+  const keydownHandlers = {
+    [EVENT_TYPE.ENTER]: enterEvent,
+    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
+    [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
+    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
+    [EVENT_TYPE.CTRL_V]: ctrlVEvent,
+  };
 
   const isFocus = currentIndex === cellIndex;
   if (isFocus) {
     inputRef = state.inputRef;
   }
+
+  attachDefaultHandlers(defaultKeydownHandlers);
+  useKeys(keydownHandlers, isFocus, [block.end], defaultChecksumAllTrue);
+  // -------------- End -----------------------
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -154,8 +167,6 @@ const MarkdownCell = ({ cellUuid }) => {
     // };
     // window.addEventListener("beforeunload", isSaved);
   }, [inputRef]);
-
-  useKeys(keydownHandlers, isFocus, [block.end]);
 
   const onKeyUp = (e) => {
     const { textContent } = e.target;
