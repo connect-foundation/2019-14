@@ -5,14 +5,12 @@ import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import { useCellState, useKeys } from "../../../../utils";
 import { setGenerator } from "../CellGenerator";
-import { focusPrev, focusNext, blockRelease } from "../Markdown/handler";
+import { focusPrev, focusNext } from "../Markdown/handler";
 import { EVENT_TYPE } from "../../../../enums";
 
 setGenerator("code", (uuid) => <CodeCell cellUuid={uuid} />);
 
-const CodeCellWrapper = styled.div`
-  border: none;
-
+const CodeCellWrapper = styled.p`
   &:empty {
     &::before {
       content: attr(placeholder);
@@ -29,16 +27,17 @@ const CodeCellWrapper = styled.div`
   }
 
   margin: 0;
-
   padding: 0.2em;
 
   background: ${({ intoShiftBlock }) =>
     intoShiftBlock && "rgba(128, 0, 255, 0.2)"};
+  background: rgba(255, 255, 255, 0.08);
 
+  border: none;
   border: ${({ isCurrentCell }) =>
     isCurrentCell && "1.5px solid rgba(255, 255, 255, 0.2)"};
-  border-left: ${({ isQuote }) => isQuote && "0.25rem solid silver"};
-  padding-left: ${({ isQuote }) => isQuote && "0.5rem"};
+
+  white-space: pre-wrap;
 `;
 
 const CodeCell = ({ cellUuid }) => {
@@ -98,12 +97,11 @@ const CodeCell = ({ cellUuid }) => {
 
   const onClick = () => {
     dispatch(cellActionCreator.focusMove(cellUuid));
-    blockRelease(dispatch);
   };
 
   const onBlur = (e) => {
-    const { innerHTML } = e.target;
-    dispatch(cellActionCreator.input(cellUuid, innerHTML));
+    const { innerText } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, innerText));
   };
 
   return (
