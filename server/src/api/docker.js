@@ -170,30 +170,17 @@ class DockerApi {
       t: imageTagName,
     };
 
-    const onProgressCallback = (data) => {
-      console.log("progress", data);
-    };
-
-    const onFishedCallback = (err, data) => {
-      if (err) {
-        throw err;
-      }
-      console.log("finish", data);
-    };
-
     try {
       const stream = await this.request.buildImage(defaultOptions, imageTag);
-
-      await this.request.modem.followProgress(
-        stream,
-        onFishedCallback,
-        onProgressCallback
-      );
+      await this.followProgressAsync(stream);
+      debug("next to follow progress");
+      console.log("next follow progress");
+      const result = await this.createDefaultTerminal(imageTagName);
+      return result;
     } catch (err) {
-      console.log("catch", err);
+      debug("createCustomTerminal error", err);
+      return err;
     }
-    const result = await this.createDefaultTerminal(imageTagName);
-    return result;
     // TODO: refactor
   }
 
