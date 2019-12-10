@@ -20,18 +20,29 @@ const initCell = (cellUuid, cellManager, dataObj) => {
   });
 };
 
-const newUuid = (cellUuid) => {
+const newDefaultEmptyCell = (cellUuid, cellManager) => {
   const index = uuidManager.findIndex(cellUuid);
-  uuidManager.push(uuid(), index);
+  const newUuid = uuid();
+  uuidManager.push(newUuid, index);
+  const newData = {
+    cell: cellGenerator.p(newUuid),
+    text: "",
+    tag: "p",
+  };
+  cellManager.add(index, newData);
 };
 
 const newCell = (cellUuid, cellManager, dataObj) => {
   const { createCellCallback, cursor, tag, start } = dataObj;
-  const index = uuidManager.findIndex(cellUuid);
-  const uuidArray = uuidManager.getUuidArray();
 
   const isOrderedList = tag === "ol";
+  const index = uuidManager.findIndex(cellUuid);
+
+  uuidManager.push(uuid(), index);
+
+  const uuidArray = uuidManager.getUuidArray();
   const newStart = isOrderedList ? start + 1 : null;
+
   const newCellUuid = uuidArray[index + 1];
   const cell = isOrderedList
     ? createCellCallback(newCellUuid, newStart)
@@ -106,7 +117,7 @@ const deleteCell = (cellUuid, cellManager, dataObj) => {
 export default {
   initUuid,
   initCell,
-  newUuid,
+  newDefaultEmptyCell,
   newCell,
   inputText,
   deleteCell,

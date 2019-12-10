@@ -1,4 +1,7 @@
 import { uuidManager } from "../../utils";
+import common from "./common";
+
+const { newDefaultEmptyCell } = common;
 
 const transform = (cellUuid, cellManager, dataObj) => {
   const index = uuidManager.findIndex(cellUuid);
@@ -9,6 +12,10 @@ const transform = (cellUuid, cellManager, dataObj) => {
     tag,
   };
   cellManager.change(index, data);
+
+  if (tag === "code") {
+    newDefaultEmptyCell(cellUuid, cellManager);
+  }
 };
 
 export default { transform };

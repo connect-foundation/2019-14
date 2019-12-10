@@ -35,8 +35,6 @@ const cellReducerHandler = {
     const { start, cursor, cellManager } = state;
     const { cellUuid, createMarkdownCell, tag } = action;
 
-    common.newUuid(cellUuid);
-
     const result = common.newCell(cellUuid, cellManager, {
       createCellCallback: createMarkdownCell,
       cursor,
