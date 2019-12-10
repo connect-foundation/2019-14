@@ -88,9 +88,20 @@ const CodeCell = ({ cellUuid }) => {
     focusNext(dispatch);
   };
 
+  // 참고 : https://stackoverflow.com/a/36168767/12117094
+  // ascii html code
+  const tabEvent = () => {
+    // &#09 : tab, &#32 : space
+    document.execCommand("insertHTML", false, "&#32");
+    document.execCommand("insertHTML", false, "&#32");
+    document.execCommand("insertHTML", false, "&#32");
+    document.execCommand("insertHTML", false, "&#32");
+  };
+
   const keydownHandlerArray = {
     [EVENT_TYPE.CODE_ESCAPE_UP]: codeEscapeUpEvent,
     [EVENT_TYPE.CODE_ESCAPE_DOWN]: codeEscapeDownEvent,
+    [EVENT_TYPE.TAB]: tabEvent,
   };
 
   useKeys(keydownHandlerArray, isFocus);
