@@ -83,6 +83,10 @@ const MarkdownCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     const cursorPos = getSelection();
+
+    /**
+     * @todo 블록 부분들은 추후 싹 리팩토링 예정
+     */
     if (
       (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) ||
       state.block.start !== null
@@ -133,17 +137,21 @@ const MarkdownCell = ({ cellUuid }) => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
       const cellText = changeSpecialCharacter(text);
-      if (cellText) {
-        inputRef.current.innerHTML = cellText;
-      } else {
+      if (!cellText) {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }
-      const caret =
+      // if (cellText) {
+      //   inputRef.current.innerHTML = cellText;
+      // } else {
+      //   const emptyElement = document.createTextNode("");
+      //   inputRef.current.appendChild(emptyElement);
+      // }
+      const caretOffset =
         cursor.start > inputRef.current.firstChild.length
           ? inputRef.current.firstChild.length
           : cursor.start;
-      window.getSelection().collapse(inputRef.current.firstChild, caret);
+      window.getSelection().collapse(inputRef.current.firstChild, caretOffset);
     }
     /**
      * 거슬려서 잠시 주석

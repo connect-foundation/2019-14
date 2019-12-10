@@ -55,10 +55,11 @@ const ListCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     const currentCursor = getSelection();
-    if (
+    const isStartPos =
       textContent.length === 0 ||
-      (currentCursor.start === 0 && currentCursor.end === 0)
-    ) {
+      (currentCursor.start === 0 && currentCursor.end === 0);
+
+    if (isStartPos) {
       const componentCallback = cellGenerator.p;
       dispatch(cellActionCreator.input(cellUuid, textContent));
       initCell(cellUuid, dispatch, componentCallback);
@@ -166,11 +167,11 @@ const ListCell = ({ cellUuid }) => {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }
-      const caret =
+      const caretOffset =
         cursor.start > inputRef.current.firstChild.length
           ? inputRef.current.firstChild.length
           : cursor.start;
-      window.getSelection().collapse(inputRef.current.firstChild, caret);
+      window.getSelection().collapse(inputRef.current.firstChild, caretOffset);
     }
   }, [inputRef]);
 
