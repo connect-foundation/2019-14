@@ -10,10 +10,7 @@ const TermialSettingDrawerWrapper = styled.section`
   height: 100%;
   background-color: silver;
   top: 12.5%;
-
-  left: ${({ isHidden }) => {
-    isHidden && "9999rem";
-  }};
+  display: ${({ isHidden }) => isHidden && "none"};
 `;
 
 const TerminalSettingDrawer = () => {

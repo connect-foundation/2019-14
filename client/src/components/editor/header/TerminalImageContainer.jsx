@@ -37,8 +37,8 @@ const TerminalImageContainer = () => {
         images = [...images, ...state[element]];
     });
 
-    return images.map((image) => {
-      return <FontAwesomeIcon icon={ICON[image]} />;
+    return images.map((image, index) => {
+      return <FontAwesomeIcon key={index} icon={ICON[image]} />;
     });
   };
   return <TerminalImageList>{makeImageList()}</TerminalImageList>;

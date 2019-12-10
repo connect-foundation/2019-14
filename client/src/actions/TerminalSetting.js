@@ -42,7 +42,7 @@ const terminalSettingActionCreator = {
     return { type: TERMINAL_SETTING_ACTION.MOVE.STEP, step };
   },
 
-  hideTerminalSettingView() {
+  viewTerminalSetting() {
     return { type: TERMINAL_SETTING_ACTION.HIDE };
   },
 };
