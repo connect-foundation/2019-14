@@ -1,5 +1,25 @@
 const fs = require("fs").promises;
 
+const makeCentosTypeTerminalText = (terminalOption) => {
+  let dockerText = `FROM ${terminalOption.OS[0]}:7`;
+  dockerText = `${dockerText}\nRUN yum update -y && yum install -y openssh-server`;
+
+  terminalOption.DB.forEach((element) => {
+    if (element === "mongo") {
+      dockerText = `${dockerText} mongodb-org`;
+    }
+
+    if (element === "mysql") {
+      dockerText = `${dockerText} mysql-community-server`;
+    }
+  });
+
+  terminalOption.PL.forEach((element) => {
+    dockerText = `${dockerText} ${element}`;
+  });
+
+  return dockerText;
+};
 // 같은 이름의 파일은 덮어 씀
 const writeDockerfile = async (text) => {
   const data = new Uint8Array(Buffer.from(text));
