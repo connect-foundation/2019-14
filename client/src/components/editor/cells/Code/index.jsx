@@ -3,13 +3,16 @@ import propTypes from "prop-types";
 import styled from "styled-components";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
-import { useCellState } from "../../../../utils";
+import { useCellState, useKeys } from "../../../../utils";
 import { setGenerator } from "../CellGenerator";
 import {
   changeSpecialCharacter,
+  focusPrev,
+  focusNext,
   blockRelease,
   htmlText,
 } from "../Markdown/handler";
+import { EVENT_TYPE } from "../../../../enums";
 
 setGenerator("code", (uuid) => <CodeCell cellUuid={uuid} />);
 
@@ -85,6 +88,22 @@ const CodeCell = ({ cellUuid }) => {
       window.getSelection().collapse(inputRef.current.firstChild, caretOffset);
     }
   }, [inputRef]);
+
+  // ------------ handler -----------
+  const codeEscapeUpEvent = () => {
+    focusPrev(dispatch);
+  };
+
+  const codeEscapeDownEvent = () => {
+    focusNext(dispatch);
+  };
+
+  const keydownHandlerArray = {
+    [EVENT_TYPE.CODE_ESCAPE_UP]: codeEscapeUpEvent,
+    [EVENT_TYPE.CODE_ESCAPE_DOWN]: codeEscapeDownEvent,
+  };
+
+  useKeys(keydownHandlerArray, isFocus);
 
   const onClick = () => {
     dispatch(cellActionCreator.focusMove(cellUuid));
