@@ -27,6 +27,24 @@ const checkOsDependentCtrl = (e) => {
   return ctrlKey;
 };
 
+const checkOsDependentCodeEscape = (e) => {
+  const { altKey, ctrlKey, metaKey } = e;
+  const agentInfo = navigator.userAgent.toLowerCase();
+  const isMac = agentInfo.includes("mac");
+  if (isMac) {
+    return altKey && metaKey;
+  }
+
+  const isWindowOrLinux =
+    agentInfo.includes("linux") || agentInfo.includes("window");
+  if (isWindowOrLinux) {
+    return ctrlKey;
+  }
+
+  // any other minor os
+  return ctrlKey;
+};
+
 const makeKeyHandler = {
   [EVENT_TYPE.ENTER]: (handler) => {
     return (e) => {
@@ -105,6 +123,19 @@ const makeKeyHandler = {
     };
   },
 
+  [EVENT_TYPE.CODE_ESCAPE_UP]: (handler) => {
+    return (e) => {
+      const { key, shiftKey } = e;
+      const isArrowUp = key === KEY_TYPE.ARROW_UP;
+      const isShiftUp = shiftKey;
+      const isCodeEscape = checkOsDependentCodeEscape(e);
+      if (!isShiftUp && isCodeEscape && isArrowUp) {
+        e.preventDefault();
+        handler(e);
+      }
+    };
+  },
+
   [EVENT_TYPE.ARROW_DOWN]: (handler) => {
     return (e) => {
       const { key, shiftKey } = e;
@@ -122,6 +153,19 @@ const makeKeyHandler = {
       const { key, shiftKey } = e;
       const isShiftDown = key === KEY_TYPE.ARROW_DOWN && shiftKey;
       if (isShiftDown) {
+        e.preventDefault();
+        handler(e);
+      }
+    };
+  },
+
+  [EVENT_TYPE.CODE_ESCAPE_DOWN]: (handler) => {
+    return (e) => {
+      const { key, shiftKey } = e;
+      const isArrowDown = key === KEY_TYPE.ARROW_DOWN;
+      const isShiftUp = shiftKey;
+      const isCodeEscape = checkOsDependentCodeEscape(e);
+      if (!isShiftUp && isCodeEscape && isArrowDown) {
         e.preventDefault();
         handler(e);
       }
