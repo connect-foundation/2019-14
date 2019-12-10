@@ -3,10 +3,11 @@ import propTypes from "prop-types";
 import styled from "styled-components";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
+import { setGenerator, cellGenerator } from "../CellGenerator";
 import { useCellState, useKeys } from "../../../../utils";
-import { setGenerator } from "../CellGenerator";
-import { focusPrev, focusNext } from "../Markdown/handler";
 import { EVENT_TYPE } from "../../../../enums";
+import { focusPrev, focusNext } from "../Markdown/handler";
+import { initCell } from "../Heading/handler";
 
 setGenerator("code", (uuid) => <CodeCell cellUuid={uuid} />);
 
@@ -27,7 +28,7 @@ const CodeCellWrapper = styled.p`
   }
 
   margin: 0;
-  padding: 0.2em;
+  padding: 1em;
 
   background: ${({ intoShiftBlock }) =>
     intoShiftBlock && "rgba(128, 0, 255, 0.2)"};
@@ -43,7 +44,7 @@ const CodeCellWrapper = styled.p`
 const CodeCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { tag, text, placeholder, cellIndex, currentIndex } = useCellState(
+  const { text, placeholder, cellIndex, currentIndex } = useCellState(
     state,
     cellUuid
   );
@@ -91,17 +92,22 @@ const CodeCell = ({ cellUuid }) => {
   // 참고 : https://stackoverflow.com/a/36168767/12117094
   // ascii html code
   const tabEvent = () => {
-    // &#09 : tab, &#32 : space
-    document.execCommand("insertHTML", false, "&#32");
-    document.execCommand("insertHTML", false, "&#32");
-    document.execCommand("insertHTML", false, "&#32");
-    document.execCommand("insertHTML", false, "&#32");
+    document.execCommand("insertHTML", false, "&#32;&#32;&#32;&#32;");
+  };
+
+  const backspaceEvent = (e) => {
+    const { textContent } = e.target;
+    if (textContent.length === 0) {
+      const componentCallback = cellGenerator.p;
+      initCell(cellUuid, dispatch, componentCallback);
+    }
   };
 
   const keydownHandlerArray = {
     [EVENT_TYPE.CODE_ESCAPE_UP]: codeEscapeUpEvent,
     [EVENT_TYPE.CODE_ESCAPE_DOWN]: codeEscapeDownEvent,
     [EVENT_TYPE.TAB]: tabEvent,
+    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
   useKeys(keydownHandlerArray, isFocus);
