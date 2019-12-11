@@ -11,7 +11,7 @@ const MARKDOWN_REGEXP = {
 
   blockquote: /^\s{0,3}>\s+/g,
 
-  code: /^(\s{4,})|\s{0,3}`{3,}/g,
+  code: /^(\s{4,}|\s{0,3}`{3,})/g,
 
   // hr: /^\s{0,3}-{3,}|\*{3,}|_{3,}/g,
 

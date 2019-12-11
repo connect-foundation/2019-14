@@ -9,7 +9,7 @@ import {
   getChecksumAllFalse,
 } from "./HandlerManager";
 import useCellState from "./useCellState";
-import request from "./Request";
+import { request } from "./Request";
 import utils from "./Common";
 
 export {
