@@ -110,7 +110,7 @@ const QuoteCell = ({ cellUuid }) => {
       as={tag}
       contentEditable
       intoShiftBlock={intoShiftBlock}
-      isCurrentCell={cellIndex === currentIndex}
+      isCurrentCell={isFocus}
       isQuote
       placeholder={placeholder}
       onClick={onClick}
