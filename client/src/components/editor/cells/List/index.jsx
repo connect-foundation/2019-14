@@ -27,7 +27,11 @@ const ListCell = ({ cellUuid }) => {
     cellUuid
   );
   const { block, cursor, cellManager } = state;
-  const { start } = cellManager.options[cellIndex];
+  const { options } = cellManager;
+  const start =
+    options[cellIndex] && options[cellIndex].start
+      ? options[cellIndex].start
+      : null;
   let inputRef = null;
   let intoShiftBlock = false;
 
