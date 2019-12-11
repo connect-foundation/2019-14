@@ -1,9 +1,6 @@
-import clientIo from "socket.io-client";
 import { utils } from "../utils";
 
 const { splice } = utils;
-
-const io = clientIo(`http://localhost:9090`);
 
 class TerminalState {
   constructor(
@@ -138,12 +135,6 @@ class TerminalState {
     this.isLoadings = splice.addBefore(this.isLoadings, index, true);
   }
 
-  emitCurrentInput() {
-    io.emit("stdin", this.currentText);
-
-    this.currentText = "";
-  }
-
   updateCurrentInput(index) {
     this.inputTexts = splice.addBefore(
       this.inputTexts,
@@ -165,4 +156,4 @@ class TerminalState {
   }
 }
 
-export { TerminalState, io };
+export default TerminalState;

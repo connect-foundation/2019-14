@@ -1,8 +1,9 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useEffect } from "react";
 import propTypes from "prop-types";
 
+import { socketManager } from "../utils";
 import terminalReducer from "../reducers/TerminalReducer";
-import { TerminalState } from "../reducers/TerminalState";
+import TerminalState from "../reducers/TerminalState";
 
 const TerminalContext = React.createContext();
 const TerminalDispatchContext = React.createContext();

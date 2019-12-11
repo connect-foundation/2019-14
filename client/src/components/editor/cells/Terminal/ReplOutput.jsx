@@ -1,10 +1,11 @@
 import React, { useContext, useEffect } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import createDebug from "debug";
 import { parse } from "ansicolor";
 
+import { socketManager } from "../../../../utils";
 import { THEME } from "../../../../enums";
-import { io } from "../../../../reducers/TerminalState";
 import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
 import {
   TerminalContext,
@@ -28,22 +29,24 @@ const ColoredOutputWrapper = styled.span`
   ${(props) => props.css}
 `;
 
-const ReplOutput = () => {
+const decoder = new TextDecoder();
+
+const ReplOutput = ({ cellUuid }) => {
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const { terminalState } = useContext(TerminalContext);
   const { outputTexts } = terminalState;
 
   useEffect(() => {
-    if (io) {
-      debug("enroll io's stdout event", io);
-      io.on("stdout", (chunk) => {
-        const decoder = new TextDecoder();
-        const text = decoder.decode(chunk);
-        debug("stdout text is", text);
-        dispatchToTerminal(terminalAction.updateOutputText(text));
+    const socket = socketManager.get(cellUuid);
+    if (socket) {
+      debug("enroll socket's stdout event with", socket);
+      socket.on("stdout", (chunk) => {
+        const decodedText = decoder.decode(chunk);
+        debug("stdout text is", decodedText);
+        dispatchToTerminal(terminalAction.updateOutputText(decodedText));
       });
     } else {
-      debug("stdout io disabled");
+      debug("stdout socket disabled");
     }
   }, []);
 
@@ -61,6 +64,10 @@ const ReplOutput = () => {
   });
 
   return <ReplOutputWrapper>{outputs}</ReplOutputWrapper>;
+};
+
+ReplOutput.propTypes = {
+  cellUuid: PropTypes.string.isRequired,
 };
 
 export default ReplOutput;

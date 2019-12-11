@@ -1,5 +1,5 @@
 import { TERMINAL_ACTION } from "../actions/TerminalAction";
-import { TerminalState } from "./TerminalState";
+import TerminalState from "./TerminalState";
 
 const copyState = (state) => {
   return new TerminalState(state);
@@ -29,19 +29,6 @@ const terminalReducerHandler = {
     }
 
     currentTerminal.focusBottom();
-
-    // TODO: 다른 하위 터미널의 인풋도 다시 평가해야한다.
-
-    return nextState;
-  },
-
-  [TERMINAL_ACTION.EVAL_INPUT]: (state) => {
-    const nextState = copyState(state);
-    const currentTerminal = nextState;
-
-    currentTerminal.emitCurrentInput();
-
-    console.log("eval input=", nextState);
 
     return nextState;
   },

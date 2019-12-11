@@ -11,10 +11,11 @@ import {
 } from "../../../../stores/TerminalStore";
 import { CellContext } from "../../../../stores/CellStore";
 import { setGenerator } from "../CellGenerator";
-import { uuidManager } from "../../../../utils";
+import { uuidManager, socketManager } from "../../../../utils";
 import ReplContainer from "./ReplContainer";
 
 setGenerator("terminal", (uuid) => {
+  socketManager.enroll(uuid);
   return <TerminalCell cellUuid={uuid} />;
 });
 

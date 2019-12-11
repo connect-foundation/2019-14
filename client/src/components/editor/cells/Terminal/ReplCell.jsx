@@ -4,16 +4,17 @@ import PropTypes from "prop-types";
 import MovableReplCell from "./MovableReplCell";
 import ReplOutput from "./ReplOutput";
 
-const ReplCell = ({ isCellFocus }) => {
+const ReplCell = ({ cellUuid, isCellFocus }) => {
   return (
     <>
-      <ReplOutput key="repl-output" />
-      <MovableReplCell key="movable-repl-cell" isCellFocus={isCellFocus} />
+      <ReplOutput cellUuid={cellUuid} />
+      <MovableReplCell isCellFocus={isCellFocus} />
     </>
   );
 };
 
 ReplCell.propTypes = {
+  cellUuid: PropTypes.string.isRequired,
   isCellFocus: PropTypes.bool.isRequired,
 };
 
