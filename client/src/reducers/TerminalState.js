@@ -1,6 +1,9 @@
+import clientIo from "socket.io-client";
 import { utils } from "../utils";
 
 const { splice } = utils;
+
+const io = clientIo(`http://localhost:9090`);
 
 class TerminalState {
   constructor(
@@ -63,10 +66,8 @@ class TerminalState {
     this.outputTexts = this.outputTexts.map(() => "");
   }
 
-  updateOutput(index, outputText) {
-    this.isLoadings = splice.change(this.isLoadings, index, false);
-    this.isActives = splice.change(this.isActives, index, true);
-    this.outputTexts = splice.change(this.outputTexts, index, outputText);
+  updateOutput(outputText) {
+    this.outputTexts.push(outputText);
   }
 
   deleteRepl(index = this.focusIndex) {
@@ -113,8 +114,6 @@ class TerminalState {
 
   focusIn() {
     this.focusIndex = this.replCount;
-    this.currentText = "";
-    this.currentStdin = "";
     this.replCount = this.inputTexts.length;
   }
 
@@ -139,6 +138,12 @@ class TerminalState {
     this.isLoadings = splice.addBefore(this.isLoadings, index, true);
   }
 
+  emitCurrentInput() {
+    io.emit("stdin", this.currentText);
+
+    this.currentText = "";
+  }
+
   updateCurrentInput(index) {
     this.inputTexts = splice.addBefore(
       this.inputTexts,
@@ -160,4 +165,4 @@ class TerminalState {
   }
 }
 
-export default TerminalState;
+export { TerminalState, io };

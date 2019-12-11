@@ -1,5 +1,5 @@
 import { TERMINAL_ACTION } from "../actions/TerminalAction";
-import TerminalState from "./TerminalState";
+import { TerminalState } from "./TerminalState";
 
 const copyState = (state) => {
   return new TerminalState(state);
@@ -35,7 +35,16 @@ const terminalReducerHandler = {
     return nextState;
   },
 
-  // [TERMINAL_ACTION.EVAL_INPUT]: (state, action) => {},
+  [TERMINAL_ACTION.EVAL_INPUT]: (state) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+
+    currentTerminal.emitCurrentInput();
+
+    console.log("eval input=", nextState);
+
+    return nextState;
+  },
 
   [TERMINAL_ACTION.EVAL_ALL]: (state) => {
     const nextState = copyState(state);
@@ -61,9 +70,6 @@ const terminalReducerHandler = {
 
   [TERMINAL_ACTION.FOCUS_OUT]: (state) => {
     const nextState = copyState(state);
-    const currentTerminal = nextState;
-
-    currentTerminal.insertReplTo();
 
     return nextState;
   },
@@ -111,9 +117,9 @@ const terminalReducerHandler = {
     const nextState = copyState(state);
     const currentTerminal = nextState;
 
-    const { index, text } = action;
+    const { text } = action;
 
-    currentTerminal.updateOutput(index, text);
+    currentTerminal.updateOutput(text);
 
     return nextState;
   },
