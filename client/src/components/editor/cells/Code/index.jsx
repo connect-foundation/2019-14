@@ -4,11 +4,7 @@ import styled from "styled-components";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import { setGenerator, cellGenerator } from "../CellGenerator";
-import {
-  useCellState,
-  useKeys,
-  defaultChecksumAllFalse,
-} from "../../../../utils";
+import { useCellState, useKeys, getChecksumAllFalse } from "../../../../utils";
 import { EVENT_TYPE } from "../../../../enums";
 import { focusPrev, focusNext } from "../Markdown/handler";
 import { initCell } from "../Heading/handler";
@@ -83,11 +79,11 @@ const CodeCell = ({ cellUuid }) => {
   }, [inputRef]);
 
   // ------------ handler -----------
-  const codeEscapeUpEvent = () => {
+  const optionCommandUpEvent = () => {
     focusPrev(dispatch);
   };
 
-  const codeEscapeDownEvent = () => {
+  const optionCommandDownEvent = () => {
     focusNext(dispatch);
   };
 
@@ -106,13 +102,13 @@ const CodeCell = ({ cellUuid }) => {
   };
 
   const keydownHandlerArray = {
-    [EVENT_TYPE.CODE_ESCAPE_UP]: codeEscapeUpEvent,
-    [EVENT_TYPE.CODE_ESCAPE_DOWN]: codeEscapeDownEvent,
+    [EVENT_TYPE.OPTION_COMMAND_UP]: optionCommandUpEvent,
+    [EVENT_TYPE.OPTION_COMMAND_DOWN]: optionCommandDownEvent,
     [EVENT_TYPE.TAB]: tabEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
-  useKeys(keydownHandlerArray, isFocus, [], defaultChecksumAllFalse);
+  useKeys(keydownHandlerArray, isFocus, [], getChecksumAllFalse());
 
   const onClick = () => {
     dispatch(cellActionCreator.focusMove(cellUuid));
@@ -129,7 +125,7 @@ const CodeCell = ({ cellUuid }) => {
     <CodeCellWrapper
       contentEditable
       intoShiftBlock={intoShiftBlock}
-      isCurrentCell={cellIndex === currentIndex}
+      isCurrentCell={isFocus}
       isQuote={false}
       placeholder={placeholder}
       onClick={onClick}

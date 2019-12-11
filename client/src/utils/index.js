@@ -6,8 +6,7 @@ import {
   useKey,
   useKeys,
   attachDefaultHandlers,
-  defaultChecksumAllFalse,
-  defaultChecksumAllTrue,
+  getChecksumAllFalse,
 } from "./HandlerManager";
 import useCellState from "./useCellState";
 import request from "./Request";
@@ -21,8 +20,7 @@ export {
   useKey,
   useKeys,
   attachDefaultHandlers,
-  defaultChecksumAllFalse,
-  defaultChecksumAllTrue,
+  getChecksumAllFalse,
   useCellState,
   useReducerAsync,
   request,

@@ -134,7 +134,7 @@ const ListCell = ({ cellUuid }) => {
       as="li"
       contentEditable
       intoShiftBlock={intoShiftBlock}
-      isCurrentCell={cellIndex === currentIndex}
+      isCurrentCell={isFocus}
       placeholder={placeholder}
       onClick={onClick}
       onBlur={onBlur}

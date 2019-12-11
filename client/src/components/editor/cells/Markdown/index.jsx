@@ -184,7 +184,7 @@ const MarkdownCell = ({ cellUuid }) => {
       as={currentTag}
       contentEditable
       intoShiftBlock={intoShiftBlock}
-      isCurrentCell={cellIndex === currentIndex}
+      isCurrentCell={isFocus}
       placeholder={PLACEHOLDER[currentTag]}
       onKeyUp={onKeyUp}
       onClick={onClick}

@@ -27,7 +27,7 @@ const checkOsDependentCtrl = (e) => {
   return ctrlKey;
 };
 
-const checkOsDependentCodeEscape = (e) => {
+const checkOsDependentOptionCommand = (e) => {
   const { altKey, ctrlKey, metaKey } = e;
   const agentInfo = navigator.userAgent.toLowerCase();
   const isMac = agentInfo.includes("mac");
@@ -123,12 +123,12 @@ const makeKeyHandler = {
     };
   },
 
-  [EVENT_TYPE.CODE_ESCAPE_UP]: (handler) => {
+  [EVENT_TYPE.OPTION_COMMAND_UP]: (handler) => {
     return (e) => {
       const { key, shiftKey } = e;
       const isArrowUp = key === KEY_TYPE.ARROW_UP;
       const isShiftUp = shiftKey;
-      const isCodeEscape = checkOsDependentCodeEscape(e);
+      const isCodeEscape = checkOsDependentOptionCommand(e);
       if (!isShiftUp && isCodeEscape && isArrowUp) {
         e.preventDefault();
         handler(e);
@@ -159,12 +159,12 @@ const makeKeyHandler = {
     };
   },
 
-  [EVENT_TYPE.CODE_ESCAPE_DOWN]: (handler) => {
+  [EVENT_TYPE.OPTION_COMMAND_DOWN]: (handler) => {
     return (e) => {
       const { key, shiftKey } = e;
       const isArrowDown = key === KEY_TYPE.ARROW_DOWN;
       const isShiftUp = shiftKey;
-      const isCodeEscape = checkOsDependentCodeEscape(e);
+      const isCodeEscape = checkOsDependentOptionCommand(e);
       if (!isShiftUp && isCodeEscape && isArrowDown) {
         e.preventDefault();
         handler(e);
@@ -241,6 +241,10 @@ const defaultChecksumAllFalse = {
   [EVENT_TYPE.CTRL_V]: false,
 };
 
+const getChecksumAllFalse = () => {
+  return { ...defaultChecksumAllFalse };
+};
+
 const defaultChecksumAllTrue = {
   [EVENT_TYPE.SHIFT_ENTER]: true,
   [EVENT_TYPE.ARROW_UP]: true,
@@ -301,10 +305,4 @@ const useKeys = (
   }, [isFocus, ...deps]);
 };
 
-export {
-  useKey,
-  useKeys,
-  attachDefaultHandlers,
-  defaultChecksumAllFalse,
-  defaultChecksumAllTrue,
-};
+export { useKey, useKeys, attachDefaultHandlers, getChecksumAllFalse };
