@@ -11,13 +11,7 @@ import {
   getSelection,
   saveCursorPosition,
   deleteCell,
-  focusPrev,
-  focusNext,
-  changeSpecialCharacter,
-  blockEndUp,
-  blockEndDown,
   blockRelease,
-  htmlText,
 } from "../Markdown/handler";
 import { newCell, initCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
@@ -78,53 +72,9 @@ const HeadingCell = ({ cellUuid }) => {
     blockRelease(dispatch);
   };
 
-  const arrowUpEvent = () => {
-    focusPrev(dispatch);
-    blockRelease(dispatch);
-  };
-
-  const arrowDownEvent = () => {
-    focusNext(dispatch);
-    blockRelease(dispatch);
-  };
-
-  const shiftArrowUpEvent = () => {
-    blockEndUp(cellUuid, dispatch);
-  };
-
-  const shiftArrowDownEvent = () => {
-    blockEndDown(cellUuid, dispatch);
-  };
-
-  const ctrlAEvent = () => {
-    dispatch(cellActionCreator.blockAll());
-  };
-
-  const ctrlXEvent = () => {
-    dispatch(cellActionCreator.copy());
-    deleteCell(dispatch);
-  };
-
-  const ctrlCEvent = () => {
-    dispatch(cellActionCreator.copy());
-  };
-
-  const ctrlVEvent = () => {
-    dispatch(cellActionCreator.paste(cellUuid));
-    blockRelease(dispatch);
-  };
-
   const keydownHandlers = {
     [EVENT_TYPE.ENTER]: enterEvent,
-    [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
-    [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
-    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
-    [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
-    [EVENT_TYPE.CTRL_A]: ctrlAEvent,
-    [EVENT_TYPE.CTRL_X]: ctrlXEvent,
-    [EVENT_TYPE.CTRL_C]: ctrlCEvent,
-    [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
   const isFocus = currentIndex === cellIndex;
@@ -137,13 +87,11 @@ const HeadingCell = ({ cellUuid }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      const cellText = changeSpecialCharacter(text);
-      if (cellText) {
-        inputRef.current.innerHTML = cellText;
-      } else {
+      if (inputRef.current.firstChild === null) {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }
+
       const caretOffset =
         cursor.start > inputRef.current.firstChild.length
           ? inputRef.current.firstChild.length
@@ -167,15 +115,17 @@ const HeadingCell = ({ cellUuid }) => {
       as={tag}
       contentEditable
       intoShiftBlock={intoShiftBlock}
-      isCurrentCell={cellIndex === currentIndex}
+      isCurrentCell={isFocus}
       isQuote={false}
       placeholder={placeholder}
       onClick={onClick}
       onBlur={onBlur}
       ref={inputRef || null}
-      dangerouslySetInnerHTML={htmlText(text)}
       spellCheck={false}
-    />
+      suppressContentEditableWarning
+    >
+      {text}
+    </MarkdownWrapper>
   );
 };
 

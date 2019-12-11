@@ -16,9 +16,7 @@ const selectAllBlock = (lastCellIndex) => {
   };
 };
 
-const blockRangeUp = (cellUuid, block) => {
-  const index = uuidManager.findIndex(cellUuid);
-
+const blockRangeUp = (index, block) => {
   const newStart = block.start || index;
   let newEnd = null;
   if (block.end > 0) {
@@ -40,9 +38,7 @@ const blockRangeUp = (cellUuid, block) => {
   };
 };
 
-const blockRangeDown = (cellUuid, block, cellLength) => {
-  const index = uuidManager.findIndex(cellUuid);
-
+const blockRangeDown = (index, block, cellLength) => {
   const newStart = block.start !== null ? block.start : index;
   let newEnd = null;
   if (block.end < cellLength - 1) {
