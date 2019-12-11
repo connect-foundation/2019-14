@@ -10,11 +10,12 @@ import {
   faFileExport,
   faTerminal,
 } from "@fortawesome/free-solid-svg-icons";
-import { CellDispatchContext } from "../../../stores/CellStore";
 import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
 import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
+import { CellDispatchContext, CellContext } from "../../../stores/CellStore";
 import { THEME } from "../../../enums";
 import { cellActionCreator } from "../../../actions/CellAction";
+import { request } from "../../../utils";
 
 const BUTTON_TYPE = {
   NEW: faFileMedical,
@@ -30,8 +31,15 @@ const BUTTON_HANDLER = {
   SAVE: (cellDispatch) => {
     cellDispatch(cellActionCreator.save());
   },
-  LOAD: (cellDispatch) => {
+  LOAD: (cellDispatch, cellManager) => {
+    const loadDocument = async () => {
+      const result = await request.do("LOAD");
+      const doc = await result.text();
+      cellManager.load(doc);
+      cellDispatch(cellActionCreator.loadFinish());
+    };
     cellDispatch(cellActionCreator.load());
+    loadDocument();
   },
   CODE: () => {},
   SHARE: () => {},
@@ -41,12 +49,16 @@ const BUTTON_HANDLER = {
 const ToolBarButtonWrapper = styled.button`
   margin: 0 0.5rem;
   width: 2rem;
-  height: 2rem;
+  height: 3rem;
   font-size: 1.5rem;
   background: transparent;
   border: transparent;
   cursor: pointer;
   color: ${THEME.VS_CODE.FONT};
+
+  div {
+    font-size: 0.3rem;
+  }
 
   margin-left: ${(props) => (props.isTerminal ? "auto" : "0px")};
 `;
@@ -54,9 +66,11 @@ const ToolBarButtonWrapper = styled.button`
 const ToolBarButton = ({ buttonType }) => {
   const isTerminal = buttonType === "TERMINAL";
   const cellDispatch = useContext(CellDispatchContext);
+  const { state } = useContext(CellContext);
+  const { cellManager } = state;
 
   const onClick = () => {
-    BUTTON_HANDLER[buttonType](cellDispatch);
+    BUTTON_HANDLER[buttonType](cellDispatch, cellManager);
   };
 
   if (isTerminal) {
@@ -76,6 +90,7 @@ const ToolBarButton = ({ buttonType }) => {
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>
       <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} onClick={onClick} />
+      <div>{buttonType}</div>
     </ToolBarButtonWrapper>
   );
 };

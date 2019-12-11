@@ -1,5 +1,6 @@
 import { uuid } from "uuidv4";
 import { uuidManager } from "../../utils";
+import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
 const initUuid = (cellUuid, newCellUuid) => {
   if (!cellUuid) {
@@ -8,32 +9,46 @@ const initUuid = (cellUuid, newCellUuid) => {
 };
 
 const initCell = (cellUuid, cellManager, dataObj) => {
+  const { cell, tag } = dataObj;
   const uuidArray = uuidManager.getUuidArray();
   const index = cellUuid ? uuidManager.findIndex(cellUuid) : 0;
   const targetUuid = uuidArray[index];
   cellManager.change(index, {
-    cell: dataObj.cell(targetUuid),
-    text: dataObj.text,
-    tag: dataObj.tag,
+    cell: cell ? cell(targetUuid) : cellGenerator.p(targetUuid),
+    text: cellManager.texts[index] || "",
+    tag,
   });
+  cellManager.deleteOption(index);
 };
 
-const newUuid = (cellUuid) => {
+const newDefaultEmptyCell = (cellUuid, cellManager) => {
   const index = uuidManager.findIndex(cellUuid);
-  uuidManager.push(uuid(), index);
+  const newUuid = uuid();
+  uuidManager.push(newUuid, index);
+  const newData = {
+    cell: cellGenerator.p(newUuid),
+    text: "",
+    tag: "p",
+  };
+  cellManager.add(index, newData);
 };
 
 const newCell = (cellUuid, cellManager, dataObj) => {
   const { createCellCallback, cursor, tag, start } = dataObj;
-  const index = uuidManager.findIndex(cellUuid);
-  const uuidArray = uuidManager.getUuidArray();
 
   const isOrderedList = tag === "ol";
+  const index = uuidManager.findIndex(cellUuid);
+
+  uuidManager.push(uuid(), index);
+
+  const uuidArray = uuidManager.getUuidArray();
   const newStart = isOrderedList ? start + 1 : null;
+
   const newCellUuid = uuidArray[index + 1];
-  const cell = isOrderedList
-    ? createCellCallback(newCellUuid, newStart)
-    : createCellCallback(newCellUuid);
+  const cell = createCellCallback(newCellUuid);
+  if (isOrderedList) {
+    cellManager.addOption(index + 1, { start: newStart });
+  }
 
   const originText = cellManager.texts[index];
   const currentText = originText ? originText.slice(0, cursor.start) : "";
@@ -57,7 +72,6 @@ const newCell = (cellUuid, cellManager, dataObj) => {
   return {
     cursor: newCursor,
     currentIndex,
-    start: newStart,
   };
 };
 
@@ -87,6 +101,14 @@ const deleteCell = (cellUuid, cellManager, dataObj) => {
   };
   cellManager.delete(index, flag);
   cellManager.change(prevIndex, { text: joinedText });
+  if (cellManager.cells.length === 0) {
+    initUuid(null, uuid());
+    initCell(cellUuid, cellManager, {
+      cell: cellGenerator.p,
+      text: "",
+      tag: "p",
+    });
+  }
   return {
     cursor,
     currentIndex: prevIndex,
@@ -96,7 +118,7 @@ const deleteCell = (cellUuid, cellManager, dataObj) => {
 export default {
   initUuid,
   initCell,
-  newUuid,
+  newDefaultEmptyCell,
   newCell,
   inputText,
   deleteCell,

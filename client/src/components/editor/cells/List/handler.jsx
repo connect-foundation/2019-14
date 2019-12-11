@@ -1,7 +1,7 @@
 import { cellActionCreator } from "../../../../actions/CellAction";
 
-const newCell = (cellUuid, cellDispatch, componentCallback, tag) => {
-  cellDispatch(cellActionCreator.new(cellUuid, componentCallback, tag));
+const newCell = (cellUuid, cellDispatch, componentCallback, tag, start) => {
+  cellDispatch(cellActionCreator.new(cellUuid, componentCallback, tag, start));
 };
 
 const initCell = (cellUuid, cellDispatch, componentCallback) => {
