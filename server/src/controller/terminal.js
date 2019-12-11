@@ -1,3 +1,4 @@
+const debug = require("debug");
 const { writeDockerfile } = require("../api/makeDockerfile");
 
 const createDefaultTerminal = async (dockerInstance, terminalOption) => {
@@ -10,8 +11,7 @@ const createDefaultTerminal = async (dockerInstance, terminalOption) => {
     );
     return containerId;
   } catch (err) {
-    console.log(err);
-    return null;
+    debug("create default terminal", err);
   }
 };
 

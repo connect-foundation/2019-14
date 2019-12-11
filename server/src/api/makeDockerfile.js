@@ -24,7 +24,7 @@ const parseTerminalOption = (terminalOption) => {
 
 const makeUbuntuTypeTerminalText = (terminalOption) => {
   let dockerText = `FROM ${terminalOption.OS[0]}:16.04`;
-  dockerText = `${dockerText}\nRUN apt-get update && apt-get install -y apt apt-transport-https openssh-server ca-certificates wget`;
+  dockerText = `${dockerText}\nRUN apt-get update -y && apt-get install -y apt apt-transport-https openssh-server ca-certificates wget`;
 
   let tmpText = "";
 
@@ -43,7 +43,7 @@ const makeUbuntuTypeTerminalText = (terminalOption) => {
     });
   }
 
-  dockerText = `${dockerText}\nRUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y ${tmpText}`;
+  dockerText = `${dockerText}\nRUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install -y ${tmpText}`;
 
   if (terminalOption.PL.length !== 0) {
     terminalOption.PL.forEach((element) => {
