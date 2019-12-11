@@ -11,27 +11,13 @@ import {
   getSelection,
   saveCursorPosition,
   deleteCell,
-  focusPrev,
-  focusNext,
-  changeSpecialCharacter,
-  blockEndUp,
-  blockEndDown,
   blockRelease,
-  htmlText,
 } from "../Markdown/handler";
 import { newCell, initCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
 
-setGenerator("ul", (uuid) => (
-  <ul>
-    <ListCell cellUuid={uuid} />
-  </ul>
-));
-setGenerator("ol", (uuid, start) => (
-  <ol start={start}>
-    <ListCell cellUuid={uuid} />
-  </ol>
-));
+setGenerator("ul", (uuid) => <ListCell cellUuid={uuid} />);
+setGenerator("ol", (uuid) => <ListCell cellUuid={uuid} />);
 
 const ListCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
@@ -40,7 +26,12 @@ const ListCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block, cursor } = state;
+  const { block, cursor, cellManager } = state;
+  const { options } = cellManager;
+  const start =
+    options[cellIndex] && options[cellIndex].start
+      ? options[cellIndex].start
+      : null;
   let inputRef = null;
   let intoShiftBlock = false;
 
@@ -96,58 +87,14 @@ const ListCell = ({ cellUuid }) => {
 
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback, tag);
+      newCell(cellUuid, dispatch, componentCallback, tag, start);
     }
-    blockRelease(dispatch);
-  };
-
-  const arrowUpEvent = () => {
-    focusPrev(dispatch);
-    blockRelease(dispatch);
-  };
-
-  const arrowDownEvent = () => {
-    focusNext(dispatch);
-    blockRelease(dispatch);
-  };
-
-  const shiftArrowUpEvent = () => {
-    blockEndUp(cellUuid, dispatch);
-  };
-
-  const shiftArrowDownEvent = () => {
-    blockEndDown(cellUuid, dispatch);
-  };
-
-  const ctrlAEvent = () => {
-    dispatch(cellActionCreator.blockAll());
-  };
-
-  const ctrlXEvent = () => {
-    dispatch(cellActionCreator.copy());
-    deleteCell(dispatch);
-  };
-
-  const ctrlCEvent = () => {
-    dispatch(cellActionCreator.copy());
-  };
-
-  const ctrlVEvent = () => {
-    dispatch(cellActionCreator.paste(cellUuid));
     blockRelease(dispatch);
   };
 
   const keydownHandlers = {
     [EVENT_TYPE.ENTER]: enterEvent,
-    [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
-    [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
-    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
-    [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
-    [EVENT_TYPE.CTRL_A]: ctrlAEvent,
-    [EVENT_TYPE.CTRL_X]: ctrlXEvent,
-    [EVENT_TYPE.CTRL_C]: ctrlCEvent,
-    [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
   const isFocus = currentIndex === cellIndex;
@@ -160,10 +107,7 @@ const ListCell = ({ cellUuid }) => {
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      const cellText = changeSpecialCharacter(text);
-      if (cellText) {
-        inputRef.current.innerHTML = cellText;
-      } else {
+      if (inputRef.current.firstChild === null) {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }
@@ -185,20 +129,27 @@ const ListCell = ({ cellUuid }) => {
     dispatch(cellActionCreator.input(cellUuid, textContent));
   };
 
-  return (
+  const renderTarget = (
     <MarkdownWrapper
       as="li"
       contentEditable
       intoShiftBlock={intoShiftBlock}
-      isCurrentCell={cellIndex === currentIndex}
+      isCurrentCell={isFocus}
       placeholder={placeholder}
       onClick={onClick}
       onBlur={onBlur}
       ref={inputRef || null}
-      dangerouslySetInnerHTML={htmlText(text)}
       spellCheck={false}
-    />
+      suppressContentEditableWarning
+    >
+      {text}
+    </MarkdownWrapper>
   );
+
+  if (tag === "ol") {
+    return <ol start={start}>{renderTarget}</ol>;
+  }
+  return <ul>{renderTarget}</ul>;
 };
 
 ListCell.propTypes = {

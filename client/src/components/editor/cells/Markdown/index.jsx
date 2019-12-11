@@ -4,7 +4,7 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import { useKeys, uuidManager } from "../../../../utils";
+import { useKeys, uuidManager, attachDefaultHandlers } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -18,8 +18,6 @@ import {
   blockEndDown,
   blockRelease,
   transformCell,
-  htmlText,
-  changeSpecialCharacter,
 } from "./handler";
 
 setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
@@ -30,7 +28,7 @@ setGenerator("hr", (uuid) => (
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { currentIndex, start, cursor, block, cellManager, isLoading } = state;
+  const { currentIndex, cursor, block, cellManager, isLoading } = state;
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
@@ -49,7 +47,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   useEffect(() => {
     text = !isLoading ? cellManager.texts[cellIndex] : "";
-    transformCell(cellUuid, dispatch, text, currentTag, start);
+    transformCell(cellUuid, dispatch, text, currentTag);
   }, [isLoading]);
 
   // -------------- Handler -----------------------
@@ -62,13 +60,15 @@ const MarkdownCell = ({ cellUuid }) => {
     blockRelease(dispatch);
   };
 
+  const shiftEnterEvent = () => {};
+
   const arrowUpEvent = () => {
     focusPrev(dispatch);
     blockRelease(dispatch);
   };
 
   const shiftArrowUpEvent = () => {
-    blockEndUp(cellUuid, dispatch);
+    blockEndUp(dispatch);
   };
 
   const arrowDownEvent = () => {
@@ -77,7 +77,7 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const shiftArrowDownEvent = () => {
-    blockEndDown(cellUuid, dispatch);
+    blockEndDown(dispatch);
   };
 
   const backspaceEvent = (e) => {
@@ -109,44 +109,44 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const ctrlVEvent = () => {
-    dispatch(cellActionCreator.paste(cellUuid));
+    dispatch(cellActionCreator.paste());
     blockRelease(dispatch);
   };
 
-  const keydownHandlers = {
-    [EVENT_TYPE.ENTER]: enterEvent,
+  const defaultKeydownHandlers = {
+    [EVENT_TYPE.SHIFT_ENTER]: shiftEnterEvent,
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
-    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
     [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
-    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
     [EVENT_TYPE.CTRL_A]: ctrlAEvent,
     [EVENT_TYPE.CTRL_X]: ctrlXEvent,
     [EVENT_TYPE.CTRL_C]: ctrlCEvent,
     [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
-  // -------------- End -----------------------
+  const keydownHandlers = {
+    [EVENT_TYPE.ENTER]: enterEvent,
+    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
+  };
 
   const isFocus = currentIndex === cellIndex;
   if (isFocus) {
     inputRef = state.inputRef;
   }
 
+  attachDefaultHandlers(defaultKeydownHandlers);
+  useKeys(keydownHandlers, isFocus, [block.end]);
+  // -------------- End -----------------------
+
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
-      const cellText = changeSpecialCharacter(text);
-      if (!cellText) {
+      if (inputRef.current.firstChild === null) {
         const emptyElement = document.createTextNode("");
         inputRef.current.appendChild(emptyElement);
       }
-      // if (cellText) {
-      //   inputRef.current.innerHTML = cellText;
-      // } else {
-      //   const emptyElement = document.createTextNode("");
-      //   inputRef.current.appendChild(emptyElement);
-      // }
+
       const caretOffset =
         cursor.start > inputRef.current.firstChild.length
           ? inputRef.current.firstChild.length
@@ -163,12 +163,10 @@ const MarkdownCell = ({ cellUuid }) => {
     // window.addEventListener("beforeunload", isSaved);
   }, [inputRef]);
 
-  useKeys(keydownHandlers, isFocus, [block.end]);
-
   const onKeyUp = (e) => {
     const { textContent } = e.target;
 
-    transformCell(cellUuid, dispatch, textContent, currentTag, start);
+    transformCell(cellUuid, dispatch, textContent, currentTag);
   };
 
   const onClick = () => {
@@ -184,18 +182,19 @@ const MarkdownCell = ({ cellUuid }) => {
   const renderTarget = (
     <MarkdownWrapper
       as={currentTag}
+      contentEditable
       intoShiftBlock={intoShiftBlock}
-      isCurrentCell={cellIndex === currentIndex}
+      isCurrentCell={isFocus}
       placeholder={PLACEHOLDER[currentTag]}
       onKeyUp={onKeyUp}
       onClick={onClick}
       onBlur={onBlur}
       ref={inputRef || null}
-      dangerouslySetInnerHTML={htmlText(text)}
-      suppressContentEditableWarning
-      contentEditable
       spellCheck={false}
-    />
+      suppressContentEditableWarning
+    >
+      {text}
+    </MarkdownWrapper>
   );
 
   return renderTarget;

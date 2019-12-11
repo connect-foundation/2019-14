@@ -15,6 +15,7 @@ const CELL_TAG = {
   },
   BLOCKQUOTE: "blockquote",
   TERMINAL: "terminal",
+  CODE: "code",
 };
 
 export default CELL_TAG;

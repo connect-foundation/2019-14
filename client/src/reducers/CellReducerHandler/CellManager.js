@@ -9,6 +9,7 @@ function CellManager() {
   this.cells = [];
   this.texts = [];
   this.tags = [];
+  this.options = [];
 }
 
 const TAG_MARKDOWN = {
@@ -55,6 +56,25 @@ CellManager.prototype.delete = function(index, flag) {
   if (flag.tag) this.tags = splice.delete(this.tags, index);
 };
 
+CellManager.prototype.addOption = function(index, dataObj) {
+  this.options[index] = dataObj;
+};
+
+CellManager.prototype.changeOption = function(index, dataObj) {
+  this.options[index] = {
+    ...this.options[index],
+    ...dataObj,
+  };
+};
+
+CellManager.prototype.deleteOneOption = function(index, key) {
+  delete this.options[index][key];
+};
+
+CellManager.prototype.deleteOption = function(index) {
+  delete this.options[index];
+};
+
 CellManager.prototype.pushArray = function(index, dataObj) {
   if (dataObj.cells !== undefined)
     this.cells = splice.pushArray(this.cells, index, dataObj.cells);
@@ -73,7 +93,12 @@ CellManager.prototype.popArray = function(start, end, flag) {
 CellManager.prototype.createMarkdownDocument = function() {
   let document = "";
   for (let i = 0; i < this.texts.length; i += 1) {
-    const mdText = findMakdownByTag(this.tags[i]);
+    let mdText = null;
+    if (this.tags[i] === "ol") {
+      mdText = "".concat(this.options[i].start).concat(". ");
+    } else {
+      mdText = findMakdownByTag(this.tags[i]);
+    }
     const text = `${mdText}${this.texts[i]}\n`;
     document = document.concat(text);
   }
