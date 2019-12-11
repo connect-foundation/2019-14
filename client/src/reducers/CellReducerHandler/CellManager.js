@@ -93,7 +93,12 @@ CellManager.prototype.popArray = function(start, end, flag) {
 CellManager.prototype.createMarkdownDocument = function() {
   let document = "";
   for (let i = 0; i < this.texts.length; i += 1) {
-    const mdText = findMakdownByTag(this.tags[i]);
+    let mdText = null;
+    if (this.tags[i] === "ol") {
+      mdText = "".concat(this.options[i].start).concat(". ");
+    } else {
+      mdText = findMakdownByTag(this.tags[i]);
+    }
     const text = `${mdText}${this.texts[i]}\n`;
     document = document.concat(text);
   }
