@@ -51,6 +51,7 @@ class SshConnection {
           reject(err);
         });
 
+        debug(`ssh connection start`, this.connection, this.resolvedOptions);
         this.connection.connect(this.resolvedOptions);
       });
     };
@@ -95,4 +96,4 @@ class SshConnection {
   }
 }
 
-export default SshConnection;
+module.exports = SshConnection;

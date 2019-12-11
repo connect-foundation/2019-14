@@ -1,11 +1,6 @@
 const debug = require("debug")("boostwriter:routes:terminal");
 const express = require("express");
-const {
-  utils,
-  socketManager,
-  StreamResolver,
-  sshManager,
-} = require("../utils");
+const { utils, socketManager, StreamResolver } = require("../utils");
 
 const { wrapAsync } = utils;
 
@@ -94,7 +89,6 @@ router
   .route("/")
   .post(
     wrapAsync(async (req, res) => {
-      const { session } = req;
       const docker = req.app.get("docker");
       const result = await createDefaultTerminal(docker, "ubuntu");
 
@@ -103,29 +97,7 @@ router
         return;
       }
 
-      // client <--> server
-      const socket = await socketManager.makeClientConnection(session);
-      // server <--> docker container
-      const shellChannel = await sshManager.makeShellConnection(session);
-
-      // server <-- docker container
-      shellChannel.on("data", (data) => {
-        debug(`Shell command output : ${data}`);
-        // client <-- server
-        socket.emit("stdout", data);
-      });
-
-      // client --> (server) --> docker container
-      socket.on("stdin", (cmd) => {
-        const shellConnection = sshManager.getConnection(session.id);
-        shellConnection.write(cmd);
-      });
-
-      shellChannel.on("close", () => {
-        debug("Shell channel connection end");
-      });
-
-      res.status(201).json({ containerId: result });
+      res.status(201).json({ containerId: null });
     })
   )
   .patch(

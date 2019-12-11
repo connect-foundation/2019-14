@@ -8,7 +8,7 @@ const http = require("http");
 const SocketServer = require("socket.io");
 
 const { DockerApi } = require("../src/api/docker");
-const socketManager = require("../src/utils/socket-manager");
+const { socketManager, sshManager } = require("../src/utils");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const terminalRouter = require("./routes/terminal");
@@ -39,11 +39,11 @@ app.set("docker", docker);
  * 임시로 고정된 ssh 유저 세션을 위한 설정
  */
 const sshOptions = {
-  id: "test-id",
+  id: "testid",
   username: process.env.REMOTE_SSH_USERNAME,
-  passowrd: process.env.REMOTE_SSH_PASSWORD,
+  password: process.env.REMOTE_SSH_PASSWORD,
   port: process.env.REMOTE_CONTAINER_PORT,
-  host: process.env.REMOTE.REMOTE_DOCKER_IP,
+  host: process.env.REMOTE_DOCKER_IP,
 };
 app.set("session", sshOptions);
 
@@ -81,6 +81,39 @@ app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/terminal", terminalRouter);
 app.use("/api/document", documentRouter);
+
+io.on("connection", async (socket) => {
+  const { session } = socket.request;
+  const { id } = session;
+
+  debug("socket with", session, socket);
+
+  // ssh connection
+  const shellChannel = await sshManager.makeShellConnection(session);
+
+  // socket enroll
+  socketManager.enrollSocket(id, socket);
+
+  debug("Connect socket and shell channel", socket, shellChannel);
+
+  // server <-- docker container
+  shellChannel.on("data", (data) => {
+    debug(`Shell command output : ${data}`);
+    // client <-- server
+    socket.emit("stdout", data);
+  });
+
+  // client --> (server) --> docker container
+  socket.on("stdin", (cmd) => {
+    const shellConnection = sshManager.getConnection(session.id);
+    debug(`Shell command stdin : ${cmd}`);
+    shellConnection.write(cmd);
+  });
+
+  shellChannel.on("close", () => {
+    debug("Shell channel connection end");
+  });
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
