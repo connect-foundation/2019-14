@@ -25,7 +25,7 @@ const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
 
     [EVENT_TYPE.BACKSPACE]: () => {
       debug("Delete terminal cell");
-      // dispatchToCell(cellAction.delete(cellUuid));
+      // dispatchToCell(cellAction.init(null, cellUuid));
     },
 
     [EVENT_TYPE.ARROW_UP]: (e) => {

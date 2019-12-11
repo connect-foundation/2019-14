@@ -15,6 +15,7 @@ const MarkdownWrapper = styled.p`
   &:hover {
     cursor: text;
     border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-left: ${({ isQuote }) => isQuote && "0.25rem solid silver"};
   }
 
   margin: 0;
@@ -24,6 +25,8 @@ const MarkdownWrapper = styled.p`
   background: ${({ intoShiftBlock }) =>
     intoShiftBlock && "rgba(128, 0, 255, 0.2)"};
 
+  border: ${({ isCurrentCell }) =>
+    isCurrentCell && "1.5px solid rgba(255, 255, 255, 0.2)"};
   border-left: ${({ isQuote }) => isQuote && "0.25rem solid silver"};
   padding-left: ${({ isQuote }) => isQuote && "0.5rem"};
 `;
