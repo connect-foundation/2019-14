@@ -91,4 +91,20 @@ const request = {
   },
 };
 
-export default request;
+const createTerminalFetch = async (data) => {
+  const localDomain = "localhost";
+  const port = "3000";
+  const path = "api/terminal";
+  const options = {
+    ...defaultOptions,
+    method: "POST",
+    url: `${SCHEME}://${localDomain}:${port}/${path}`,
+    data: {
+      dockerData: data,
+    },
+  };
+  const response = await axios(options);
+  return response;
+};
+
+export { request, createTerminalFetch };

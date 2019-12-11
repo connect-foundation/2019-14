@@ -1,9 +1,18 @@
-const createDefaultTerminal = async (
-  dockerInstance,
-  baseImageName = "ubuntu"
-) => {
-  const containerId = await dockerInstance.createDefaultTerminal(baseImageName);
-  return containerId;
+const debug = require("debug");
+const { writeDockerfile } = require("../api/makeDockerfile");
+
+const createDefaultTerminal = async (dockerInstance, terminalOption) => {
+  const dockerFilePath = `${process.env.INIT_CWD}/dockerfiles/`;
+  try {
+    await writeDockerfile(terminalOption);
+
+    const containerId = await dockerInstance.createCustomTerminal(
+      dockerFilePath
+    );
+    return containerId;
+  } catch (err) {
+    debug("create default terminal", err);
+  }
 };
 
 const startTerminal = async (dockerInstance, containerId) => {

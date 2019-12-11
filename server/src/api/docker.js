@@ -1,7 +1,7 @@
 const debug = require("debug")("boostwriter:api:Docker");
 const fs = require("fs");
 const Docker = require("dockerode");
-
+const uuid = require("uuid/v4");
 const SIGNAL_TYPE = {
   SIGINT: 2,
   SIGKILL: 9,
@@ -158,45 +158,56 @@ class DockerApi {
     });
   }
 
-  async createCustomTerminal(userTerminalInfo) {
-    if (!userTerminalInfo) {
-      const defaultBaseImage = "ubuntu";
-      return this.createContainer(defaultBaseImage);
-    }
+  async createCustomTerminal(dockerFilePath) {
+    const imageTagName = uuid();
     // TODO 유저 입력 파싱
     const defaultOptions = {
-      context: __dirname,
+      context: dockerFilePath,
       src: ["Dockerfile"],
     };
 
     const imageTag = {
-      t: "test",
+      t: imageTagName,
     };
 
-    const progressCallback = (err) => {
-      if (err) {
-        debug("progress", err);
-      }
-    };
-
-    const finishCallback = (err) => {
-      if (err) {
-        debug("finish", err);
-      }
-    };
-
-    const stream = await this.request.buildImage(defaultOptions, imageTag);
-
-    this.request.modem.followProgress(stream, progressCallback, finishCallback);
-
+    try {
+      const stream = await this.request.buildImage(defaultOptions, imageTag);
+      await this.followProgressAsync(stream);
+      debug("next to follow progress");
+      console.log("next follow progress");
+      const result = await this.createDefaultTerminal(imageTagName);
+      return result;
+    } catch (err) {
+      debug("createCustomTerminal error", err);
+      return err;
+    }
     // TODO: refactor
-    return null;
+  }
+
+  followProgressAsync(stream) {
+    return new Promise((resolve, reject) => {
+      const onProgress = (data) => {
+        debug("following progress", data);
+        console.log("following progress", data);
+      };
+
+      const onFinish = async (err, data) => {
+        if (err) {
+          console.log("progress finish err", err, data);
+          return reject(err);
+        }
+        debug("finish follow progressing", data);
+        console.log("finish follow progressing", data);
+        resolve(data);
+      };
+      this.request.modem.followProgress(stream, onFinish, onProgress);
+    });
   }
 
   async createDefaultTerminal(baseImageName) {
     // TOOD 초기 하드코딩 값 변경하거나 없앨 것
     const defaultCmd = ["/bin/bash"];
-    const defaultTagName = "ubuntu-container-test";
+    const defaultTagName = baseImageName;
     const newContainerInfo = await this.request.createContainer({
       AttachStdin: true,
       AttachStdout: true,
