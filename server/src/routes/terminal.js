@@ -134,7 +134,6 @@ router
         res.status(400).json({ message: "not created terminal" });
         return;
       }
-      console.log(result);
       res.status(201).json({ containerId: result });
     })
   )

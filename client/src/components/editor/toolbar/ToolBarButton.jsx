@@ -11,6 +11,8 @@ import {
   faTerminal,
 } from "@fortawesome/free-solid-svg-icons";
 import { CellDispatchContext } from "../../../stores/CellStore";
+import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
+import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
 import { THEME } from "../../../enums";
 import { cellActionCreator } from "../../../actions/CellAction";
 
