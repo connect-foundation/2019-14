@@ -4,11 +4,6 @@ const TERMINAL_SETTING_ACTION = {
     PL: "terminal-setting/select/pl",
     DB: "terminal-setting/select/db",
   },
-  UNSELECT: {
-    OS: "terminal-setting/unselect/os",
-    PL: "terminal-setting/unselect/pl",
-    DB: "terminal-setting/unselect/db",
-  },
   MOVE: {
     PREV: "terminal-setting/move/prev",
     NEXT: "terminal-setting/move/next",

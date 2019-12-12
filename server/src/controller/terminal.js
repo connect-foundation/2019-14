@@ -1,22 +1,18 @@
-const {
-  parseTerminalOption,
-  writeDockerfile,
-} = require("../api/makeDockerfile");
+const debug = require("debug");
+const { writeDockerfile } = require("../api/makeDockerfile");
 
 const createDefaultTerminal = async (dockerInstance, terminalOption) => {
   const dockerFilePath = `${process.env.INIT_CWD}/dockerfiles/`;
-
   try {
-    const dockerContents = parseTerminalOption(terminalOption);
+    await writeDockerfile(terminalOption);
 
-    await writeDockerfile(dockerContents);
+    const containerId = await dockerInstance.createCustomTerminal(
+      dockerFilePath
+    );
+    return containerId;
   } catch (err) {
-    console.log(err);
-    return null;
+    debug("create default terminal", err);
   }
-
-  const containerId = await dockerInstance.createCustomTerminal(dockerFilePath);
-  return containerId;
 };
 
 const startTerminal = async (dockerInstance, containerId) => {

@@ -95,6 +95,7 @@ router
   .route("/")
   .post(
     wrapAsync(async (req, res) => {
+      const { dockerData } = req.body;
       const { session } = req;
       const docker = req.app.get("docker");
       const result = await createDefaultTerminal(docker, terminalOption);
@@ -148,7 +149,7 @@ router
     })
   );
 
-router.route("/temp").put(
+router.route("/snapshot").put(
   wrapAsync(async (req, res) => {
     const docker = req.app.get("docker");
     const { containerId } = req.body;
