@@ -175,7 +175,6 @@ class DockerApi {
       const stream = await this.request.buildImage(defaultOptions, imageTag);
       await this.followProgressAsync(stream);
       debug("next to follow progress");
-      console.log("next follow progress");
       const result = await this.createDefaultTerminal(imageTagName);
       return result;
     } catch (err) {
@@ -239,6 +238,37 @@ class DockerApi {
     const container = await this.request.getContainer(containerId);
     const result = await container.commit(containerId);
     return result;
+  }
+
+  async monitorContainer(containerId) {
+    const container = await this.request.getContainer(containerId);
+
+    let timerId = null;
+
+    const setIntervalHandler = async () => {
+      let totalNetworksUsage = 0;
+
+      const userMetric = await container.stats({
+        id: containerId,
+        stream: false,
+      });
+
+      if (!userMetric || !userMetric.networks) {
+        return false;
+      }
+      Object.keys(userMetric.networks).forEach(async (element) => {
+        totalNetworksUsage += userMetric.networks[element].rx_bytes;
+        totalNetworksUsage += userMetric.networks[element].tx_bytes;
+      });
+
+      if (totalNetworksUsage > 100000) {
+        await container.stop();
+        clearInterval(timerId);
+      }
+    };
+    timerId = setInterval(setIntervalHandler, 1000);
+
+    return true;
   }
 }
 
