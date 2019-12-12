@@ -43,7 +43,9 @@ const BUTTON_HANDLER = {
   },
   CODE: () => {},
   SHARE: () => {},
-  TERMINAL: () => {},
+  TERMINAL: (tmp, temp, terminalDispatch) => {
+    terminalDispatch(terminalSettingActionCreator.viewTerminalSetting());
+  },
 };
 
 const ToolBarButtonWrapper = styled.button`
@@ -57,35 +59,22 @@ const ToolBarButtonWrapper = styled.button`
   color: ${THEME.VS_CODE.FONT};
 
   div {
-    font-size: 0.3rem;
+    font-size: 0.4rem;
   }
 
-  margin-left: ${(props) => (props.isTerminal ? "auto" : "0px")};
+  margin-left: ${({ isTerminal }) => isTerminal && "auto"};
 `;
 
 const ToolBarButton = ({ buttonType }) => {
   const isTerminal = buttonType === "TERMINAL";
   const cellDispatch = useContext(CellDispatchContext);
+  const terminalDispatch = useContext(TerminalSettingDispatch);
   const { state } = useContext(CellContext);
   const { cellManager } = state;
 
   const onClick = () => {
-    BUTTON_HANDLER[buttonType](cellDispatch, cellManager);
+    BUTTON_HANDLER[buttonType](cellDispatch, cellManager, terminalDispatch);
   };
-
-  if (isTerminal) {
-    const dispatch = useContext(TerminalSettingDispatch);
-
-    const handler = () => {
-      dispatch(terminalSettingActionCreator.hideTerminalSettingView());
-    };
-
-    return (
-      <ToolBarButtonWrapper type={buttonType} onClick={handler}>
-        <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} />
-      </ToolBarButtonWrapper>
-    );
-  }
 
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>

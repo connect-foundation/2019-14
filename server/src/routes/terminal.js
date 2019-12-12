@@ -92,7 +92,7 @@ router
     wrapAsync(async (req, res) => {
       const { dockerData } = req.body;
       const docker = req.app.get("docker");
-      const result = await createDefaultTerminal(docker, dockerData);
+      const result = await createDefaultTerminal(docker, terminalOption);
 
       if (!result) {
         res.status(400).json({ message: "not created terminal" });
@@ -121,7 +121,7 @@ router
     })
   );
 
-router.route("/temp").put(
+router.route("/snapshot").put(
   wrapAsync(async (req, res) => {
     const docker = req.app.get("docker");
     const { containerId } = req.body;
