@@ -240,6 +240,13 @@ class DockerApi {
     const result = await container.commit(containerId);
     return result;
   }
+
+  async getActiveContainers() {
+    const containers = await this.request.listContainers({
+      status: ["running"],
+    });
+    return containers;
+  }
 }
 
 module.exports = { DockerApi, SIGNAL_TYPE };
