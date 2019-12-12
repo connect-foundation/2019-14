@@ -24,7 +24,8 @@ const StepperContent = ({ element, index }) => {
     if (state.currentStep === 0) {
       dispatch(terminalSettingActionCreator.selectOS(e.target.id));
     } else if (state.currentStep === 1) {
-      dispatch(terminalSettingActionCreator.selectPL(e.target.id));
+      dispatch(terminalSettingActionCreator.selectPE(e.target.id));
+      console.log(state.PE, "@@");
     } else {
       dispatch(terminalSettingActionCreator.selectDB(e.target.id));
     }

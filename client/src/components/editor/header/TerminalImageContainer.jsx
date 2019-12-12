@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import TerminalImage from "./TerminalImage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDatabase } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -12,6 +11,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 
 import { TerminalSettingContext } from "../../../stores/TerminalSetting";
+import TERMINAL_SETTING_STEP from "../../../enums/TERMINAL_SETTING_STEP";
 
 const TerminalImageList = styled.section`
   font-size: 2.5rem;
@@ -33,12 +33,12 @@ const TerminalImageContainer = () => {
     let images = [];
 
     Object.keys(state).map((element) => {
-      if (element === "OS" || element === "PL" || element === "DB")
-        images = [...images, ...state[element]];
+      const elements = ["OS", "PE", "DB"];
+      if (elements.includes(element)) images = [...images, ...state[element]];
     });
 
     return images.map((image, index) => {
-      return <FontAwesomeIcon key={index} icon={ICON[image]} />;
+      return <FontAwesomeIcon key={"fa" + index} icon={ICON[image]} />;
     });
   };
   return <TerminalImageList>{makeImageList()}</TerminalImageList>;

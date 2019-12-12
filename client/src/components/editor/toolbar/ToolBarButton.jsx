@@ -15,8 +15,6 @@ import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
 import { CellDispatchContext, CellContext } from "../../../stores/CellStore";
 import { THEME } from "../../../enums";
 import { cellActionCreator } from "../../../actions/CellAction";
-import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
-import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
 import { request } from "../../../utils";
 
 const BUTTON_TYPE = {

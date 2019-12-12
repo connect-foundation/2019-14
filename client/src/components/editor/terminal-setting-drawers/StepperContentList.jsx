@@ -25,7 +25,7 @@ const StepperContentList = () => {
 
   return (
     <StepperContentListWrapper>
-      <h2>{TERMINAL_SETTING_STEP[step].type}</h2>
+      <h3>{TERMINAL_SETTING_STEP[step].type}</h3>
       {getSettings()}
     </StepperContentListWrapper>
   );

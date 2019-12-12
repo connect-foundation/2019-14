@@ -1,7 +1,7 @@
 const TERMINAL_SETTING_ACTION = {
   SELECT: {
     OS: "terminal-setting/select/os",
-    PL: "terminal-setting/select/pl",
+    PE: "terminal-setting/select/pe",
     DB: "terminal-setting/select/db",
   },
   MOVE: {
@@ -17,8 +17,8 @@ const terminalSettingActionCreator = {
     return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os };
   },
 
-  selectPL(pl) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.PL, pl };
+  selectPE(pe) {
+    return { type: TERMINAL_SETTING_ACTION.SELECT.PE, pe };
   },
 
   selectDB(db) {

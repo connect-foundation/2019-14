@@ -8,7 +8,7 @@ const TerminalSettingDispatch = React.createContext();
 function TerminalSettingStore({ children }) {
   const initValue = {
     OS: [],
-    PL: [],
+    PE: [],
     DB: [],
 
     currentStep: 0,

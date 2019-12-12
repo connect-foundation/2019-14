@@ -29,7 +29,7 @@ const StepperButtons = () => {
     // TODO 함수로 분리 할 것
     const option = {
       OS: state.OS,
-      PL: state.PL,
+      PE: state.PE,
       DB: state.DB,
     };
 
