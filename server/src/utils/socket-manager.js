@@ -10,26 +10,12 @@ class SocketManager {
     this.server = server;
   }
 
-  async makeClientConnection(session) {
-    const { id } = session;
-    if (this.connections[id] !== undefined) {
+  enrollSocket(id, socket) {
+    if (this.connections[id] && this.connections[id].socket) {
       this.disconnectSocket(id);
     }
-    this.connections[id] = {
-      io: this.server.of(`/io/${id}`),
-      socket: null,
-    };
-
-    const current = this.connections[id];
-    const currentIo = current.io;
-
-    return new Promise((resolve) => {
-      currentIo.on("connection", (socket) => {
-        debug(`Connection success with ${id}`);
-        current.socket = socket;
-        resolve(socket);
-      });
-    });
+    this.connections[id] = {};
+    this.connections[id].socket = socket;
   }
 
   attachEvent(id, event, cb) {
@@ -39,7 +25,9 @@ class SocketManager {
 
   disconnectSocket(id) {
     const targetSocket = this.connections[id].socket;
-    targetSocket.disconnect(true);
+    if (targetSocket) {
+      targetSocket.disconnect(true);
+    }
     this.connections[id].socket = null;
   }
 }

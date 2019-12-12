@@ -5,8 +5,10 @@ class SshConnectionManager {
     this.connections = {};
   }
 
-  async makeShellConnection(session) {
-    const { id } = session;
+  async makeShellConnection(id, session) {
+    if (this.connections[id]) {
+      return this.connections[id].channel;
+    }
     this.connections[id] = new SshConnection();
     const current = this.connections[id];
     const shellChannel = await current.connect({ ...session });
@@ -16,6 +18,16 @@ class SshConnectionManager {
   getConnection(id) {
     return this.connections[id];
   }
+
+  disconnect(id) {
+    const connection = this.connections[id];
+    if (!connection) {
+      return false;
+    }
+    connection.disconnect();
+    this.connections[id] = null;
+    return true;
+  }
 }
 
-export default new SshConnectionManager();
+module.exports = new SshConnectionManager();

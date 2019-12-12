@@ -71,7 +71,20 @@ const makeKeyHandler = {
 
   [EVENT_TYPE.BACKSPACE]: (handler) => {
     return (e) => {
-      if (e.key === KEY_TYPE.BACKSPACE) {
+      const { key, shiftKey } = e;
+      const isBackspace = key === KEY_TYPE.BACKSPACE;
+      const isShift = shiftKey;
+      if (isBackspace && !isShift) {
+        handler(e);
+      }
+    };
+  },
+
+  [EVENT_TYPE.SHIFT_BACKSPACE]: (handler) => {
+    return (e) => {
+      const { key, shiftKey } = e;
+      const isShiftBackspace = key === KEY_TYPE.BACKSPACE && shiftKey;
+      if (isShiftBackspace) {
         handler(e);
       }
     };

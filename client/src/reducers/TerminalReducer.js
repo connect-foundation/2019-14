@@ -30,12 +30,8 @@ const terminalReducerHandler = {
 
     currentTerminal.focusBottom();
 
-    // TODO: 다른 하위 터미널의 인풋도 다시 평가해야한다.
-
     return nextState;
   },
-
-  // [TERMINAL_ACTION.EVAL_INPUT]: (state, action) => {},
 
   [TERMINAL_ACTION.EVAL_ALL]: (state) => {
     const nextState = copyState(state);
@@ -61,9 +57,6 @@ const terminalReducerHandler = {
 
   [TERMINAL_ACTION.FOCUS_OUT]: (state) => {
     const nextState = copyState(state);
-    const currentTerminal = nextState;
-
-    currentTerminal.insertReplTo();
 
     return nextState;
   },
@@ -111,9 +104,9 @@ const terminalReducerHandler = {
     const nextState = copyState(state);
     const currentTerminal = nextState;
 
-    const { index, text } = action;
+    const { text } = action;
 
-    currentTerminal.updateOutput(index, text);
+    currentTerminal.updateOutput(text);
 
     return nextState;
   },
