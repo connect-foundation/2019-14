@@ -28,6 +28,24 @@ class SshConnectionManager {
     this.connections[id] = null;
     return true;
   }
+
+  writeTo(id, cmd) {
+    const connection = this.connections[id];
+    if (!connection) {
+      return false;
+    }
+    connection.write(cmd);
+    return true;
+  }
+
+  sendSignal(id, signal) {
+    const connection = this.connections[id];
+    if (!connection) {
+      return false;
+    }
+    connection.sendSignal(signal);
+    return true;
+  }
 }
 
 module.exports = new SshConnectionManager();
