@@ -128,7 +128,7 @@ CellManager.prototype.load = function(doc) {
     const newCellUuid = uuid();
     uuidManager.push(newCellUuid);
 
-    const { findPattern, matchingTag } = getType(array[cellIndex]);
+    const { findPattern, matchingTag } = getType(array[i]);
     const tag = matchingTag || "p";
     const cell = cellGenerator[tag];
     this.cells.push(cell(newCellUuid));
@@ -147,7 +147,9 @@ CellManager.prototype.load = function(doc) {
         i += 1;
       }
     } else {
-      this.texts[cellIndex] = array[i];
+      let sliceStart = tag !== "p" ? findPattern.length : 0;
+      sliceStart = tag === "ol" ? sliceStart + 2 : sliceStart;
+      this.texts[cellIndex] = array[i].slice(sliceStart);
     }
     cellIndex += 1;
   }
