@@ -1,4 +1,5 @@
 const express = require("express");
+const uuid = require("uuid/v4");
 
 const router = express.Router();
 const mysql = require("mysql2/promise");
@@ -24,7 +25,7 @@ const query = async function(queryString, ...arg) {
     } catch (err) {
       console.log(`[Query Error] ${err}`);
       conn.release();
-      return err;
+      return false;
     }
   } catch (err) {
     console.log("DB Error");
@@ -63,6 +64,33 @@ router.document = {
       const result = await query(queryString, [userId]);
       return result;
     }
+    return false;
+  },
+
+  async chkExistedShareId(containerId) {
+    const queryString = `select share_id from editors where id = ?`;
+    const result = await query(queryString, [containerId]);
+    if (!result) return false;
+    const shareId = result[0].share_id;
+    return shareId;
+  },
+  async share(containerId) {
+    const shareId = await this.chkExistedShareId(containerId);
+    if (shareId === false) return false;
+    if (shareId === null) {
+      const newUuid = uuid();
+      const queryString = `update editors set share_id = ? where id = ?`;
+      const result = await query(queryString, [newUuid, containerId]);
+      if (result) return newUuid;
+      return result;
+    }
+    return shareId;
+  },
+
+  async shareLoad(shareId) {
+    const queryString = `select content from editors where share_id = ?`;
+    const result = await query(queryString, [shareId]);
+    if (result && result.length === 1) return result[0].content;
     return false;
   },
 };
