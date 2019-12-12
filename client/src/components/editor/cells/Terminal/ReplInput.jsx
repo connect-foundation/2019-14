@@ -50,7 +50,7 @@ const ReplInput = React.forwardRef(
         <EditorableReplInput
           ref={inputRef}
           spellCheck={false}
-          onInput={inputHandler}
+          onChange={inputHandler}
           onClick={clickHandler}
           value={text}
         />
