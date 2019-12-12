@@ -57,7 +57,7 @@ const cellReducerHandler = {
     const { cellUuid, text } = action;
     const result = common.inputText(cellUuid, cellManager, { text });
 
-    // debug("Cell Change text", index, text);
+    debug("Cell Change text", cellManager);
 
     return {
       ...state,

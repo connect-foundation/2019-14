@@ -46,10 +46,6 @@ const terminalReducerHandler = {
     const nextState = copyState(state);
     const currentTerminal = nextState;
 
-    if (currentTerminal.replCount === 0) {
-      return nextState;
-    }
-
     currentTerminal.focusIn();
 
     return nextState;
