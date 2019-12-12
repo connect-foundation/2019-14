@@ -1,3 +1,4 @@
+const debug = require("debug")("boostwriter:ssh-manager");
 const SshConnection = require("../api/ssh");
 
 class SshConnectionManager {
@@ -10,8 +11,15 @@ class SshConnectionManager {
       return this.connections[id].channel;
     }
     this.connections[id] = new SshConnection();
+
+    debug("shell conecting...", this.connections[id]);
     const current = this.connections[id];
-    const shellChannel = await current.connect({ ...session });
+    let shellChannel;
+    try {
+      shellChannel = await current.connect({ ...session });
+    } catch (err) {
+      debug("shell conection error", err);
+    }
     return shellChannel;
   }
 

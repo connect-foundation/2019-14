@@ -25,15 +25,22 @@ class SshConnection {
 
     this.resolvedOptions = { ...defaultOptions, ...options };
 
-    this.resolvedOptions.onKeyboardInteractive = (
-      name,
-      instructions,
-      instructionsLang,
-      prompts,
-      finish
-    ) => {
-      finish([this.resolvedOptions.password]);
-    };
+    // this.resolvedOptions.onKeyboardInteractive = (
+    //  name,
+    //  instructions,
+    //  instructionsLang,
+    //  prompts,
+    //  finish
+    // ) => {
+    //  finish([this.resolvedOptions.password]);
+    // };
+
+    this.connection.on(
+      "keyboard-interactive",
+      (name, instructions, lang, prompts, finish) => {
+        finish([this.resolvedOptions.password]);
+      }
+    );
 
     const makeConnection = () => {
       return new Promise((resolve, reject) => {

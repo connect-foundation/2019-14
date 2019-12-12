@@ -1,4 +1,4 @@
-const debug = require("debug");
+const debug = require("debug")("boostwriter:controller:terminal");
 const { writeDockerfile } = require("../api/makeDockerfile");
 
 const createDefaultTerminal = async (dockerInstance, terminalOption) => {
@@ -6,10 +6,13 @@ const createDefaultTerminal = async (dockerInstance, terminalOption) => {
   try {
     await writeDockerfile(terminalOption);
 
-    const containerId = await dockerInstance.createCustomTerminal(
-      dockerFilePath
-    );
-    return containerId;
+    debug("write docker file");
+
+    const result = await dockerInstance.createCustomTerminal(dockerFilePath);
+
+    debug("create terminal", result);
+
+    return result;
   } catch (err) {
     debug("create default terminal", err);
   }

@@ -92,12 +92,17 @@ router
     wrapAsync(async (req, res) => {
       const { terminalOption } = req.body;
       const docker = req.app.get("docker");
+      const session = req.app.get("session");
       const result = await createDefaultTerminal(docker, terminalOption);
+
+      debug("api/terminal route", result);
 
       if (!result) {
         res.status(400).json({ message: "not created terminal" });
         return;
       }
+
+      session.port = result.portBinding;
 
       res.status(201).json(result);
     })
