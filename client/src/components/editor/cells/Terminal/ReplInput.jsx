@@ -1,9 +1,11 @@
-import React, { useRef, useImperativeHandle } from "react";
+import React, { useContext, useRef, useImperativeHandle } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { THEME } from "../../../../enums";
 import EditorableReplInput from "./EditorableReplInput";
+import { TerminalDispatchContext } from "../../../../stores/TerminalStore";
+import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
 
 const ReplInputWrapper = styled.div`
   display: flex;
@@ -26,6 +28,7 @@ const ReplInput = React.forwardRef(
   ({ text, isEditorable, inputHandler }, ref) => {
     const inputRef = useRef();
     const prompt = "User $";
+    const dispatchToTerminal = useContext(TerminalDispatchContext);
 
     useImperativeHandle(ref, () => ({
       focus: () => {
@@ -36,6 +39,11 @@ const ReplInput = React.forwardRef(
       },
     }));
 
+    const clickHandler = (e) => {
+      e.stopPropagation();
+      dispatchToTerminal(terminalAction.focusIn());
+    };
+
     return (
       <ReplInputWrapper>
         <ReplPrompt>{prompt}</ReplPrompt>
@@ -43,6 +51,7 @@ const ReplInput = React.forwardRef(
           ref={inputRef}
           spellCheck={false}
           onInput={inputHandler}
+          onClick={clickHandler}
           value={text}
         />
       </ReplInputWrapper>

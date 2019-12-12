@@ -39,7 +39,7 @@ const InnerTerminalCell = ({ cellUuid }) => {
   const isCellFocus = cellIndex === currentIndex;
   if (isCellFocus) {
     debug(`Terminal cell ${cellIndex} focus in`);
-    dispatchToTerminal(terminalAction.focusIn(cellUuid));
+    dispatchToTerminal(terminalAction.focusIn());
   }
 
   return (

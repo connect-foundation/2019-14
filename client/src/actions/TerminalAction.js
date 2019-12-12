@@ -56,10 +56,9 @@ const terminalActionCreator = {
     };
   },
 
-  focusIn(cellUuid) {
+  focusIn() {
     return {
       type: TERMINAL_ACTION.FOCUS_IN,
-      cellUuid,
     };
   },
 
