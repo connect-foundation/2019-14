@@ -8,6 +8,7 @@ import {
   target,
   clipboard,
   toolbar,
+  share,
 } from "./CellReducerHandler";
 
 const debug = createDebug("boost:reducer:cell");
@@ -247,6 +248,22 @@ const cellReducerHandler = {
     return {
       ...state,
       isLoading: false,
+    };
+  },
+
+  [CELL_ACTION.SHARE.APPLY]: (state) => {
+    share.apply();
+    return {
+      ...state,
+      isShared: true,
+    };
+  },
+
+  [CELL_ACTION.SHARE.LOAD]: (state, action) => {
+    const { docId } = action;
+    return {
+      ...state,
+      isShared: true,
     };
   },
 };

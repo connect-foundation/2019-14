@@ -14,6 +14,8 @@ const PATH = {
   SAVE: "api/document",
   LOAD: "api/document",
   TERMINAL: "api/terminal",
+  SHARE: "share",
+  SHARE_LOAD: "share",
 };
 
 const defaultOptions = {
