@@ -90,7 +90,7 @@ router
   .route("/")
   .post(
     wrapAsync(async (req, res) => {
-      const { dockerData } = req.body;
+      const { terminalOption } = req.body;
       const docker = req.app.get("docker");
       const result = await createDefaultTerminal(docker, terminalOption);
 

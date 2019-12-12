@@ -44,8 +44,8 @@ const makeUbuntuTypeTerminalText = (terminalOption) => {
 
   dockerText = `${dockerText}\nRUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install -y ${tmpText}`;
 
-  if (terminalOption.PL.length !== 0) {
-    terminalOption.PL.forEach((element) => {
+  if (terminalOption.PE.length !== 0) {
+    terminalOption.PE.forEach((element) => {
       dockerText = `${dockerText} ${element}`;
     });
   }
@@ -66,7 +66,7 @@ const makeCentosTypeTerminalText = (terminalOption) => {
     }
   });
 
-  terminalOption.PL.forEach((element) => {
+  terminalOption.PE.forEach((element) => {
     dockerText = `${dockerText} ${element}`;
   });
 
