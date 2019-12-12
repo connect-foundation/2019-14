@@ -1,8 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import { THEME } from "./enums";
 import EditorPage from "./pages/EditorPage";
+import LoadingPage from "./pages/LoadingPage";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -24,10 +26,13 @@ const GlobalStyle = createGlobalStyle`
 
 function App() {
   return (
-    <>
+    <BrowserRouter>
       <GlobalStyle />
-      <EditorPage />
-    </>
+      <Switch>
+        <Route exact path="/" component={EditorPage} />
+        <Route exact path="/share" component={LoadingPage} />
+      </Switch>
+    </BrowserRouter>
   );
 }
 

@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import propTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -41,8 +42,13 @@ const BUTTON_HANDLER = {
     cellDispatch(cellActionCreator.load());
     loadDocument();
   },
-  CODE: () => {},
-  SHARE: () => {},
+  CODE: (cellDispatch) => {
+    const docId = prompt("공유 문서의 ID를 입력하세요.", "Input a Document ID");
+    cellDispatch(cellActionCreator.shareLoad(docId));
+  },
+  SHARE: (cellDispatch) => {
+    cellDispatch(cellActionCreator.share());
+  },
   TERMINAL: (tmp, temp, terminalDispatch) => {
     terminalDispatch(terminalSettingActionCreator.viewTerminalSetting());
   },
@@ -70,7 +76,7 @@ const ToolBarButton = ({ buttonType }) => {
   const cellDispatch = useContext(CellDispatchContext);
   const terminalDispatch = useContext(TerminalSettingDispatch);
   const { state } = useContext(CellContext);
-  const { cellManager } = state;
+  const { cellManager, isShared } = state;
 
   const onClick = () => {
     BUTTON_HANDLER[buttonType](cellDispatch, cellManager, terminalDispatch);
@@ -78,6 +84,7 @@ const ToolBarButton = ({ buttonType }) => {
 
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>
+      {isShared && <Redirect to="/share" />}
       <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} onClick={onClick} />
       <div>{buttonType}</div>
     </ToolBarButtonWrapper>
