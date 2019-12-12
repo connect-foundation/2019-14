@@ -25,7 +25,7 @@ const TAG_MARKDOWN = {
   [CELL_TAG.HEADING.H6]: "###### ",
   [CELL_TAG.BLOCKQUOTE]: "> ",
   [CELL_TAG.CODE]: "```",
-  [CELL_TAG.TERMINAL]: "$$$ ",
+  [CELL_TAG.TERMINAL]: "$$$",
 };
 
 const findMakdownByTag = (tag) => {
@@ -118,21 +118,10 @@ CellManager.prototype.createMarkdownDocument = function() {
   return document;
 };
 
-CellManager.prototype.save = function() {};
-
 CellManager.prototype.load = function(doc) {
   const array = doc.split("\n");
   this.init();
   uuidManager.init();
-  // this.texts = array.reduce((acc, val) => {
-  //   const newCellUuid = uuid();
-  //   this.cells.push(cell(newCellUuid));
-  //   const { matchingTag } = getType(val);
-  //   this.tags.push(matchingTag);
-  //   acc.push(val);
-  //   uuidManager.push(newCellUuid);
-  //   return acc;
-  // }, []);
 
   let cellIndex = 0;
   for (let i = 0; i < array.length; i += 1) {
