@@ -101,18 +101,19 @@ CellManager.prototype.popArray = function(start, end, flag) {
 CellManager.prototype.createMarkdownDocument = function() {
   let document = "";
   for (let i = 0; i < this.texts.length; i += 1) {
-    let mdText = null;
+    let mdExp = null;
     if (this.tags[i] === "ol") {
-      mdText = "".concat(this.options[i].start).concat(". ");
+      mdExp = "".concat(this.options[i].start).concat(". ");
     } else {
-      mdText = findMakdownByTag(this.tags[i]);
+      mdExp = findMakdownByTag(this.tags[i]);
     }
 
-    let text = mdText;
-    const isCodeTag = this.tags[i] === "code";
-    text += `${isCodeTag ? "\n" : ""}`;
+    let text = mdExp;
+    const tag = this.tags[i];
+    const isAreaTag = tag === "code" || tag === "terminal";
+    text += `${isAreaTag ? "\n" : ""}`;
     text += `${this.texts[i]}\n`;
-    text += `${isCodeTag ? `${mdText}\n` : ""}`;
+    text += `${isAreaTag ? `${mdExp}\n` : ""}`;
     document = document.concat(text);
   }
   return document;
