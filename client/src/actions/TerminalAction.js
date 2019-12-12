@@ -15,6 +15,8 @@ const TERMINAL_ACTION = {
   UPDATE_OUTPUT: "terminal/update-output",
 
   DELETE_REPL: "terminal/delete-repl",
+
+  LOAD: "terminal/load",
 };
 
 const terminalActionCreator = {
@@ -118,6 +120,13 @@ const terminalActionCreator = {
   deleteRepl() {
     return {
       type: TERMINAL_ACTION.DELETE_REPL,
+    };
+  },
+
+  load(outputString) {
+    return {
+      type: TERMINAL_ACTION.LOAD,
+      outputString,
     };
   },
 };
