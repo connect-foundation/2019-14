@@ -1,23 +1,44 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import TerminalImage from "./TerminalImage";
-// TODO 임시로 저장한 기본 아이콘 삭제할 것
-import ubuntuImagePath from "../../../../public/ubuntu-50.png";
-import mysqlImagePath from "../../../../public/mysql-logo-50.png";
-import nodejsImagePath from "../../../../public/nodejs-50.png";
-import npmImagePath from "../../../../public/npm-50.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDatabase } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUbuntu,
+  faCentos,
+  faJs,
+  faPython,
+} from "@fortawesome/free-brands-svg-icons";
+
+import { TerminalSettingContext } from "../../../stores/TerminalSetting";
+import TERMINAL_SETTING_STEP from "../../../enums/TERMINAL_SETTING_STEP";
 
 const TerminalImageList = styled.section`
+  font-size: 2.5rem;
   display: flex;
-  flex-direction: row;
-  justify-content: center;
 `;
+// TODO 하드코딩 삭제할 것
+const ICON = {
+  ubuntu: faUbuntu,
+  centos: faCentos,
+  javascript: faJs,
+  python: faPython,
+  mysql: faDatabase,
+  mongodb: faDatabase,
+};
 
-const TerminalImageContainer = (props) => {
+const TerminalImageContainer = () => {
+  const { state } = useContext(TerminalSettingContext);
   const makeImageList = () => {
-    return props.defaultImages.map((image, index) => {
-      return TerminalImage(image, index);
+    let images = [];
+
+    Object.keys(state).map((element) => {
+      const elements = ["OS", "PE", "DB"];
+      if (elements.includes(element)) images = [...images, ...state[element]];
+    });
+
+    return images.map((image, index) => {
+      return <FontAwesomeIcon key={"fa" + index} icon={ICON[image]} />;
     });
   };
   return <TerminalImageList>{makeImageList()}</TerminalImageList>;
@@ -25,15 +46,6 @@ const TerminalImageContainer = (props) => {
 
 TerminalImageContainer.propTypes = {
   defaultImages: PropTypes.arrayOf(PropTypes.string),
-};
-
-TerminalImageContainer.defaultProps = {
-  defaultImages: [
-    ubuntuImagePath,
-    mysqlImagePath,
-    nodejsImagePath,
-    npmImagePath,
-  ],
 };
 
 export default TerminalImageContainer;

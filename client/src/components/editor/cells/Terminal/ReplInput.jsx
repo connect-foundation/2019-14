@@ -41,26 +41,19 @@ const ReplInput = React.forwardRef(
         <ReplPrompt>{prompt}</ReplPrompt>
         <EditorableReplInput
           ref={inputRef}
+          spellCheck={false}
           onInput={inputHandler}
-          isEditorable={isEditorable}
-        >
-          {text}
-        </EditorableReplInput>
+          value={text}
+        />
       </ReplInputWrapper>
     );
   }
 );
 
 ReplInputWrapper.propTypes = {
-  isEditorable: PropTypes.bool,
-  text: PropTypes.string,
-  inputHandler: PropTypes.func,
-};
-
-ReplInputWrapper.defaultProps = {
-  isEditorable: false,
-  text: "",
-  inputHandler: () => {},
+  isEditorable: PropTypes.bool.isRequired,
+  text: PropTypes.string.isRequired,
+  inputHandler: PropTypes.func.isRequired,
 };
 
 export default ReplInput;

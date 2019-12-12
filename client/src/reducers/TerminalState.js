@@ -63,10 +63,8 @@ class TerminalState {
     this.outputTexts = this.outputTexts.map(() => "");
   }
 
-  updateOutput(index, outputText) {
-    this.isLoadings = splice.change(this.isLoadings, index, false);
-    this.isActives = splice.change(this.isActives, index, true);
-    this.outputTexts = splice.change(this.outputTexts, index, outputText);
+  updateOutput(outputText) {
+    this.outputTexts.push(outputText);
   }
 
   deleteRepl(index = this.focusIndex) {
@@ -113,8 +111,6 @@ class TerminalState {
 
   focusIn() {
     this.focusIndex = this.replCount;
-    this.currentText = "";
-    this.currentStdin = "";
     this.replCount = this.inputTexts.length;
   }
 

@@ -1,8 +1,6 @@
 const debug = require("debug")("boostwriter:routes:terminal");
 const express = require("express");
-const Ssh = require("node-ssh");
-const { StreamResolver } = require("../utils/stream-resolver");
-const { utils } = require("../utils");
+const { utils, StreamResolver } = require("../utils");
 
 const { wrapAsync } = utils;
 
@@ -12,6 +10,7 @@ const {
   createDefaultTerminal,
   startTerminal,
   stopTerminal,
+  saveTerminal,
 } = require("../controller/terminal");
 
 const deleteDockerPrefix = (rawString) => {
@@ -87,53 +86,20 @@ router.post(
   })
 );
 
-const containerSsh = new Ssh();
-const password = process.env.REMOTE_SSH_PASSWORD;
-containerSsh.connect({
-  host: process.env.REMOTE_DOCKER_IP,
-  port: process.env.REMOTE_CONTAINER_PORT,
-  tryKeyboard: true,
-  keepaliveInterval: 100 * 1000,
-  keepaliveCountMax: 100,
-  username: "root",
-  password,
-  onKeyboardInteractive: (
-    name,
-    instructions,
-    instructionsLang,
-    prompts,
-    finish
-  ) => {
-    finish([password]);
-  },
-});
-
-router.post(
-  "/command/ssh",
-  wrapAsync(async (req, res) => {
-    const { cmd, stdin } = req.body;
-
-    const result = await containerSsh.execCommand(cmd, { stdin });
-
-    debug("result of ssh", containerSsh, cmd, stdin, result);
-
-    res.status(200).send(result);
-  })
-);
-
 router
   .route("/")
   .post(
     wrapAsync(async (req, res) => {
+      const { dockerData } = req.body;
       const docker = req.app.get("docker");
-      const result = await createDefaultTerminal(docker, "ubuntu");
+      const result = await createDefaultTerminal(docker, terminalOption);
 
       if (!result) {
         res.status(400).json({ message: "not created terminal" });
         return;
       }
 
-      res.status(201).json({ containerId: result });
+      res.status(201).json({ containerId: null });
     })
   )
   .patch(
@@ -154,5 +120,15 @@ router
       res.status(200).json(result);
     })
   );
+
+router.route("/snapshot").put(
+  wrapAsync(async (req, res) => {
+    const docker = req.app.get("docker");
+    const { containerId } = req.body;
+    const result = await saveTerminal(docker, containerId);
+
+    res.status(200).json(result);
+  })
+);
 
 module.exports = router;
