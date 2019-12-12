@@ -1,13 +1,8 @@
 const TERMINAL_SETTING_ACTION = {
   SELECT: {
     OS: "terminal-setting/select/os",
-    PL: "terminal-setting/select/pl",
+    PE: "terminal-setting/select/pe",
     DB: "terminal-setting/select/db",
-  },
-  UNSELECT: {
-    OS: "terminal-setting/unselect/os",
-    PL: "terminal-setting/unselect/pl",
-    DB: "terminal-setting/unselect/db",
   },
   MOVE: {
     PREV: "terminal-setting/move/prev",
@@ -22,8 +17,8 @@ const terminalSettingActionCreator = {
     return { type: TERMINAL_SETTING_ACTION.SELECT.OS, os };
   },
 
-  selectPL(pl, index) {
-    return { type: TERMINAL_SETTING_ACTION.SELECT.PL, pl, index };
+  selectPE(pe) {
+    return { type: TERMINAL_SETTING_ACTION.SELECT.PE, pe };
   },
 
   selectDB(db) {
@@ -42,9 +37,8 @@ const terminalSettingActionCreator = {
     return { type: TERMINAL_SETTING_ACTION.MOVE.STEP, step };
   },
 
-  hideTerminalSettingView(isHiiden) {
-    console.log("reduce", isHiiden);
-    return { type: TERMINAL_SETTING_ACTION.HIDE, isHiiden };
+  viewTerminalSetting() {
+    return { type: TERMINAL_SETTING_ACTION.HIDE };
   },
 };
 

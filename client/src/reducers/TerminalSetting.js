@@ -1,6 +1,6 @@
 import { TERMINAL_SETTING_ACTION } from "../actions/TerminalSetting";
 
-const terminalSettingHendler = {
+const terminalSettingHandler = {
   [TERMINAL_SETTING_ACTION.SELECT.OS]: (state, action) => {
     const newOs = [];
 
@@ -8,18 +8,26 @@ const terminalSettingHendler = {
 
     return { ...state, OS: newOs };
   },
-  [TERMINAL_SETTING_ACTION.SELECT.PL]: (state, action) => {
-    const newPL = state.PL;
+  [TERMINAL_SETTING_ACTION.SELECT.PE]: (state, action) => {
+    const newPE = [];
 
-    const targetIndex = newPL.findIndex((element) => element === action.pl);
+    state.PE.forEach((element) => {
+      newPE.push(element);
+    });
 
-    if (targetIndex < 0) newPL.push(action.pl);
-    else newPL.splice(targetIndex, 1);
+    const targetIndex = newPE.findIndex((element) => element === action.pe);
 
-    return { ...state, PL: newPL };
+    if (targetIndex < 0) newPE.push(action.pe);
+    else newPE.splice(targetIndex, 1);
+
+    return { ...state, PE: newPE };
   },
   [TERMINAL_SETTING_ACTION.SELECT.DB]: (state, action) => {
-    const newDb = state.DB;
+    const newDb = [];
+
+    state.DB.forEach((element) => {
+      newDb.push(element);
+    });
 
     const targetIndex = newDb.findIndex((element) => element === action.db);
 
@@ -53,11 +61,12 @@ const terminalSettingHendler = {
 };
 
 const terminalSettingReducer = (state, action) => {
-  if (!state) {
-    return null;
-  }
+  console.log(state, action);
+  const handler = terminalSettingHandler[action.type];
 
-  const handler = terminalSettingHendler[action.type];
+  if (handler === undefined) {
+    return state;
+  }
 
   return handler(state, action);
 };

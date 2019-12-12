@@ -1,8 +1,16 @@
 import React, { useContext, useEffect, useRef } from "react";
+import styled from "styled-components";
+
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
 import { uuidManager } from "../../utils";
 import { MarkdownCell } from "./cells";
+
+const EditorComponentWrapper = styled.section`
+  width: 99%;
+  display: flex;
+  flex-direction: column;
+`;
 
 const EditorComponent = () => {
   const { state } = useContext(CellContext);
@@ -21,13 +29,13 @@ const EditorComponent = () => {
   }, []);
 
   return (
-    <>
+    <EditorComponentWrapper>
       {cells.map((cell, cellIndex) => {
         const uuidArray = uuidManager.getUuidArray();
         const key = uuidArray[cellIndex];
         return <React.Fragment key={key}>{cell}</React.Fragment>;
       })}
-    </>
+    </EditorComponentWrapper>
   );
 };
 

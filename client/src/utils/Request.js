@@ -11,9 +11,9 @@ const PATH = {
   COMMAND: `${TERMINAL_API}/command/not-pending`,
   COMMAND_PENDING: `${TERMINAL_API}/command/pending`,
   COMMAND_SSH: `${TERMINAL_API}/command/ssh`,
-  TERMINAL: TERMINAL_API,
   SAVE: "api/document",
   LOAD: "api/document",
+  TERMINAL: "api/terminal",
 };
 
 const defaultOptions = {
@@ -92,13 +92,13 @@ const request = {
   },
 };
 
-const createTerminalFetch = async (data) => {
+const createTerminalFetch = async (option) => {
   const options = {
     ...defaultOptions,
     method: "POST",
     url: `${BASE_URL}/${PATH.TERMINAL}`,
     data: {
-      dockerData: data,
+      terminalOption: option,
     },
   };
   const response = await axios(options);

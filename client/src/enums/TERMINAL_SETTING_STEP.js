@@ -4,8 +4,8 @@ const TERMINAL_SETTING_STEP = [
     list: ["ubuntu", "centos"],
   },
   {
-    type: "PL",
-    list: ["javascript", "python"],
+    type: "PE",
+    list: ["node", "python"],
   },
   {
     type: "DB",

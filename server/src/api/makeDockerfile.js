@@ -18,7 +18,6 @@ const parseTerminalOption = (terminalOption) => {
   result = `${result}\nEXPOSE 22`;
   result = `${result}\nCMD ["/usr/sbin/sshd", "-D"]`;
 
-  console.log("dockerfile", result);
   return result;
 };
 
@@ -102,4 +101,4 @@ const makeDockerfile = async (text) => {
   }
 };
 
-module.exports = { writeDockerfile };
+module.exports = { parseTerminalOption, writeDockerfile };

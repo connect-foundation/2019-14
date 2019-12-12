@@ -1,12 +1,14 @@
 import React from "react";
 import styled from "styled-components";
-import { THEME } from "../enums";
-import { CellStore } from "../stores/CellStore";
+
 import EditorComponent from "../components/editor/EditorComponent";
 import EditorHeader from "../components/editor/header/EditorHeader";
 import EditorToolbar from "../components/editor/toolbar/ToolBar";
-import { TerminalSettingStore } from "../stores/TerminalSetting";
 import TerminalSettingDrawer from "../components/editor/terminal-setting-drawers/TerminalSettingDrawer";
+
+import { THEME } from "../enums";
+import { CellStore } from "../stores/CellStore";
+import { TerminalSettingStore } from "../stores/TerminalSetting";
 
 const EditorWindowLayout = styled.div`
   position: relative;
@@ -46,11 +48,15 @@ const scrollStyle = `
 `;
 
 const MarkdownWindowLayout = styled.div`
+  display: flex;
+  justify-content: space-between;
+
   position: relative;
 
   padding: 0;
   padding-left: 0.5em;
 
+  width: 100%;
   height: 100%;
 
   overflow-y: auto;
