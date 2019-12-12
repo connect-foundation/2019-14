@@ -55,6 +55,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
+    "react-router-dom": "^5.1.2",
     "socket.io-client": "^2.3.0",
     "styled-components": "^4.4.1",
     "uuidv4": "^6.0.0"
