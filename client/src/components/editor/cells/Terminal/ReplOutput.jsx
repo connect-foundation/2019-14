@@ -36,19 +36,21 @@ const ReplOutput = ({ cellUuid }) => {
   const { terminalState } = useContext(TerminalContext);
   const { outputTexts } = terminalState;
 
+  const socket = socketManager.get(cellUuid);
+
   useEffect(() => {
-    const socket = socketManager.get(cellUuid);
+    debug("prev enroll socket's stdout event with", cellUuid, socket);
     if (socket) {
-      debug("enroll socket's stdout event with", socket);
+      debug("enroll socket's stdout event with", cellUuid, socket);
       socket.on("stdout", (chunk) => {
         const decodedText = decoder.decode(chunk);
         debug("stdout text is", decodedText);
         dispatchToTerminal(terminalAction.updateOutputText(decodedText));
       });
     } else {
-      debug("stdout socket disabled");
+      debug("stdout socket disabled", cellUuid, socket);
     }
-  }, []);
+  }, [socket]);
 
   const outputs = outputTexts.map((output, index) => {
     const key = `repl-output-${index}`;
