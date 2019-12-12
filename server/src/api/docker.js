@@ -270,6 +270,12 @@ class DockerApi {
 
     return true;
   }
+
+  async inspectContainer(containerId) {
+    const container = this.request.getContainer(containerId);
+    const containerInfo = await container.inspect();
+    return containerInfo;
+  }
 }
 
 module.exports = { DockerApi, SIGNAL_TYPE };
