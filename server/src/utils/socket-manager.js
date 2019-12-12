@@ -11,7 +11,7 @@ class SocketManager {
   }
 
   enrollSocket(id, socket) {
-    if (this.connections[id] !== undefined) {
+    if (this.connections[id] && this.connections[id].socket) {
       this.disconnectSocket(id);
     }
     this.connections[id] = {};

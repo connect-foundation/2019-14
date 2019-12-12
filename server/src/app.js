@@ -82,19 +82,18 @@ app.use("/api/users", usersRouter);
 app.use("/api/terminal", terminalRouter);
 app.use("/api/document", documentRouter);
 
-io.on("connection", async (socket) => {
+io.of((name, query, next) => {
+  const isConnect = true;
+  next(null, isConnect);
+}).on("connection", async (socket) => {
   const { session } = socket.request;
-  const { id } = session;
+  const id = session.id + socket.nsp.name;
 
-  debug("socket with", session, socket);
+  const shellChannel = await sshManager.makeShellConnection(id, session);
 
-  // ssh connection
-  const shellChannel = await sshManager.makeShellConnection(session);
-
-  // socket enroll
   socketManager.enrollSocket(id, socket);
 
-  debug("Connect socket and shell channel", socket, shellChannel);
+  debug("Connect socket and shell channel");
 
   // server <-- docker container
   shellChannel.on("data", (data) => {
@@ -105,13 +104,26 @@ io.on("connection", async (socket) => {
 
   // client --> (server) --> docker container
   socket.on("stdin", (cmd) => {
-    const shellConnection = sshManager.getConnection(session.id);
+    const shellConnection = sshManager.getConnection(id);
     debug(`Shell command stdin : ${cmd}`);
     shellConnection.write(cmd);
   });
 
-  shellChannel.on("close", () => {
+  socket.on("disconnect", (reason) => {
+    debug(`socket io disconnect by ${reason}`);
+    sshManager.disconnect(id);
+  });
+
+  shellChannel.on("end", () => {
     debug("Shell channel connection end");
+  });
+
+  shellChannel.on("close", () => {
+    debug("Shell channel connection close");
+  });
+
+  shellChannel.on("error", (error) => {
+    debug("Shell channel connection error", error);
   });
 });
 

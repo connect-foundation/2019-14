@@ -60,6 +60,14 @@ class SshConnection {
     return this.channel;
   }
 
+  disconnect() {
+    if (!this.channel) {
+      return false;
+    }
+    this.channel.end();
+    return true;
+  }
+
   async makeShellChannel() {
     const makeShell = () => {
       return new Promise((resolve, reject) => {
