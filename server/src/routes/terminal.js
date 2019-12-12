@@ -99,7 +99,7 @@ router
         return;
       }
 
-      res.status(201).json({ containerId: null });
+      res.status(201).json(result);
     })
   )
   .patch(

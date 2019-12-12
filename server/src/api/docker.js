@@ -216,10 +216,23 @@ class DockerApi {
       Cmd: defaultCmd,
       name: defaultTagName,
       Tty: true,
+      ExposedPorts: {
+        "22/tcp": {},
+      },
+      HostConfig: {
+        PortBindings: {
+          "22/tcp": [{}],
+        },
+      },
     });
     // TODO startContainer 결과를 합쳐서 리턴 할 것
     await this.startContainer(newContainerInfo.id);
-    return newContainerInfo.id;
+    const containerInfo = await this.inspectContainer(newContainerInfo.id);
+    const result = {
+      containerId: newContainerInfo.id,
+      portBinding: containerInfo.NetworkSettings.Ports["22/tcp"][0].HostPort,
+    };
+    return result;
   }
 
   async startContainer(containerId) {
