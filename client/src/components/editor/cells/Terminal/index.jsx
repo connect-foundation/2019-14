@@ -60,7 +60,7 @@ InnerTerminalCell.propTypes = {
 const TerminalCell = ({ cellUuid }) => {
   return (
     <>
-      <TerminalStore>
+      <TerminalStore cellUuid={cellUuid}>
         <InnerTerminalCell cellUuid={cellUuid} />
       </TerminalStore>
     </>

@@ -41,10 +41,9 @@ const terminalActionCreator = {
    * 터미널 쉘 명령을 평가할 수 있다.
    * @param {String} commandString REPL cell에 입력된 쉘 명령이다.
    */
-  evalInput(commandString) {
+  evalInput() {
     return {
       type: TERMINAL_ACTION.EVAL_INPUT,
-      commandString,
     };
   },
 
@@ -108,13 +107,11 @@ const terminalActionCreator = {
 
   /**
    * REPL 출력값을 업데이트한다.
-   * @param {Number} index 업데이트될 REPL cell index다.
    * @param {String} text 업데이트될 REPL 출력값이다.
    */
-  updateOutputText(index, text) {
+  updateOutputText(text) {
     return {
       type: TERMINAL_ACTION.UPDATE_OUTPUT,
-      index,
       text,
     };
   },

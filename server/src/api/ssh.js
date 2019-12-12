@@ -51,12 +51,21 @@ class SshConnection {
           reject(err);
         });
 
+        debug(`ssh connection start`, this.connection, this.resolvedOptions);
         this.connection.connect(this.resolvedOptions);
       });
     };
 
     this.channel = await makeConnection();
     return this.channel;
+  }
+
+  disconnect() {
+    if (!this.channel) {
+      return false;
+    }
+    this.channel.end();
+    return true;
   }
 
   async makeShellChannel() {
@@ -95,4 +104,4 @@ class SshConnection {
   }
 }
 
-export default SshConnection;
+module.exports = SshConnection;

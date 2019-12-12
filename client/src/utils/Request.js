@@ -3,9 +3,7 @@ import axios from "axios";
 
 const debug = createDebug("boost:request");
 
-const SCHEME = "http";
-
-const BASE_URL = "localhost:9090";
+const BASE_URL = process.env.SERVER_URL;
 
 const TERMINAL_API = "api/terminal";
 
@@ -31,7 +29,7 @@ const request = {
     const options = {
       ...defaultOptions,
       method: "POST",
-      url: `${SCHEME}://${BASE_URL}/${PATH.COMMAND}`,
+      url: `${BASE_URL}/${PATH.COMMAND}`,
       data: {
         containerId: to,
         cmd: command,
@@ -46,7 +44,7 @@ const request = {
     const options = {
       ...defaultOptions,
       method: "POST",
-      url: `${SCHEME}://${BASE_URL}/${PATH.COMMAND_PENDING}`,
+      url: `${BASE_URL}/${PATH.COMMAND_PENDING}`,
       data: {
         containerId: to,
         cmd: command,
@@ -62,7 +60,7 @@ const request = {
     const options = {
       ...defaultOptions,
       method: "POST",
-      url: `${SCHEME}://${BASE_URL}/${PATH.COMMAND_SSH}`,
+      url: `${BASE_URL}/${PATH.COMMAND_SSH}`,
       data: {
         cmd: command,
         stdin,
@@ -73,7 +71,7 @@ const request = {
     return response;
   },
   async do(command, method = "GET", data = null) {
-    const uri = `${SCHEME}://${BASE_URL}/${PATH[command]}`;
+    const uri = `${BASE_URL}/${PATH[command]}`;
     let option = {
       method,
       mode: "cors",
@@ -98,7 +96,7 @@ const createTerminalFetch = async (option) => {
   const options = {
     ...defaultOptions,
     method: "POST",
-    url: `${SCHEME}://${BASE_URL}/${PATH.TERMINAL}`,
+    url: `${BASE_URL}/${PATH.TERMINAL}`,
     data: {
       terminalOption: option,
     },
