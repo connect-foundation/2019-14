@@ -270,7 +270,7 @@ class DockerApi {
         totalNetworksUsage += userMetric.networks[element].tx_bytes;
       });
 
-      if (totalNetworksUsage > 100000) {
+      if (totalNetworksUsage > 1000) {
         await container.stop();
         clearInterval(timerId);
       }
