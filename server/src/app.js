@@ -88,6 +88,8 @@ io.of((name, query, next) => {
   const { session } = socket.request;
   const connectionId = session.id + socket.nsp.name;
 
+  debug("start connecting session", session);
+
   const shellChannel = await sshManager.makeShellConnection(
     connectionId,
     session
