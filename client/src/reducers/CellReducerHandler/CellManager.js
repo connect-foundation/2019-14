@@ -128,20 +128,22 @@ CellManager.prototype.load = function(doc) {
     const newCellUuid = uuid();
     uuidManager.push(newCellUuid);
 
-    const { matchingTag } = getType(array[cellIndex]);
+    const { findPattern, matchingTag } = getType(array[cellIndex]);
     const tag = matchingTag || "p";
     const cell = cellGenerator[tag];
     this.cells.push(cell(newCellUuid));
 
     this.tags.push(tag);
 
-    if (tag === "code") {
-      let codeText = "";
+    const isAreaTag = tag === "code" || tag === "terminal";
+    if (isAreaTag) {
+      let areaText = "";
       this.texts[cellIndex] = "";
       i += 1;
-      while (array[i] !== TAG_MARKDOWN.code) {
-        codeText = array[i].concat("\n");
-        this.texts[cellIndex] = this.texts[cellIndex].concat(codeText);
+      const pattern = findPattern[0];
+      while (array[i] !== pattern) {
+        areaText = array[i].concat("\n");
+        this.texts[cellIndex] = this.texts[cellIndex].concat(areaText);
         i += 1;
       }
     } else {
