@@ -1,5 +1,5 @@
 import { uuid } from "uuidv4";
-import { utils, uuidManager } from "../../utils";
+import { utils, uuidManager, getType } from "../../utils";
 import { CELL_TAG } from "../../enums";
 import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
@@ -24,12 +24,20 @@ const TAG_MARKDOWN = {
   [CELL_TAG.HEADING.H5]: "##### ",
   [CELL_TAG.HEADING.H6]: "###### ",
   [CELL_TAG.BLOCKQUOTE]: "> ",
+  [CELL_TAG.CODE]: "```",
   [CELL_TAG.TERMINAL]: "$$$ ",
 };
 
 const findMakdownByTag = (tag) => {
   const mdText = TAG_MARKDOWN[tag];
   return mdText;
+};
+
+CellManager.prototype.init = function() {
+  this.cells = [];
+  this.texts = [];
+  this.tags = [];
+  this.options = [];
 };
 
 CellManager.prototype.add = function(index, dataObj) {
@@ -99,7 +107,12 @@ CellManager.prototype.createMarkdownDocument = function() {
     } else {
       mdText = findMakdownByTag(this.tags[i]);
     }
-    const text = `${mdText}${this.texts[i]}\n`;
+
+    let text = mdText;
+    const isCodeTag = this.tags[i] === "code";
+    text += `${isCodeTag ? "\n" : ""}`;
+    text += `${this.texts[i]}\n`;
+    text += `${isCodeTag ? `${mdText}\n` : ""}`;
     document = document.concat(text);
   }
   return document;
@@ -109,18 +122,44 @@ CellManager.prototype.save = function() {};
 
 CellManager.prototype.load = function(doc) {
   const array = doc.split("\n");
-  const cell = cellGenerator.p;
-  this.cells = [];
-  this.tags = [];
+  this.init();
   uuidManager.init();
-  this.texts = array.reduce((acc, val) => {
+  // this.texts = array.reduce((acc, val) => {
+  //   const newCellUuid = uuid();
+  //   this.cells.push(cell(newCellUuid));
+  //   const { matchingTag } = getType(val);
+  //   this.tags.push(matchingTag);
+  //   acc.push(val);
+  //   uuidManager.push(newCellUuid);
+  //   return acc;
+  // }, []);
+
+  let cellIndex = 0;
+  for (let i = 0; i < array.length; i += 1) {
     const newCellUuid = uuid();
-    this.cells.push(cell(newCellUuid));
-    this.tags.push("p");
-    acc.push(val);
     uuidManager.push(newCellUuid);
-    return acc;
-  }, []);
+
+    const { matchingTag } = getType(array[cellIndex]);
+    const tag = matchingTag || "p";
+    const cell = cellGenerator[tag];
+    this.cells.push(cell(newCellUuid));
+
+    this.tags.push(tag);
+
+    if (tag === "code") {
+      let codeText = "";
+      this.texts[cellIndex] = "";
+      i += 1;
+      while (array[i] !== TAG_MARKDOWN.code) {
+        codeText = array[i].concat("\n");
+        this.texts[cellIndex] = this.texts[cellIndex].concat(codeText);
+        i += 1;
+      }
+    } else {
+      this.texts[cellIndex] = array[i];
+    }
+    cellIndex += 1;
+  }
 };
 
 export default CellManager;
