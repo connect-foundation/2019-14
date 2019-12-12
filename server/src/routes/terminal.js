@@ -1,6 +1,6 @@
 const debug = require("debug")("boostwriter:routes:terminal");
 const express = require("express");
-const { utils, socketManager, StreamResolver } = require("../utils");
+const { utils, StreamResolver } = require("../utils");
 
 const { wrapAsync } = utils;
 
@@ -10,6 +10,7 @@ const {
   createDefaultTerminal,
   startTerminal,
   stopTerminal,
+  saveTerminal,
 } = require("../controller/terminal");
 
 const deleteDockerPrefix = (rawString) => {
@@ -89,8 +90,9 @@ router
   .route("/")
   .post(
     wrapAsync(async (req, res) => {
+      const { dockerData } = req.body;
       const docker = req.app.get("docker");
-      const result = await createDefaultTerminal(docker, "ubuntu");
+      const result = await createDefaultTerminal(docker, dockerData);
 
       if (!result) {
         res.status(400).json({ message: "not created terminal" });
@@ -118,5 +120,15 @@ router
       res.status(200).json(result);
     })
   );
+
+router.route("/temp").put(
+  wrapAsync(async (req, res) => {
+    const docker = req.app.get("docker");
+    const { containerId } = req.body;
+    const result = await saveTerminal(docker, containerId);
+
+    res.status(200).json(result);
+  })
+);
 
 module.exports = router;

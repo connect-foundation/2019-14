@@ -93,4 +93,17 @@ const request = {
   },
 };
 
-export default request;
+const createTerminalFetch = async (data) => {
+  const options = {
+    ...defaultOptions,
+    method: "POST",
+    url: `${SCHEME}://${BASE_URL}/${PATH.TERMINAL}`,
+    data: {
+      dockerData: data,
+    },
+  };
+  const response = await axios(options);
+  return response;
+};
+
+export { request, createTerminalFetch };

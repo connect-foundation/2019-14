@@ -5,7 +5,8 @@ import { CellStore } from "../stores/CellStore";
 import EditorComponent from "../components/editor/EditorComponent";
 import EditorHeader from "../components/editor/header/EditorHeader";
 import EditorToolbar from "../components/editor/toolbar/ToolBar";
-// import TerminalSetting from "../components/editor/side-window/TerminalSetting";
+import { TerminalSettingStore } from "../stores/TerminalSetting";
+import TerminalSettingDrawer from "../components/editor/terminal-setting-drawers/TerminalSettingDrawer";
 
 const EditorWindowLayout = styled.div`
   position: relative;
@@ -65,15 +66,18 @@ const EditorPage = () => {
   return (
     <>
       <CellStore>
-        <EditorWindowLayout>
-          <HeaderLayout>
-            <EditorHeader />
-            <EditorToolbar />
-          </HeaderLayout>
-          <MarkdownWindowLayout>
-            <EditorComponent />
-          </MarkdownWindowLayout>
-        </EditorWindowLayout>
+        <TerminalSettingStore>
+          <EditorWindowLayout>
+            <HeaderLayout>
+              <EditorHeader />
+              <EditorToolbar />
+            </HeaderLayout>
+            <MarkdownWindowLayout>
+              <EditorComponent />
+              <TerminalSettingDrawer />
+            </MarkdownWindowLayout>
+          </EditorWindowLayout>
+        </TerminalSettingStore>
       </CellStore>
     </>
   );
