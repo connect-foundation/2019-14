@@ -86,21 +86,19 @@ class SshConnection {
     return channel;
   }
 
+  sendSignal(signal) {
+    const trimmed = signal.trim();
+    debug(`Send signal ${trimmed}`);
+    this.channel.write(trimmed);
+  }
+
   write(str) {
     const trimmed = str.trim();
-    if (isSignal(trimmed)) {
-      const signalStr = SIGNAL[trimmed];
+    const line = trimmed.endsWith("\n") ? trimmed : `${trimmed}\n`;
 
-      debug(`Send signal ${trimmed} : ${signalStr}`);
+    debug(`Send shell command ${line}`);
 
-      this.channel.write(signalStr);
-    } else {
-      const line = trimmed.endsWith("\n") ? trimmed : `${trimmed}\n`;
-
-      debug(`Send shell command ${line}`);
-
-      this.channel.write(line);
-    }
+    this.channel.write(line);
   }
 }
 

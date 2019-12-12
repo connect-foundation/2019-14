@@ -22,13 +22,11 @@ const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
   const { terminalState } = useContext(TerminalContext);
   const { currentText } = terminalState;
 
-  const socket = socketManager.get(cellUuid);
-
   const focusHandlers = {
     [EVENT_TYPE.ENTER]: (e) => {
       e.preventDefault();
       debug("Evaling terminal input");
-      socket.emit("stdin", currentText);
+      socketManager.writeToStdin(cellUuid, currentText);
       dispatchToTerminal(terminalAction.changeCurrentText(""));
     },
 
@@ -48,13 +46,14 @@ const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
 
     [EVENT_TYPE.OPTION_COMMAND_DOWN]: () => {
       debug("Create Next & Focus next");
-      // TODO: options focus next
+      dispatchToTerminal(terminalAction.focusOut());
+      const makeNewMarkdownCell = cellAction.new(cellUuid, cellGenerator.p);
+      dispatchToCell(makeNewMarkdownCell);
     },
 
     [EVENT_TYPE.CTRL_C]: () => {
       debug("Signal SIGINT");
-      // TODO: change interupt string and abstraction
-      socket.emit("stdin", "SIGINT");
+      socketManager.sendSignal(cellUuid, "SIGINT");
     },
 
     [EVENT_TYPE.ARROW_UP]: (e) => {

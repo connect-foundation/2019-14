@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import createDebug from "debug";
@@ -11,6 +11,8 @@ import {
   TerminalContext,
   TerminalDispatchContext,
 } from "../../../../stores/TerminalStore";
+import { CellDispatchContext } from "../../../../stores/CellStore";
+import { cellActionCreator as cellAction } from "../../../../actions/CellAction";
 
 const debug = createDebug("boost:component:repl-output");
 
@@ -32,6 +34,8 @@ const ColoredOutputWrapper = styled.span`
 const decoder = new TextDecoder();
 
 const ReplOutput = ({ cellUuid }) => {
+  const [isUpdate, setIsUpdate] = useState(false);
+  const dispatchToCell = useContext(CellDispatchContext);
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const { terminalState } = useContext(TerminalContext);
   const { outputTexts } = terminalState;
@@ -46,11 +50,20 @@ const ReplOutput = ({ cellUuid }) => {
         const decodedText = decoder.decode(chunk);
         debug("stdout text is", decodedText);
         dispatchToTerminal(terminalAction.updateOutputText(decodedText));
+        setIsUpdate(true);
       });
     } else {
       debug("stdout socket disabled", cellUuid, socket);
     }
   }, [socket]);
+
+  useEffect(() => {
+    if (isUpdate) {
+      setIsUpdate(false);
+      const savedOutput = outputTexts.join("\n");
+      dispatchToCell(cellAction.input(cellUuid, savedOutput));
+    }
+  }, [outputTexts]);
 
   const outputs = outputTexts.map((output, index) => {
     const key = `repl-output-${index}`;

@@ -39,7 +39,7 @@ TerminalStore.defaultProps = {
 };
 
 TerminalStore.propTypes = {
-  cellUuid: propTypes.bool.isRequired,
+  cellUuid: propTypes.string.isRequired,
   children: propTypes.element,
 };
 
