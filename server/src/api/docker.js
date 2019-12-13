@@ -253,6 +253,14 @@ class DockerApi {
     return result;
   }
 
+  async getActiveContainers() {
+    const containers = await this.request.listContainers({
+      status: ["running"],
+    });
+
+    return containers;
+  }
+
   async monitorContainer(containerId) {
     const container = await this.request.getContainer(containerId);
 
@@ -269,16 +277,18 @@ class DockerApi {
       if (!userMetric || !userMetric.networks) {
         return false;
       }
+
       Object.keys(userMetric.networks).forEach(async (element) => {
         totalNetworksUsage += userMetric.networks[element].rx_bytes;
         totalNetworksUsage += userMetric.networks[element].tx_bytes;
       });
 
-      if (totalNetworksUsage > 100000) {
+      if (totalNetworksUsage > 1000000) {
         await container.stop();
         clearInterval(timerId);
       }
     };
+
     timerId = setInterval(setIntervalHandler, 1000);
 
     return true;
