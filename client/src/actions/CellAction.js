@@ -246,10 +246,9 @@ const cellActionCreator = {
     };
   },
 
-  shareLoad(shareId) {
+  shareLoad() {
     return {
       type: CELL_ACTION.TOOLBAR.SHARE_LOAD,
-      shareId,
     };
   },
 

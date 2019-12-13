@@ -56,13 +56,6 @@ const BUTTON_HANDLER = {
     cellDispatch(cellActionCreator.load());
     loadDocument();
   },
-  CODE: (cellDispatch) => {
-    const shareId = prompt(
-      "공유 문서의 ID를 입력하세요.",
-      "Input a Document ID"
-    );
-    cellDispatch(cellActionCreator.shareLoad(shareId));
-  },
   SHARE: () => {
     let shareId = null;
     const shareDocument = async () => {
@@ -76,6 +69,22 @@ const BUTTON_HANDLER = {
     } else {
       shareDocument();
     }
+  },
+  S_LOAD: (cellDispatch, cellManager) => {
+    const loadDocument = async (shareId) => {
+      const result = await request.do("SHARE", "GET", null, shareId);
+      const doc = await result.text();
+      if (doc) {
+        cellManager.load(doc);
+      }
+      cellDispatch(cellActionCreator.shareLoadFinish());
+    };
+    const shareId = prompt(
+      "공유 문서의 ID를 입력하세요.",
+      "Input a Document ID"
+    );
+    cellDispatch(cellActionCreator.shareLoad());
+    loadDocument(shareId);
   },
   TERMINAL: (tmp, temp, terminalDispatch) => {
     terminalDispatch(terminalSettingActionCreator.viewTerminalSetting());

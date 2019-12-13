@@ -8,6 +8,6 @@ const { wrapAsync } = utils;
 
 router.route("/").post(wrapAsync(shareController.share));
 
-// router.route("/:shareId").get(wrapAsync(shareController.load));
+router.route("/:shareId").get(wrapAsync(shareController.load));
 
 module.exports = router;

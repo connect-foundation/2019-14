@@ -72,8 +72,9 @@ const request = {
     debug("pending response", response);
     return response;
   },
-  async do(command, method = "GET", data = null) {
-    const uri = `${BASE_URL}/${PATH[command]}`;
+  async do(command, method = "GET", data = null, url = "") {
+    const optionUri = url.length > 0 ? `/${url}` : "";
+    const uri = `${BASE_URL}/${PATH[command]}${optionUri}`;
     let option = {
       method,
       mode: "cors",
