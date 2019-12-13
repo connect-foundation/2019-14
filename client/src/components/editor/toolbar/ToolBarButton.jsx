@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from "react";
-import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import propTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,7 +15,7 @@ import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
 import { CellDispatchContext, CellContext } from "../../../stores/CellStore";
 import { THEME } from "../../../enums";
 import { cellActionCreator } from "../../../actions/CellAction";
-import { request } from "../../../utils";
+import { request, utils } from "../../../utils";
 
 const BUTTON_TYPE = {
   NEW: faFileMedical,
@@ -42,17 +41,6 @@ const share = async () => {
   return shareId;
 };
 
-const copyText = (text) => {
-  const tmpElement = document.createElement("textarea");
-  tmpElement.value = text;
-  document.body.appendChild(tmpElement);
-
-  tmpElement.select();
-  document.execCommand("copy");
-  document.body.removeChild(tmpElement);
-  alert("공유를 위한 UUID가 복사되었습니다.");
-};
-
 const BUTTON_HANDLER = {
   NEW: () => {},
   SAVE: (cellDispatch) => {
@@ -76,12 +64,12 @@ const BUTTON_HANDLER = {
     let shareId = null;
     const shareDocument = async () => {
       shareId = await share();
-      copyText(shareId);
+      utils.copyText(shareId);
     };
 
     shareId = localStorage.getItem("sharedDocumentId");
     if (shareId) {
-      copyText(shareId);
+      utils.copyText(shareId);
     } else {
       shareDocument();
     }
