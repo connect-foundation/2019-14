@@ -33,12 +33,13 @@ const cellReducerHandler = {
 
   [CELL_ACTION.NEW]: (state, action) => {
     const { cursor, cellManager } = state;
-    const { cellUuid, createMarkdownCell, tag, start } = action;
+    const { cellUuid, createMarkdownCell, tag, depth, start } = action;
 
     const result = common.newCell(cellUuid, cellManager, {
       createCellCallback: createMarkdownCell,
       cursor,
       tag,
+      depth,
       start,
     });
 
@@ -133,11 +134,12 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
-    const { cellUuid, cell, text, tag, start } = action;
+    const { cellUuid, cell, text, tag, depth, start } = action;
     const result = target.transform(cellUuid, state.cellManager, {
       cell,
       text,
       tag,
+      depth,
       start,
     });
 

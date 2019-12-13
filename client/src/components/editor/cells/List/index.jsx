@@ -13,7 +13,7 @@ import {
   deleteCell,
   blockRelease,
 } from "../Markdown/handler";
-import { newCell, initCell } from "./handler";
+import { newCell, initCell, transformCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
 
 setGenerator("ul", (uuid) => <ListCell cellUuid={uuid} />);
@@ -28,6 +28,10 @@ const ListCell = ({ cellUuid }) => {
   );
   const { block, cursor, cellManager } = state;
   const { options } = cellManager;
+  const depth =
+    options[cellIndex] && options[cellIndex].depth
+      ? options[cellIndex].depth
+      : 0;
   const start =
     options[cellIndex] && options[cellIndex].start
       ? options[cellIndex].start
@@ -87,14 +91,40 @@ const ListCell = ({ cellUuid }) => {
 
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback, tag, start);
+      newCell(cellUuid, dispatch, componentCallback, tag, depth, start);
     }
     blockRelease(dispatch);
+  };
+
+  /**
+   * @todo depth
+   */
+
+  const tabEvent = (ev) => {
+    const { textContent } = ev.target;
+
+    transformCell(cellUuid, dispatch, textContent, tag, depth + 1, start);
+
+    console.log("tab event:", options[cellIndex]);
+  };
+
+  const shiftTabEvent = (ev) => {
+    const { textContent } = ev.target;
+
+    /**
+     * @todo depth
+     */
+
+    transformCell(cellUuid, dispatch, textContent, tag, depth - 1, start);
+
+    console.log("shift+tab event:", options[cellIndex]);
   };
 
   const keydownHandlers = {
     [EVENT_TYPE.ENTER]: enterEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
+    [EVENT_TYPE.TAB]: tabEvent,
+    [EVENT_TYPE.SHIFT_TAB]: shiftTabEvent,
   };
 
   const isFocus = currentIndex === cellIndex;
@@ -102,7 +132,7 @@ const ListCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus, [block.end]);
+  useKeys(keydownHandlers, isFocus, [block.end, depth]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -141,6 +171,8 @@ const ListCell = ({ cellUuid }) => {
       ref={inputRef || null}
       spellCheck={false}
       suppressContentEditableWarning
+      isList
+      depth={depth}
     >
       {text}
     </MarkdownWrapper>
