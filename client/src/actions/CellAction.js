@@ -31,9 +31,7 @@ const CELL_ACTION = {
     SAVE: "cell/toolbar/save",
     LOAD: "cell/toolbar/load",
     LOAD_FINISH: "cell/toolbar/load-finish",
-  },
-  SHARE: {
-    LOAD: "cell/share/load",
+    SHARE_LOAD: "cell/toolbar/share/load",
   },
 };
 
@@ -247,10 +245,10 @@ const cellActionCreator = {
     };
   },
 
-  shareLoad(docId) {
+  shareLoad(shareId) {
     return {
-      type: CELL_ACTION.SHARE.LOAD,
-      docId,
+      type: CELL_ACTION.TOOLBAR.SHARE_LOAD,
+      shareId,
     };
   },
 };

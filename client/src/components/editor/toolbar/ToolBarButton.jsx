@@ -57,8 +57,11 @@ const BUTTON_HANDLER = {
     loadDocument();
   },
   CODE: (cellDispatch) => {
-    const docId = prompt("공유 문서의 ID를 입력하세요.", "Input a Document ID");
-    cellDispatch(cellActionCreator.shareLoad(docId));
+    const shareId = prompt(
+      "공유 문서의 ID를 입력하세요.",
+      "Input a Document ID"
+    );
+    cellDispatch(cellActionCreator.shareLoad(shareId));
   },
   SHARE: () => {
     let shareId = null;
