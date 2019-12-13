@@ -14,7 +14,7 @@ class SocketManager {
 
   enroll(uuid) {
     if (!this.connections[uuid]) {
-      this.connections[uuid] = clientIo(`${process.env.SERVER_URL}/${uuid}`);
+      this.connections[uuid] = clientIo(`${process.env.SERVER_URL}/io/${uuid}`);
       debug("make socket io connection & enroll", uuid, this);
     }
     const connection = this.connections[uuid];
