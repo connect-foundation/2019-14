@@ -2,10 +2,16 @@ import getType from "./getType";
 import getStart from "./getStart";
 import uuidManager from "./UuidManager";
 import useReducerAsync from "./useReducerAsync";
-import { useKey, useKeys } from "./HandlerManager";
+import {
+  useKey,
+  useKeys,
+  attachDefaultHandlers,
+  getChecksumAllFalse,
+} from "./HandlerManager";
 import useCellState from "./useCellState";
-import request from "./Request";
+import { request } from "./Request";
 import utils from "./Common";
+import socketManager from "./SocketManager";
 
 export {
   utils,
@@ -14,7 +20,10 @@ export {
   uuidManager,
   useKey,
   useKeys,
+  attachDefaultHandlers,
+  getChecksumAllFalse,
   useCellState,
   useReducerAsync,
   request,
+  socketManager,
 };

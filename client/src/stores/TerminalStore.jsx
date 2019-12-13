@@ -1,5 +1,7 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useEffect } from "react";
 import propTypes from "prop-types";
+
+import { socketManager } from "../utils";
 import terminalReducer from "../reducers/TerminalReducer";
 import TerminalState from "../reducers/TerminalState";
 
@@ -10,11 +12,18 @@ const makeInitState = () => {
   return new TerminalState();
 };
 
-const TerminalStore = ({ children }) => {
+const TerminalStore = ({ cellUuid, children }) => {
   const [terminalState, dispatch] = useReducer(
     terminalReducer,
     makeInitState()
   );
+
+  useEffect(() => {
+    socketManager.enroll(cellUuid);
+    return () => {
+      socketManager.release(cellUuid);
+    };
+  }, []);
 
   return (
     <TerminalContext.Provider value={{ terminalState }}>
@@ -30,6 +39,7 @@ TerminalStore.defaultProps = {
 };
 
 TerminalStore.propTypes = {
+  cellUuid: propTypes.string.isRequired,
   children: propTypes.element,
 };
 

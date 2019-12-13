@@ -56,13 +56,15 @@ const cellActionCreator = {
    * - 엔터시 기준 셀의 다음 셀에 셀을 생성한다.
    * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백
    * @param {String} tag 셀의 타입(태그). 생략시 default input 셀이 생성된다.
+   * @param {Number} start ordered list일 경우의 start
    */
-  new(cellUuid, createMarkdownCell, tag = CELL_TAG.DEFAULT) {
+  new(cellUuid, createMarkdownCell, tag = CELL_TAG.DEFAULT, start = null) {
     return {
       type: CELL_ACTION.NEW,
       cellUuid,
       createMarkdownCell,
       tag,
+      start,
     };
   },
 
@@ -142,15 +144,16 @@ const cellActionCreator = {
    * @param {String} text 변경할 Cell의 텍스트
    * @param {String} tag 변경할 Cell의 태그
    * @param {React.element} cell 변경할 Cell 요소
+   * @param {Number} start ordered-list일 경우의 start
    */
-  transform(cellUuid, text, tag, cell, start) {
+  transform(cellUuid, text, tag, cell, start = null) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
       cellUuid,
       text,
       tag,
       cell,
-      start: start || null,
+      start,
     };
   },
 
@@ -165,23 +168,19 @@ const cellActionCreator = {
 
   /**
    * 쉬프트+위 입력시 선택할 셀의 범위를 위로 한 단계 올린다.
-   * @param {Uuid} cellUuid 블록을 시작할 기준 셀의 uuid
    */
-  blockUp(cellUuid) {
+  blockUp() {
     return {
       type: CELL_ACTION.BLOCK.UP,
-      cellUuid,
     };
   },
 
   /**
    * 쉬프트+아래 입력시 선택할 셀의 범위를 위로 한 단계 내린다.
-   * @param {Uuid} cellUuid 블록을 시작할 기준 셀의 uuid
    */
-  blockDown(cellUuid) {
+  blockDown() {
     return {
       type: CELL_ACTION.BLOCK.DOWN,
-      cellUuid,
     };
   },
 
@@ -219,12 +218,11 @@ const cellActionCreator = {
   },
 
   /**
-   * @param {Uuid} cellUuid 붙여넣기를 할 기준 셀의 uuid
+   * 현재 셀의 다음 셀부터 클립보드의 내용을 붙여넣기 한다.
    */
-  paste(cellUuid) {
+  paste() {
     return {
       type: CELL_ACTION.CLIPBOARD.PASTE,
-      cellUuid,
     };
   },
 

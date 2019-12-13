@@ -24,7 +24,6 @@ const CellStore = ({ children }) => {
       start: null,
       end: null,
     },
-    start: null,
   });
 
   return (
@@ -37,13 +36,11 @@ const CellStore = ({ children }) => {
 };
 
 CellStore.defaultProps = {
-  // children: [],
   children: {},
 };
 
 CellStore.propTypes = {
   children: propTypes.element,
-  // children: propTypes.arrayOf(propTypes.element),
 };
 
 export { CellContext, CellDispatchContext, CellStore };

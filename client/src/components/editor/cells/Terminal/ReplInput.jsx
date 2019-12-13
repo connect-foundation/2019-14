@@ -1,9 +1,11 @@
-import React, { useRef, useImperativeHandle } from "react";
+import React, { useContext, useRef, useImperativeHandle } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { THEME } from "../../../../enums";
 import EditorableReplInput from "./EditorableReplInput";
+import { TerminalDispatchContext } from "../../../../stores/TerminalStore";
+import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
 
 const ReplInputWrapper = styled.div`
   display: flex;
@@ -26,6 +28,7 @@ const ReplInput = React.forwardRef(
   ({ text, isEditorable, inputHandler }, ref) => {
     const inputRef = useRef();
     const prompt = "User $";
+    const dispatchToTerminal = useContext(TerminalDispatchContext);
 
     useImperativeHandle(ref, () => ({
       focus: () => {
@@ -36,31 +39,30 @@ const ReplInput = React.forwardRef(
       },
     }));
 
+    const clickHandler = (e) => {
+      e.stopPropagation();
+      dispatchToTerminal(terminalAction.focusIn());
+    };
+
     return (
       <ReplInputWrapper>
         <ReplPrompt>{prompt}</ReplPrompt>
         <EditorableReplInput
           ref={inputRef}
-          onInput={inputHandler}
-          isEditorable={isEditorable}
-        >
-          {text}
-        </EditorableReplInput>
+          spellCheck={false}
+          onChange={inputHandler}
+          onClick={clickHandler}
+          value={text}
+        />
       </ReplInputWrapper>
     );
   }
 );
 
 ReplInputWrapper.propTypes = {
-  isEditorable: PropTypes.bool,
-  text: PropTypes.string,
-  inputHandler: PropTypes.func,
-};
-
-ReplInputWrapper.defaultProps = {
-  isEditorable: false,
-  text: "",
-  inputHandler: () => {},
+  isEditorable: PropTypes.bool.isRequired,
+  text: PropTypes.string.isRequired,
+  inputHandler: PropTypes.func.isRequired,
 };
 
 export default ReplInput;

@@ -10,6 +10,13 @@ const getUuidArray = function() {
 };
 
 /**
+ * uuidArray를 빈 배열로 초기화시킨다.
+ */
+const init = function() {
+  uuidArray = [];
+};
+
+/**
  * uuid를 맨 뒤에 추가한다.
  * @param {Uuid} uuid uuid 모듈을 사용하여 생성한 uuid
  * @param {Number?} index 새로운 uuid를 추가할 기준 셀의 index
@@ -51,6 +58,7 @@ const findIndex = function(uuid) {
 
 export default {
   getUuidArray,
+  init,
   push,
   pop,
   blockDelete,

@@ -1,5 +1,9 @@
+import createDebug from "debug";
+
 import { TERMINAL_ACTION } from "../actions/TerminalAction";
 import TerminalState from "./TerminalState";
+
+const debug = createDebug("boost:reducer:terminal");
 
 const copyState = (state) => {
   return new TerminalState(state);
@@ -30,12 +34,8 @@ const terminalReducerHandler = {
 
     currentTerminal.focusBottom();
 
-    // TODO: 다른 하위 터미널의 인풋도 다시 평가해야한다.
-
     return nextState;
   },
-
-  // [TERMINAL_ACTION.EVAL_INPUT]: (state, action) => {},
 
   [TERMINAL_ACTION.EVAL_ALL]: (state) => {
     const nextState = copyState(state);
@@ -50,10 +50,6 @@ const terminalReducerHandler = {
     const nextState = copyState(state);
     const currentTerminal = nextState;
 
-    if (currentTerminal.replCount === 0) {
-      return nextState;
-    }
-
     currentTerminal.focusIn();
 
     return nextState;
@@ -61,9 +57,6 @@ const terminalReducerHandler = {
 
   [TERMINAL_ACTION.FOCUS_OUT]: (state) => {
     const nextState = copyState(state);
-    const currentTerminal = nextState;
-
-    currentTerminal.insertReplTo();
 
     return nextState;
   },
@@ -111,9 +104,9 @@ const terminalReducerHandler = {
     const nextState = copyState(state);
     const currentTerminal = nextState;
 
-    const { index, text } = action;
+    const { text } = action;
 
-    currentTerminal.updateOutput(index, text);
+    currentTerminal.updateOutput(text);
 
     return nextState;
   },
@@ -130,6 +123,27 @@ const terminalReducerHandler = {
       nextFocusIndex = currentTerminal.focusPrev();
     }
     currentTerminal.deleteRepl(nextFocusIndex);
+
+    return nextState;
+  },
+
+  [TERMINAL_ACTION.LOAD]: (state, action) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+    const { outputString } = action;
+
+    const nextOutputs = outputString.split("\n");
+
+    currentTerminal.outputTexts = nextOutputs.reduce((result, output = "") => {
+      const trimmed = output.trim();
+      if (trimmed.length === 0) {
+        return result;
+      }
+      result.push(`${trimmed}\n`);
+      return result;
+    }, []);
+
+    debug("Load terminal store", nextState);
 
     return nextState;
   },
