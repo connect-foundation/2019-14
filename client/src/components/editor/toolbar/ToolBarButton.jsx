@@ -6,7 +6,7 @@ import {
   faFileMedical,
   faFileDownload,
   faFileUpload,
-  faFileCode,
+  faFileImport,
   faFileExport,
   faTerminal,
 } from "@fortawesome/free-solid-svg-icons";
@@ -21,8 +21,8 @@ const BUTTON_TYPE = {
   NEW: faFileMedical,
   SAVE: faFileDownload,
   LOAD: faFileUpload,
-  CODE: faFileCode,
   SHARE: faFileExport,
+  S_LOAD: faFileImport,
   TERMINAL: faTerminal,
 };
 

@@ -257,6 +257,13 @@ const cellReducerHandler = {
       isLoading: true,
     };
   },
+
+  [CELL_ACTION.TOOLBAR.SHARE_LOAD_FINISH]: (state) => {
+    return {
+      ...state,
+      isLoading: false,
+    };
+  },
 };
 
 const cellReducer = (state, action) => {
