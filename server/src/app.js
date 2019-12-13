@@ -78,6 +78,14 @@ io.use((socket, next) => {
 
 app.use(sessionMiddleware);
 
+(async () => {
+  const containers = await docker.getActiveContainers();
+
+  containers.forEach(async (element) => {
+    await docker.monitorContainer(element.Id);
+  });
+})();
+
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/terminal", terminalRouter);

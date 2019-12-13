@@ -42,6 +42,7 @@ const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
     [EVENT_TYPE.SHIFT_BACKSPACE]: () => {
       debug("Shift backspace terminal cell");
       dispatchToCell(cellAction.init(null, cellUuid));
+      dispatchToCell(cellAction.input(cellUuid, ""));
     },
 
     [EVENT_TYPE.OPTION_COMMAND_DOWN]: () => {
