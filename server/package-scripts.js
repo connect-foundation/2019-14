@@ -5,7 +5,7 @@ function test(params) {
 module.exports = {
   scripts: {
     default: {
-      script: "nodemon bin/index.js",
+      script: "node bin/index.js",
       description: "Start app",
     },
     dev: {
