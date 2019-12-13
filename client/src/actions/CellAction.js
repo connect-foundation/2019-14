@@ -33,7 +33,6 @@ const CELL_ACTION = {
     LOAD_FINISH: "cell/toolbar/load-finish",
   },
   SHARE: {
-    APPLY: "cell/share/apply",
     LOAD: "cell/share/load",
   },
 };
@@ -245,12 +244,6 @@ const cellActionCreator = {
   loadFinish() {
     return {
       type: CELL_ACTION.TOOLBAR.LOAD_FINISH,
-    };
-  },
-
-  share() {
-    return {
-      type: CELL_ACTION.SHARE.APPLY,
     };
   },
 

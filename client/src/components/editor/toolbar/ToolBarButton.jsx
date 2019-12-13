@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import propTypes from "prop-types";
@@ -27,6 +27,32 @@ const BUTTON_TYPE = {
   TERMINAL: faTerminal,
 };
 
+const share = async () => {
+  const data = {
+    userId: "boost",
+    containerId: 9,
+  };
+  const result = await request.do("SHARE", "POST", data);
+  if (!result.ok) {
+    return false;
+  }
+
+  const shareId = await result.text();
+  localStorage.setItem("sharedDocumentId", shareId);
+  return shareId;
+};
+
+const copyText = (text) => {
+  const tmpElement = document.createElement("textarea");
+  tmpElement.value = text;
+  document.body.appendChild(tmpElement);
+
+  tmpElement.select();
+  document.execCommand("copy");
+  document.body.removeChild(tmpElement);
+  alert("공유를 위한 UUID가 복사되었습니다.");
+};
+
 const BUTTON_HANDLER = {
   NEW: () => {},
   SAVE: (cellDispatch) => {
@@ -46,8 +72,19 @@ const BUTTON_HANDLER = {
     const docId = prompt("공유 문서의 ID를 입력하세요.", "Input a Document ID");
     cellDispatch(cellActionCreator.shareLoad(docId));
   },
-  SHARE: (cellDispatch) => {
-    cellDispatch(cellActionCreator.share());
+  SHARE: () => {
+    let shareId = null;
+    const shareDocument = async () => {
+      shareId = await share();
+      copyText(shareId);
+    };
+
+    shareId = localStorage.getItem("sharedDocumentId");
+    if (shareId) {
+      copyText(shareId);
+    } else {
+      shareDocument();
+    }
   },
   TERMINAL: (tmp, temp, terminalDispatch) => {
     terminalDispatch(terminalSettingActionCreator.viewTerminalSetting());
@@ -82,9 +119,15 @@ const ToolBarButton = ({ buttonType }) => {
     BUTTON_HANDLER[buttonType](cellDispatch, cellManager, terminalDispatch);
   };
 
+  useEffect(() => {
+    if (isShared) {
+      console.log(localStorage.getItem("sharedDocumentId"));
+    }
+  }, [isShared]);
+
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>
-      {isShared && <Redirect to="/share" />}
+      {/* {isShared && <Redirect to="/share" />} */}
       <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} onClick={onClick} />
       <div>{buttonType}</div>
     </ToolBarButtonWrapper>

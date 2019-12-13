@@ -251,14 +251,6 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.SHARE.APPLY]: (state) => {
-    share.apply();
-    return {
-      ...state,
-      isShared: true,
-    };
-  },
-
   [CELL_ACTION.SHARE.LOAD]: (state, action) => {
     const { docId } = action;
     return {
