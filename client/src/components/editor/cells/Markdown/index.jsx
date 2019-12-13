@@ -182,7 +182,7 @@ const MarkdownCell = ({ cellUuid }) => {
   const renderTarget = (
     <MarkdownWrapper
       as={currentTag}
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       placeholder={PLACEHOLDER[currentTag]}

@@ -132,7 +132,7 @@ const ListCell = ({ cellUuid }) => {
   const renderTarget = (
     <MarkdownWrapper
       as="li"
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       placeholder={placeholder}

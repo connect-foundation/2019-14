@@ -83,8 +83,10 @@ const BUTTON_HANDLER = {
       "공유 문서의 ID를 입력하세요.",
       "Input a Document ID"
     );
-    cellDispatch(cellActionCreator.shareLoad());
-    loadDocument(shareId);
+    if (shareId) {
+      cellDispatch(cellActionCreator.shareLoad());
+      loadDocument(shareId);
+    }
   },
   TERMINAL: (tmp, temp, terminalDispatch) => {
     terminalDispatch(terminalSettingActionCreator.viewTerminalSetting());

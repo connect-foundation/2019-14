@@ -123,7 +123,7 @@ const CodeCell = ({ cellUuid }) => {
 
   return (
     <CodeCellWrapper
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       isQuote={false}

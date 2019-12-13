@@ -108,7 +108,7 @@ const QuoteCell = ({ cellUuid }) => {
   return (
     <MarkdownWrapper
       as={tag}
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       isQuote
