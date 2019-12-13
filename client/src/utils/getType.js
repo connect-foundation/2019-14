@@ -11,23 +11,26 @@ const MARKDOWN_REGEXP = {
 
   blockquote: /^\s{0,3}>\s+/g,
 
-  code: /^(\s{4,})|\s{0,3}`{3,}/g,
+  code: /^(\s{4,}|\s{0,3}`{3,})/g,
 
-  hr: /^\s{0,3}-{3,}|\*{3,}|_{3,}/g,
+  // hr: /^\s{0,3}-{3,}|\*{3,}|_{3,}/g,
 
   terminal: /^\s{0,3}\${3,}/,
 };
 
 const getType = (textContent) => {
   const types = Object.keys(MARKDOWN_REGEXP);
-  const result = types.find((type) => {
+  let findPattern = null;
+  const matchingTag = types.find((type) => {
     const regExp = MARKDOWN_REGEXP[type];
-    if (regExp.exec(textContent)) {
+    const regExpResult = regExp.exec(textContent);
+    if (regExpResult) {
+      findPattern = [...regExpResult];
       return true;
     }
     return false;
   });
-  return result;
+  return { findPattern, matchingTag };
 };
 
 export default getType;

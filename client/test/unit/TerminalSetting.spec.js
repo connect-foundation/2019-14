@@ -1,9 +1,4 @@
 import TestStore from "../TestStore";
-import {
-  TERMINAL_SETTING_ACTION,
-  terminalSettingActionCreator as tsActionCreator,
-} from "../../src/actions/TerminalSettingAction";
-import terminalSettingReducer from "../../src/reducers/TerminalSettingReducer";
 
 const testcases = {
   open: [
@@ -17,7 +12,7 @@ const testcases = {
   ],
 };
 
-describe("Terminal Setting Side Window", () => {
+xdescribe("Terminal Setting Side Window", () => {
   it("open window", () => {
     testcases.open.map((testcase) => {
       const { init, answer } = testcase;

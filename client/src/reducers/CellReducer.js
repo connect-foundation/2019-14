@@ -20,7 +20,6 @@ const cellReducerHandler = {
     common.initUuid(cellUuid, newCellUuid);
     common.initCell(cellUuid, state.cellManager, {
       cell: createMarkdownCell,
-      text: "",
       tag,
     });
 
@@ -33,10 +32,8 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.NEW]: (state, action) => {
-    const { start, cursor, cellManager } = state;
-    const { cellUuid, createMarkdownCell, tag } = action;
-
-    common.newUuid(cellUuid);
+    const { cursor, cellManager } = state;
+    const { cellUuid, createMarkdownCell, tag, start } = action;
 
     const result = common.newCell(cellUuid, cellManager, {
       createCellCallback: createMarkdownCell,
@@ -60,7 +57,7 @@ const cellReducerHandler = {
     const { cellUuid, text } = action;
     const result = common.inputText(cellUuid, cellManager, { text });
 
-    // debug("Cell Change text", index, text);
+    debug("Cell Change text", cellManager);
 
     return {
       ...state,
@@ -137,11 +134,16 @@ const cellReducerHandler = {
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
     const { cellUuid, cell, text, tag, start } = action;
-    target.transform(cellUuid, state.cellManager, { cell, text, tag });
+    const result = target.transform(cellUuid, state.cellManager, {
+      cell,
+      text,
+      tag,
+      start,
+    });
 
     return {
       ...state,
-      start,
+      ...result,
     };
   },
 
@@ -155,8 +157,8 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.BLOCK.UP]: (state, action) => {
-    const result = block.blockRangeUp(action.cellUuid, state.block);
+  [CELL_ACTION.BLOCK.UP]: (state) => {
+    const result = block.blockRangeUp(state.currentIndex, state.block);
 
     return {
       ...state,
@@ -164,10 +166,10 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.BLOCK.DOWN]: (state, action) => {
+  [CELL_ACTION.BLOCK.DOWN]: (state) => {
     const { cells } = state.cellManager;
     const result = block.blockRangeDown(
-      action.cellUuid,
+      state.currentIndex,
       state.block,
       cells.length
     );
@@ -202,7 +204,7 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.CLIPBOARD.COPY]: (state) => {
-    if (!state.block.start) {
+    if (state.block.start === null) {
       return state;
     }
     const result = clipboard.copy(state.cellManager, state.block);
@@ -212,14 +214,13 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.CLIPBOARD.PASTE]: (state, action) => {
-    const { cellManager } = state;
-    const { cellUuid } = action;
+  [CELL_ACTION.CLIPBOARD.PASTE]: (state) => {
+    const { cellManager, currentIndex } = state;
 
     const dataObj = {
       clipboard: state.clipboard,
     };
-    const result = clipboard.paste(cellUuid, cellManager, dataObj);
+    const result = clipboard.paste(currentIndex, cellManager, dataObj);
 
     return {
       ...state,

@@ -4,13 +4,7 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
 import { cellGenerator, setGenerator } from "../CellGenerator";
-import {
-  getType,
-  getStart,
-  useKeys,
-  uuidManager,
-  request,
-} from "../../../../utils";
+import { useKeys, uuidManager, attachDefaultHandlers } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
 import {
@@ -20,11 +14,10 @@ import {
   saveCursorPosition,
   focusPrev,
   focusNext,
-  createCursor,
-  setCursorPosition,
   blockEndUp,
   blockEndDown,
   blockRelease,
+  transformCell,
 } from "./handler";
 
 setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
@@ -35,7 +28,7 @@ setGenerator("hr", (uuid) => (
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { currentIndex, start, cursor, block, cellManager, isLoading } = state;
+  const { currentIndex, cursor, block, cellManager, isLoading } = state;
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
@@ -53,17 +46,8 @@ const MarkdownCell = ({ cellUuid }) => {
   }
 
   useEffect(() => {
-    const loadDocument = async () => {
-      const result = await request.do("LOAD");
-      const doc = await result.text();
-      cellManager.load(doc);
-      dispatch(cellActionCreator.loadFinish());
-      text = cellManager.texts[cellIndex];
-    };
-
-    if (isLoading) {
-      loadDocument();
-    }
+    text = !isLoading ? cellManager.texts[cellIndex] : "";
+    transformCell(cellUuid, dispatch, text, currentTag);
   }, [isLoading]);
 
   // -------------- Handler -----------------------
@@ -76,13 +60,15 @@ const MarkdownCell = ({ cellUuid }) => {
     blockRelease(dispatch);
   };
 
+  const shiftEnterEvent = () => {};
+
   const arrowUpEvent = () => {
     focusPrev(dispatch);
     blockRelease(dispatch);
   };
 
   const shiftArrowUpEvent = () => {
-    blockEndUp(cellUuid, dispatch);
+    blockEndUp(dispatch);
   };
 
   const arrowDownEvent = () => {
@@ -91,13 +77,20 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const shiftArrowDownEvent = () => {
-    blockEndDown(cellUuid, dispatch);
+    blockEndDown(dispatch);
   };
 
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     const cursorPos = getSelection();
-    if (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) {
+
+    /**
+     * @todo 블록 부분들은 추후 싹 리팩토링 예정
+     */
+    if (
+      (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) ||
+      state.block.start !== null
+    ) {
       deleteCell(dispatch, cellUuid, textContent);
     }
   };
@@ -116,38 +109,49 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const ctrlVEvent = () => {
-    dispatch(cellActionCreator.paste(cellUuid));
+    dispatch(cellActionCreator.paste());
     blockRelease(dispatch);
   };
 
-  const keydownHandlers = {
-    [EVENT_TYPE.ENTER]: enterEvent,
+  const defaultKeydownHandlers = {
+    [EVENT_TYPE.SHIFT_ENTER]: shiftEnterEvent,
     [EVENT_TYPE.ARROW_UP]: arrowUpEvent,
-    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
+    [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
     [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
-    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
     [EVENT_TYPE.CTRL_A]: ctrlAEvent,
     [EVENT_TYPE.CTRL_X]: ctrlXEvent,
     [EVENT_TYPE.CTRL_C]: ctrlCEvent,
     [EVENT_TYPE.CTRL_V]: ctrlVEvent,
   };
 
-  // -------------- End -----------------------
+  const keydownHandlers = {
+    [EVENT_TYPE.ENTER]: enterEvent,
+    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
+  };
 
   const isFocus = currentIndex === cellIndex;
   if (isFocus) {
     inputRef = state.inputRef;
   }
 
+  attachDefaultHandlers(defaultKeydownHandlers);
+  useKeys(keydownHandlers, isFocus, [block.end]);
+  // -------------- End -----------------------
+
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
+      if (inputRef.current.firstChild === null) {
+        const emptyElement = document.createTextNode("");
+        inputRef.current.appendChild(emptyElement);
+      }
 
-      const content = createCursor(text, cursor);
-      inputRef.current.innerHTML = content;
-      setCursorPosition();
-      inputRef.current.normalize();
+      const caretOffset =
+        cursor.start > inputRef.current.firstChild.length
+          ? inputRef.current.firstChild.length
+          : cursor.start;
+      window.getSelection().collapse(inputRef.current.firstChild, caretOffset);
     }
     /**
      * 거슬려서 잠시 주석
@@ -159,33 +163,10 @@ const MarkdownCell = ({ cellUuid }) => {
     // window.addEventListener("beforeunload", isSaved);
   }, [inputRef]);
 
-  useKeys(keydownHandlers, isFocus);
-
   const onKeyUp = (e) => {
     const { textContent } = e.target;
 
-    const matchingTag = getType(textContent);
-
-    if (matchingTag && matchingTag !== currentTag) {
-      const makeNewCell = cellGenerator[matchingTag];
-
-      const isOrderedList = matchingTag === "ol";
-
-      let newStart = null;
-      if (isOrderedList) {
-        newStart = start ? start + 1 : getStart(textContent);
-      } else {
-        newStart = 0;
-      }
-
-      const cell = makeNewCell(cellUuid, {
-        start: newStart,
-      });
-
-      dispatch(
-        cellActionCreator.transform(cellUuid, "", matchingTag, cell, newStart)
-      );
-    }
+    transformCell(cellUuid, dispatch, textContent, currentTag);
   };
 
   const onClick = () => {
@@ -194,31 +175,26 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const onBlur = (e) => {
-    const { innerHTML } = e.target;
-    dispatch(cellActionCreator.input(cellUuid, innerHTML));
-  };
-
-  const htmlText = () => {
-    /**
-     * @todo text에 대한 보안장치 필요
-     * @todo text에 대해 원하는 것 외에는 전부 유니코드로 바꾸는 로직 필요
-     * - placeholder의 key 배열에 해당하는 태그 외에는 전부 변환한다던가
-     */
-    return { __html: text };
+    const { textContent } = e.target;
+    dispatch(cellActionCreator.input(cellUuid, textContent));
   };
 
   const renderTarget = (
     <MarkdownWrapper
       as={currentTag}
+      contentEditable
       intoShiftBlock={intoShiftBlock}
+      isCurrentCell={isFocus}
       placeholder={PLACEHOLDER[currentTag]}
       onKeyUp={onKeyUp}
       onClick={onClick}
       onBlur={onBlur}
       ref={inputRef || null}
-      dangerouslySetInnerHTML={htmlText()}
-      contentEditable
-    />
+      spellCheck={false}
+      suppressContentEditableWarning
+    >
+      {text}
+    </MarkdownWrapper>
   );
 
   return renderTarget;

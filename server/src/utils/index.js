@@ -1,4 +1,6 @@
 const { StreamResolver } = require("./stream-resolver");
+const socketManager = require("./socket-manager");
+const sshManager = require("./ssh-manager");
 
 const utils = {};
 
@@ -16,4 +18,4 @@ utils.isFunction = (v) => {
   return typeof v === "function";
 };
 
-module.exports = { utils, StreamResolver };
+module.exports = { utils, StreamResolver, socketManager, sshManager };

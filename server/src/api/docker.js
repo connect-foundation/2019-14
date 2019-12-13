@@ -1,6 +1,7 @@
 const debug = require("debug")("boostwriter:api:Docker");
 const fs = require("fs");
 const Docker = require("dockerode");
+const uuid = require("uuid/v4");
 
 const SIGNAL_TYPE = {
   SIGINT: 2,
@@ -158,45 +159,55 @@ class DockerApi {
     });
   }
 
-  async createCustomTerminal(userTerminalInfo) {
-    if (!userTerminalInfo) {
-      const defaultBaseImage = "ubuntu";
-      return this.createContainer(defaultBaseImage);
-    }
+  async createCustomTerminal(dockerFilePath) {
+    const imageTagName = uuid();
     // TODO 유저 입력 파싱
     const defaultOptions = {
-      context: __dirname,
+      context: dockerFilePath,
       src: ["Dockerfile"],
     };
 
     const imageTag = {
-      t: "test",
+      t: imageTagName,
     };
 
-    const progressCallback = (err) => {
-      if (err) {
-        debug("progress", err);
-      }
-    };
-
-    const finishCallback = (err) => {
-      if (err) {
-        debug("finish", err);
-      }
-    };
-
-    const stream = await this.request.buildImage(defaultOptions, imageTag);
-
-    this.request.modem.followProgress(stream, progressCallback, finishCallback);
-
+    try {
+      const stream = await this.request.buildImage(defaultOptions, imageTag);
+      await this.followProgressAsync(stream);
+      debug("next to follow progress");
+      const result = await this.createDefaultTerminal(imageTagName);
+      return result;
+    } catch (err) {
+      debug("createCustomTerminal error", err);
+      return err;
+    }
     // TODO: refactor
-    return null;
+  }
+
+  followProgressAsync(stream) {
+    return new Promise((resolve, reject) => {
+      const onProgress = (data) => {
+        debug("following progress", data);
+        console.log("following progress", data);
+      };
+
+      const onFinish = async (err, data) => {
+        if (err) {
+          console.log("progress finish err", err, data);
+          return reject(err);
+        }
+        debug("finish follow progressing", data);
+        console.log("finish follow progressing", data);
+        resolve(data);
+      };
+      this.request.modem.followProgress(stream, onFinish, onProgress);
+    });
   }
 
   async createDefaultTerminal(baseImageName) {
     // TOOD 초기 하드코딩 값 변경하거나 없앨 것
-    const defaultCmd = ["/bin/bash"];
-    const defaultTagName = "ubuntu-container-test";
+    const defaultCmd = ["/usr/sbin/sshd", "-D"];
+    const defaultTagName = baseImageName;
     const newContainerInfo = await this.request.createContainer({
       AttachStdin: true,
       AttachStdout: true,
@@ -205,10 +216,23 @@ class DockerApi {
       Cmd: defaultCmd,
       name: defaultTagName,
       Tty: true,
+      ExposedPorts: {
+        "22/tcp": {},
+      },
+      HostConfig: {
+        PortBindings: {
+          "22/tcp": [{}],
+        },
+      },
     });
     // TODO startContainer 결과를 합쳐서 리턴 할 것
     await this.startContainer(newContainerInfo.id);
-    return newContainerInfo.id;
+    const containerInfo = await this.inspectContainer(newContainerInfo.id);
+    const result = {
+      containerId: newContainerInfo.id,
+      portBinding: containerInfo.NetworkSettings.Ports["22/tcp"][0].HostPort,
+    };
+    return result;
   }
 
   async startContainer(containerId) {
@@ -221,6 +245,59 @@ class DockerApi {
     const container = await this.request.getContainer(containerId);
     const result = await container.stop();
     return result;
+  }
+
+  async saveContainer(containerId) {
+    const container = await this.request.getContainer(containerId);
+    const result = await container.commit(containerId);
+    return result;
+  }
+
+  async getActiveContainers() {
+    const containers = await this.request.listContainers({
+      status: ["running"],
+    });
+
+    return containers;
+  }
+
+  async monitorContainer(containerId) {
+    const container = await this.request.getContainer(containerId);
+
+    let timerId = null;
+
+    const setIntervalHandler = async () => {
+      let totalNetworksUsage = 0;
+
+      const userMetric = await container.stats({
+        id: containerId,
+        stream: false,
+      });
+
+      if (!userMetric || !userMetric.networks) {
+        return false;
+      }
+
+      Object.keys(userMetric.networks).forEach(async (element) => {
+        totalNetworksUsage += userMetric.networks[element].rx_bytes;
+        totalNetworksUsage += userMetric.networks[element].tx_bytes;
+      });
+
+      if (totalNetworksUsage > 1000000) {
+        await container.stop();
+        clearInterval(timerId);
+      }
+    };
+
+    timerId = setInterval(setIntervalHandler, 1000);
+
+    return true;
+  }
+
+  async inspectContainer(containerId) {
+    const container = this.request.getContainer(containerId);
+    const containerInfo = await container.inspect();
+    return containerInfo;
   }
 }
 
