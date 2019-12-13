@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import createDebug from "debug";
@@ -31,15 +31,21 @@ const TerminalWrapper = styled.div`
 `;
 
 const InnerTerminalCell = ({ cellUuid }) => {
+  const [isFirstRender, setIsFirstRender] = useState(true);
   const { state } = useContext(CellContext);
   const dispatchToTerminal = useContext(TerminalDispatchContext);
-  const { currentIndex } = state;
+  const { currentIndex, cellManager } = state;
   const cellIndex = uuidManager.findIndex(cellUuid);
 
   const isCellFocus = cellIndex === currentIndex;
   if (isCellFocus) {
     debug(`Terminal cell ${cellIndex} focus in`);
-    dispatchToTerminal(terminalAction.focusIn(cellUuid));
+    dispatchToTerminal(terminalAction.focusIn());
+  }
+
+  if (isFirstRender) {
+    setIsFirstRender(false);
+    dispatchToTerminal(terminalAction.load(cellManager.texts[cellIndex]));
   }
 
   return (

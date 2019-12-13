@@ -1,5 +1,9 @@
+import createDebug from "debug";
+
 import { TERMINAL_ACTION } from "../actions/TerminalAction";
 import TerminalState from "./TerminalState";
+
+const debug = createDebug("boost:reducer:terminal");
 
 const copyState = (state) => {
   return new TerminalState(state);
@@ -45,10 +49,6 @@ const terminalReducerHandler = {
   [TERMINAL_ACTION.FOCUS_IN]: (state) => {
     const nextState = copyState(state);
     const currentTerminal = nextState;
-
-    if (currentTerminal.replCount === 0) {
-      return nextState;
-    }
 
     currentTerminal.focusIn();
 
@@ -123,6 +123,27 @@ const terminalReducerHandler = {
       nextFocusIndex = currentTerminal.focusPrev();
     }
     currentTerminal.deleteRepl(nextFocusIndex);
+
+    return nextState;
+  },
+
+  [TERMINAL_ACTION.LOAD]: (state, action) => {
+    const nextState = copyState(state);
+    const currentTerminal = nextState;
+    const { outputString } = action;
+
+    const nextOutputs = outputString.split("\n");
+
+    currentTerminal.outputTexts = nextOutputs.reduce((result, output = "") => {
+      const trimmed = output.trim();
+      if (trimmed.length === 0) {
+        return result;
+      }
+      result.push(`${trimmed}\n`);
+      return result;
+    }, []);
+
+    debug("Load terminal store", nextState);
 
     return nextState;
   },

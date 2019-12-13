@@ -85,15 +85,19 @@ app.use("/api/document", documentRouter);
 app.use("/share", shareRouter);
 
 io.of((name, query, next) => {
-  const isConnect = true;
-  next(null, isConnect);
+  next(null, true);
 }).on("connection", async (socket) => {
   const { session } = socket.request;
-  const id = session.id + socket.nsp.name;
+  const connectionId = session.id + socket.nsp.name;
 
-  const shellChannel = await sshManager.makeShellConnection(id, session);
+  debug("start connecting session", session);
 
-  socketManager.enrollSocket(id, socket);
+  const shellChannel = await sshManager.makeShellConnection(
+    connectionId,
+    session
+  );
+
+  socketManager.enrollSocket(connectionId, socket);
 
   debug("Connect socket and shell channel");
 
@@ -106,14 +110,18 @@ io.of((name, query, next) => {
 
   // client --> (server) --> docker container
   socket.on("stdin", (cmd) => {
-    const shellConnection = sshManager.getConnection(id);
     debug(`Shell command stdin : ${cmd}`);
-    shellConnection.write(cmd);
+    sshManager.writeTo(connectionId, cmd);
+  });
+
+  socket.on("signal", (signal) => {
+    debug(`Shell signal : ${signal}`);
+    sshManager.sendSignal(connectionId, signal);
   });
 
   socket.on("disconnect", (reason) => {
     debug(`socket io disconnect by ${reason}`);
-    sshManager.disconnect(id);
+    sshManager.disconnect(connectionId);
   });
 
   shellChannel.on("end", () => {

@@ -90,16 +90,21 @@ router
   .route("/")
   .post(
     wrapAsync(async (req, res) => {
-      const { dockerData } = req.body;
+      const { terminalOption } = req.body;
       const docker = req.app.get("docker");
+      const session = req.app.get("session");
       const result = await createDefaultTerminal(docker, terminalOption);
+
+      debug("api/terminal route", result);
 
       if (!result) {
         res.status(400).json({ message: "not created terminal" });
         return;
       }
 
-      res.status(201).json({ containerId: null });
+      session.port = result.portBinding;
+
+      res.status(201).json(result);
     })
   )
   .patch(
