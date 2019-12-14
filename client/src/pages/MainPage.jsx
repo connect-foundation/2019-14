@@ -9,6 +9,7 @@ const MainPageWrapper = styled.div`
   flex-direction: column;
   background: rgba(0, 0, 0, 0.75);
   height: -webkit-fill-available;
+  align-items: center;
 `;
 const MainPage = () => {
   return (
