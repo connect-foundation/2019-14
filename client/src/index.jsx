@@ -3,8 +3,8 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import { THEME } from "./enums";
+import MainPage from "./pages/MainPage";
 import EditorPage from "./pages/EditorPage";
-import LoadingPage from "./pages/LoadingPage";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -29,8 +29,8 @@ function App() {
     <BrowserRouter>
       <GlobalStyle />
       <Switch>
-        <Route exact path="/" component={EditorPage} />
-        <Route exact path="/share" component={LoadingPage} />
+        <Route exact path="/" component={MainPage} />
+        <Route exact path="/editor" component={EditorPage} />
       </Switch>
     </BrowserRouter>
   );
