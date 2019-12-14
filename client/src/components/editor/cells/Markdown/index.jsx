@@ -28,7 +28,14 @@ setGenerator("hr", (uuid) => (
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { currentIndex, cursor, block, cellManager, isLoading } = state;
+  const {
+    currentIndex,
+    cursor,
+    block,
+    cellManager,
+    isLoading,
+    isShared,
+  } = state;
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
@@ -179,6 +186,7 @@ const MarkdownCell = ({ cellUuid }) => {
     dispatch(cellActionCreator.input(cellUuid, textContent));
   };
 
+  const textContent = text.length > 0 ? text : "\u200b";
   const renderTarget = (
     <MarkdownWrapper
       as={currentTag}
@@ -193,7 +201,7 @@ const MarkdownCell = ({ cellUuid }) => {
       spellCheck={false}
       suppressContentEditableWarning
     >
-      {text}
+      {!isShared ? text : textContent}
     </MarkdownWrapper>
   );
 
