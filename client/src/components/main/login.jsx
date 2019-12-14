@@ -31,11 +31,12 @@ const LoginWrapper = styled.div`
       min-width: 150px;
       max-width: 500px;
       font-size: 1.5rem;
-      border: 2px solid ${THEME.VS_CODE.FONT}
+      border: 2px solid ${THEME.VS_CODE.FONT};
+      margin: 0.3rem;
     }
     div:hover {
       cursor: default;
-      10px 5px 5px red;
+      box-shadow: 1px 1px 3px ${THEME.VS_CODE.FONT};
     }
   }
 `;
