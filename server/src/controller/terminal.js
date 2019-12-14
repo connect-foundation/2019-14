@@ -3,12 +3,15 @@ const { writeDockerfile } = require("../api/makeDockerfile");
 const validImages = require("../dockerImages");
 
 const makeImageNameString = (terminalOption) => {
-  let userEnvironment = [];
-  Object.values(terminalOption).forEach((element) => {
-    userEnvironment = userEnvironment.concat(element);
+  let userSelectionEnvironment = [];
+
+  Object.values(terminalOption).forEach((environment) => {
+    userSelectionEnvironment = userSelectionEnvironment.concat(environment);
   });
 
-  return validImages[userEnvironment.join("/")];
+  userSelectionEnvironment.sort();
+
+  return validImages[userSelectionEnvironment.join("/")];
 };
 
 const createDefaultTerminal = async (dockerInstance, terminalOption) => {
@@ -24,7 +27,7 @@ const createDefaultTerminal = async (dockerInstance, terminalOption) => {
       return result;
     }
 
-    const result = dockerInstance.createDefaultTerminal(imageTag);
+    const result = await dockerInstance.createDefaultTerminal(imageTag);
     // TODO 이미지 tag로 컨테이너 생성하기
     debug("create terminal", result);
 
