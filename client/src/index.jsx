@@ -31,6 +31,7 @@ function App() {
       <Switch>
         <Route exact path="/" component={MainPage} />
         <Route exact path="/editor" component={EditorPage} />
+        <Route path="/:shareId" component={MainPage} />
       </Switch>
     </BrowserRouter>
   );

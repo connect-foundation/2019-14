@@ -53,8 +53,29 @@ const Login = () => {
     }
   };
 
+  const openShareDocument = () => {
+    const saveShareDocument = async (shareId) => {
+      const result = await request.do("SHARE", "GET", null, shareId);
+      const doc = await result.text();
+      localStorage.setItem("share-document-content", doc);
+      localStorage.setItem("isShared", true);
+      setOpen(true);
+    };
+    const shareId = prompt(
+      "공유 문서의 ID를 입력하세요.",
+      "Input a Document ID"
+    );
+    if (shareId) {
+      saveShareDocument(shareId);
+    }
+  };
+
   const beforeLogin = (
     <>
+      {open && <Redirect to="/editor" />}
+      <div className="open-share-document" onClick={openShareDocument}>
+        Open Share Document
+      </div>
       <input type="text" id="id" name="id" placeholder="ID" />
       <input
         type="password"
@@ -88,27 +109,9 @@ const Login = () => {
         >
           Open Editor
         </div>
-        <div
-          className="open-share-document"
-          onClick={() => {
-            const saveShareDocument = async (shareId) => {
-              const result = await request.do("SHARE", "GET", null, shareId);
-              const doc = await result.text();
-              localStorage.setItem("share-document-content", doc);
-              localStorage.setItem("isShared", true);
-              setOpen(true);
-            };
-            const shareId = prompt(
-              "공유 문서의 ID를 입력하세요.",
-              "Input a Document ID"
-            );
-            if (shareId) {
-              saveShareDocument(shareId);
-            }
-          }}
-        >
+        {/* <div className="open-share-document" onClick={openShareDocument}>
           Open Share Document
-        </div>
+        </div> */}
         <div
           className="logout"
           onClick={() => {
