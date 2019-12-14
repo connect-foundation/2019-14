@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { THEME } from "../../enums";
+import { request } from "../../utils";
 
 const LoginWrapper = styled.div`
   width: 100%;
@@ -90,7 +91,20 @@ const Login = () => {
         <div
           className="open-share-document"
           onClick={() => {
-            setOpen(true);
+            const saveShareDocument = async (shareId) => {
+              const result = await request.do("SHARE", "GET", null, shareId);
+              const doc = await result.text();
+              localStorage.setItem("share-document-content", doc);
+              localStorage.setItem("isShared", true);
+              setOpen(true);
+            };
+            const shareId = prompt(
+              "공유 문서의 ID를 입력하세요.",
+              "Input a Document ID"
+            );
+            if (shareId) {
+              saveShareDocument(shareId);
+            }
           }}
         >
           Open Share Document

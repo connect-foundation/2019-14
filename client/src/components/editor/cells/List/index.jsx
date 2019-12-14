@@ -4,8 +4,8 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
-import { EVENT_TYPE } from "../../../../enums";
-import { useCellState, useKeys } from "../../../../utils";
+import { EVENT_TYPE, PLACEHOLDER } from "../../../../enums";
+import { useCellState, useKeys, uuidManager } from "../../../../utils";
 
 import {
   getSelection,
