@@ -1,9 +1,9 @@
-const db = require("../api/db");
+const shareService = require("../services/share");
 
 const share = async (req, res) => {
   // eslint-disable-next-line no-unused-vars
   const { userId, containerId } = req.body;
-  const result = await db.document.share(containerId);
+  const result = await shareService.share(containerId);
   if (result) {
     res.status(201).send(result);
   } else {
@@ -13,7 +13,7 @@ const share = async (req, res) => {
 
 const load = async (req, res) => {
   const { shareId } = req.params;
-  const result = await db.document.shareLoad(shareId);
+  const result = await shareService.shareLoad(shareId);
   if (result) {
     res.status(200).send(result);
   } else {
