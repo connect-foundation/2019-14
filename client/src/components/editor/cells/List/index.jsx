@@ -26,7 +26,7 @@ const ListCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block, cursor, cellManager } = state;
+  const { block, cursor, cellManager, isShared } = state;
   const { options } = cellManager;
   const start =
     options[cellIndex] && options[cellIndex].start
@@ -102,7 +102,8 @@ const ListCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus, [block.end]);
+  const eventTrigger = isFocus && !isShared;
+  useKeys(keydownHandlers, eventTrigger, [block.end]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
