@@ -13,6 +13,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const terminalRouter = require("./routes/terminal");
 const documentRouter = require("./routes/document");
+const shareRouter = require("./routes/share");
 
 const app = express();
 const server = http.createServer(app);
@@ -89,6 +90,7 @@ app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/terminal", terminalRouter);
 app.use("/api/document", documentRouter);
+app.use("/share", shareRouter);
 
 io.of((name, query, next) => {
   next(null, true);

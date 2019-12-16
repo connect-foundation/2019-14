@@ -51,7 +51,7 @@ const CodeCell = ({ cellUuid }) => {
   );
   let inputRef = null;
   let intoShiftBlock = false;
-  const { block } = state;
+  const { block, isShared } = state;
 
   if (block.start !== null) {
     const blockStart = block.start < block.end ? block.start : block.end;
@@ -108,7 +108,8 @@ const CodeCell = ({ cellUuid }) => {
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
-  useKeys(keydownHandlerArray, isFocus, [], getChecksumAllFalse());
+  const eventTrigger = isFocus && !isShared;
+  useKeys(keydownHandlerArray, eventTrigger, [], getChecksumAllFalse());
 
   const onClick = () => {
     dispatch(cellActionCreator.focusMove(cellUuid));
@@ -123,7 +124,7 @@ const CodeCell = ({ cellUuid }) => {
 
   return (
     <CodeCellWrapper
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       isQuote={false}

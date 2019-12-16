@@ -31,6 +31,8 @@ const CELL_ACTION = {
     SAVE: "cell/toolbar/save",
     LOAD: "cell/toolbar/load",
     LOAD_FINISH: "cell/toolbar/load-finish",
+    SHARE_LOAD: "cell/toolbar/share/load",
+    SHARE_LOAD_FINISH: "cell/toolbar/share/load-finish",
   },
 };
 
@@ -241,6 +243,18 @@ const cellActionCreator = {
   loadFinish() {
     return {
       type: CELL_ACTION.TOOLBAR.LOAD_FINISH,
+    };
+  },
+
+  shareLoad() {
+    return {
+      type: CELL_ACTION.TOOLBAR.SHARE_LOAD,
+    };
+  },
+
+  shareLoadFinish() {
+    return {
+      type: CELL_ACTION.TOOLBAR.SHARE_LOAD_FINISH,
     };
   },
 };

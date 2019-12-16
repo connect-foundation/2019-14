@@ -4,8 +4,8 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
-import { EVENT_TYPE } from "../../../../enums";
-import { useCellState, useKeys } from "../../../../utils";
+import { EVENT_TYPE, PLACEHOLDER } from "../../../../enums";
+import { useCellState, useKeys, uuidManager } from "../../../../utils";
 
 import {
   getSelection,
@@ -26,7 +26,7 @@ const ListCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block, cursor, cellManager } = state;
+  const { block, cursor, cellManager, isShared } = state;
   const { options } = cellManager;
   const start =
     options[cellIndex] && options[cellIndex].start
@@ -102,7 +102,8 @@ const ListCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus, [block.end]);
+  const eventTrigger = isFocus && !isShared;
+  useKeys(keydownHandlers, eventTrigger, [block.end]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -132,7 +133,7 @@ const ListCell = ({ cellUuid }) => {
   const renderTarget = (
     <MarkdownWrapper
       as="li"
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       placeholder={placeholder}

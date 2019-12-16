@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import propTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,7 +6,6 @@ import {
   faFileMedical,
   faFileDownload,
   faFileUpload,
-  faFileCode,
   faFileExport,
   faTerminal,
 } from "@fortawesome/free-solid-svg-icons";
@@ -15,15 +14,29 @@ import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
 import { CellDispatchContext, CellContext } from "../../../stores/CellStore";
 import { THEME } from "../../../enums";
 import { cellActionCreator } from "../../../actions/CellAction";
-import { request } from "../../../utils";
+import { request, utils } from "../../../utils";
 
 const BUTTON_TYPE = {
   NEW: faFileMedical,
   SAVE: faFileDownload,
   LOAD: faFileUpload,
-  CODE: faFileCode,
   SHARE: faFileExport,
   TERMINAL: faTerminal,
+};
+
+const share = async () => {
+  const data = {
+    userId: "boost",
+    containerId: 9,
+  };
+  const result = await request.do("SHARE", "POST", data);
+  if (!result.ok) {
+    return false;
+  }
+
+  const shareId = await result.text();
+  localStorage.setItem("sharedDocumentId", shareId);
+  return shareId;
 };
 
 const BUTTON_HANDLER = {
@@ -41,8 +54,20 @@ const BUTTON_HANDLER = {
     cellDispatch(cellActionCreator.load());
     loadDocument();
   },
-  CODE: () => {},
-  SHARE: () => {},
+  SHARE: () => {
+    let shareId = null;
+    const shareDocument = async () => {
+      shareId = await share();
+      utils.copyText(shareId);
+    };
+
+    shareId = localStorage.getItem("sharedDocumentId");
+    if (shareId) {
+      utils.copyText(shareId);
+    } else {
+      shareDocument();
+    }
+  },
   TERMINAL: (tmp, temp, terminalDispatch) => {
     terminalDispatch(terminalSettingActionCreator.viewTerminalSetting());
   },
@@ -70,14 +95,21 @@ const ToolBarButton = ({ buttonType }) => {
   const cellDispatch = useContext(CellDispatchContext);
   const terminalDispatch = useContext(TerminalSettingDispatch);
   const { state } = useContext(CellContext);
-  const { cellManager } = state;
+  const { cellManager, isShared } = state;
 
   const onClick = () => {
     BUTTON_HANDLER[buttonType](cellDispatch, cellManager, terminalDispatch);
   };
 
+  useEffect(() => {
+    if (isShared) {
+      console.log(localStorage.getItem("sharedDocumentId"));
+    }
+  }, [isShared]);
+
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>
+      {/* {isShared && <Redirect to="/share" />} */}
       <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} onClick={onClick} />
       <div>{buttonType}</div>
     </ToolBarButtonWrapper>

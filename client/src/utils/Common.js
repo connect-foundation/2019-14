@@ -87,4 +87,14 @@ utils.getTypeString = (obj) => {
   return {}.toString.call(obj).match(/\s([a-zA-Z]+)/)[1];
 };
 
+utils.copyText = (text) => {
+  const tmpElement = document.createElement("textarea");
+  tmpElement.value = text;
+  document.body.appendChild(tmpElement);
+
+  tmpElement.select();
+  document.execCommand("copy");
+  document.body.removeChild(tmpElement);
+};
+
 export default utils;
