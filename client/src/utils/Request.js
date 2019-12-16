@@ -14,6 +14,7 @@ const PATH = {
   SAVE: "api/document",
   LOAD: "api/document",
   TERMINAL: "api/terminal",
+  SHARE: "api/share",
 };
 
 const defaultOptions = {
@@ -70,25 +71,49 @@ const request = {
     debug("pending response", response);
     return response;
   },
-  async do(command, method = "GET", data = null) {
-    const uri = `${BASE_URL}/${PATH[command]}`;
-    let option = {
-      method,
-      mode: "cors",
-      gzip: true,
-      headers: {
-        "Content-Type": "application/json",
-        Connection: "keep-alive",
+  async saveDocument({ containerId, documentString }) {
+    const options = {
+      ...defaultOptions,
+      method: "PATCH",
+      url: `${BASE_URL}/${PATH.SAVE}`,
+      data: {
+        containerId,
+        docContent: documentString,
       },
     };
-    const body = JSON.stringify(data);
-    if (method !== "GET") {
-      option = Object.assign(option, { body });
-    }
-    const result = await fetch(uri, {
-      ...option,
-    });
-    return result;
+    const response = await axios(options);
+    return response;
+  },
+
+  async loadDocument(containerId) {
+    const options = {
+      ...defaultOptions,
+      url: `${BASE_URL}/${PATH.LOAD}/${containerId}`,
+    };
+    const response = await axios(options);
+    return response;
+  },
+
+  async shareDocument(containerId) {
+    const options = {
+      ...defaultOptions,
+      method: "POST",
+      url: `${BASE_URL}/${PATH.SHARE}`,
+      data: {
+        containerId,
+      },
+    };
+    const response = await axios(options);
+    return response;
+  },
+
+  async loadSharingDocument(shareId) {
+    const options = {
+      ...defaultOptions,
+      url: `${BASE_URL}/${PATH.SHARE}/${shareId}`,
+    };
+    const response = await axios(options);
+    return response;
   },
 };
 

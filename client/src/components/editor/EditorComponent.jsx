@@ -15,8 +15,22 @@ const EditorComponentWrapper = styled.section`
 const EditorComponent = () => {
   const { state } = useContext(CellContext);
   const cellDispatch = useContext(CellDispatchContext);
-  const { cells } = state.cellManager;
+  const { cellManager } = state;
+  const { cells } = cellManager;
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    const shareDocumentContent = localStorage.getItem("share-document-content");
+    const isShared = localStorage.getItem("isShared");
+    if (shareDocumentContent && isShared) {
+      cellDispatch(cellActionCreator.shareLoad());
+      const document = JSON.parse(shareDocumentContent);
+      cellManager.load(document);
+      cellDispatch(cellActionCreator.shareLoadFinish());
+      localStorage.removeItem("share-document-content");
+      localStorage.removeItem("isShared");
+    }
+  }, []);
 
   useEffect(() => {
     const renderTargetCallback = (cellUuid) => (

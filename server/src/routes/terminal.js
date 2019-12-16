@@ -113,6 +113,8 @@ router
       const { containerId } = req.body;
       const result = await startTerminal(docker, containerId);
 
+      await docker.monitorContainer(containerId);
+
       res.status(200).json(result);
     })
   )

@@ -13,6 +13,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const terminalRouter = require("./routes/terminal");
 const documentRouter = require("./routes/document");
+const shareRouter = require("./routes/share");
 
 const app = express();
 const server = http.createServer(app);
@@ -77,10 +78,19 @@ io.use((socket, next) => {
 
 app.use(sessionMiddleware);
 
+(async () => {
+  const containers = await docker.getActiveContainers();
+
+  containers.forEach(async (element) => {
+    await docker.monitorContainer(element.Id);
+  });
+})();
+
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/terminal", terminalRouter);
 app.use("/api/document", documentRouter);
+app.use("/api/share", shareRouter);
 
 io.of((name, query, next) => {
   next(null, true);

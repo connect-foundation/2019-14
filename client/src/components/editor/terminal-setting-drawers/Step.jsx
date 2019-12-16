@@ -6,6 +6,7 @@ import { faUbuntu, faJs } from "@fortawesome/free-brands-svg-icons";
 
 import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
 import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
+import { THEME } from "../../../enums";
 
 const STEP_TYPE = {
   OS: faUbuntu,
@@ -14,13 +15,14 @@ const STEP_TYPE = {
 };
 
 const StepWrapper = styled.div`
+  margin: 2rem 0;
   cursor: pointer;
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   text-align: center;
-  line-height: 2rem;
+  line-height: 2.5rem;
   border-radius: 100%;
-  background-color: red;
+  background-color: ${THEME.VS_CODE.INNER_BOX};
 `;
 
 const Step = ({ icon, index }) => {

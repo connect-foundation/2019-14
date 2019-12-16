@@ -26,7 +26,7 @@ const QuoteCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block, cursor } = state;
+  const { block, cursor, isShared } = state;
   let inputRef = null;
   let intoShiftBlock = false;
 
@@ -78,7 +78,8 @@ const QuoteCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus, [block.end]);
+  const eventTrigger = isFocus && !isShared;
+  useKeys(keydownHandlers, eventTrigger, [block.end]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -108,7 +109,7 @@ const QuoteCell = ({ cellUuid }) => {
   return (
     <MarkdownWrapper
       as={tag}
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       isQuote
@@ -118,7 +119,9 @@ const QuoteCell = ({ cellUuid }) => {
       ref={inputRef || null}
       spellCheck={false}
       suppressContentEditableWarning
-    />
+    >
+      {text}
+    </MarkdownWrapper>
   );
 };
 

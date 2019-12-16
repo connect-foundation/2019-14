@@ -29,6 +29,7 @@ const MarkdownWrapper = styled.p`
     isCurrentCell && "1.5px solid rgba(255, 255, 255, 0.2)"};
   border-left: ${({ isQuote }) => isQuote && "0.25rem solid silver"};
   padding-left: ${({ isQuote }) => isQuote && "0.5rem"};
+  margin-left: ${({ isList, depth }) => isList && `${depth * 4}rem`};
 `;
 
 export default MarkdownWrapper;

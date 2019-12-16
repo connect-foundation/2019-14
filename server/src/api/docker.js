@@ -207,14 +207,12 @@ class DockerApi {
   async createDefaultTerminal(baseImageName) {
     // TOOD 초기 하드코딩 값 변경하거나 없앨 것
     const defaultCmd = ["/usr/sbin/sshd", "-D"];
-    const defaultTagName = baseImageName;
     const newContainerInfo = await this.request.createContainer({
       AttachStdin: true,
       AttachStdout: true,
       AttachStderr: true,
       Image: baseImageName,
       Cmd: defaultCmd,
-      name: defaultTagName,
       Tty: true,
       ExposedPorts: {
         "22/tcp": {},
@@ -253,6 +251,14 @@ class DockerApi {
     return result;
   }
 
+  async getActiveContainers() {
+    const containers = await this.request.listContainers({
+      status: ["running"],
+    });
+
+    return containers;
+  }
+
   async monitorContainer(containerId) {
     const container = await this.request.getContainer(containerId);
 
@@ -269,16 +275,18 @@ class DockerApi {
       if (!userMetric || !userMetric.networks) {
         return false;
       }
+
       Object.keys(userMetric.networks).forEach(async (element) => {
         totalNetworksUsage += userMetric.networks[element].rx_bytes;
         totalNetworksUsage += userMetric.networks[element].tx_bytes;
       });
 
-      if (totalNetworksUsage > 100000) {
+      if (totalNetworksUsage > 1000000) {
         await container.stop();
         clearInterval(timerId);
       }
     };
+
     timerId = setInterval(setIntervalHandler, 1000);
 
     return true;
