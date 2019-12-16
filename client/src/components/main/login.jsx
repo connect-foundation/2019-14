@@ -55,9 +55,15 @@ const Login = () => {
 
   const openShareDocument = () => {
     const saveShareDocument = async (shareId) => {
-      const result = await request.do("SHARE", "GET", null, shareId);
-      const doc = await result.text();
-      localStorage.setItem("share-document-content", doc);
+      const response = await request.loadSharingDocument(shareId);
+      /**
+       * @todo 에러 처리하기
+       * - 성공, 실패시 각각 처리할 것.
+       * - axious 문서 보고 처리하기
+       */
+      const document = response.data;
+      const documentString = JSON.stringify(document);
+      localStorage.setItem("share-document-content", documentString);
       localStorage.setItem("isShared", true);
       setOpen(true);
     };

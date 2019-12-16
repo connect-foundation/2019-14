@@ -7,9 +7,8 @@ const { wrapAsync } = utils;
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(wrapAsync(documentController.load))
-  .patch(wrapAsync(documentController.save));
+router.route("/").patch(wrapAsync(documentController.save));
+
+router.route("/:containerId").get(wrapAsync(documentController.load));
 
 module.exports = router;

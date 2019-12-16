@@ -25,16 +25,17 @@ const BUTTON_TYPE = {
 };
 
 const share = async () => {
-  const data = {
-    userId: "boost",
-    containerId: 9,
-  };
-  const result = await request.do("SHARE", "POST", data);
-  if (!result.ok) {
+  const containerId = 9;
+  const response = await request.shareDocument(containerId);
+  /**
+   * @todo 에러 처리하기
+   * - 성공, 실패시 각각 처리할 것.
+   */
+  if (response.status === 500) {
     return false;
   }
-
-  const shareId = await result.text();
+  console.log(response);
+  const shareId = response.data;
   localStorage.setItem("sharedDocumentId", shareId);
   return shareId;
 };
@@ -46,9 +47,19 @@ const BUTTON_HANDLER = {
   },
   LOAD: (cellDispatch, cellManager) => {
     const loadDocument = async () => {
-      const result = await request.do("LOAD");
-      const doc = await result.text();
-      cellManager.load(doc);
+      /**
+       * @todo static한거 바꾸기
+       * - 터미널 생성한 정보 받아서 바꾸기
+       */
+      const containerId = 9;
+      const response = await request.loadDocument(containerId);
+      console.log(response);
+      /**
+       * @todo 에러 처리하기
+       * - 성공, 실패시 각각 처리할 것.
+       */
+      const document = response.data;
+      cellManager.load(document);
       cellDispatch(cellActionCreator.loadFinish());
     };
     cellDispatch(cellActionCreator.load());

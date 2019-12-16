@@ -1,28 +1,24 @@
 import { request } from "../../utils";
 
 const save = (cellManager) => {
-  const document = cellManager.createMarkdownDocument();
+  const documentString = cellManager.createMarkdownDocument();
+
   /**
    * @todo
-   * - request 모듈의 do에 uri에다가 userId를 붙여야댐
-   * - 나중에 추가할 것! 필수!
+   * - static 데이터를 터미널 생성 id를 받아와서 적용시키기
    */
   const data = {
-    userId: "boost",
-    docContent: document,
+    containerId: 9,
+    documentString,
   };
-  const result = request.do("SAVE", "PATCH", data);
+  const response = request.saveDocument(data);
 
-  result
-    .then((res) => {
-      if (res.ok) alert("저장 성공!");
-      else {
-        alert("저장 실패ㅠㅠ");
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  if (response.status === 500) {
+    alert("저장 실패ㅠㅠ");
+    return;
+  }
+
+  alert("저장 성공!");
 };
 
 export default {

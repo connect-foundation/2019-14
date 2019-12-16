@@ -118,9 +118,7 @@ CellManager.prototype.createMarkdownDocument = function() {
   return documentString;
 };
 
-CellManager.prototype.load = function(documentString) {
-  const document = JSON.parse(documentString);
-
+CellManager.prototype.load = function(document) {
   this.init();
   uuidManager.init();
 

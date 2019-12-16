@@ -1,8 +1,7 @@
 const shareService = require("../services/share");
 
 const share = async (req, res) => {
-  // eslint-disable-next-line no-unused-vars
-  const { userId, containerId } = req.body;
+  const { containerId } = req.body;
   const shareId = await shareService.share(containerId);
   if (shareId) {
     res.status(201).send(shareId);
