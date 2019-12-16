@@ -2,8 +2,8 @@ const documentService = require("../services/document");
 
 const save = async (req, res) => {
   // const userId = req.params.userId
-  const { userId, docContent } = req.body;
-  const result = await documentService.save(userId, docContent);
+  const { containerId, docContent } = req.body;
+  const result = await documentService.save(containerId, docContent);
   if (result) {
     res.status(200).send();
   } else {
@@ -12,9 +12,9 @@ const save = async (req, res) => {
 };
 
 const load = async (req, res) => {
-  // const userId = req.params.userId
-  const userId = "boost";
-  const content = await documentService.load(userId);
+  const { containerId } = req.params;
+
+  const content = await documentService.load(containerId);
   if (content) {
     res.status(200).send(content);
   } else {

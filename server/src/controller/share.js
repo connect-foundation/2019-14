@@ -13,7 +13,7 @@ const share = async (req, res) => {
 
 const load = async (req, res) => {
   const { shareId } = req.params;
-  const content = await shareService.shareLoad(shareId);
+  const content = await shareService.load(shareId);
   if (content) {
     res.status(200).send(content);
   } else {
