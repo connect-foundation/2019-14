@@ -187,7 +187,8 @@ const MarkdownCell = ({ cellUuid }) => {
     dispatch(cellActionCreator.input(cellUuid, textContent));
   };
 
-  const textContent = text && text.length > 0 ? text : "\u200b";
+  const emptyString = "\u200b";
+  const textContent = text && text.length > 0 ? text : emptyString;
   const renderTarget = (
     <MarkdownWrapper
       as={currentTag}

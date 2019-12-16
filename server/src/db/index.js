@@ -12,13 +12,13 @@ const dbInfo = {
 
 const pool = mysql.createPool(dbInfo);
 
-router.query = async function(queryString, ...arg) {
+router.query = async function(queryString, ...args) {
   try {
     const conn = await pool.getConnection(async (_conn) => {
       return _conn;
     });
     try {
-      const [rows] = await conn.query(queryString, ...arg);
+      const [rows] = await conn.query(queryString, ...args);
       conn.release();
       return rows;
     } catch (err) {
