@@ -58,7 +58,7 @@ const cellReducerHandler = {
     const { cellUuid, text } = action;
     const result = common.inputText(cellUuid, cellManager, { text });
 
-    // debug("Cell Change text", index, text);
+    debug("Cell Change text", cellManager);
 
     return {
       ...state,
@@ -246,6 +246,21 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TOOLBAR.LOAD_FINISH]: (state) => {
+    return {
+      ...state,
+      isLoading: false,
+    };
+  },
+
+  [CELL_ACTION.TOOLBAR.SHARE_LOAD]: (state) => {
+    return {
+      ...state,
+      isShared: true,
+      isLoading: true,
+    };
+  },
+
+  [CELL_ACTION.TOOLBAR.SHARE_LOAD_FINISH]: (state) => {
     return {
       ...state,
       isLoading: false,

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 
+import { CellContext } from "../../../stores/CellStore";
 import { ToolBarButton, BUTTON_TYPE } from "./ToolBarButton";
 
 const ToolBarWrapper = styled.nav`
@@ -9,7 +10,9 @@ const ToolBarWrapper = styled.nav`
 `;
 
 const ToolBar = () => {
+  const { state } = useContext(CellContext);
   const getToolBarButtons = () => {
+    if (state.isShared) return "";
     return Object.keys(BUTTON_TYPE).map((buttonType, index) => {
       const key = `toolbar-button-${index}`;
       return <ToolBarButton key={key} buttonType={buttonType} />;

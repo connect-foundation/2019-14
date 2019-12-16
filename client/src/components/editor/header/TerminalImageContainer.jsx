@@ -6,22 +6,22 @@ import { faDatabase } from "@fortawesome/free-solid-svg-icons";
 import {
   faUbuntu,
   faCentos,
-  faJs,
+  faNode,
   faPython,
 } from "@fortawesome/free-brands-svg-icons";
 
 import { TerminalSettingContext } from "../../../stores/TerminalSetting";
-import TERMINAL_SETTING_STEP from "../../../enums/TERMINAL_SETTING_STEP";
 
 const TerminalImageList = styled.section`
   font-size: 2.5rem;
   display: flex;
+  margin-left: auto;
 `;
 // TODO 하드코딩 삭제할 것
 const ICON = {
   ubuntu: faUbuntu,
   centos: faCentos,
-  javascript: faJs,
+  nodejs: faNode,
   python: faPython,
   mysql: faDatabase,
   mongodb: faDatabase,

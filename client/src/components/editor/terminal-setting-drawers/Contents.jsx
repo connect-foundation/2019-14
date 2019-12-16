@@ -4,7 +4,9 @@ import Stepper from "./Stepper";
 import StepperContents from "./StepperContents";
 import StepperButtons from "./StepperButtons";
 
-const ContentsWrapper = styled.section``;
+const ContentsWrapper = styled.section`
+  height: 100%;
+`;
 
 function Contents() {
   return (

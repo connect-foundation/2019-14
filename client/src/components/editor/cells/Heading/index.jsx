@@ -30,7 +30,7 @@ const HeadingCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block, cursor } = state;
+  const { block, cursor, isShared } = state;
   let inputRef = null;
   let intoShiftBlock = false;
 
@@ -82,7 +82,8 @@ const HeadingCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus, [block.end]);
+  const eventTrigger = isFocus && !isShared;
+  useKeys(keydownHandlers, eventTrigger, [block.end]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -113,7 +114,7 @@ const HeadingCell = ({ cellUuid }) => {
   return (
     <MarkdownWrapper
       as={tag}
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       isQuote={false}

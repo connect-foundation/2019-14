@@ -61,7 +61,6 @@ const terminalSettingHandler = {
 };
 
 const terminalSettingReducer = (state, action) => {
-  console.log(state, action);
   const handler = terminalSettingHandler[action.type];
 
   if (handler === undefined) {

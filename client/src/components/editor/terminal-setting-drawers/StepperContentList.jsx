@@ -7,8 +7,7 @@ import { TerminalSettingContext } from "../../../stores/TerminalSetting";
 
 const StepperContentListWrapper = styled.ul`
   list-style-type: none;
-  margin: 0;
-  padding: 0;
+  margin: 1rem;
 `;
 
 const StepperContentList = () => {
@@ -25,7 +24,11 @@ const StepperContentList = () => {
 
   return (
     <StepperContentListWrapper>
-      <h3>{TERMINAL_SETTING_STEP[step].type}</h3>
+      <h3>
+        {TERMINAL_SETTING_STEP[step].type === "PE"
+          ? "Environment"
+          : TERMINAL_SETTING_STEP[step].type}
+      </h3>
       {getSettings()}
     </StepperContentListWrapper>
   );

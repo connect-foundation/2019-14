@@ -206,20 +206,31 @@ class DockerApi {
 
   async createDefaultTerminal(baseImageName) {
     // TOOD 초기 하드코딩 값 변경하거나 없앨 것
-    const defaultCmd = ["/bin/bash"];
-    const defaultTagName = baseImageName;
+    const defaultCmd = ["/usr/sbin/sshd", "-D"];
     const newContainerInfo = await this.request.createContainer({
       AttachStdin: true,
       AttachStdout: true,
       AttachStderr: true,
       Image: baseImageName,
       Cmd: defaultCmd,
-      name: defaultTagName,
       Tty: true,
+      ExposedPorts: {
+        "22/tcp": {},
+      },
+      HostConfig: {
+        PortBindings: {
+          "22/tcp": [{}],
+        },
+      },
     });
     // TODO startContainer 결과를 합쳐서 리턴 할 것
     await this.startContainer(newContainerInfo.id);
-    return newContainerInfo.id;
+    const containerInfo = await this.inspectContainer(newContainerInfo.id);
+    const result = {
+      containerId: newContainerInfo.id,
+      portBinding: containerInfo.NetworkSettings.Ports["22/tcp"][0].HostPort,
+    };
+    return result;
   }
 
   async startContainer(containerId) {
@@ -244,6 +255,7 @@ class DockerApi {
     const containers = await this.request.listContainers({
       status: ["running"],
     });
+
     return containers;
   }
 
@@ -263,19 +275,27 @@ class DockerApi {
       if (!userMetric || !userMetric.networks) {
         return false;
       }
+
       Object.keys(userMetric.networks).forEach(async (element) => {
         totalNetworksUsage += userMetric.networks[element].rx_bytes;
         totalNetworksUsage += userMetric.networks[element].tx_bytes;
       });
 
-      if (totalNetworksUsage > 100000) {
+      if (totalNetworksUsage > 1000000) {
         await container.stop();
         clearInterval(timerId);
       }
     };
+
     timerId = setInterval(setIntervalHandler, 1000);
 
     return true;
+  }
+
+  async inspectContainer(containerId) {
+    const container = this.request.getContainer(containerId);
+    const containerInfo = await container.inspect();
+    return containerInfo;
   }
 }
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import logoImagePath from "../../../../public/BoostWriter.png";
 
@@ -9,7 +10,11 @@ const HeaderLogoImageWrapper = styled.img`
 `;
 
 const HeaderLogoImage = () => {
-  return <HeaderLogoImageWrapper alt="logo" src={logoImagePath} />;
+  return (
+    <Link to="/">
+      <HeaderLogoImageWrapper alt="logo" src={logoImagePath} />
+    </Link>
+  );
 };
 
 export default HeaderLogoImage;

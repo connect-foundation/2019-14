@@ -26,7 +26,7 @@ const ListCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block, cursor, cellManager } = state;
+  const { block, cursor, cellManager, isShared } = state;
   const { options } = cellManager;
   const depth =
     options[cellIndex] && options[cellIndex].depth
@@ -96,28 +96,16 @@ const ListCell = ({ cellUuid }) => {
     blockRelease(dispatch);
   };
 
-  /**
-   * @todo depth
-   */
-
   const tabEvent = (ev) => {
     const { textContent } = ev.target;
 
     transformCell(cellUuid, dispatch, textContent, tag, depth + 1, start);
-
-    console.log("tab event:", options[cellIndex]);
   };
 
   const shiftTabEvent = (ev) => {
     const { textContent } = ev.target;
 
-    /**
-     * @todo depth
-     */
-
     transformCell(cellUuid, dispatch, textContent, tag, depth - 1, start);
-
-    console.log("shift+tab event:", options[cellIndex]);
   };
 
   const keydownHandlers = {
@@ -132,7 +120,8 @@ const ListCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus, [block.end, depth]);
+  const eventTrigger = isFocus && !isShared;
+  useKeys(keydownHandlers, eventTrigger, [block.end, depth]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -162,7 +151,7 @@ const ListCell = ({ cellUuid }) => {
   const renderTarget = (
     <MarkdownWrapper
       as="li"
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       placeholder={placeholder}

@@ -24,6 +24,7 @@ const CellStore = ({ children }) => {
       start: null,
       end: null,
     },
+    isShared: false,
   });
 
   return (

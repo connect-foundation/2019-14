@@ -28,7 +28,14 @@ setGenerator("hr", (uuid) => (
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
   const dispatch = useContext(CellDispatchContext);
-  const { currentIndex, cursor, block, cellManager, isLoading } = state;
+  const {
+    currentIndex,
+    cursor,
+    block,
+    cellManager,
+    isLoading,
+    isShared,
+  } = state;
   let inputRef = null;
 
   const cellIndex = uuidManager.findIndex(cellUuid);
@@ -135,8 +142,9 @@ const MarkdownCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
+  const eventTrigger = isFocus && !isShared;
   attachDefaultHandlers(defaultKeydownHandlers);
-  useKeys(keydownHandlers, isFocus, [block.end]);
+  useKeys(keydownHandlers, eventTrigger, [block.end]);
   // -------------- End -----------------------
 
   useEffect(() => {
@@ -179,10 +187,12 @@ const MarkdownCell = ({ cellUuid }) => {
     dispatch(cellActionCreator.input(cellUuid, textContent));
   };
 
+  const emptyString = "\u200b";
+  const textContent = text && text.length > 0 ? text : emptyString;
   const renderTarget = (
     <MarkdownWrapper
       as={currentTag}
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       placeholder={PLACEHOLDER[currentTag]}
@@ -193,7 +203,7 @@ const MarkdownCell = ({ cellUuid }) => {
       spellCheck={false}
       suppressContentEditableWarning
     >
-      {text}
+      {!isShared ? text : textContent}
     </MarkdownWrapper>
   );
 
