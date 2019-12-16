@@ -15,7 +15,6 @@ import TerminalImageContainer from "./TerminalImageContainer";
 const Header = styled.header`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   width: 100%;
   align-items: center;
 `;
@@ -28,7 +27,7 @@ const EditorHeader = () => {
       <DocumentTitleWrapper>
         <DocumentTitle />
       </DocumentTitleWrapper>
-      <TerminalImageContainer />
+      <TerminalImageContainer isRight />
     </Header>
   );
 };
