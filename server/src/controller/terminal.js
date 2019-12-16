@@ -34,6 +34,7 @@ const createDefaultTerminal = async (dockerInstance, terminalOption) => {
     return result;
   } catch (err) {
     debug("create default terminal", err);
+    throw err;
   }
 };
 

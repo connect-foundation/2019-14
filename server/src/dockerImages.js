@@ -11,7 +11,7 @@ module.exports = {
   "nodejs/ubuntu": "ubuntu/nodejs",
   "python/ubuntu": "ubuntu/python",
   "mysql/ubuntu": "ubuntu/mysql",
-  "mongodb/ubuntu": "ubuntu//mongodb",
+  "mongodb/ubuntu": "ubuntu/mongodb",
   ubuntu: "ubuntu16.04:16.04",
   "centos/mongodb/mysql/nodejs/python": "centos/nodejs/python/mysql/mongodb",
   "centos/mysql/nodejs/python": "centos/nodejs/python/mysql",
@@ -25,6 +25,6 @@ module.exports = {
   "centos/nodejs": "centos/nodejs",
   "centos/python": "centos/python",
   "centos/mysql": "centos/mysql",
-  "centos/mongodb": "centos//mongodb",
-  centos: "centos",
+  "centos/mongodb": "centos/mongodb",
+  centos: "centos7:7",
 };
