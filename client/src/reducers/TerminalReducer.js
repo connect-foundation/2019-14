@@ -104,9 +104,14 @@ const terminalReducerHandler = {
     const nextState = copyState(state);
     const currentTerminal = nextState;
 
+    const { outputTexts } = currentTerminal;
     const { text } = action;
 
-    currentTerminal.updateOutput(text);
+    if (outputTexts.length === 0) {
+      currentTerminal.updateOutput("");
+    } else {
+      currentTerminal.updateOutput(text);
+    }
 
     return nextState;
   },

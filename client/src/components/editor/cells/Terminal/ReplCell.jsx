@@ -8,7 +8,7 @@ const ReplCell = ({ cellUuid, isCellFocus }) => {
   return (
     <>
       <ReplOutput cellUuid={cellUuid} />
-      <MovableReplCell isCellFocus={isCellFocus} />
+      <MovableReplCell cellUuid={cellUuid} isCellFocus={isCellFocus} />
     </>
   );
 };
