@@ -4,12 +4,13 @@ import styled from "styled-components";
 import Header from "./Header";
 import Contents from "./Contents";
 import { TerminalSettingContext } from "../../../stores/TerminalSetting";
+import { THEME } from "../../../enums";
 
 const TermialSettingDrawerWrapper = styled.section`
-  width: 20rem;
+  width: 28rem;
   height: 100%;
-  background-color: silver;
-  top: 12.5%;
+  background-color: ${THEME.VS_CODE.SIDE_MENU};
+  color: ${THEME.VS_CODE.FONT};
   display: ${({ isHidden }) => isHidden && "none"};
 `;
 
