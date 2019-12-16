@@ -24,7 +24,8 @@ const EditorComponent = () => {
     const isShared = localStorage.getItem("isShared");
     if (shareDocumentContent && isShared) {
       cellDispatch(cellActionCreator.shareLoad());
-      cellManager.load(shareDocumentContent);
+      const document = JSON.parse(shareDocumentContent);
+      cellManager.load(document);
       cellDispatch(cellActionCreator.shareLoadFinish());
       localStorage.removeItem("share-document-content");
       localStorage.removeItem("isShared");
