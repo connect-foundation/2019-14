@@ -207,14 +207,12 @@ class DockerApi {
   async createDefaultTerminal(baseImageName) {
     // TOOD 초기 하드코딩 값 변경하거나 없앨 것
     const defaultCmd = ["/usr/sbin/sshd", "-D"];
-    const defaultTagName = baseImageName;
     const newContainerInfo = await this.request.createContainer({
       AttachStdin: true,
       AttachStdout: true,
       AttachStderr: true,
       Image: baseImageName,
       Cmd: defaultCmd,
-      name: defaultTagName,
       Tty: true,
       ExposedPorts: {
         "22/tcp": {},

@@ -35,8 +35,6 @@ const StepperButtons = () => {
 
     // TODO 받아 온 값을 store에 저장(cell, terminal)
     const result = await createTerminalFetch(option);
-
-    console.log(result);
   };
 
   return (
