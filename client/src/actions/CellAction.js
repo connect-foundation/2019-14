@@ -58,14 +58,22 @@ const cellActionCreator = {
    * - 엔터시 기준 셀의 다음 셀에 셀을 생성한다.
    * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백
    * @param {String} tag 셀의 타입(태그). 생략시 default input 셀이 생성된다.
+   * @param {Number} depth list일 경우의 depth
    * @param {Number} start ordered list일 경우의 start
    */
-  new(cellUuid, createMarkdownCell, tag = CELL_TAG.DEFAULT, start = null) {
+  new(
+    cellUuid,
+    createMarkdownCell,
+    tag = CELL_TAG.DEFAULT,
+    depth = 0,
+    start = null
+  ) {
     return {
       type: CELL_ACTION.NEW,
       cellUuid,
       createMarkdownCell,
       tag,
+      depth,
       start,
     };
   },
@@ -146,15 +154,17 @@ const cellActionCreator = {
    * @param {String} text 변경할 Cell의 텍스트
    * @param {String} tag 변경할 Cell의 태그
    * @param {React.element} cell 변경할 Cell 요소
+   * @param {Number} depth list일 경우의 depth
    * @param {Number} start ordered-list일 경우의 start
    */
-  transform(cellUuid, text, tag, cell, start = null) {
+  transform(cellUuid, text, tag, cell, depth = null, start = null) {
     return {
       type: CELL_ACTION.TARGET.TRANSFORM,
       cellUuid,
       text,
       tag,
       cell,
+      depth,
       start,
     };
   },

@@ -34,20 +34,25 @@ const newDefaultEmptyCell = (cellUuid, cellManager) => {
 };
 
 const newCell = (cellUuid, cellManager, dataObj) => {
-  const { createCellCallback, cursor, tag, start } = dataObj;
+  const { createCellCallback, cursor, tag, depth, start } = dataObj;
 
   const isOrderedList = tag === "ol";
+  const isList = isOrderedList || tag === "ul";
   const index = uuidManager.findIndex(cellUuid);
 
   uuidManager.push(uuid(), index);
 
   const uuidArray = uuidManager.getUuidArray();
   const newStart = isOrderedList ? start + 1 : null;
+  const newDepth = isList ? depth : 0;
 
   const newCellUuid = uuidArray[index + 1];
   const cell = createCellCallback(newCellUuid);
+
   if (isOrderedList) {
-    cellManager.addOption(index + 1, { start: newStart });
+    cellManager.addOption(index + 1, { depth: newDepth, start: newStart });
+  } else if (isList) {
+    cellManager.addOption(index + 1, { depth: newDepth });
   }
 
   const originText = cellManager.texts[index];
