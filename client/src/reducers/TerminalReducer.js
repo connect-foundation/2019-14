@@ -108,6 +108,7 @@ const terminalReducerHandler = {
     const { text } = action;
 
     if (outputTexts.length === 0) {
+      // skip welcome message
       currentTerminal.updateOutput("");
     } else {
       currentTerminal.updateOutput(text);
