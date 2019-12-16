@@ -22,13 +22,13 @@ router.query = async function(queryString, ...args) {
       conn.release();
       return rows;
     } catch (err) {
-      console.log(`[Query Error] ${err}`);
+      const errMsg = `[Query Error] ${err}`;
       conn.release();
-      return false;
+      throw new Error(errMsg);
     }
   } catch (err) {
-    console.log("DB Error");
-    return false;
+    const errMsg = `[DB Error] ${err}`;
+    throw new Error(errMsg);
   }
 };
 

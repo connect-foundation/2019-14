@@ -26,7 +26,7 @@ module.exports = {
   async shareLoad(shareId) {
     const queryString = `select content from editors where share_id = ?`;
     const result = await query(queryString, [shareId]);
-    if (result && result.length === 1) return result[0].content;
-    return false;
+    if (result.length === 1) return result[0].content;
+    return null;
   },
 };

@@ -14,11 +14,11 @@ const save = async (req, res) => {
 const load = async (req, res) => {
   // const userId = req.params.userId
   const userId = "boost";
-  const result = await documentService.load(userId);
-  if (result) {
-    res.status(200).send(result[0].content);
+  const content = await documentService.load(userId);
+  if (content) {
+    res.status(200).send(content);
   } else {
-    res.status(500).send();
+    res.status(204).send();
   }
 };
 

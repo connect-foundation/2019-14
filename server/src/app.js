@@ -90,7 +90,7 @@ app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/terminal", terminalRouter);
 app.use("/api/document", documentRouter);
-app.use("/share", shareRouter);
+app.use("/api/share", shareRouter);
 
 io.of((name, query, next) => {
   next(null, true);

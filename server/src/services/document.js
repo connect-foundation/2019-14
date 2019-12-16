@@ -4,13 +4,8 @@ module.exports = {
   async chkExisted(userId) {
     const queryString = `select count(*) as cntId from editors where user_id = ?`;
     const rows = await query(queryString, [userId]);
-    if (rows === "Error: read ECONNRESET") {
-      const retry = await query(queryString, [userId]);
-      if (retry !== true) return false;
-      return retry;
-    }
-    const result = await rows[0];
-    if (result && result.cntId === 1) return true;
+    const result = rows[0];
+    if (result.cntId === 1) return true;
     return false;
   },
   async save(userId, docContent) {
@@ -29,7 +24,8 @@ module.exports = {
     if (check) {
       const queryString = `select content from editors where user_id = ?`;
       const result = await query(queryString, [userId]);
-      return result;
+      const { content } = result[0];
+      return content;
     }
     return false;
   },
