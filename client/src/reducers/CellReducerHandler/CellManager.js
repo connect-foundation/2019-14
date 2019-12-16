@@ -1,6 +1,5 @@
 import { uuid } from "uuidv4";
-import { utils, uuidManager, getType } from "../../utils";
-import { CELL_TAG } from "../../enums";
+import { utils, uuidManager } from "../../utils";
 import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
 const { splice } = utils;
@@ -11,27 +10,6 @@ function CellManager() {
   this.tags = [];
   this.options = [];
 }
-
-const TAG_MARKDOWN = {
-  [CELL_TAG.DEFAULT]: "",
-  [CELL_TAG.LIST.UL]: "- ",
-  [CELL_TAG.LIST.OL]: "1. ",
-  [CELL_TAG.LIST.LI]: "- ",
-  [CELL_TAG.HEADING.H1]: "# ",
-  [CELL_TAG.HEADING.H2]: "## ",
-  [CELL_TAG.HEADING.H3]: "### ",
-  [CELL_TAG.HEADING.H4]: "#### ",
-  [CELL_TAG.HEADING.H5]: "##### ",
-  [CELL_TAG.HEADING.H6]: "###### ",
-  [CELL_TAG.BLOCKQUOTE]: "> ",
-  [CELL_TAG.CODE]: "```",
-  [CELL_TAG.TERMINAL]: "$$$",
-};
-
-const findMakdownByTag = (tag) => {
-  const mdText = TAG_MARKDOWN[tag];
-  return mdText;
-};
 
 CellManager.prototype.init = function() {
   this.cells = [];
