@@ -4,8 +4,8 @@ import propTypes from "prop-types";
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
-import { EVENT_TYPE, PLACEHOLDER } from "../../../../enums";
-import { useCellState, useKeys, uuidManager } from "../../../../utils";
+import { EVENT_TYPE } from "../../../../enums";
+import { useCellState, useKeys } from "../../../../utils";
 
 import {
   getSelection,
@@ -13,7 +13,7 @@ import {
   deleteCell,
   blockRelease,
 } from "../Markdown/handler";
-import { newCell, initCell } from "./handler";
+import { newCell, initCell, transformCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
 
 setGenerator("ul", (uuid) => <ListCell cellUuid={uuid} />);
@@ -28,6 +28,10 @@ const ListCell = ({ cellUuid }) => {
   );
   const { block, cursor, cellManager, isShared } = state;
   const { options } = cellManager;
+  const depth =
+    options[cellIndex] && options[cellIndex].depth
+      ? options[cellIndex].depth
+      : 0;
   const start =
     options[cellIndex] && options[cellIndex].start
       ? options[cellIndex].start
@@ -51,9 +55,13 @@ const ListCell = ({ cellUuid }) => {
       (currentCursor.start === 0 && currentCursor.end === 0);
 
     if (isStartPos) {
-      const componentCallback = cellGenerator.p;
-      dispatch(cellActionCreator.input(cellUuid, textContent));
-      initCell(cellUuid, dispatch, componentCallback);
+      if (depth) {
+        transformCell(cellUuid, dispatch, textContent, tag, depth - 1, start);
+      } else {
+        const componentCallback = cellGenerator.p;
+        dispatch(cellActionCreator.input(cellUuid, textContent));
+        initCell(cellUuid, dispatch, componentCallback);
+      }
     }
     if (state.block.start !== null) {
       deleteCell(dispatch);
@@ -87,14 +95,28 @@ const ListCell = ({ cellUuid }) => {
 
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback, tag, start);
+      newCell(cellUuid, dispatch, componentCallback, tag, depth, start);
     }
     blockRelease(dispatch);
+  };
+
+  const tabEvent = (ev) => {
+    const { textContent } = ev.target;
+
+    transformCell(cellUuid, dispatch, textContent, tag, depth + 1, start);
+  };
+
+  const shiftTabEvent = (ev) => {
+    const { textContent } = ev.target;
+
+    transformCell(cellUuid, dispatch, textContent, tag, depth - 1, start);
   };
 
   const keydownHandlers = {
     [EVENT_TYPE.ENTER]: enterEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
+    [EVENT_TYPE.TAB]: tabEvent,
+    [EVENT_TYPE.SHIFT_TAB]: shiftTabEvent,
   };
 
   const isFocus = currentIndex === cellIndex;
@@ -103,7 +125,7 @@ const ListCell = ({ cellUuid }) => {
   }
 
   const eventTrigger = isFocus && !isShared;
-  useKeys(keydownHandlers, eventTrigger, [block.end]);
+  useKeys(keydownHandlers, eventTrigger, [block.end, depth]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -142,6 +164,8 @@ const ListCell = ({ cellUuid }) => {
       ref={inputRef || null}
       spellCheck={false}
       suppressContentEditableWarning
+      isList
+      depth={depth}
     >
       {text}
     </MarkdownWrapper>

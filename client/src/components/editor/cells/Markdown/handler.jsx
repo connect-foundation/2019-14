@@ -60,6 +60,7 @@ const transformCell = (cellUuid, cellDispatch, text, tag) => {
 
     const isOrderedList = matchingTag === "ol";
 
+    const depth = 0;
     let start = null;
     if (isOrderedList) {
       start = getStart(text);
@@ -76,6 +77,7 @@ const transformCell = (cellUuid, cellDispatch, text, tag) => {
         exceptPatternText,
         matchingTag,
         cell,
+        depth,
         start
       )
     );

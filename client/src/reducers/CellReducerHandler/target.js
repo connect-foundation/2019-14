@@ -5,15 +5,19 @@ const { newDefaultEmptyCell } = common;
 
 const transform = (cellUuid, cellManager, dataObj) => {
   const index = uuidManager.findIndex(cellUuid);
-  const { cell, text, tag, start } = dataObj;
+  const { cell, text, tag, depth, start } = dataObj;
+
   const data = {
     cell,
     text,
     tag,
   };
+
   cellManager.change(index, data);
-  if (start === null) cellManager.deleteOption(index);
-  else cellManager.addOption(index, { start });
+
+  if (start === null && depth === null) cellManager.deleteOption(index);
+  else cellManager.addOption(index, { depth, start });
+
   const cursor = {
     start: cellManager.texts[index].length,
     end: cellManager.texts[index].length,
@@ -22,6 +26,7 @@ const transform = (cellUuid, cellManager, dataObj) => {
   if (tag === "code") {
     newDefaultEmptyCell(cellUuid, cellManager);
   }
+
   return {
     cursor,
   };
