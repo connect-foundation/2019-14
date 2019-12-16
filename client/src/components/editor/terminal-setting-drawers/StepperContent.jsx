@@ -8,7 +8,9 @@ import {
 import TERMINAL_SETTING_STEP from "../../../enums/TERMINAL_SETTING_STEP";
 import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
 
-const StepperContentWrapper = styled.li``;
+const StepperContentWrapper = styled.li`
+  margin: 1rem 0;
+`;
 
 const StepperContent = ({ element, index }) => {
   const { state } = useContext(TerminalSettingContext);
