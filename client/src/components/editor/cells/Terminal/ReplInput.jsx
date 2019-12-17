@@ -38,14 +38,15 @@ const ReplInput = ({ cellUuid, isCellFocus }) => {
   const { terminalState } = useContext(TerminalContext);
   const dispatchToCell = useContext(CellDispatchContext);
 
-  const { currentText } = terminalState;
+  const { currentText, replCount } = terminalState;
 
   useEffect(() => {
     const isFocusIn = replRef && replRef.current && isCellFocus;
     if (isFocusIn) {
       replRef.current.focus();
+      replRef.current.scrollIntoView(false);
     }
-  }, [replRef, isCellFocus]);
+  }, [replRef, isCellFocus, replCount]);
 
   const changeHandler = (e) => {
     const text = e.target.value;
