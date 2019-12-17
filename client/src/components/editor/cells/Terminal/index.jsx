@@ -32,8 +32,10 @@ const TerminalWrapper = styled.div`
 
 const InnerTerminalCell = ({ cellUuid }) => {
   const [isFirstRender, setIsFirstRender] = useState(true);
+
   const { state } = useContext(CellContext);
   const dispatchToTerminal = useContext(TerminalDispatchContext);
+
   const { currentIndex, cellManager } = state;
   const cellIndex = uuidManager.findIndex(cellUuid);
 
@@ -45,16 +47,16 @@ const InnerTerminalCell = ({ cellUuid }) => {
 
   if (isFirstRender) {
     setIsFirstRender(false);
-    dispatchToTerminal(terminalAction.load(cellManager.texts[cellIndex]));
+
+    dispatchToTerminal(terminalAction.enrollId(cellUuid));
+
+    const loadedText = cellManager.texts[cellIndex];
+    dispatchToTerminal(terminalAction.load(loadedText));
   }
 
   return (
     <TerminalWrapper>
-      <ReplContainer
-        cellUuid={cellUuid}
-        cellIndex={cellIndex}
-        isCellFocus={isCellFocus}
-      />
+      <ReplContainer cellUuid={cellUuid} isCellFocus={isCellFocus} />
     </TerminalWrapper>
   );
 };

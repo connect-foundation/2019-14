@@ -1,5 +1,5 @@
 const TERMINAL_ACTION = {
-  NEW_TERMINAL: "terminal/new",
+  ENROLL_ID: "terminal/enroll-id",
 
   NEW_REPL: "terminal/new-repl",
   EVAL_INPUT: "terminal/eval-input",
@@ -20,11 +20,10 @@ const TERMINAL_ACTION = {
 };
 
 const terminalActionCreator = {
-  createNewTerminal(cellUuid, cellIndex) {
+  enrollId(cellUuid) {
     return {
-      type: TERMINAL_ACTION.NEW_TERMINAL,
+      type: TERMINAL_ACTION.ENROLL_ID,
       cellUuid,
-      cellIndex,
     };
   },
 

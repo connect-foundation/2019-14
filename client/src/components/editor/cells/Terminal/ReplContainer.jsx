@@ -12,26 +12,30 @@ import {
   TerminalContext,
   TerminalDispatchContext,
 } from "../../../../stores/TerminalStore";
-import ReplCell from "./ReplCell";
+import MovableReplCell from "./MovableReplCell";
+import ReplOutput from "./ReplOutput";
 
 const debug = createDebug("boost:component:repl-container");
 
-const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
+const ReplContainer = ({ cellUuid, isCellFocus }) => {
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const dispatchToCell = useContext(CellDispatchContext);
   const { terminalState } = useContext(TerminalContext);
   const { currentText } = terminalState;
 
-  const focusHandlers = {
+  const eventHandlers = {
     [EVENT_TYPE.ENTER]: (e) => {
       e.preventDefault();
-      debug("Evaling terminal input");
+
+      debug("Enter terminal input");
+
       socketManager.writeToStdin(cellUuid, currentText);
       dispatchToTerminal(terminalAction.changeCurrentText(""));
     },
 
     [EVENT_TYPE.BACKSPACE]: () => {
       debug("Backspace terminal cell");
+
       if (currentText.length === 0) {
         // if outputTexts.length === 0 -> init cell
         // delete last output
@@ -41,6 +45,7 @@ const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
 
     [EVENT_TYPE.SHIFT_BACKSPACE]: () => {
       debug("Shift backspace terminal cell");
+
       dispatchToCell(cellAction.init(null, cellUuid));
       dispatchToCell(cellAction.input(cellUuid, ""));
     },
@@ -72,18 +77,18 @@ const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
     },
   };
 
-  useKeys(focusHandlers, isCellFocus, [currentText]);
+  useKeys(eventHandlers, isCellFocus, [currentText]);
 
   return (
     <>
-      <ReplCell cellUuid={cellUuid} isCellFocus={isCellFocus} />
+      <ReplOutput cellUuid={cellUuid} />
+      <MovableReplCell cellUuid={cellUuid} isCellFocus={isCellFocus} />
     </>
   );
 };
 
 ReplContainer.propTypes = {
   cellUuid: PropTypes.string.isRequired,
-  cellIndex: PropTypes.number.isRequired,
   isCellFocus: PropTypes.bool.isRequired,
 };
 

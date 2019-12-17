@@ -10,11 +10,12 @@ const copyState = (state) => {
 };
 
 const terminalReducerHandler = {
-  [TERMINAL_ACTION.NEW_TERMINAL]: (state, action) => {
+  [TERMINAL_ACTION.ENROLL_ID]: (state, action) => {
     const nextState = copyState(state);
+    const currentTerminal = nextState;
     const { cellUuid } = action;
 
-    nextState.setIds(cellUuid);
+    currentTerminal.setId(cellUuid);
 
     return nextState;
   },
@@ -91,22 +92,19 @@ const terminalReducerHandler = {
     return nextState;
   },
 
-  [TERMINAL_ACTION.CHANGE_STDIN_TEXT]: (state, action) => {
-    const nextState = copyState(state);
-    const currentTerminal = nextState;
-
-    currentTerminal.changeCurrentStdin(action.text);
-
-    return nextState;
-  },
-
   [TERMINAL_ACTION.UPDATE_OUTPUT]: (state, action) => {
     const nextState = copyState(state);
     const currentTerminal = nextState;
 
+    const { outputTexts } = currentTerminal;
     const { text } = action;
 
-    currentTerminal.updateOutput(text);
+    if (outputTexts.length === 0) {
+      // skip welcome message
+      currentTerminal.updateOutput("");
+    } else {
+      currentTerminal.updateOutput(text);
+    }
 
     return nextState;
   },
