@@ -5,14 +5,13 @@ const SIGNAL = {
   SIGINT: "\x03",
 };
 
-const isSignal = (str) => {
-  return Object.keys(SIGNAL).includes(str);
-};
-
 class SshConnection {
   constructor() {
     this.connection = new Ssh();
     this.channel = null;
+
+    this.isFirstMessage = true;
+
     this.resolvedOptions = {};
   }
 
@@ -24,16 +23,6 @@ class SshConnection {
     };
 
     this.resolvedOptions = { ...defaultOptions, ...options };
-
-    // this.resolvedOptions.onKeyboardInteractive = (
-    //  name,
-    //  instructions,
-    //  instructionsLang,
-    //  prompts,
-    //  finish
-    // ) => {
-    //  finish([this.resolvedOptions.password]);
-    // };
 
     this.connection.on(
       "keyboard-interactive",
@@ -95,7 +84,9 @@ class SshConnection {
 
   sendSignal(signal) {
     const trimmed = signal.trim();
+
     debug(`Send signal ${trimmed}`);
+
     this.channel.write(trimmed);
   }
 

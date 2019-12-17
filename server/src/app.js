@@ -111,9 +111,14 @@ io.of((name, query, next) => {
 
   // server <-- docker container
   shellChannel.on("data", (data) => {
-    debug(`Shell command output : ${data}`);
+    debug(`Shell command output : ${data.toString()}`);
     // client <-- server
-    socket.emit("stdout", data);
+    const sshConnection = sshManager.getConnection(connectionId);
+    if (sshConnection.isFirstMessage) {
+      sshConnection.isFirstMessage = false;
+    } else {
+      socket.emit("stdout", data);
+    }
   });
 
   // client --> (server) --> docker container

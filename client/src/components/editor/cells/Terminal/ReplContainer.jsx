@@ -12,7 +12,7 @@ import {
   TerminalContext,
   TerminalDispatchContext,
 } from "../../../../stores/TerminalStore";
-import MovableReplCell from "./MovableReplCell";
+import ReplInput from "./ReplInput";
 import ReplOutput from "./ReplOutput";
 
 const debug = createDebug("boost:component:repl-container");
@@ -21,6 +21,7 @@ const ReplContainer = ({ cellUuid, isCellFocus }) => {
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const dispatchToCell = useContext(CellDispatchContext);
   const { terminalState } = useContext(TerminalContext);
+
   const { currentText } = terminalState;
 
   const eventHandlers = {
@@ -28,19 +29,8 @@ const ReplContainer = ({ cellUuid, isCellFocus }) => {
       e.preventDefault();
 
       debug("Enter terminal input");
-
       socketManager.writeToStdin(cellUuid, currentText);
       dispatchToTerminal(terminalAction.changeCurrentText(""));
-    },
-
-    [EVENT_TYPE.BACKSPACE]: () => {
-      debug("Backspace terminal cell");
-
-      if (currentText.length === 0) {
-        // if outputTexts.length === 0 -> init cell
-        // delete last output
-      }
-      // dispatchToCell(cellAction.init(null, cellUuid));
     },
 
     [EVENT_TYPE.SHIFT_BACKSPACE]: () => {
@@ -52,8 +42,9 @@ const ReplContainer = ({ cellUuid, isCellFocus }) => {
 
     [EVENT_TYPE.OPTION_COMMAND_DOWN]: () => {
       debug("Create Next & Focus next");
+
       dispatchToTerminal(terminalAction.focusOut());
-      const makeNewMarkdownCell = cellAction.new(cellUuid, cellGenerator.p);
+      const makeNewMarkdownCell = cellAction.newEmptyDefault(cellUuid);
       dispatchToCell(makeNewMarkdownCell);
     },
 
@@ -64,14 +55,18 @@ const ReplContainer = ({ cellUuid, isCellFocus }) => {
 
     [EVENT_TYPE.ARROW_UP]: (e) => {
       e.preventDefault();
+
       debug("Focus to prev cell");
+
       dispatchToTerminal(terminalAction.focusOut());
       dispatchToCell(cellAction.focusPrev());
     },
 
     [EVENT_TYPE.ARROW_DOWN]: (e) => {
       e.preventDefault();
+
       debug("Focus Down In Terminal");
+
       dispatchToTerminal(terminalAction.focusOut());
       dispatchToCell(cellAction.focusNext());
     },
@@ -82,7 +77,7 @@ const ReplContainer = ({ cellUuid, isCellFocus }) => {
   return (
     <>
       <ReplOutput cellUuid={cellUuid} />
-      <MovableReplCell cellUuid={cellUuid} isCellFocus={isCellFocus} />
+      <ReplInput cellUuid={cellUuid} isCellFocus={isCellFocus} />
     </>
   );
 };

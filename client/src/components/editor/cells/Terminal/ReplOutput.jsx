@@ -33,9 +33,13 @@ const ColoredLineWrapper = styled.span`
 
 const decoder = new TextDecoder();
 
-const ReplOutput = ({ cellUuid }) => {
-  const [isUpdate, setIsUpdate] = useState(false);
+let isUpdate = false;
 
+const setIsUpdate = (bool) => {
+  isUpdate = bool;
+};
+
+const ReplOutput = ({ cellUuid }) => {
   const dispatchToCell = useContext(CellDispatchContext);
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const { terminalState } = useContext(TerminalContext);
@@ -47,13 +51,14 @@ const ReplOutput = ({ cellUuid }) => {
   useEffect(() => {
     if (socket) {
       debug("enroll socket's stdout event with", cellUuid, socket);
-      socket.on("stdout", (chunk) => {
-        setIsUpdate(true);
 
+      socket.on("stdout", (chunk) => {
         const decodedText = decoder.decode(chunk);
         debug("stdout text is", decodedText);
 
-        return dispatchToTerminal(terminalAction.updateOutputText(decodedText));
+        dispatchToTerminal(terminalAction.updateOutputText(decodedText));
+
+        setIsUpdate(true);
       });
     } else {
       debug("stdout socket disabled", cellUuid, socket);
@@ -64,8 +69,7 @@ const ReplOutput = ({ cellUuid }) => {
     if (isUpdate) {
       setIsUpdate(false);
 
-      const savedOutput = outputTexts.join("\n");
-      dispatchToCell(cellAction.input(cellUuid, savedOutput));
+      dispatchToCell(cellAction.input(cellUuid, outputTexts));
     }
   }, [outputTexts]);
 
@@ -92,7 +96,9 @@ const ReplOutput = ({ cellUuid }) => {
     return outputs;
   };
 
-  const memoizedOutputs = useMemo(() => renderOutputs(), [outputTexts]);
+  const memoizedOutputs = useMemo(() => {
+    return renderOutputs();
+  }, [outputTexts]);
 
   return <ReplOutputWrapper>{memoizedOutputs}</ReplOutputWrapper>;
 };

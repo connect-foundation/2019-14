@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const EditorableReplInput = styled.textarea`
+const EditableReplInput = styled.textarea`
   flex-grow: 99;
   margin-left: 20px;
 
@@ -14,4 +14,4 @@ const EditorableReplInput = styled.textarea`
   }
 `;
 
-export default EditorableReplInput;
+export default EditableReplInput;

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { THEME } from "../../../../enums";
-import EditorableReplInput from "./EditorableReplInput";
+import EditableReplInput from "./EditableReplInput";
 import { cellActionCreator as cellAction } from "../../../../actions/CellAction";
 import { CellDispatchContext } from "../../../../stores/CellStore";
 import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
@@ -29,21 +29,24 @@ const ReplPrompt = styled.div`
   width: 5rem;
 `;
 
-const MovableReplCell = ({ cellUuid, isCellFocus }) => {
+const ReplInput = ({ cellUuid, isCellFocus }) => {
   const prompt = "User $";
+
   const replRef = useRef(null);
+
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const { terminalState } = useContext(TerminalContext);
   const dispatchToCell = useContext(CellDispatchContext);
 
-  const { currentText } = terminalState;
+  const { currentText, replCount } = terminalState;
 
   useEffect(() => {
     const isFocusIn = replRef && replRef.current && isCellFocus;
     if (isFocusIn) {
       replRef.current.focus();
+      replRef.current.scrollIntoView(false);
     }
-  }, [replRef, isCellFocus]);
+  }, [replRef, isCellFocus, replCount]);
 
   const changeHandler = (e) => {
     const text = e.target.value;
@@ -59,7 +62,7 @@ const MovableReplCell = ({ cellUuid, isCellFocus }) => {
   return (
     <ReplInputWrapper>
       <ReplPrompt>{prompt}</ReplPrompt>
-      <EditorableReplInput
+      <EditableReplInput
         ref={replRef}
         spellCheck={false}
         onChange={changeHandler}
@@ -70,9 +73,9 @@ const MovableReplCell = ({ cellUuid, isCellFocus }) => {
   );
 };
 
-MovableReplCell.propTypes = {
+ReplInput.propTypes = {
   cellUuid: PropTypes.string.isRequired,
   isCellFocus: PropTypes.bool.isRequired,
 };
 
-export default MovableReplCell;
+export default ReplInput;
