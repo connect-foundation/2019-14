@@ -34,7 +34,6 @@ const share = async () => {
   if (response.status === 500) {
     return false;
   }
-  console.log(response);
   const shareId = response.data;
   localStorage.setItem("sharedDocumentId", shareId);
   return shareId;

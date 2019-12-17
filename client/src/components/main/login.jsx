@@ -21,24 +21,22 @@ const LoginWrapper = styled.div`
     font-size: 1.5rem;
   }
 
-  .button-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-self: center;
-    width: 100%;
-    div {
-      width: 40%;
-      min-width: 150px;
-      max-width: 500px;
-      font-size: 1.5rem;
-      border: 2px solid ${THEME.VS_CODE.FONT};
-      margin: 0.3rem;
-    }
-    div:hover {
-      cursor: default;
-      box-shadow: 1px 1px 3px ${THEME.VS_CODE.FONT};
-    }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  width: 100%;
+  .btn-common {
+    width: 40%;
+    min-width: 150px;
+    max-width: 500px;
+    font-size: 1.5rem;
+    border: 2px solid ${THEME.VS_CODE.FONT};
+    margin: 0.3rem;
+  }
+  .btn-common:hover {
+    cursor: default;
+    box-shadow: 1px 1px 3px ${THEME.VS_CODE.FONT};
   }
 `;
 
@@ -79,7 +77,7 @@ const Login = () => {
   const beforeLogin = (
     <>
       {open && <Redirect to="/editor" />}
-      <div className="open-share-document" onClick={openShareDocument}>
+      <div className="btn-common" onClick={openShareDocument}>
         Open Share Document
       </div>
       <input type="text" id="id" name="id" placeholder="ID" />
@@ -90,15 +88,13 @@ const Login = () => {
         placeholder="password"
         onKeyPress={onKeyPress}
       />
-      <div className="button-area">
-        <div
-          className="login"
-          onClick={() => {
-            setLoginState(true);
-          }}
-        >
-          Login
-        </div>
+      <div
+        className="btn-common"
+        onClick={() => {
+          setLoginState(true);
+        }}
+      >
+        Login
       </div>
     </>
   );
@@ -106,26 +102,21 @@ const Login = () => {
   const afterLogin = (
     <>
       {open && <Redirect to="/editor" />}
-      <div className="button-area">
-        <div
-          className="open-editor"
-          onClick={() => {
-            setOpen(true);
-          }}
-        >
-          Open Editor
-        </div>
-        {/* <div className="open-share-document" onClick={openShareDocument}>
-          Open Share Document
-        </div> */}
-        <div
-          className="logout"
-          onClick={() => {
-            setLoginState(false);
-          }}
-        >
-          Logout
-        </div>
+      <div
+        className="btn-common"
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        Open Editor
+      </div>
+      <div
+        className="btn-common"
+        onClick={() => {
+          setLoginState(false);
+        }}
+      >
+        Logout
       </div>
     </>
   );
