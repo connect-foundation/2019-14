@@ -47,13 +47,14 @@ const ReplOutput = ({ cellUuid }) => {
   useEffect(() => {
     if (socket) {
       debug("enroll socket's stdout event with", cellUuid, socket);
-      socket.on("stdout", (chunk) => {
-        setIsUpdate(true);
 
+      socket.on("stdout", (chunk) => {
         const decodedText = decoder.decode(chunk);
         debug("stdout text is", decodedText);
 
-        return dispatchToTerminal(terminalAction.updateOutputText(decodedText));
+        dispatchToTerminal(terminalAction.updateOutputText(decodedText));
+
+        setIsUpdate(true);
       });
     } else {
       debug("stdout socket disabled", cellUuid, socket);
@@ -92,7 +93,9 @@ const ReplOutput = ({ cellUuid }) => {
     return outputs;
   };
 
-  const memoizedOutputs = useMemo(() => renderOutputs(), [outputTexts]);
+  const memoizedOutputs = useMemo(() => {
+    return renderOutputs();
+  }, [outputTexts]);
 
   return <ReplOutputWrapper>{memoizedOutputs}</ReplOutputWrapper>;
 };

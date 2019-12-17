@@ -39,8 +39,8 @@ const InnerTerminalCell = ({ cellUuid }) => {
   const { currentIndex, cellManager } = state;
   const cellIndex = uuidManager.findIndex(cellUuid);
 
-  const isCellFocus = cellIndex === currentIndex;
-  if (isCellFocus) {
+  const isFocus = cellIndex === currentIndex;
+  if (isFocus) {
     debug(`Terminal cell ${cellIndex} focus in`);
     dispatchToTerminal(terminalAction.focusIn());
   }
@@ -48,15 +48,13 @@ const InnerTerminalCell = ({ cellUuid }) => {
   if (isFirstRender) {
     setIsFirstRender(false);
 
-    dispatchToTerminal(terminalAction.enrollId(cellUuid));
-
     const loadedText = cellManager.texts[cellIndex];
     dispatchToTerminal(terminalAction.load(loadedText));
   }
 
   return (
     <TerminalWrapper>
-      <ReplContainer cellUuid={cellUuid} isCellFocus={isCellFocus} />
+      <ReplContainer cellUuid={cellUuid} isCellFocus={isFocus} />
     </TerminalWrapper>
   );
 };
