@@ -5,6 +5,7 @@ import { createGlobalStyle } from "styled-components";
 import { THEME } from "./enums";
 import MainPage from "./pages/MainPage";
 import EditorPage from "./pages/EditorPage";
+import SimpleModal from "./components/common/SimpleModal";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -28,6 +29,7 @@ function App() {
   return (
     <BrowserRouter>
       <GlobalStyle />
+      <SimpleModal />
       <Switch>
         <Route exact path="/" component={MainPage} />
         <Route exact path="/editor" component={EditorPage} />

@@ -4,7 +4,9 @@ import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { THEME } from "../../enums";
-import { request } from "../../utils";
+import { request, modalManager } from "../../utils";
+
+const { openModal, closeModal } = modalManager;
 
 const LoginWrapper = styled.div`
   width: 100%;
@@ -54,24 +56,42 @@ const Login = () => {
   const openShareDocument = () => {
     const saveShareDocument = async (shareId) => {
       const response = await request.loadSharingDocument(shareId);
-      /**
-       * @todo 에러 처리하기
-       * - 성공, 실패시 각각 처리할 것.
-       * - axious 문서 보고 처리하기
-       */
+
+      if (response.status === 500) {
+        const label = "공유 문서 불러오기 실패";
+        const modalContents =
+          "공유 문서를 불러오는 것에 실패하였습니다.\n 다시 시도해 주세요.";
+        openModal(label, modalContents);
+        return;
+      }
       const document = response.data;
       const documentString = JSON.stringify(document);
       localStorage.setItem("share-document-content", documentString);
       localStorage.setItem("isShared", true);
       setOpen(true);
     };
-    const shareId = prompt(
-      "공유 문서의 ID를 입력하세요.",
-      "Input a Document ID"
+
+    const label = "공유 문서 불러오기";
+    const modalContents = (
+      <>
+        <input type="text" id="share-id-input-text" autoFocus />
+        <input
+          type="button"
+          value="불러오기"
+          onClick={() => {
+            const shareIdInputElement = document.querySelector(
+              "#share-id-input-text"
+            );
+            const shareId = shareIdInputElement.value;
+            closeModal();
+            if (shareId) {
+              saveShareDocument(shareId);
+            }
+          }}
+        />
+      </>
     );
-    if (shareId) {
-      saveShareDocument(shareId);
-    }
+    openModal(label, modalContents);
   };
 
   const beforeLogin = (
