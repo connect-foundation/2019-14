@@ -10,16 +10,6 @@ const copyState = (state) => {
 };
 
 const terminalReducerHandler = {
-  [TERMINAL_ACTION.ENROLL_ID]: (state, action) => {
-    const nextState = copyState(state);
-    const currentTerminal = nextState;
-    const { cellUuid } = action;
-
-    currentTerminal.setId(cellUuid);
-
-    return nextState;
-  },
-
   [TERMINAL_ACTION.NEW_REPL]: (state) => {
     const nextState = copyState(state);
     const currentTerminal = nextState;

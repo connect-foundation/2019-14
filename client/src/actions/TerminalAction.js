@@ -20,13 +20,6 @@ const TERMINAL_ACTION = {
 };
 
 const terminalActionCreator = {
-  enrollId(cellUuid) {
-    return {
-      type: TERMINAL_ACTION.ENROLL_ID,
-      cellUuid,
-    };
-  },
-
   /**
    * Enter를 누를시에 사용된다.
    * 새로운 REPL cell을 현재 위치에 생성한다.

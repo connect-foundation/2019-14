@@ -25,10 +25,6 @@ class TerminalState {
     this.replCount = other.replCount || 0;
   }
 
-  setId(cellUuid) {
-    this.cellUuid = cellUuid;
-  }
-
   copySelf() {
     return new TerminalState(this);
   }
@@ -59,6 +55,7 @@ class TerminalState {
 
   updateOutput(outputText) {
     this.outputTexts.push(outputText);
+    this.replCount = this.outputTexts.length;
   }
 
   deleteRepl(index = this.focusIndex) {
@@ -86,8 +83,6 @@ class TerminalState {
 
     this.outputTexts = splice.change(this.outputTexts, index, "");
     this.isLoadings = splice.change(this.isLoadings, index, true);
-
-    this.replCount = this.inputTexts.length;
   }
 
   changeCurrentText(text) {
@@ -96,7 +91,7 @@ class TerminalState {
 
   focusIn() {
     this.focusIndex = this.replCount;
-    this.replCount = this.inputTexts.length;
+    this.replCount = this.outputTexts.length;
   }
 
   focusPrev() {
