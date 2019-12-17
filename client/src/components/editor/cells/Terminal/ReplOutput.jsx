@@ -34,6 +34,7 @@ const ColoredLineWrapper = styled.span`
 const decoder = new TextDecoder();
 
 let isUpdate = false;
+
 const setIsUpdate = (bool) => {
   isUpdate = bool;
 };
