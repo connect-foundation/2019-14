@@ -57,10 +57,10 @@ const terminalActionCreator = {
     };
   },
 
-  load(outputString) {
+  load(outputTexts) {
     return {
       type: TERMINAL_ACTION.LOAD,
-      outputString,
+      outputTexts,
     };
   },
 };

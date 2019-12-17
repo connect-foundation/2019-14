@@ -33,9 +33,12 @@ const ColoredLineWrapper = styled.span`
 
 const decoder = new TextDecoder();
 
-const ReplOutput = ({ cellUuid }) => {
-  const [isUpdate, setIsUpdate] = useState(false);
+let isUpdate = false;
+const setIsUpdate = (bool) => {
+  isUpdate = bool;
+};
 
+const ReplOutput = ({ cellUuid }) => {
   const dispatchToCell = useContext(CellDispatchContext);
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const { terminalState } = useContext(TerminalContext);
@@ -65,8 +68,7 @@ const ReplOutput = ({ cellUuid }) => {
     if (isUpdate) {
       setIsUpdate(false);
 
-      const savedOutput = outputTexts.join("\n");
-      dispatchToCell(cellAction.input(cellUuid, savedOutput));
+      dispatchToCell(cellAction.input(cellUuid, outputTexts));
     }
   }, [outputTexts]);
 

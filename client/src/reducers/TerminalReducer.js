@@ -54,18 +54,9 @@ const terminalReducerHandler = {
   [TERMINAL_ACTION.LOAD]: (state, action) => {
     const nextState = copyState(state);
     const currentTerminal = nextState;
-    const { outputString } = action;
+    const { outputTexts } = action;
 
-    const nextOutputs = outputString.split("\n");
-
-    currentTerminal.outputTexts = nextOutputs.reduce((result, output = "") => {
-      const trimmed = output.trim();
-      if (trimmed.length === 0) {
-        return result;
-      }
-      result.push(`${trimmed}\n`);
-      return result;
-    }, []);
+    currentTerminal.outputTexts = outputTexts;
 
     debug("Load terminal store", nextState);
 
