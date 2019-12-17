@@ -52,7 +52,6 @@ const BUTTON_HANDLER = {
        */
       const containerId = 9;
       const response = await request.loadDocument(containerId);
-      console.log(response);
       /**
        * @todo 에러 처리하기
        * - 성공, 실패시 각각 처리할 것.
@@ -105,21 +104,14 @@ const ToolBarButton = ({ buttonType }) => {
   const cellDispatch = useContext(CellDispatchContext);
   const terminalDispatch = useContext(TerminalSettingDispatch);
   const { state } = useContext(CellContext);
-  const { cellManager, isShared } = state;
+  const { cellManager } = state;
 
   const onClick = () => {
     BUTTON_HANDLER[buttonType](cellDispatch, cellManager, terminalDispatch);
   };
 
-  useEffect(() => {
-    if (isShared) {
-      console.log(localStorage.getItem("sharedDocumentId"));
-    }
-  }, [isShared]);
-
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>
-      {/* {isShared && <Redirect to="/share" />} */}
       <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} onClick={onClick} />
       <div>{buttonType}</div>
     </ToolBarButtonWrapper>
