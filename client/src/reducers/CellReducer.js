@@ -53,6 +53,18 @@ const cellReducerHandler = {
     return nextState;
   },
 
+  [CELL_ACTION.NEW_EMPTY_DEFAULT]: (state, action) => {
+    const { cellManager, currentIndex } = state;
+    const { cellUuid } = action;
+
+    common.newDefaultEmptyCell(cellUuid, cellManager);
+
+    return {
+      ...state,
+      currentIndex: currentIndex + 1,
+    };
+  },
+
   [CELL_ACTION.INPUT]: (state, action) => {
     const { cellManager } = state;
     const { cellUuid, text } = action;

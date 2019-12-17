@@ -3,6 +3,7 @@ import CELL_TAG from "../enums/CELL_TAG";
 const CELL_ACTION = {
   INIT: "cell/init",
   NEW: "cell/new",
+  NEW_EMPTY_DEFAULT: "cell/new/empty/default",
   INPUT: "cell/input",
   DELETE: "cell/delete",
   TARGET: {
@@ -75,6 +76,13 @@ const cellActionCreator = {
       tag,
       depth,
       start,
+    };
+  },
+
+  newEmptyDefault(cellUuid) {
+    return {
+      type: CELL_ACTION.NEW_EMPTY_DEFAULT,
+      cellUuid,
     };
   },
 

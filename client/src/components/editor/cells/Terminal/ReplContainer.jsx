@@ -44,7 +44,7 @@ const ReplContainer = ({ cellUuid, isCellFocus }) => {
       debug("Create Next & Focus next");
 
       dispatchToTerminal(terminalAction.focusOut());
-      const makeNewMarkdownCell = cellAction.new(cellUuid, cellGenerator.p);
+      const makeNewMarkdownCell = cellAction.newEmptyDefault(cellUuid);
       dispatchToCell(makeNewMarkdownCell);
     },
 
