@@ -54,16 +54,15 @@ const ListCell = ({ cellUuid }) => {
       textContent.length === 0 ||
       (currentCursor.start === 0 && currentCursor.end === 0);
 
-    if (isStartPos) {
+    if (block.start !== null) {
+      dispatch(cellActionCreator.blockDelete());
+    } else if (isStartPos) {
       if (depth) {
         transformCell(cellUuid, dispatch, textContent, tag, depth - 1, start);
       } else {
         dispatch(cellActionCreator.input(cellUuid, textContent));
         dispatch(cellActionCreator.reset());
       }
-    }
-    if (state.block.start !== null) {
-      deleteCell(dispatch);
     }
   };
 

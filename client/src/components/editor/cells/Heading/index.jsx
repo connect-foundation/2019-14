@@ -45,16 +45,15 @@ const HeadingCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     const currentCursor = getSelection();
-    const isStartPos =
+    const isCursorPosZero =
       textContent.length === 0 ||
       (currentCursor.start === 0 && currentCursor.end === 0);
 
-    if (isStartPos) {
+    if (block.start !== null) {
+      dispatch(cellActionCreator.blockDelete());
+    } else if (isCursorPosZero) {
       dispatch(cellActionCreator.input(cellUuid, textContent));
       dispatch(cellActionCreator.reset());
-    }
-    if (state.block.start !== null) {
-      deleteCell(dispatch);
     }
   };
 

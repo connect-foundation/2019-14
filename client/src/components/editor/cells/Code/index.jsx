@@ -3,7 +3,7 @@ import propTypes from "prop-types";
 import styled from "styled-components";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
-import { setGenerator, cellGenerator } from "../CellGenerator";
+import { setGenerator } from "../CellGenerator";
 import { useCellState, useKeys, getChecksumAllFalse } from "../../../../utils";
 import { EVENT_TYPE } from "../../../../enums";
 import { focusPrev, focusNext } from "../Markdown/handler";
