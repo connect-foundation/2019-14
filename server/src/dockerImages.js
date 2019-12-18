@@ -30,7 +30,7 @@ module.exports = {
   "centos/mysql/python": "centos/python/mysql",
   "centos/mongodb/python": "centos/python/mongodb",
   "centos/nodejs/python": "centos/nodejs/python",
-  "centos/mongodb/mysql": "centos/mongodb/mysql",
+  "centos/mongodb/mysql": "centos/mysql/mongodb",
 
   "centos/nodejs": "centos/nodejs",
   "centos/python": "centos/python",
