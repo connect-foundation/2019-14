@@ -72,23 +72,32 @@ const Login = () => {
     };
 
     const label = "공유 문서 불러오기";
+    const submitShareIdEvent = () => {
+      const shareIdInputElement = document.querySelector(
+        "#share-id-input-text"
+      );
+      const shareId = shareIdInputElement.value;
+      closeModal();
+      if (shareId) {
+        saveShareDocument(shareId);
+      }
+    };
     const modalContents = (
       <>
-        <input type="text" id="share-id-input-text" autoFocus />
         <input
-          type="button"
-          value="불러오기"
-          onClick={() => {
-            const shareIdInputElement = document.querySelector(
-              "#share-id-input-text"
-            );
-            const shareId = shareIdInputElement.value;
-            closeModal();
-            if (shareId) {
-              saveShareDocument(shareId);
+          type="text"
+          id="share-id-input-text"
+          autoFocus
+          spellCheck={false}
+          onKeyPress={(e) => {
+            const { key } = e;
+            if (key === "Enter") {
+              e.preventDefault();
+              submitShareIdEvent();
             }
           }}
         />
+        <input type="button" value="불러오기" onClick={submitShareIdEvent} />
       </>
     );
     openModal(label, modalContents);

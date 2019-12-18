@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Modal from "react-modal";
 import { modalManager } from "../../utils";
+import SimpleModalContentsWrapper from "./SimpleModalContentsWrapper";
 
 const { injectSetState, closeModal } = modalManager;
 
 const customStyles = {
+  overlay: {
+    background: "rgba(255, 255, 255, 0.2)",
+  },
   content: {
-    top: "50%",
+    width: "40%",
+    top: "30%",
     left: "50%",
     right: "auto",
     bottom: "auto",
@@ -16,12 +21,7 @@ const customStyles = {
   },
 };
 
-const SimpleModalWrapper = styled.div`
-  input[type="button"] {
-    font-size: 1rem;
-    text-align: center;
-  }
-`;
+const SimpleModalWrapper = styled.div``;
 
 Modal.setAppElement("#root");
 const SimpleModal = () => {
@@ -40,9 +40,16 @@ const SimpleModal = () => {
         if (isOverlay) modalManager.closeModal();
       }}
     >
-      <Modal isOpen={open} style={customStyles} contentLabel={data.label}>
-        {data.contents}
-        <input type="button" onClick={closeModal} value="닫기" />
+      <Modal
+        isOpen={open}
+        style={customStyles}
+        contentLabel={data.label}
+        id="simple-modal-overlay"
+      >
+        <SimpleModalContentsWrapper>
+          {data.contents}
+          <input type="button" onClick={closeModal} value="닫기" />
+        </SimpleModalContentsWrapper>
       </Modal>
     </SimpleModalWrapper>
   );
