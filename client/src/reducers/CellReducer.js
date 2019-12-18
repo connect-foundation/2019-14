@@ -173,7 +173,6 @@ const cellReducerHandler = {
 
   [CELL_ACTION.BLOCK.UP]: (state) => {
     const result = block.blockRangeUp(state.currentIndex, state.block);
-
     return {
       ...state,
       ...result,

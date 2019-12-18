@@ -39,14 +39,13 @@ const blockRangeUp = (index, block) => {
 };
 
 const blockRangeDown = (index, block, cellLength) => {
-  const newStart = block.start !== null ? block.start : index;
-  let newEnd = null;
+  const newStart = block.start || index;
+  let newEnd = block.end || index;
+
   if (block.end < cellLength - 1) {
-    newEnd = block.end + 1;
+    newEnd += 1;
   } else if (block.end === cellLength - 1) {
     newEnd = cellLength - 1;
-  } else {
-    newEnd = newStart;
   }
 
   const newBlock = {
