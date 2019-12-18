@@ -10,26 +10,29 @@ const dbInfo = {
   password: process.env.DB_PASSWORD,
 };
 
-const pool = mysql.createPool(dbInfo);
+const pool = mysql.createPool({
+  ...dbInfo,
+  waitForConnections: true,
+});
 
-router.query = async (queryString, ...args) => {
+const query = async (queryString, ...args) => {
+  const conn = await pool.getConnection();
   try {
-    const conn = await pool.getConnection(async (connection) => {
-      return connection;
-    });
-    try {
+    const [rows] = await conn.query(queryString, ...args);
+    conn.release();
+    return rows;
+  } catch (err) {
+    console.log(err);
+    if (err.code === "ETIMEDOUT") {
       const [rows] = await conn.query(queryString, ...args);
       conn.release();
       return rows;
-    } catch (err) {
-      const errMsg = `[Query Error] ${err}`;
-      conn.release();
-      throw new Error(errMsg);
     }
-  } catch (err) {
-    const errMsg = `[DB Error] ${err}`;
-    throw new Error(errMsg);
+    conn.release();
+    throw new Error(err);
   }
 };
+
+router.query = query;
 
 module.exports = router;

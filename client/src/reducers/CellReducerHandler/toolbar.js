@@ -1,4 +1,6 @@
-import { request } from "../../utils";
+import { request, modalManager } from "../../utils";
+
+const { openModal } = modalManager;
 
 const save = (cellManager) => {
   const documentString = cellManager.createMarkdownDocument();
@@ -14,11 +16,14 @@ const save = (cellManager) => {
   const response = request.saveDocument(data);
 
   if (response.status === 500) {
-    alert("저장 실패ㅠㅠ");
+    const label = "저장 실패";
+    const modalContents = "저장에 실패하였습니다.\n 다시 시도해 주세요.";
+    openModal(label, modalContents);
     return;
   }
-
-  alert("저장 성공!");
+  const label = "저장 성공";
+  const modalContents = "저장하였습니다.";
+  openModal(label, modalContents);
 };
 
 export default {

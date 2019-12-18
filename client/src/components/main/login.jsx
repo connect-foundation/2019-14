@@ -4,7 +4,9 @@ import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { THEME } from "../../enums";
-import { request } from "../../utils";
+import { request, modalManager } from "../../utils";
+
+const { openModal, closeModal } = modalManager;
 
 const LoginWrapper = styled.div`
   width: 100%;
@@ -21,24 +23,22 @@ const LoginWrapper = styled.div`
     font-size: 1.5rem;
   }
 
-  .button-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-self: center;
-    width: 100%;
-    div {
-      width: 40%;
-      min-width: 150px;
-      max-width: 500px;
-      font-size: 1.5rem;
-      border: 2px solid ${THEME.VS_CODE.FONT};
-      margin: 0.3rem;
-    }
-    div:hover {
-      cursor: default;
-      box-shadow: 1px 1px 3px ${THEME.VS_CODE.FONT};
-    }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  width: 100%;
+  .btn-common {
+    width: 40%;
+    min-width: 150px;
+    max-width: 500px;
+    font-size: 1.5rem;
+    border: 2px solid ${THEME.VS_CODE.FONT};
+    margin: 0.3rem;
+  }
+  .btn-common:hover {
+    cursor: default;
+    box-shadow: 1px 1px 3px ${THEME.VS_CODE.FONT};
   }
 `;
 
@@ -56,30 +56,48 @@ const Login = () => {
   const openShareDocument = () => {
     const saveShareDocument = async (shareId) => {
       const response = await request.loadSharingDocument(shareId);
-      /**
-       * @todo 에러 처리하기
-       * - 성공, 실패시 각각 처리할 것.
-       * - axious 문서 보고 처리하기
-       */
+
+      if (response.status === 500) {
+        const label = "공유 문서 불러오기 실패";
+        const modalContents =
+          "공유 문서를 불러오는 것에 실패하였습니다.\n 다시 시도해 주세요.";
+        openModal(label, modalContents);
+        return;
+      }
       const document = response.data;
       const documentString = JSON.stringify(document);
       localStorage.setItem("share-document-content", documentString);
       localStorage.setItem("isShared", true);
       setOpen(true);
     };
-    const shareId = prompt(
-      "공유 문서의 ID를 입력하세요.",
-      "Input a Document ID"
+
+    const label = "공유 문서 불러오기";
+    const modalContents = (
+      <>
+        <input type="text" id="share-id-input-text" autoFocus />
+        <input
+          type="button"
+          value="불러오기"
+          onClick={() => {
+            const shareIdInputElement = document.querySelector(
+              "#share-id-input-text"
+            );
+            const shareId = shareIdInputElement.value;
+            closeModal();
+            if (shareId) {
+              saveShareDocument(shareId);
+            }
+          }}
+        />
+      </>
     );
-    if (shareId) {
-      saveShareDocument(shareId);
-    }
+    openModal(label, modalContents);
   };
 
   const beforeLogin = (
     <>
       {open && <Redirect to="/editor" />}
-      <div className="open-share-document" onClick={openShareDocument}>
+      <div className="btn-common" onClick={openShareDocument}>
         Open Share Document
       </div>
       <input type="text" id="id" name="id" placeholder="ID" />
@@ -90,15 +108,13 @@ const Login = () => {
         placeholder="password"
         onKeyPress={onKeyPress}
       />
-      <div className="button-area">
-        <div
-          className="login"
-          onClick={() => {
-            setLoginState(true);
-          }}
-        >
-          Login
-        </div>
+      <div
+        className="btn-common"
+        onClick={() => {
+          setLoginState(true);
+        }}
+      >
+        Login
       </div>
     </>
   );
@@ -106,26 +122,21 @@ const Login = () => {
   const afterLogin = (
     <>
       {open && <Redirect to="/editor" />}
-      <div className="button-area">
-        <div
-          className="open-editor"
-          onClick={() => {
-            setOpen(true);
-          }}
-        >
-          Open Editor
-        </div>
-        {/* <div className="open-share-document" onClick={openShareDocument}>
-          Open Share Document
-        </div> */}
-        <div
-          className="logout"
-          onClick={() => {
-            setLoginState(false);
-          }}
-        >
-          Logout
-        </div>
+      <div
+        className="btn-common"
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        Open Editor
+      </div>
+      <div
+        className="btn-common"
+        onClick={() => {
+          setLoginState(false);
+        }}
+      >
+        Logout
       </div>
     </>
   );
