@@ -141,7 +141,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const eventTrigger = isFocus && !isShared;
   attachDefaultHandlers(defaultKeydownHandlers);
-  useKeys(keydownHandlers, eventTrigger, [block.end]);
+  useKeys(keydownHandlers, eventTrigger, [block.end], inputRef);
   // -------------- End -----------------------
 
   useEffect(() => {
