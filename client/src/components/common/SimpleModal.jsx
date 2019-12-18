@@ -37,7 +37,7 @@ const SimpleModal = () => {
       onClick={(e) => {
         const { classList } = e.target;
         const isOverlay = classList[0] === "ReactModal__Overlay";
-        if (isOverlay) modalManager.setOpen(false);
+        if (isOverlay) modalManager.closeModal();
       }}
     >
       <Modal isOpen={open} style={customStyles} contentLabel={data.label}>
