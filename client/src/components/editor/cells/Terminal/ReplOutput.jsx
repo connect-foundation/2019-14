@@ -13,6 +13,7 @@ import {
 } from "../../../../stores/TerminalStore";
 import { CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator as cellAction } from "../../../../actions/CellAction";
+import Loading from "../../../commons/Loading";
 
 const debug = createDebug("boost:component:repl-output");
 
@@ -31,6 +32,14 @@ const ColoredLineWrapper = styled.span`
   ${(props) => props.css}
 `;
 
+const LoadingWrapper = styled.div`
+  display: flex;
+
+  justify-content: center;
+
+  width: 100%;
+`;
+
 const decoder = new TextDecoder();
 
 let isUpdate = false;
@@ -40,6 +49,7 @@ const setIsUpdate = (bool) => {
 };
 
 const ReplOutput = ({ cellUuid }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const dispatchToCell = useContext(CellDispatchContext);
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const { terminalState } = useContext(TerminalContext);
@@ -53,6 +63,8 @@ const ReplOutput = ({ cellUuid }) => {
       debug("enroll socket's stdout event with", cellUuid, socket);
 
       socket.on("stdout", (chunk) => {
+        setIsLoading(false);
+
         const decodedText = decoder.decode(chunk);
         debug("stdout text is", decodedText);
 
@@ -100,7 +112,17 @@ const ReplOutput = ({ cellUuid }) => {
     return renderOutputs();
   }, [outputTexts]);
 
-  return <ReplOutputWrapper>{memoizedOutputs}</ReplOutputWrapper>;
+  return (
+    <ReplOutputWrapper>
+      {isLoading ? (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      ) : (
+        memoizedOutputs
+      )}
+    </ReplOutputWrapper>
+  );
 };
 
 ReplOutput.propTypes = {
