@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
@@ -17,6 +17,8 @@ const ReplInputWrapper = styled.div`
 
   height: 100%;
 
+  align-items: center;
+
   padding: 15px;
   margin: 10px;
 
@@ -24,9 +26,10 @@ const ReplInputWrapper = styled.div`
 `;
 
 const ReplPrompt = styled.div`
+  width: 5rem;
+
   border-right: 5px solid #00fe3d;
   padding-right: 10px;
-  width: 5rem;
 `;
 
 const ReplInput = ({ cellUuid, isCellFocus }) => {
@@ -64,10 +67,11 @@ const ReplInput = ({ cellUuid, isCellFocus }) => {
       <ReplPrompt>{prompt}</ReplPrompt>
       <EditableReplInput
         ref={replRef}
+        rows={1}
+        value={currentText}
         spellCheck={false}
         onChange={changeHandler}
         onClick={clickHandler}
-        value={currentText}
       />
     </ReplInputWrapper>
   );

@@ -1,17 +1,19 @@
 import styled from "styled-components";
 
 const EditableReplInput = styled.textarea`
-  flex-grow: 99;
+  width: 100%;
   margin-left: 20px;
 
-  &:focus {
-    outline: none;
-    border: none;
-  }
+  border: none;
+  outline: none;
+  box-shadow: none;
 
-  :empty:not(:focus):before {
-    content: attr(data-text);
-  }
+  overflow-y: hidden;
+  resize: none;
+
+  background-color: transparent;
+  color: inherit;
+  font-size: inherit;
 `;
 
 export default EditableReplInput;
