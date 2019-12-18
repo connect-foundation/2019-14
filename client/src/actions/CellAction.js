@@ -1,10 +1,8 @@
-import CELL_TAG from "../enums/CELL_TAG";
-
 const CELL_ACTION = {
   INIT: "cell/init",
   NEW: "cell/new",
   NEW_LIST: "cell/new/list",
-  NEW_EMPTY_DEFAULT: "cell/new/empty/default",
+  NEW_EMPTY: "cell/new/empty",
   INPUT: "cell/input",
   DELETE: "cell/delete",
   TARGET: {
@@ -22,6 +20,7 @@ const CELL_ACTION = {
     UP: "cell/block/up",
     DOWN: "cell/block/down",
     RELEASE: "cell/block/release",
+    DELETE: "cell/block/delete",
   },
   CURSOR: {
     MOVE: "cell/cursor/move",
@@ -64,10 +63,9 @@ const cellActionCreator = {
     };
   },
 
-  newEmptyDefault(cellUuid) {
+  newEmptyDefault() {
     return {
       type: CELL_ACTION.NEW_EMPTY_DEFAULT,
-      cellUuid,
     };
   },
 
@@ -86,13 +84,11 @@ const cellActionCreator = {
 
   /**
    * 지정한 셀을 삭제한다.
-   * @param {Uuid} cellUuid 삭제할 셀의 uuid
    * @param {Text} text 이전 셀로 이동할 텍스트
    */
-  delete(cellUuid, text = "") {
+  delete(text = "") {
     return {
       type: CELL_ACTION.DELETE,
-      cellUuid,
       text,
     };
   },
@@ -201,6 +197,12 @@ const cellActionCreator = {
   blockRelease() {
     return {
       type: CELL_ACTION.BLOCK.RELEASE,
+    };
+  },
+
+  blockDelete() {
+    return {
+      type: CELL_ACTION.BLOCK.DELETE,
     };
   },
 

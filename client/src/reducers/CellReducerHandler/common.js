@@ -16,8 +16,7 @@ const initCell = (cellManager) => {
   cellManager.deleteOption(index);
 };
 
-const newDefaultEmptyCell = (cellUuid, cellManager) => {
-  const index = uuidManager.findIndex(cellUuid);
+const newEmptyCell = (index, cellManager) => {
   const newUuid = uuid();
   uuidManager.push(newUuid, index);
   const newData = {
@@ -129,9 +128,8 @@ const inputText = (cellUuid, cellManager, dataObj) => {
   cellManager.change(index, { text });
 };
 
-const deleteCell = (cellUuid, cellManager, dataObj) => {
+const deleteCell = (index, cellManager, dataObj) => {
   const { text } = dataObj;
-  const index = uuidManager.findIndex(cellUuid);
   const prevIndex = index - 1;
 
   uuidManager.pop(index);
@@ -158,7 +156,7 @@ const deleteCell = (cellUuid, cellManager, dataObj) => {
 
 export default {
   initCell,
-  newDefaultEmptyCell,
+  newEmptyCell,
   newCell,
   newListCell,
   inputText,

@@ -37,8 +37,8 @@ const blockRangeUp = (index, block) => {
 };
 
 const blockRangeDown = (index, block, cellLength) => {
-  const newStart = block.start || index;
-  let newEnd = block.end || index;
+  const newStart = block.start !== null ? block.start : index;
+  let newEnd = block.end !== null ? block.end : index;
 
   if (block.end < cellLength - 1) {
     newEnd += 1;

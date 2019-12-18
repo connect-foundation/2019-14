@@ -50,11 +50,10 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.NEW_EMPTY_DEFAULT]: (state, action) => {
+  [CELL_ACTION.NEW_EMPTY]: (state) => {
     const { cellManager, currentIndex } = state;
-    const { cellUuid } = action;
 
-    common.newDefaultEmptyCell(cellUuid, cellManager);
+    common.newEmptyCell(currentIndex, cellManager);
 
     return {
       ...state,
@@ -76,21 +75,10 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.DELETE]: (state, action) => {
-    const { cellManager } = state;
-    const { cellUuid, text } = action;
+    const { currentIndex, cellManager } = state;
+    const { text } = action;
 
-    if (state.block.start !== null) {
-      const result = block.blockDelete(cellManager, { block: state.block });
-
-      debug("Cells delete for Block", result);
-
-      return {
-        ...state,
-        ...result,
-      };
-    }
-
-    const result = common.deleteCell(cellUuid, cellManager, { text });
+    const result = common.deleteCell(currentIndex, cellManager, { text });
 
     debug("Cell delete", result);
 
@@ -207,6 +195,19 @@ const cellReducerHandler = {
     return {
       ...state,
       block: emptyBlock,
+    };
+  },
+
+  [CELL_ACTION.BLOCK.DELETE]: (state) => {
+    const { cellManager } = state;
+
+    const result = block.blockDelete(cellManager, { block: state.block });
+
+    debug("Cells delete for Block", result);
+
+    return {
+      ...state,
+      ...result,
     };
   },
 

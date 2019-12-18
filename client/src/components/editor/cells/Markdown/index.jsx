@@ -89,15 +89,13 @@ const MarkdownCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     const cursorPos = getSelection();
+    const isCursorPosZero =
+      cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0;
 
-    /**
-     * @todo 블록 부분들은 추후 싹 리팩토링 예정
-     */
-    if (
-      (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) ||
-      state.block.start !== null
-    ) {
-      deleteCell(dispatch, cellUuid, textContent);
+    if (block.start !== null) {
+      dispatch(cellActionCreator.blockDelete());
+    } else if (isCursorPosZero) {
+      deleteCell(dispatch, textContent);
     }
   };
 
