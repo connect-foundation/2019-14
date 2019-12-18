@@ -1,5 +1,4 @@
 import createDebug from "debug";
-import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
 import {
   common,
@@ -13,15 +12,8 @@ import {
 const debug = createDebug("boost:reducer:cell");
 
 const cellReducerHandler = {
-  [CELL_ACTION.INIT]: (state, action) => {
-    const { cellUuid, createMarkdownCell, tag } = action;
-    const newCellUuid = cellUuid || uuid();
-
-    common.initUuid(cellUuid, newCellUuid);
-    common.initCell(cellUuid, state.cellManager, {
-      cell: createMarkdownCell,
-      tag,
-    });
+  [CELL_ACTION.INIT]: (state) => {
+    common.initCell(state.cellManager);
 
     debug("Init cell next state", state.cellManager);
 
@@ -158,6 +150,15 @@ const cellReducerHandler = {
     return {
       ...state,
       ...result,
+    };
+  },
+
+  [CELL_ACTION.TARGET.RESET]: (state) => {
+    const { currentIndex, cellManager } = state;
+    target.reset(currentIndex, cellManager);
+
+    return {
+      ...state,
     };
   },
 

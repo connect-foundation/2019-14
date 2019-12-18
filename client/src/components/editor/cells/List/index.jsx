@@ -13,7 +13,7 @@ import {
   deleteCell,
   blockRelease,
 } from "../Markdown/handler";
-import { newCell, initCell, transformCell } from "./handler";
+import { newCell, transformCell } from "./handler";
 import { cellGenerator, setGenerator } from "../CellGenerator";
 
 setGenerator("ul", (uuid) => <ListCell cellUuid={uuid} />);
@@ -58,9 +58,8 @@ const ListCell = ({ cellUuid }) => {
       if (depth) {
         transformCell(cellUuid, dispatch, textContent, tag, depth - 1, start);
       } else {
-        const componentCallback = cellGenerator.p;
         dispatch(cellActionCreator.input(cellUuid, textContent));
-        initCell(cellUuid, dispatch, componentCallback);
+        dispatch(cellActionCreator.reset());
       }
     }
     if (state.block.start !== null) {
@@ -70,20 +69,6 @@ const ListCell = ({ cellUuid }) => {
 
   const enterEvent = (e) => {
     const { textContent } = e.target;
-    /*
-      e.target.insertAdjacentHTML(
-        "afterend",
-        renderToString(
-          <MarkdownWrapper
-            as="li"
-            placeholder={placeholder}
-            ref={inputRef || null}
-            suppressContentEditableWarning
-            contentEditable
-          ></MarkdownWrapper>
-        )
-      );
-      */
     if (textContent.length === 0) {
       backspaceEvent(e);
     } else {

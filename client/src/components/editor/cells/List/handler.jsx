@@ -14,10 +14,6 @@ const newCell = (
   );
 };
 
-const initCell = (cellUuid, cellDispatch, componentCallback) => {
-  cellDispatch(cellActionCreator.init(componentCallback, cellUuid));
-};
-
 const transformCell = (cellUuid, cellDispatch, text, tag, depth, start) => {
   const makeNewCell = cellGenerator[tag];
 
@@ -30,4 +26,4 @@ const transformCell = (cellUuid, cellDispatch, text, tag, depth, start) => {
   );
 };
 
-export { newCell, initCell, transformCell };
+export { newCell, transformCell };

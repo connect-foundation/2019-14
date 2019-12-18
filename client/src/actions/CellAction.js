@@ -8,6 +8,7 @@ const CELL_ACTION = {
   DELETE: "cell/delete",
   TARGET: {
     TRANSFORM: "cell/target/transform",
+    RESET: "cell/target/reset",
   },
   FOCUS: {
     PREV: "cell/focus/prev",
@@ -39,17 +40,11 @@ const CELL_ACTION = {
 
 const cellActionCreator = {
   /**
-   * 셀의 데이터를 초기화시킨다.
-   * @param {Cell} createMarkdownCell 초기화할 셀을 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
-   * @param {Uuid} cellUuid 초기화할 셀의 uuid
-   * - 파라미터로 넘기지 않으면 기본값 null
+   * 맨 처음 페이지를 열었을 때 스토어의 상태를 초기화시킨다.
    */
-  init(createMarkdownCell, cellUuid = null) {
+  init() {
     return {
       type: CELL_ACTION.INIT,
-      createMarkdownCell,
-      tag: CELL_TAG.DEFAULT,
-      cellUuid,
     };
   },
 
@@ -174,6 +169,12 @@ const cellActionCreator = {
       cell,
       depth,
       start,
+    };
+  },
+
+  reset() {
+    return {
+      type: CELL_ACTION.TARGET.RESET,
     };
   },
 

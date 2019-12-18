@@ -2,21 +2,16 @@ import { uuid } from "uuidv4";
 import { uuidManager } from "../../utils";
 import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
-const initUuid = (cellUuid, newCellUuid) => {
-  if (!cellUuid) {
-    uuidManager.push(newCellUuid);
-  }
-};
+const initCell = (cellManager) => {
+  const index = 0;
+  const newUuid = uuid();
 
-const initCell = (cellUuid, cellManager, dataObj) => {
-  const { cell, tag } = dataObj;
-  const uuidArray = uuidManager.getUuidArray();
-  const index = cellUuid ? uuidManager.findIndex(cellUuid) : 0;
-  const targetUuid = uuidArray[index];
+  uuidManager.push(newUuid);
+
   cellManager.change(index, {
-    cell: cell ? cell(targetUuid) : cellGenerator.p(targetUuid),
-    text: cellManager.texts[index] || "",
-    tag,
+    cell: cellGenerator.p(newUuid),
+    text: "",
+    tag: "p",
   });
   cellManager.deleteOption(index);
 };
@@ -106,14 +101,7 @@ const deleteCell = (cellUuid, cellManager, dataObj) => {
   };
   cellManager.delete(index, flag);
   cellManager.change(prevIndex, { text: joinedText });
-  if (cellManager.cells.length === 0) {
-    initUuid(null, uuid());
-    initCell(cellUuid, cellManager, {
-      cell: cellGenerator.p,
-      text: "",
-      tag: "p",
-    });
-  }
+
   return {
     cursor,
     currentIndex: prevIndex,
@@ -121,7 +109,6 @@ const deleteCell = (cellUuid, cellManager, dataObj) => {
 };
 
 export default {
-  initUuid,
   initCell,
   newDefaultEmptyCell,
   newCell,
