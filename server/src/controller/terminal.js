@@ -1,3 +1,4 @@
+const path = require("path");
 const debug = require("debug")("boostwriter:controller:terminal");
 const { writeDockerfile } = require("../api/makeDockerfile");
 const validImages = require("../dockerImages");
@@ -15,6 +16,7 @@ const makeImageNameString = (terminalOption) => {
 };
 
 const createDefaultTerminal = async (dockerInstance, terminalOption) => {
+  const rootDir = path.resolve(__dirname, "../../");
   const dockerFilePath = `${process.env.INIT_CWD}/dockerfiles/`;
   const imageTag = makeImageNameString(terminalOption);
 
