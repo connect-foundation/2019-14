@@ -14,7 +14,7 @@ import {
   blockRelease,
 } from "../Markdown/handler";
 import { newCell } from "./handler";
-import { cellGenerator, setGenerator } from "../CellGenerator";
+import { setGenerator } from "../CellGenerator";
 
 setGenerator("h1", (uuid) => <HeadingCell cellUuid={uuid} />);
 setGenerator("h2", (uuid) => <HeadingCell cellUuid={uuid} />);
@@ -63,10 +63,9 @@ const HeadingCell = ({ cellUuid }) => {
     if (textContent.length === 0) {
       backspaceEvent(e);
     } else {
-      const componentCallback = cellGenerator.p;
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback);
+      newCell(dispatch);
     }
     blockRelease(dispatch);
   };

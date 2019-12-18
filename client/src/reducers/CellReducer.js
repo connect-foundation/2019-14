@@ -23,16 +23,11 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.NEW]: (state, action) => {
-    const { cursor, cellManager } = state;
-    const { cellUuid, createMarkdownCell, tag, depth, start } = action;
+  [CELL_ACTION.NEW]: (state) => {
+    const { currentIndex, cursor, cellManager } = state;
 
-    const result = common.newCell(cellUuid, cellManager, {
-      createCellCallback: createMarkdownCell,
+    const result = common.newCell(currentIndex, cellManager, {
       cursor,
-      tag,
-      depth,
-      start,
     });
 
     const nextState = {
@@ -43,6 +38,16 @@ const cellReducerHandler = {
     debug("New cell", nextState);
 
     return nextState;
+  },
+
+  [CELL_ACTION.NEW_LIST]: (state) => {
+    const { currentIndex, cellManager, cursor } = state;
+    const result = common.newListCell(currentIndex, cellManager, { cursor });
+
+    return {
+      ...state,
+      ...result,
+    };
   },
 
   [CELL_ACTION.NEW_EMPTY_DEFAULT]: (state, action) => {

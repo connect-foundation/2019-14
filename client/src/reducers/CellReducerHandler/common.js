@@ -28,33 +28,82 @@ const newDefaultEmptyCell = (cellUuid, cellManager) => {
   cellManager.add(index, newData);
 };
 
-const newCell = (cellUuid, cellManager, dataObj) => {
-  const { createCellCallback, cursor, tag, depth, start } = dataObj;
+const sliceNewText = (cellManager, index, cursor) => {
+  const originText = cellManager.texts[index];
+  const currentText = originText ? originText.slice(0, cursor) : "";
+  cellManager.change(index, { text: currentText });
+  const newText = originText ? originText.slice(cursor) : "";
+
+  return newText;
+};
+
+const newCell = (index, cellManager, dataObj) => {
+  const { cursor } = dataObj;
+
+  // uuid
+  const newUuid = uuid();
+  uuidManager.push(newUuid, index);
+
+  // cell
+  const cell = cellGenerator.p(newUuid);
+
+  // 중간에서 enter
+  const newText = sliceNewText(cellManager, index, cursor.start);
+
+  const data = {
+    cell,
+    text: newText,
+    tag: "p",
+  };
+  cellManager.add(index, data);
+
+  // cursor
+  const newCursor = {
+    start: 0,
+    end: 0,
+  };
+
+  // index
+  const currentIndex = index + 1;
+
+  return {
+    cursor: newCursor,
+    currentIndex,
+  };
+};
+
+const newListCell = (index, cellManager, dataObj) => {
+  const { cursor } = dataObj;
+  const tag = cellManager.tags[index];
+  const { start, depth } = cellManager.options[index];
 
   const isOrderedList = tag === "ol";
-  const isList = isOrderedList || tag === "ul";
-  const index = uuidManager.findIndex(cellUuid);
 
-  uuidManager.push(uuid(), index);
+  // uuid
+  const newUuid = uuid();
+  uuidManager.push(newUuid, index);
 
-  const uuidArray = uuidManager.getUuidArray();
   const newStart = isOrderedList ? start + 1 : null;
-  const newDepth = isList ? depth : 0;
+  const newDepth = depth;
 
-  const newCellUuid = uuidArray[index + 1];
-  const cell = createCellCallback(newCellUuid);
+  // cell
+  const cell = cellGenerator[tag](newUuid);
 
+  // index
+  const newIndex = index + 1;
+
+  // depth
+  let newOption = null;
   if (isOrderedList) {
-    cellManager.addOption(index + 1, { depth: newDepth, start: newStart });
-  } else if (isList) {
-    cellManager.addOption(index + 1, { depth: newDepth });
+    newOption = { depth: newDepth, start: newStart };
+  } else {
+    newOption = { depth: newDepth };
   }
+  cellManager.addOption(newIndex, newOption);
 
-  const originText = cellManager.texts[index];
-  const currentText = originText ? originText.slice(0, cursor.start) : "";
-  cellManager.change(index, { text: currentText });
+  // 중간에서 enter
+  const newText = sliceNewText(cellManager, index, cursor.start);
 
-  const newText = originText ? originText.slice(cursor.start) : "";
   const data = {
     cell,
     text: newText,
@@ -62,16 +111,15 @@ const newCell = (cellUuid, cellManager, dataObj) => {
   };
   cellManager.add(index, data);
 
+  // cursor
   const newCursor = {
     start: 0,
     end: 0,
   };
 
-  const currentIndex = index + 1;
-
   return {
     cursor: newCursor,
-    currentIndex,
+    currentIndex: newIndex,
   };
 };
 
@@ -112,6 +160,7 @@ export default {
   initCell,
   newDefaultEmptyCell,
   newCell,
+  newListCell,
   inputText,
   deleteCell,
 };

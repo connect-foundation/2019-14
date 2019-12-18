@@ -1,17 +1,8 @@
 import { cellActionCreator } from "../../../../actions/CellAction";
 import { cellGenerator } from "../CellGenerator";
 
-const newCell = (
-  cellUuid,
-  cellDispatch,
-  componentCallback,
-  tag,
-  depth,
-  start
-) => {
-  cellDispatch(
-    cellActionCreator.new(cellUuid, componentCallback, tag, depth, start)
-  );
+const newCell = (cellDispatch) => {
+  cellDispatch(cellActionCreator.newList());
 };
 
 const transformCell = (cellUuid, cellDispatch, text, tag, depth, start) => {

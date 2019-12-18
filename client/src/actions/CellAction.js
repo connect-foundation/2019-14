@@ -3,6 +3,7 @@ import CELL_TAG from "../enums/CELL_TAG";
 const CELL_ACTION = {
   INIT: "cell/init",
   NEW: "cell/new",
+  NEW_LIST: "cell/new/list",
   NEW_EMPTY_DEFAULT: "cell/new/empty/default",
   INPUT: "cell/input",
   DELETE: "cell/delete",
@@ -50,27 +51,16 @@ const cellActionCreator = {
 
   /**
    * 셀을 생성한다.
-   * @param {Uuid} cellUuid 새 셀을 생성할 기준 셀의 uuid
-   * - 엔터시 기준 셀의 다음 셀에 셀을 생성한다.
-   * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백
-   * @param {String} tag 셀의 타입(태그). 생략시 default input 셀이 생성된다.
-   * @param {Number} depth list일 경우의 depth
-   * @param {Number} start ordered list일 경우의 start
    */
-  new(
-    cellUuid,
-    createMarkdownCell,
-    tag = CELL_TAG.DEFAULT,
-    depth = 0,
-    start = null
-  ) {
+  new() {
     return {
       type: CELL_ACTION.NEW,
-      cellUuid,
-      createMarkdownCell,
-      tag,
-      depth,
-      start,
+    };
+  },
+
+  newList() {
+    return {
+      type: CELL_ACTION.NEW_LIST,
     };
   },
 

@@ -14,7 +14,7 @@ import {
   blockRelease,
 } from "../Markdown/handler";
 import { newCell, transformCell } from "./handler";
-import { cellGenerator, setGenerator } from "../CellGenerator";
+import { setGenerator } from "../CellGenerator";
 
 setGenerator("ul", (uuid) => <ListCell cellUuid={uuid} />);
 setGenerator("ol", (uuid) => <ListCell cellUuid={uuid} />);
@@ -72,15 +72,9 @@ const ListCell = ({ cellUuid }) => {
     if (textContent.length === 0) {
       backspaceEvent(e);
     } else {
-      const isOrderedList = tag === "ol";
-
-      const componentCallback = isOrderedList
-        ? cellGenerator.ol
-        : cellGenerator.ul;
-
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback, tag, depth, start);
+      newCell(dispatch);
     }
     blockRelease(dispatch);
   };

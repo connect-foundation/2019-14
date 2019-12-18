@@ -22,8 +22,8 @@ const saveCursorPosition = (cellDispatch) => {
   return null;
 };
 
-const newCell = (cellUuid, cellDispatch, componentCallback, tag) => {
-  cellDispatch(cellActionCreator.new(cellUuid, componentCallback, tag));
+const newCell = (cellDispatch) => {
+  cellDispatch(cellActionCreator.new());
 };
 
 const deleteCell = (cellDispatch, cellUuid, textContent) => {
