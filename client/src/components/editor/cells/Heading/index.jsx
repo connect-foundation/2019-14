@@ -13,8 +13,8 @@ import {
   deleteCell,
   blockRelease,
 } from "../Markdown/handler";
-import { newCell, initCell } from "./handler";
-import { cellGenerator, setGenerator } from "../CellGenerator";
+import { newCell } from "./handler";
+import { setGenerator } from "../CellGenerator";
 
 setGenerator("h1", (uuid) => <HeadingCell cellUuid={uuid} />);
 setGenerator("h2", (uuid) => <HeadingCell cellUuid={uuid} />);
@@ -50,9 +50,8 @@ const HeadingCell = ({ cellUuid }) => {
       (currentCursor.start === 0 && currentCursor.end === 0);
 
     if (isStartPos) {
-      const componentCallback = cellGenerator.p;
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      initCell(cellUuid, dispatch, componentCallback);
+      dispatch(cellActionCreator.reset());
     }
     if (state.block.start !== null) {
       deleteCell(dispatch);
@@ -64,10 +63,9 @@ const HeadingCell = ({ cellUuid }) => {
     if (textContent.length === 0) {
       backspaceEvent(e);
     } else {
-      const componentCallback = cellGenerator.p;
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback);
+      newCell(dispatch);
     }
     blockRelease(dispatch);
   };

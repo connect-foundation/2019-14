@@ -33,12 +33,9 @@ const EditorComponent = () => {
   }, []);
 
   useEffect(() => {
-    const renderTargetCallback = (cellUuid) => (
-      <MarkdownCell cellUuid={cellUuid} />
-    );
     if (state.cellManager.cells.length === 0) {
       cellDispatch(cellActionCreator.focusAttachRef(inputRef));
-      cellDispatch(cellActionCreator.init(renderTargetCallback));
+      cellDispatch(cellActionCreator.init());
     }
   }, []);
 

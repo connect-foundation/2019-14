@@ -1,13 +1,13 @@
-import CELL_TAG from "../enums/CELL_TAG";
-
 const CELL_ACTION = {
   INIT: "cell/init",
   NEW: "cell/new",
-  NEW_EMPTY_DEFAULT: "cell/new/empty/default",
+  NEW_LIST: "cell/new/list",
+  NEW_EMPTY: "cell/new/empty",
   INPUT: "cell/input",
   DELETE: "cell/delete",
   TARGET: {
     TRANSFORM: "cell/target/transform",
+    RESET: "cell/target/reset",
   },
   FOCUS: {
     PREV: "cell/focus/prev",
@@ -20,6 +20,7 @@ const CELL_ACTION = {
     UP: "cell/block/up",
     DOWN: "cell/block/down",
     RELEASE: "cell/block/release",
+    DELETE: "cell/block/delete",
   },
   CURSOR: {
     MOVE: "cell/cursor/move",
@@ -39,50 +40,32 @@ const CELL_ACTION = {
 
 const cellActionCreator = {
   /**
-   * 셀의 데이터를 초기화시킨다.
-   * @param {Cell} createMarkdownCell 초기화할 셀을 리턴하는 콜백. 인자로 uuid를 넣어야 한다.
-   * @param {Uuid} cellUuid 초기화할 셀의 uuid
-   * - 파라미터로 넘기지 않으면 기본값 null
+   * 맨 처음 페이지를 열었을 때 스토어의 상태를 초기화시킨다.
    */
-  init(createMarkdownCell, cellUuid = null) {
+  init() {
     return {
       type: CELL_ACTION.INIT,
-      createMarkdownCell,
-      tag: CELL_TAG.DEFAULT,
-      cellUuid,
     };
   },
 
   /**
    * 셀을 생성한다.
-   * @param {Uuid} cellUuid 새 셀을 생성할 기준 셀의 uuid
-   * - 엔터시 기준 셀의 다음 셀에 셀을 생성한다.
-   * @param {Cell} createMarkdownCell 새 셀 컴포넌트를 리턴하는 콜백
-   * @param {String} tag 셀의 타입(태그). 생략시 default input 셀이 생성된다.
-   * @param {Number} depth list일 경우의 depth
-   * @param {Number} start ordered list일 경우의 start
    */
-  new(
-    cellUuid,
-    createMarkdownCell,
-    tag = CELL_TAG.DEFAULT,
-    depth = 0,
-    start = null
-  ) {
+  new() {
     return {
       type: CELL_ACTION.NEW,
-      cellUuid,
-      createMarkdownCell,
-      tag,
-      depth,
-      start,
     };
   },
 
-  newEmptyDefault(cellUuid) {
+  newList() {
+    return {
+      type: CELL_ACTION.NEW_LIST,
+    };
+  },
+
+  newEmptyDefault() {
     return {
       type: CELL_ACTION.NEW_EMPTY_DEFAULT,
-      cellUuid,
     };
   },
 
@@ -101,13 +84,11 @@ const cellActionCreator = {
 
   /**
    * 지정한 셀을 삭제한다.
-   * @param {Uuid} cellUuid 삭제할 셀의 uuid
    * @param {Text} text 이전 셀로 이동할 텍스트
    */
-  delete(cellUuid, text = "") {
+  delete(text = "") {
     return {
       type: CELL_ACTION.DELETE,
-      cellUuid,
       text,
     };
   },
@@ -177,6 +158,12 @@ const cellActionCreator = {
     };
   },
 
+  reset() {
+    return {
+      type: CELL_ACTION.TARGET.RESET,
+    };
+  },
+
   /**
    * 모든 셀을 선택한다.
    */
@@ -210,6 +197,12 @@ const cellActionCreator = {
   blockRelease() {
     return {
       type: CELL_ACTION.BLOCK.RELEASE,
+    };
+  },
+
+  blockDelete() {
+    return {
+      type: CELL_ACTION.BLOCK.DELETE,
     };
   },
 

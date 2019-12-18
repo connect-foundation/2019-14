@@ -13,8 +13,8 @@ import {
   deleteCell,
   blockRelease,
 } from "../Markdown/handler";
-import { newCell, initCell, transformCell } from "./handler";
-import { cellGenerator, setGenerator } from "../CellGenerator";
+import { newCell, transformCell } from "./handler";
+import { setGenerator } from "../CellGenerator";
 
 setGenerator("ul", (uuid) => <ListCell cellUuid={uuid} />);
 setGenerator("ol", (uuid) => <ListCell cellUuid={uuid} />);
@@ -58,9 +58,8 @@ const ListCell = ({ cellUuid }) => {
       if (depth) {
         transformCell(cellUuid, dispatch, textContent, tag, depth - 1, start);
       } else {
-        const componentCallback = cellGenerator.p;
         dispatch(cellActionCreator.input(cellUuid, textContent));
-        initCell(cellUuid, dispatch, componentCallback);
+        dispatch(cellActionCreator.reset());
       }
     }
     if (state.block.start !== null) {
@@ -70,32 +69,12 @@ const ListCell = ({ cellUuid }) => {
 
   const enterEvent = (e) => {
     const { textContent } = e.target;
-    /*
-      e.target.insertAdjacentHTML(
-        "afterend",
-        renderToString(
-          <MarkdownWrapper
-            as="li"
-            placeholder={placeholder}
-            ref={inputRef || null}
-            suppressContentEditableWarning
-            contentEditable
-          ></MarkdownWrapper>
-        )
-      );
-      */
     if (textContent.length === 0) {
       backspaceEvent(e);
     } else {
-      const isOrderedList = tag === "ol";
-
-      const componentCallback = isOrderedList
-        ? cellGenerator.ol
-        : cellGenerator.ul;
-
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback, tag, depth, start);
+      newCell(dispatch);
     }
     blockRelease(dispatch);
   };

@@ -4,7 +4,6 @@ import createDebug from "debug";
 
 import { EVENT_TYPE } from "../../../../enums";
 import { useKeys, socketManager } from "../../../../utils";
-import { cellGenerator } from "../CellGenerator";
 import { cellActionCreator as cellAction } from "../../../../actions/CellAction";
 import { CellDispatchContext } from "../../../../stores/CellStore";
 import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
@@ -36,7 +35,7 @@ const ReplContainer = ({ cellUuid, isCellFocus }) => {
     [EVENT_TYPE.SHIFT_BACKSPACE]: () => {
       debug("Shift backspace terminal cell");
 
-      dispatchToCell(cellAction.init(null, cellUuid));
+      dispatchToCell(cellAction.reset());
       dispatchToCell(cellAction.input(cellUuid, ""));
     },
 
