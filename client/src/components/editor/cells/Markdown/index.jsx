@@ -20,7 +20,6 @@ import {
   transformCell,
 } from "./handler";
 
-setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
 setGenerator("hr", (uuid) => (
   <hr cellUuid={uuid} noshade="noshade" style={{ borderColor: "silver" }} />
 ));

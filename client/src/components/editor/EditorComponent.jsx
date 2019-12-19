@@ -3,14 +3,17 @@ import styled from "styled-components";
 
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
+import MarkdownCell from "./cells/Markdown";
+import { setGenerator } from "./cells/CellGenerator";
 import { uuidManager } from "../../utils";
-import { MarkdownCell } from "./cells";
 
 const EditorComponentWrapper = styled.section`
   width: 99%;
   display: flex;
   flex-direction: column;
 `;
+
+setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
 
 const EditorComponent = () => {
   const { state } = useContext(CellContext);
