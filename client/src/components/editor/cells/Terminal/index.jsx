@@ -43,8 +43,11 @@ const InnerTerminalCell = ({ cellUuid }) => {
   if (isFirstRender) {
     setIsFirstRender(false);
 
-    const loadedText = cellManager.texts[cellIndex];
-    dispatchToTerminal(terminalAction.load(loadedText));
+    const loadedOutput = cellManager.texts[cellIndex];
+    if (Array.isArray(loadedOutput)) {
+      loadedOutput.push("\n");
+      dispatchToTerminal(terminalAction.load(loadedOutput));
+    }
   }
 
   return (
