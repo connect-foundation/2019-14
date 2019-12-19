@@ -13,7 +13,7 @@ import {
 } from "../../../../stores/TerminalStore";
 import { CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator as cellAction } from "../../../../actions/CellAction";
-import Loading from "../../../commons/Loading";
+import Loading from "../../../common/Loading";
 
 const debug = createDebug("boost:component:repl-output");
 

@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
 import {
@@ -7,7 +8,7 @@ import {
 } from "../../../stores/TerminalSetting";
 import { createTerminalFetch } from "../../../utils/Request";
 import { THEME } from "../../../enums";
-import Loading from "../../commons/Loading";
+import Loading from "../../common/Loading";
 import SimpleModalContentsWrapper from "../../common/SimpleModalContentsWrapper";
 import { modalManager } from "../../../utils";
 
@@ -32,6 +33,10 @@ const ModalContents = ({ resultmessage }) => {
       <div>{resultmessage}</div>
     </SimpleModalContentsWrapper>
   );
+};
+
+ModalContents.propTypes = {
+  resultmessage: PropTypes.string.isRequired,
 };
 
 const StepperButtons = () => {
