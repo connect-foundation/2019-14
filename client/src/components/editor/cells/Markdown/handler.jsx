@@ -26,7 +26,7 @@ const newCell = (cellDispatch) => {
   cellDispatch(cellActionCreator.new());
 };
 
-const deleteCell = (cellDispatch, textContent) => {
+const deleteCell = (cellDispatch, textContent = "") => {
   cellDispatch(cellActionCreator.delete(textContent));
 };
 

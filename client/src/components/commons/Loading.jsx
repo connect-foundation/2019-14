@@ -107,7 +107,6 @@ const Roller = styled.div`
 `;
 
 const Loading = () => {
-  console.log("loading!");
   return (
     <Roller>
       <div />

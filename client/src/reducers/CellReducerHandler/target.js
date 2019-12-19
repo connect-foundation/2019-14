@@ -2,7 +2,7 @@ import { uuidManager } from "../../utils";
 import common from "./common";
 import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
-const { newDefaultEmptyCell } = common;
+const { newEmptyCell } = common;
 
 const transform = (cellUuid, cellManager, dataObj) => {
   const index = uuidManager.findIndex(cellUuid);
@@ -25,7 +25,7 @@ const transform = (cellUuid, cellManager, dataObj) => {
   };
 
   if (tag === "code") {
-    newDefaultEmptyCell(cellUuid, cellManager);
+    newEmptyCell(index, cellManager);
   }
 
   return {

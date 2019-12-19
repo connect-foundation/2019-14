@@ -105,7 +105,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const ctrlXEvent = () => {
     dispatch(cellActionCreator.copy());
-    deleteCell(dispatch);
+    dispatch(cellActionCreator.blockDelete());
   };
 
   const ctrlCEvent = () => {
@@ -141,7 +141,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const eventTrigger = isFocus && !isShared;
   attachDefaultHandlers(defaultKeydownHandlers);
-  useKeys(keydownHandlers, eventTrigger, [block.end], inputRef);
+  useKeys(keydownHandlers, eventTrigger, [block.end]);
   // -------------- End -----------------------
 
   useEffect(() => {

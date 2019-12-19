@@ -307,7 +307,6 @@ const useKeys = (
   handlers,
   isFocus,
   deps = [],
-  ref,
   checksum = defaultChecksumAllTrue
 ) => {
   const keydownHandlers = {};
@@ -320,15 +319,14 @@ const useKeys = (
   });
 
   useEffect(() => {
-    const target = ref && ref.current ? ref.current : window;
     if (isFocus) {
       Object.values(keydownHandlers).forEach((handler) => {
-        target.addEventListener("keydown", handler);
+        window.addEventListener("keydown", handler);
       });
     }
     return () => {
       Object.values(keydownHandlers).forEach((handler) => {
-        target.removeEventListener("keydown", handler);
+        window.removeEventListener("keydown", handler);
       });
     };
   }, [isFocus, ...deps]);
