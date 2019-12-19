@@ -73,7 +73,7 @@ const testcases = {
   ],
 };
 
-describe("Terminal Cell", () => {
+xdescribe("Terminal Cell", () => {
   it("새로운 셀을 생성후 포커스 위치로 입력창이 이동된다", (done) => {
     const isDone = testcases.newRepl.map(async (testcase) => {
       const { storeState, answer } = testcase;
