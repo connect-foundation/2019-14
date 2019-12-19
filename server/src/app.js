@@ -84,13 +84,20 @@ io.use((socket, next) => {
 
 app.use(sessionMiddleware);
 
-(async () => {
+const thirtySec = 30000;
+const monitoring = async () => {
+  debug(`monitoring container start!`);
   const containers = await docker.getActiveContainers();
 
-  containers.forEach(async (element) => {
+  const isJobDone = containers.map(async (element) => {
     await docker.monitorContainer(element.Id);
   });
-})();
+
+  Promise.all(isJobDone).then(() => {
+    setTimeout(monitoring, thirtySec);
+  });
+};
+monitoring();
 
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);

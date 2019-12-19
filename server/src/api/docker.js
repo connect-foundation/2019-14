@@ -8,6 +8,8 @@ const SIGNAL_TYPE = {
   SIGKILL: 9,
 };
 
+const NETWORK_USAGE_LIMIT = 300000;
+
 const changeToFormattedName = (name) => {
   const startFormat = "/";
   if (name.startsWith(startFormat)) {
@@ -262,32 +264,25 @@ class DockerApi {
   async monitorContainer(containerId) {
     const container = await this.request.getContainer(containerId);
 
-    let timerId = null;
+    let totalNetworksUsage = 0;
 
-    const setIntervalHandler = async () => {
-      let totalNetworksUsage = 0;
+    const userMetric = await container.stats({
+      id: containerId,
+      stream: false,
+    });
 
-      const userMetric = await container.stats({
-        id: containerId,
-        stream: false,
-      });
+    if (!userMetric || !userMetric.networks) {
+      return false;
+    }
 
-      if (!userMetric || !userMetric.networks) {
-        return false;
-      }
+    Object.keys(userMetric.networks).forEach(async (element) => {
+      totalNetworksUsage += userMetric.networks[element].rx_bytes;
+      totalNetworksUsage += userMetric.networks[element].tx_bytes;
+    });
 
-      Object.keys(userMetric.networks).forEach(async (element) => {
-        totalNetworksUsage += userMetric.networks[element].rx_bytes;
-        totalNetworksUsage += userMetric.networks[element].tx_bytes;
-      });
-
-      if (totalNetworksUsage > 1000000) {
-        await container.stop();
-        clearInterval(timerId);
-      }
-    };
-
-    timerId = setInterval(setIntervalHandler, 1000);
+    if (totalNetworksUsage > NETWORK_USAGE_LIMIT) {
+      await container.stop();
+    }
 
     return true;
   }
