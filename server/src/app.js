@@ -140,11 +140,6 @@ io.of((name, query, next) => {
 
   socket.on("disconnect", (reason) => {
     debug(`socket io disconnect by ${reason}`);
-    const { containerId } = session;
-    if (containerId) {
-      debug(`stop container ${containerId}`);
-      docker.stopContainer(containerId);
-    }
     sshManager.disconnect(connectionId);
   });
 
