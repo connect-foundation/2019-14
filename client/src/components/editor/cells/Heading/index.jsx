@@ -71,7 +71,7 @@ const HeadingCell = ({ cellUuid }) => {
   }
 
   const eventTrigger = isFocus && !isShared;
-  useKeys(keydownHandlers, eventTrigger, [block.end]);
+  useKeys(keydownHandlers, eventTrigger, [block.end], inputRef);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
