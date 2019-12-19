@@ -46,7 +46,6 @@ const terminalSettingActionCreator = {
     return { type: TERMINAL_SETTING_ACTION.TERMINAL_LOADING, isLoading };
   },
   disableCreateTerminalButton(isDisable) {
-    console.log(isDisable);
     return { type: TERMINAL_SETTING_ACTION.CREATE_BUTTON_DISABLE, isDisable };
   },
 };

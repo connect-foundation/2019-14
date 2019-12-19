@@ -60,6 +60,8 @@ const StepperButtons = () => {
       const result = await createTerminalFetch(option);
     } catch (error) {
       console.log(error);
+
+      defaultCreateTerminalResultMesage = "터미널 생성에 실패하였습니다.";
       modalManager.openModal(
         "",
         <ModalContents resultmessage={defaultCreateTerminalResultMesage} />
@@ -68,7 +70,6 @@ const StepperButtons = () => {
     }
     // dispatch(terminalSettingActionCreator.disableCreateTerminalButton(false));
     // modal 팝업
-    defaultCreateTerminalResultMesage = "터미널 생성에 실패하였습니다.";
     modalManager.openModal(
       "",
       <ModalContents resultmessage={defaultCreateTerminalResultMesage} />
