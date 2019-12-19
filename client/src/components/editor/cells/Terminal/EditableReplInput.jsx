@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+
+import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
+import { TerminalContext } from "../../../../stores/TerminalStore";
 
 const EditorTextarea = styled.textarea`
   width: 100%;
@@ -33,6 +36,8 @@ const initState = {
 const EditableReplInput = React.forwardRef(
   ({ changeHandler, clickHandler }, ref) => {
     const [state, setState] = useState({ ...initState });
+    const { terminalState } = useContext(TerminalContext);
+    const { currentText } = terminalState;
 
     const changeHandlerWrapper = (e) => {
       e.persist();
@@ -57,7 +62,7 @@ const EditableReplInput = React.forwardRef(
         spellCheck={false}
         rows={state.rows}
         line-height={state.lineHeight}
-        value={state.value}
+        value={currentText}
       />
     );
   }
