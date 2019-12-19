@@ -14,6 +14,8 @@ function TerminalSettingStore({ children }) {
     currentStep: 0,
 
     isHidden: true,
+    loadLodingbar: false,
+    createTerminalButtonDisabled: false,
   };
 
   const [state, dispatch] = useReducer(terminalSettingReducer, initValue);

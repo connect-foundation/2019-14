@@ -7,6 +7,9 @@ import {
 } from "../../../stores/TerminalSetting";
 import { createTerminalFetch } from "../../../utils/Request";
 import { THEME } from "../../../enums";
+import Loading from "../../commons/Loading";
+import SimpleModalContentsWrapper from "../../common/SimpleModalContentsWrapper";
+import { modalManager } from "../../../utils";
 
 const StepperButtonsWrapper = styled.footer`
   display: flex;
@@ -22,6 +25,14 @@ const Button = styled.button`
   font-size: 1.2rem;
   border: none;
 `;
+
+const ModalContents = ({ resultmessage }) => {
+  return (
+    <SimpleModalContentsWrapper>
+      <div>{resultmessage}</div>
+    </SimpleModalContentsWrapper>
+  );
+};
 
 const StepperButtons = () => {
   const { state } = useContext(TerminalSettingContext);
@@ -43,16 +54,53 @@ const StepperButtons = () => {
       DB: state.DB,
     };
 
-    // TODO 받아 온 값을 store에 저장(cell, terminal)
-    const result = await createTerminalFetch(option);
+    let defaultCreateTerminalResultMesage = "터미널 생성에 성공하였습니다.";
+
+    try {
+      const result = await createTerminalFetch(option);
+    } catch (error) {
+      console.log(error);
+
+      defaultCreateTerminalResultMesage = "터미널 생성에 실패하였습니다.";
+      modalManager.openModal(
+        "",
+        <ModalContents resultmessage={defaultCreateTerminalResultMesage} />
+      );
+      return;
+    }
+    // dispatch(terminalSettingActionCreator.disableCreateTerminalButton(false));
+    // modal 팝업
+    modalManager.openModal(
+      "",
+      <ModalContents resultmessage={defaultCreateTerminalResultMesage} />
+    );
+  };
+
+  const waitSecond = () => {
+    dispatch(terminalSettingActionCreator.loadTerminalLodingbar(true));
+    dispatch(terminalSettingActionCreator.disableCreateTerminalButton(true));
+
+    setTimeout(() => {
+      terminalButtonClickHandler();
+      dispatch(terminalSettingActionCreator.loadTerminalLodingbar(false));
+      dispatch(terminalSettingActionCreator.disableCreateTerminalButton(false));
+    }, 3000);
   };
 
   return (
-    <StepperButtonsWrapper>
-      <Button onClick={clickHandler}>&lt; prev</Button>
-      <Button onClick={terminalButtonClickHandler}>createTerminal</Button>
-      <Button onClick={clickHandler}>next &gt;</Button>
-    </StepperButtonsWrapper>
+    <>
+      <StepperButtonsWrapper>
+        <Button onClick={clickHandler}>&lt; prev</Button>
+        <Button
+          onClick={waitSecond}
+          disabled={state.createTerminalButtonDisabled}
+        >
+          createTerminal
+        </Button>
+        <Button onClick={clickHandler}>next &gt;</Button>
+      </StepperButtonsWrapper>
+      <div>{state.loadLodingbar ? <Loading /> : null}</div>
+    </>
   );
 };
 
