@@ -5,7 +5,10 @@ import { faDatabase } from "@fortawesome/free-solid-svg-icons";
 import { faUbuntu, faJs } from "@fortawesome/free-brands-svg-icons";
 
 import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
-import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
+import {
+  TerminalSettingDispatch,
+  TerminalSettingContext,
+} from "../../../stores/TerminalSetting";
 import { THEME } from "../../../enums";
 
 const STEP_TYPE = {
@@ -22,18 +25,29 @@ const StepWrapper = styled.div`
   text-align: center;
   line-height: 2.5rem;
   border-radius: 100%;
-  background-color: ${THEME.VS_CODE.INNER_BOX};
+  background-color: ${({ isClicked }) =>
+    isClicked ? THEME.VS_CODE.HEADER : THEME.VS_CODE.INNER_BOX};
+
+  &:hover {
+    background-color: ${THEME.VS_CODE.HEADER};
+  }
 `;
 
 const Step = ({ icon, index }) => {
+  const { state } = useContext(TerminalSettingContext);
   const dispatch = useContext(TerminalSettingDispatch);
 
   const clickEventHandler = () => {
     dispatch(terminalSettingActionCreator.selectStep(index));
   };
 
+  console.log(state.currentStep === index, "??");
+
   return (
-    <StepWrapper onClick={clickEventHandler}>
+    <StepWrapper
+      onClick={clickEventHandler}
+      isClicked={state.currentStep == index}
+    >
       <FontAwesomeIcon icon={icon} />
     </StepWrapper>
   );
