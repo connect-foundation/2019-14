@@ -11,13 +11,9 @@ import { useCellState, useKeys } from "../../../../utils";
 import {
   getSelection,
   saveCursorPosition,
-  deleteCell,
   blockRelease,
 } from "../Markdown/handler";
 import { newCell } from "../Heading/handler";
-import { setGenerator } from "../CellGenerator";
-
-setGenerator("blockquote", (uuid) => <QuoteCell cellUuid={uuid} />);
 
 const QuoteCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);

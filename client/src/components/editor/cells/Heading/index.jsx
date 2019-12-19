@@ -13,14 +13,6 @@ import {
   blockRelease,
 } from "../Markdown/handler";
 import { newCell } from "./handler";
-import { setGenerator } from "../CellGenerator";
-
-setGenerator("h1", (uuid) => <HeadingCell cellUuid={uuid} />);
-setGenerator("h2", (uuid) => <HeadingCell cellUuid={uuid} />);
-setGenerator("h3", (uuid) => <HeadingCell cellUuid={uuid} />);
-setGenerator("h4", (uuid) => <HeadingCell cellUuid={uuid} />);
-setGenerator("h5", (uuid) => <HeadingCell cellUuid={uuid} />);
-setGenerator("h6", (uuid) => <HeadingCell cellUuid={uuid} />);
 
 const HeadingCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);

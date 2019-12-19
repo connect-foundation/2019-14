@@ -10,13 +10,8 @@ import {
   TerminalStore,
 } from "../../../../stores/TerminalStore";
 import { CellContext } from "../../../../stores/CellStore";
-import { setGenerator } from "../CellGenerator";
 import { uuidManager } from "../../../../utils";
 import ReplContainer from "./ReplContainer";
-
-setGenerator("terminal", (uuid) => {
-  return <TerminalCell cellUuid={uuid} />;
-});
 
 const debug = createDebug("boost:component:terminal-cell");
 
