@@ -3,7 +3,7 @@ import propTypes from "prop-types";
 
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
-import { cellGenerator, setGenerator } from "../CellGenerator";
+import { setGenerator } from "../CellGenerator";
 import { useKeys, uuidManager, attachDefaultHandlers } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
@@ -60,10 +60,9 @@ const MarkdownCell = ({ cellUuid }) => {
   // -------------- Handler -----------------------
   const enterEvent = (e) => {
     const { textContent } = e.target;
-    const componentCallback = cellGenerator.p;
     saveCursorPosition(dispatch);
     dispatch(cellActionCreator.input(cellUuid, textContent));
-    newCell(cellUuid, dispatch, componentCallback);
+    newCell(dispatch);
     blockRelease(dispatch);
   };
 
@@ -90,15 +89,13 @@ const MarkdownCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     const cursorPos = getSelection();
+    const isCursorPosZero =
+      cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0;
 
-    /**
-     * @todo 블록 부분들은 추후 싹 리팩토링 예정
-     */
-    if (
-      (cursorPos.start === 0 && cursorPos.end === 0 && cellIndex > 0) ||
-      state.block.start !== null
-    ) {
-      deleteCell(dispatch, cellUuid, textContent);
+    if (block.start !== null) {
+      dispatch(cellActionCreator.blockDelete());
+    } else if (isCursorPosZero) {
+      deleteCell(dispatch, textContent);
     }
   };
 
@@ -108,7 +105,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const ctrlXEvent = () => {
     dispatch(cellActionCreator.copy());
-    deleteCell(dispatch);
+    dispatch(cellActionCreator.blockDelete());
   };
 
   const ctrlCEvent = () => {

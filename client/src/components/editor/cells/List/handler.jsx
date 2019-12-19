@@ -1,21 +1,8 @@
 import { cellActionCreator } from "../../../../actions/CellAction";
 import { cellGenerator } from "../CellGenerator";
 
-const newCell = (
-  cellUuid,
-  cellDispatch,
-  componentCallback,
-  tag,
-  depth,
-  start
-) => {
-  cellDispatch(
-    cellActionCreator.new(cellUuid, componentCallback, tag, depth, start)
-  );
-};
-
-const initCell = (cellUuid, cellDispatch, componentCallback) => {
-  cellDispatch(cellActionCreator.init(componentCallback, cellUuid));
+const newCell = (cellDispatch) => {
+  cellDispatch(cellActionCreator.newList());
 };
 
 const transformCell = (cellUuid, cellDispatch, text, tag, depth, start) => {
@@ -30,4 +17,4 @@ const transformCell = (cellUuid, cellDispatch, text, tag, depth, start) => {
   );
 };
 
-export { newCell, initCell, transformCell };
+export { newCell, transformCell };

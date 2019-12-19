@@ -10,11 +10,10 @@ import { useCellState, useKeys } from "../../../../utils";
 import {
   getSelection,
   saveCursorPosition,
-  deleteCell,
   blockRelease,
 } from "../Markdown/handler";
-import { newCell, initCell, transformCell } from "./handler";
-import { cellGenerator, setGenerator } from "../CellGenerator";
+import { newCell, transformCell } from "./handler";
+import { setGenerator } from "../CellGenerator";
 
 setGenerator("ul", (uuid) => <ListCell cellUuid={uuid} />);
 setGenerator("ol", (uuid) => <ListCell cellUuid={uuid} />);
@@ -54,48 +53,26 @@ const ListCell = ({ cellUuid }) => {
       textContent.length === 0 ||
       (currentCursor.start === 0 && currentCursor.end === 0);
 
-    if (isStartPos) {
+    if (block.start !== null) {
+      dispatch(cellActionCreator.blockDelete());
+    } else if (isStartPos) {
       if (depth) {
         transformCell(cellUuid, dispatch, textContent, tag, depth - 1, start);
       } else {
-        const componentCallback = cellGenerator.p;
         dispatch(cellActionCreator.input(cellUuid, textContent));
-        initCell(cellUuid, dispatch, componentCallback);
+        dispatch(cellActionCreator.reset());
       }
-    }
-    if (state.block.start !== null) {
-      deleteCell(dispatch);
     }
   };
 
   const enterEvent = (e) => {
     const { textContent } = e.target;
-    /*
-      e.target.insertAdjacentHTML(
-        "afterend",
-        renderToString(
-          <MarkdownWrapper
-            as="li"
-            placeholder={placeholder}
-            ref={inputRef || null}
-            suppressContentEditableWarning
-            contentEditable
-          ></MarkdownWrapper>
-        )
-      );
-      */
     if (textContent.length === 0) {
       backspaceEvent(e);
     } else {
-      const isOrderedList = tag === "ol";
-
-      const componentCallback = isOrderedList
-        ? cellGenerator.ol
-        : cellGenerator.ul;
-
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback, tag, depth, start);
+      newCell(dispatch);
     }
     blockRelease(dispatch);
   };

@@ -10,11 +10,10 @@ import { useCellState, useKeys } from "../../../../utils";
 import {
   getSelection,
   saveCursorPosition,
-  deleteCell,
   blockRelease,
 } from "../Markdown/handler";
-import { newCell, initCell } from "./handler";
-import { cellGenerator, setGenerator } from "../CellGenerator";
+import { newCell } from "./handler";
+import { setGenerator } from "../CellGenerator";
 
 setGenerator("h1", (uuid) => <HeadingCell cellUuid={uuid} />);
 setGenerator("h2", (uuid) => <HeadingCell cellUuid={uuid} />);
@@ -45,17 +44,15 @@ const HeadingCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     const currentCursor = getSelection();
-    const isStartPos =
+    const isCursorPosZero =
       textContent.length === 0 ||
       (currentCursor.start === 0 && currentCursor.end === 0);
 
-    if (isStartPos) {
-      const componentCallback = cellGenerator.p;
+    if (block.start !== null) {
+      dispatch(cellActionCreator.blockDelete());
+    } else if (isCursorPosZero) {
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      initCell(cellUuid, dispatch, componentCallback);
-    }
-    if (state.block.start !== null) {
-      deleteCell(dispatch);
+      dispatch(cellActionCreator.reset());
     }
   };
 
@@ -64,10 +61,9 @@ const HeadingCell = ({ cellUuid }) => {
     if (textContent.length === 0) {
       backspaceEvent(e);
     } else {
-      const componentCallback = cellGenerator.p;
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback);
+      newCell(dispatch);
     }
     blockRelease(dispatch);
   };

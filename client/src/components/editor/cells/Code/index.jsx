@@ -3,11 +3,10 @@ import propTypes from "prop-types";
 import styled from "styled-components";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
-import { setGenerator, cellGenerator } from "../CellGenerator";
+import { setGenerator } from "../CellGenerator";
 import { useCellState, useKeys, getChecksumAllFalse } from "../../../../utils";
 import { EVENT_TYPE } from "../../../../enums";
 import { focusPrev, focusNext } from "../Markdown/handler";
-import { initCell } from "../Heading/handler";
 
 setGenerator("code", (uuid) => <CodeCell cellUuid={uuid} />);
 
@@ -96,8 +95,7 @@ const CodeCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     if (textContent.length === 0) {
-      const componentCallback = cellGenerator.p;
-      initCell(cellUuid, dispatch, componentCallback);
+      dispatch(cellActionCreator.reset());
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import propTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,7 +14,10 @@ import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
 import { CellDispatchContext, CellContext } from "../../../stores/CellStore";
 import { THEME } from "../../../enums";
 import { cellActionCreator } from "../../../actions/CellAction";
-import { request, utils } from "../../../utils";
+import { request, utils, modalManager } from "../../../utils";
+import SimpleModalContentsWrapper from "../../common/SimpleModalContentsWrapper";
+
+const { openModal } = modalManager;
 
 const BUTTON_TYPE = {
   NEW: faFileMedical,
@@ -27,16 +30,27 @@ const BUTTON_TYPE = {
 const share = async () => {
   const containerId = 9;
   const response = await request.shareDocument(containerId);
-  /**
-   * @todo 에러 처리하기
-   * - 성공, 실패시 각각 처리할 것.
-   */
   if (response.status === 500) {
+    const label = "공유 실패";
+    const modalContents = (
+      <SimpleModalContentsWrapper>
+        <div>공유에 실패하였습니다.</div>
+        <div>다시 시도해 주세요.</div>
+      </SimpleModalContentsWrapper>
+    );
+    openModal(label, modalContents);
     return false;
   }
-  console.log(response);
   const shareId = response.data;
   localStorage.setItem("sharedDocumentId", shareId);
+  const label = "공유 성공";
+  const modalContents = (
+    <SimpleModalContentsWrapper>
+      <div>공유에 성공하였습니다.</div>
+      <div>공유를 위한 UUID가 클립보드에 복사되었습니다.</div>
+    </SimpleModalContentsWrapper>
+  );
+  openModal(label, modalContents);
   return shareId;
 };
 
@@ -53,14 +67,20 @@ const BUTTON_HANDLER = {
        */
       const containerId = 9;
       const response = await request.loadDocument(containerId);
-      console.log(response);
-      /**
-       * @todo 에러 처리하기
-       * - 성공, 실패시 각각 처리할 것.
-       */
-      const document = response.data;
-      cellManager.load(document);
-      cellDispatch(cellActionCreator.loadFinish());
+      if (response.status === 200) {
+        const document = response.data;
+        cellManager.load(document);
+        cellDispatch(cellActionCreator.loadFinish());
+      } else {
+        const label = "불러오기 실패";
+        const modalContents = (
+          <SimpleModalContentsWrapper>
+            <div>불러오기에 실패하였습니다.</div>
+            <div>다시 시도해 주세요.</div>
+          </SimpleModalContentsWrapper>
+        );
+        openModal(label, modalContents);
+      }
     };
     cellDispatch(cellActionCreator.load());
     loadDocument();
@@ -69,7 +89,9 @@ const BUTTON_HANDLER = {
     let shareId = null;
     const shareDocument = async () => {
       shareId = await share();
-      utils.copyText(shareId);
+      if (shareId) {
+        utils.copyText(shareId);
+      }
     };
 
     shareId = localStorage.getItem("sharedDocumentId");
@@ -106,21 +128,14 @@ const ToolBarButton = ({ buttonType }) => {
   const cellDispatch = useContext(CellDispatchContext);
   const terminalDispatch = useContext(TerminalSettingDispatch);
   const { state } = useContext(CellContext);
-  const { cellManager, isShared } = state;
+  const { cellManager } = state;
 
   const onClick = () => {
     BUTTON_HANDLER[buttonType](cellDispatch, cellManager, terminalDispatch);
   };
 
-  useEffect(() => {
-    if (isShared) {
-      console.log(localStorage.getItem("sharedDocumentId"));
-    }
-  }, [isShared]);
-
   return (
     <ToolBarButtonWrapper isTerminal={isTerminal}>
-      {/* {isShared && <Redirect to="/share" />} */}
       <FontAwesomeIcon icon={BUTTON_TYPE[buttonType]} onClick={onClick} />
       <div>{buttonType}</div>
     </ToolBarButtonWrapper>

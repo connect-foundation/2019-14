@@ -1,7 +1,8 @@
 import { uuidManager } from "../../utils";
 import common from "./common";
+import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
-const { newDefaultEmptyCell } = common;
+const { newEmptyCell } = common;
 
 const transform = (cellUuid, cellManager, dataObj) => {
   const index = uuidManager.findIndex(cellUuid);
@@ -24,7 +25,7 @@ const transform = (cellUuid, cellManager, dataObj) => {
   };
 
   if (tag === "code") {
-    newDefaultEmptyCell(cellUuid, cellManager);
+    newEmptyCell(index, cellManager);
   }
 
   return {
@@ -32,4 +33,16 @@ const transform = (cellUuid, cellManager, dataObj) => {
   };
 };
 
-export default { transform };
+const reset = (index, cellManager) => {
+  const uuidArray = uuidManager.getUuidArray();
+  const targetUuid = uuidArray[index];
+  cellManager.change(index, {
+    cell: cellGenerator.p(targetUuid),
+    tag: "p",
+  });
+};
+
+export default {
+  transform,
+  reset,
+};

@@ -11,7 +11,7 @@ const MainPageWrapper = styled.div`
   height: -webkit-fill-available;
   align-items: center;
 `;
-const MainPage = ({ match }) => {
+const MainPage = () => {
   return (
     <MainPageWrapper>
       <MainHeader />
