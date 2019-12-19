@@ -7,8 +7,13 @@ import { TerminalSettingContext } from "../../../stores/TerminalSetting";
 import { THEME } from "../../../enums";
 
 const TermialSettingDrawerWrapper = styled.section`
+  position: fixed;
+
+  right: 0;
+
   width: 28rem;
   height: 100%;
+
   background-color: ${THEME.VS_CODE.SIDE_MENU};
   color: ${THEME.VS_CODE.FONT};
   display: ${({ isHidden }) => isHidden && "none"};

@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDatabase } from "@fortawesome/free-solid-svg-icons";
@@ -41,16 +42,18 @@ const Step = ({ icon, index }) => {
     dispatch(terminalSettingActionCreator.selectStep(index));
   };
 
-  console.log(state.currentStep === index, "??");
-
   return (
     <StepWrapper
       onClick={clickEventHandler}
-      isClicked={state.currentStep == index}
+      isClicked={state.currentStep === index}
     >
       <FontAwesomeIcon icon={icon} />
     </StepWrapper>
   );
+};
+
+Step.propTypes = {
+  index: PropTypes.number.isRequired,
 };
 
 export { Step, STEP_TYPE };
