@@ -3,13 +3,37 @@ import styled from "styled-components";
 
 import { CellContext, CellDispatchContext } from "../../stores/CellStore";
 import { cellActionCreator } from "../../actions/CellAction";
+import { setGenerator } from "./cells/CellGenerator";
 import { uuidManager } from "../../utils";
+import {
+  MarkdownCell,
+  HeadingCell,
+  ListCell,
+  QuoteCell,
+  TerminalCell,
+  CodeCell,
+} from "./cells";
 
 const EditorComponentWrapper = styled.section`
   width: 99%;
   display: flex;
   flex-direction: column;
 `;
+
+setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
+setGenerator("code", (uuid) => <CodeCell cellUuid={uuid} />);
+setGenerator("h1", (uuid) => <HeadingCell cellUuid={uuid} />);
+setGenerator("h2", (uuid) => <HeadingCell cellUuid={uuid} />);
+setGenerator("h3", (uuid) => <HeadingCell cellUuid={uuid} />);
+setGenerator("h4", (uuid) => <HeadingCell cellUuid={uuid} />);
+setGenerator("h5", (uuid) => <HeadingCell cellUuid={uuid} />);
+setGenerator("h6", (uuid) => <HeadingCell cellUuid={uuid} />);
+setGenerator("ul", (uuid) => <ListCell cellUuid={uuid} />);
+setGenerator("ol", (uuid) => <ListCell cellUuid={uuid} />);
+setGenerator("blockquote", (uuid) => <QuoteCell cellUuid={uuid} />);
+setGenerator("terminal", (uuid) => {
+  return <TerminalCell cellUuid={uuid} />;
+});
 
 const EditorComponent = () => {
   const { state } = useContext(CellContext);
