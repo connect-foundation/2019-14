@@ -102,6 +102,7 @@ router
         return;
       }
 
+      session.containerId = result.containerId;
       session.port = result.portBinding;
 
       res.status(201).json(result);

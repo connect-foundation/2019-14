@@ -45,8 +45,14 @@ const sshOptions = {
   password: process.env.REMOTE_SSH_PASSWORD,
   port: process.env.REMOTE_CONTAINER_PORT,
   host: process.env.REMOTE_DOCKER_IP,
+  containerId: process.env.REMOTE_CONTAINER_ID,
 };
 app.set("session", sshOptions);
+
+if (sshOptions.containerId) {
+  // start default container
+  docker.startContainer(sshOptions.containerId);
+}
 
 app.use(logger("dev"));
 app.use(express.json());

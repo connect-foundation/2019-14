@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useEffect, useRef, useContext } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
@@ -15,8 +15,6 @@ import {
 const ReplInputWrapper = styled.div`
   display: flex;
 
-  height: 100%;
-
   align-items: center;
 
   padding: 15px;
@@ -27,6 +25,7 @@ const ReplInputWrapper = styled.div`
 
 const ReplPrompt = styled.div`
   width: 5rem;
+  height: 100%;
 
   border-right: 5px solid #00fe3d;
   padding-right: 10px;
@@ -41,7 +40,7 @@ const ReplInput = ({ cellUuid, isCellFocus }) => {
   const { terminalState } = useContext(TerminalContext);
   const dispatchToCell = useContext(CellDispatchContext);
 
-  const { currentText, replCount } = terminalState;
+  const { replCount } = terminalState;
 
   useEffect(() => {
     const isFocusIn = replRef && replRef.current && isCellFocus;
@@ -67,11 +66,8 @@ const ReplInput = ({ cellUuid, isCellFocus }) => {
       <ReplPrompt>{prompt}</ReplPrompt>
       <EditableReplInput
         ref={replRef}
-        rows={1}
-        value={currentText}
-        spellCheck={false}
-        onChange={changeHandler}
-        onClick={clickHandler}
+        changeHandler={changeHandler}
+        clickHandler={clickHandler}
       />
     </ReplInputWrapper>
   );
