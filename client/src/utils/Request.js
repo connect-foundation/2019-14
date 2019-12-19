@@ -76,6 +76,9 @@ const request = {
       ...defaultOptions,
       method: "PATCH",
       url: `${BASE_URL}/${PATH.SAVE}`,
+      validateStatus: () => {
+        return true;
+      },
       data: {
         containerId,
         docContent: documentString,
@@ -89,6 +92,9 @@ const request = {
     const options = {
       ...defaultOptions,
       url: `${BASE_URL}/${PATH.LOAD}/${containerId}`,
+      validateStatus: () => {
+        return true;
+      },
     };
     const response = await axios(options);
     return response;
@@ -99,6 +105,9 @@ const request = {
       ...defaultOptions,
       method: "POST",
       url: `${BASE_URL}/${PATH.SHARE}`,
+      validateStatus: () => {
+        return true;
+      },
       data: {
         containerId,
       },
@@ -111,6 +120,9 @@ const request = {
     const options = {
       ...defaultOptions,
       url: `${BASE_URL}/${PATH.SHARE}/${shareId}`,
+      validateStatus: () => {
+        return true;
+      },
     };
     const response = await axios(options);
     return response;
