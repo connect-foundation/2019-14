@@ -120,11 +120,11 @@ io.of((name, query, next) => {
     debug(`Shell command output : ${data.toString()}`);
     // client <-- server
     const sshConnection = sshManager.getConnection(connectionId);
-    if (sshConnection.isFirstMessage) {
-      sshConnection.isFirstMessage = false;
-    } else {
+    const isWelcomeString = /^Welcome/.exec(data) !== null;
+    if (!sshConnection.isFirstMessage || !isWelcomeString) {
       socket.emit("stdout", data);
     }
+    sshConnection.isFirstMessage = false;
   });
 
   // client --> (server) --> docker container
