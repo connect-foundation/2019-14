@@ -10,6 +10,8 @@ const TERMINAL_SETTING_ACTION = {
     STEP: "terminal-setting/move/step",
   },
   HIDE: "terminal-setting/hide",
+  TERMINAL_LOADING: "terminal-setting/loading",
+  CREATE_BUTTON_DISABLE: "terminal-setting/createbutton",
 };
 
 const terminalSettingActionCreator = {
@@ -39,6 +41,13 @@ const terminalSettingActionCreator = {
 
   viewTerminalSetting() {
     return { type: TERMINAL_SETTING_ACTION.HIDE };
+  },
+  loadTerminalLodingbar(isLoading) {
+    return { type: TERMINAL_SETTING_ACTION.TERMINAL_LOADING, isLoading };
+  },
+  disableCreateTerminalButton(isDisable) {
+    console.log(isDisable);
+    return { type: TERMINAL_SETTING_ACTION.CREATE_BUTTON_DISABLE, isDisable };
   },
 };
 
