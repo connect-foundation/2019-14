@@ -17,7 +17,7 @@ const makeImageNameString = (terminalOption) => {
 
 const createDefaultTerminal = async (dockerInstance, terminalOption) => {
   const rootDir = path.resolve(__dirname, "../../");
-  const dockerFilePath = `${process.env.INIT_CWD}/dockerfiles/`;
+  const dockerFilePath = `${rootDir}/dockerfiles/`;
   const imageTag = makeImageNameString(terminalOption);
 
   try {
