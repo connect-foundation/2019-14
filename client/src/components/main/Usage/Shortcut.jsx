@@ -14,7 +14,7 @@ const ShortcutTableWrapper = styled.table`
 const Shortcut = () => {
   return (
     <>
-      <h3>Shortcut</h3>
+      <h3 className="sub-title">Shortcut</h3>
       <ShortcutTableWrapper>
         <thead>
           <tr>
