@@ -107,13 +107,7 @@ const CodeCell = ({ cellUuid }) => {
   };
 
   const eventTrigger = isFocus && !isShared;
-  useKeys(
-    keydownHandlerArray,
-    eventTrigger,
-    [],
-    inputRef,
-    getChecksumAllFalse()
-  );
+  useKeys(keydownHandlerArray, eventTrigger, [], getChecksumAllFalse());
 
   const onClick = () => {
     dispatch(cellActionCreator.focusMove(cellUuid));

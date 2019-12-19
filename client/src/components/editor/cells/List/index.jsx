@@ -10,7 +10,6 @@ import { useCellState, useKeys } from "../../../../utils";
 import {
   getSelection,
   saveCursorPosition,
-  deleteCell,
   blockRelease,
 } from "../Markdown/handler";
 import { newCell, transformCell } from "./handler";
@@ -103,7 +102,7 @@ const ListCell = ({ cellUuid }) => {
   }
 
   const eventTrigger = isFocus && !isShared;
-  useKeys(keydownHandlers, eventTrigger, [block.end, depth], inputRef);
+  useKeys(keydownHandlers, eventTrigger, [block.end, depth]);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
