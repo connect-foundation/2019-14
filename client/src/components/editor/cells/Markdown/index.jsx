@@ -89,6 +89,7 @@ const MarkdownCell = ({ cellUuid }) => {
     if (block.start !== null) {
       dispatch(cellActionCreator.blockDelete());
     } else if (isCursorPosZero) {
+      e.preventDefault();
       deleteCell(dispatch, textContent);
     }
   };
@@ -135,7 +136,7 @@ const MarkdownCell = ({ cellUuid }) => {
 
   const eventTrigger = isFocus && !isShared;
   attachDefaultHandlers(defaultKeydownHandlers);
-  useKeys(keydownHandlers, eventTrigger, [block.end]);
+  useKeys(keydownHandlers, eventTrigger, [block.end], inputRef);
   // -------------- End -----------------------
 
   useEffect(() => {

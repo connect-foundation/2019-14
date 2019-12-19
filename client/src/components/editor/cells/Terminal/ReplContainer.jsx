@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import PropTypes from "prop-types";
 import createDebug from "debug";
 
@@ -17,6 +17,8 @@ import ReplOutput from "./ReplOutput";
 const debug = createDebug("boost:component:repl-container");
 
 const ReplContainer = ({ cellUuid, isCellFocus }) => {
+  const replRef = useRef(null);
+
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const dispatchToCell = useContext(CellDispatchContext);
   const { terminalState } = useContext(TerminalContext);
@@ -71,12 +73,12 @@ const ReplContainer = ({ cellUuid, isCellFocus }) => {
     },
   };
 
-  useKeys(eventHandlers, isCellFocus, [currentText]);
+  useKeys(eventHandlers, isCellFocus, [currentText], replRef);
 
   return (
     <>
       <ReplOutput cellUuid={cellUuid} />
-      <ReplInput cellUuid={cellUuid} isCellFocus={isCellFocus} />
+      <ReplInput ref={replRef} cellUuid={cellUuid} isCellFocus={isCellFocus} />
     </>
   );
 };
