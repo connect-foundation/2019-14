@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import createDebug from "debug";
+
 import { terminalSettingActionCreator } from "../../../actions/TerminalSetting";
 import {
   TerminalSettingDispatch,
@@ -11,6 +13,8 @@ import { THEME } from "../../../enums";
 import Loading from "../../common/Loading";
 import SimpleModalContentsWrapper from "../../common/SimpleModalContentsWrapper";
 import { modalManager } from "../../../utils";
+
+const debug = createDebug("boost:terminal-setting:stepper-button");
 
 const StepperButtonsWrapper = styled.footer`
   display: flex;
@@ -59,35 +63,37 @@ const StepperButtons = () => {
       DB: state.DB,
     };
 
-    let defaultCreateTerminalResultMesage = "터미널 생성에 성공하였습니다.";
+    let defaultCreateTerminalResultMessage = "터미널 생성에 성공하였습니다.";
 
     try {
       const result = await createTerminalFetch(option);
-    } catch (error) {
-      console.log(error);
 
-      defaultCreateTerminalResultMesage = "터미널 생성에 실패하였습니다.";
+      debug("response container creation request", result);
+    } catch (error) {
+      debug("container creation error", error);
+      defaultCreateTerminalResultMessage = "터미널 생성에 실패하였습니다.";
+      // 실패 Modal 팝업
       modalManager.openModal(
         "",
-        <ModalContents resultmessage={defaultCreateTerminalResultMesage} />
+        <ModalContents resultmessage={defaultCreateTerminalResultMessage} />
       );
+      dispatch(terminalSettingActionCreator.loadTerminalLodingbar(false));
       return;
     }
-    // dispatch(terminalSettingActionCreator.disableCreateTerminalButton(false));
-    // modal 팝업
+    // 성공 Modal 팝업
     modalManager.openModal(
       "",
-      <ModalContents resultmessage={defaultCreateTerminalResultMesage} />
+      <ModalContents resultmessage={defaultCreateTerminalResultMessage} />
     );
+    dispatch(terminalSettingActionCreator.loadTerminalLodingbar(false));
   };
 
   const waitSecond = () => {
-    dispatch(terminalSettingActionCreator.loadTerminalLodingbar(true));
     dispatch(terminalSettingActionCreator.disableCreateTerminalButton(true));
 
+    terminalButtonClickHandler();
+
     setTimeout(() => {
-      terminalButtonClickHandler();
-      dispatch(terminalSettingActionCreator.loadTerminalLodingbar(false));
       dispatch(terminalSettingActionCreator.disableCreateTerminalButton(false));
     }, 3000);
   };
