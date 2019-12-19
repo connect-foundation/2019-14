@@ -27,22 +27,7 @@ const BUTTON_TYPE = {
   TERMINAL: faTerminal,
 };
 
-const share = async () => {
-  const containerId = 9;
-  const response = await request.shareDocument(containerId);
-  if (response.status === 500) {
-    const label = "공유 실패";
-    const modalContents = (
-      <SimpleModalContentsWrapper>
-        <div>공유에 실패하였습니다.</div>
-        <div>다시 시도해 주세요.</div>
-      </SimpleModalContentsWrapper>
-    );
-    openModal(label, modalContents);
-    return false;
-  }
-  const shareId = response.data;
-  localStorage.setItem("sharedDocumentId", shareId);
+const openShareSuccessModal = () => {
   const label = "공유 성공";
   const modalContents = (
     <SimpleModalContentsWrapper>
@@ -51,6 +36,40 @@ const share = async () => {
     </SimpleModalContentsWrapper>
   );
   openModal(label, modalContents);
+};
+
+const openShareFailModal = () => {
+  const label = "공유 실패";
+  const modalContents = (
+    <SimpleModalContentsWrapper>
+      <div>공유에 실패하였습니다.</div>
+      <div>다시 시도해 주세요.</div>
+    </SimpleModalContentsWrapper>
+  );
+  openModal(label, modalContents);
+};
+
+const openLoadFailModal = () => {
+  const label = "불러오기 실패";
+  const modalContents = (
+    <SimpleModalContentsWrapper>
+      <div>불러오기에 실패하였습니다.</div>
+      <div>다시 시도해 주세요.</div>
+    </SimpleModalContentsWrapper>
+  );
+  openModal(label, modalContents);
+};
+
+const share = async () => {
+  const containerId = 9;
+  const response = await request.shareDocument(containerId);
+  if (response.status === 500) {
+    openShareFailModal();
+    return false;
+  }
+  const shareId = response.data;
+  localStorage.setItem("sharedDocumentId", shareId);
+  openShareSuccessModal();
   return shareId;
 };
 
@@ -72,14 +91,7 @@ const BUTTON_HANDLER = {
         cellManager.load(document);
         cellDispatch(cellActionCreator.loadFinish());
       } else {
-        const label = "불러오기 실패";
-        const modalContents = (
-          <SimpleModalContentsWrapper>
-            <div>불러오기에 실패하였습니다.</div>
-            <div>다시 시도해 주세요.</div>
-          </SimpleModalContentsWrapper>
-        );
-        openModal(label, modalContents);
+        openLoadFailModal();
       }
     };
     cellDispatch(cellActionCreator.load());
@@ -97,6 +109,7 @@ const BUTTON_HANDLER = {
     shareId = localStorage.getItem("sharedDocumentId");
     if (shareId) {
       utils.copyText(shareId);
+      openShareSuccessModal();
     } else {
       shareDocument();
     }

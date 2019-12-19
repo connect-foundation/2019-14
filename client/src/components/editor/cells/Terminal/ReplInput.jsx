@@ -31,10 +31,8 @@ const ReplPrompt = styled.div`
   padding-right: 10px;
 `;
 
-const ReplInput = ({ cellUuid, isCellFocus }) => {
+const ReplInput = React.forwardRef(({ cellUuid, isCellFocus }, replRef) => {
   const prompt = "User $";
-
-  const replRef = useRef(null);
 
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const { terminalState } = useContext(TerminalContext);
@@ -71,7 +69,7 @@ const ReplInput = ({ cellUuid, isCellFocus }) => {
       />
     </ReplInputWrapper>
   );
-};
+});
 
 ReplInput.propTypes = {
   cellUuid: PropTypes.string.isRequired,

@@ -98,7 +98,7 @@ const ListCell = ({ cellUuid }) => {
   }
 
   const eventTrigger = isFocus && !isShared;
-  useKeys(keydownHandlers, eventTrigger, [block.end, depth]);
+  useKeys(keydownHandlers, eventTrigger, [block.end, depth], inputRef);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
