@@ -3,7 +3,6 @@ import propTypes from "prop-types";
 
 import MarkdownWrapper from "../../style/MarkdownWrapper";
 import { PLACEHOLDER, EVENT_TYPE } from "../../../../enums";
-import { setGenerator } from "../CellGenerator";
 import { useKeys, uuidManager, attachDefaultHandlers } from "../../../../utils";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
@@ -19,11 +18,6 @@ import {
   blockRelease,
   transformCell,
 } from "./handler";
-
-setGenerator("p", (uuid) => <MarkdownCell cellUuid={uuid} />);
-setGenerator("hr", (uuid) => (
-  <hr cellUuid={uuid} noshade="noshade" style={{ borderColor: "silver" }} />
-));
 
 const MarkdownCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);

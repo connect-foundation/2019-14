@@ -13,10 +13,6 @@ import {
   blockRelease,
 } from "../Markdown/handler";
 import { newCell, transformCell } from "./handler";
-import { setGenerator } from "../CellGenerator";
-
-setGenerator("ul", (uuid) => <ListCell cellUuid={uuid} />);
-setGenerator("ol", (uuid) => <ListCell cellUuid={uuid} />);
 
 const ListCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);

@@ -15,7 +15,7 @@ const selectAllBlock = (lastCellIndex) => {
 };
 
 const blockRangeUp = (index, block) => {
-  const newStart = block.start || index;
+  const newStart = block.start !== null ? block.start : index;
   let newEnd = null;
   if (block.end > 0) {
     newEnd = block.end - 1;
@@ -38,10 +38,12 @@ const blockRangeUp = (index, block) => {
 
 const blockRangeDown = (index, block, cellLength) => {
   const newStart = block.start !== null ? block.start : index;
-  let newEnd = block.end !== null ? block.end : index;
+  let newEnd = null;
 
-  if (block.end < cellLength - 1) {
-    newEnd += 1;
+  if (block.end === null) {
+    newEnd = index;
+  } else if (block.end < cellLength - 1) {
+    newEnd = block.end + 1;
   } else if (block.end === cellLength - 1) {
     newEnd = cellLength - 1;
   }

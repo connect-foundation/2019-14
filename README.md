@@ -41,12 +41,12 @@
 
 |기능|윈도우 단축키|맥OS 단축키
 |-|-|-|
-| 모든 셀 선택 | Ctrl + A | ⌘ + A
+| 모든 셀 선택 | Ctrl + a | ⌘ + a
 | 범위 선택 | Shift + ↑ | ⇧ + ↑
 | 범위 선택 | Shift + ↓ | ⇧ + ↓
-| 범위 잘라내기 | Ctrl + X | ⌘ + X
-| 범위 복사 | Ctrl + C | ⌘ + C
-| 범위 붙여넣기 | Ctrl + V | ⌘ + V
+| 범위 잘라내기 | Ctrl + x | ⌘ + x
+| 범위 복사 | Ctrl + c | ⌘ + c
+| 범위 붙여넣기 | Ctrl + v | ⌘ + v
 | 깊이 증가(List) | Tab | ⇥
 | 깊이 감소(List) | Shift + Tab | ⇧ + ⇥
 | 터미널 셀 삭제 | Shift + Backspace | ⇧ + ⌫

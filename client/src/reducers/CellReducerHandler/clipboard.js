@@ -14,6 +14,8 @@ const copy = (cellManager, block) => {
     options: options.slice(blockStart, blockEnd + 1),
   };
 
+  navigator.clipboard.writeText(clipboard.texts.join("\n"));
+
   return {
     clipboard,
   };

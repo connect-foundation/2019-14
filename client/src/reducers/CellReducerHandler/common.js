@@ -5,7 +5,7 @@ import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 const initCell = (cellManager) => {
   const index = 0;
   const newUuid = uuid();
-
+  uuidManager.init();
   uuidManager.push(newUuid);
 
   cellManager.change(index, {

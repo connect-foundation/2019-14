@@ -65,7 +65,7 @@ const cellActionCreator = {
 
   newEmptyDefault() {
     return {
-      type: CELL_ACTION.NEW_EMPTY_DEFAULT,
+      type: CELL_ACTION.NEW_EMPTY,
     };
   },
 
