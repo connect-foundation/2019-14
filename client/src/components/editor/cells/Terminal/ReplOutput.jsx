@@ -1,8 +1,8 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import createDebug from "debug";
-import { parse } from "ansicolor";
+import { strip, parse } from "ansicolor";
 
 import { socketManager } from "../../../../utils";
 import { THEME } from "../../../../enums";
@@ -13,6 +13,7 @@ import {
 } from "../../../../stores/TerminalStore";
 import { CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator as cellAction } from "../../../../actions/CellAction";
+import Loading from "../../../common/Loading";
 
 const debug = createDebug("boost:component:repl-output");
 
@@ -27,29 +28,48 @@ const ReplOutputWrapper = styled.div`
   white-space: pre-wrap;
 `;
 
-const ColoredOutputWrapper = styled.span`
+const ColoredLineWrapper = styled.span`
   ${(props) => props.css}
+`;
+
+const LoadingWrapper = styled.div`
+  display: flex;
+
+  justify-content: center;
+
+  width: 100%;
 `;
 
 const decoder = new TextDecoder();
 
+let isUpdate = false;
+
+const setIsUpdate = (bool) => {
+  isUpdate = bool;
+};
+
 const ReplOutput = ({ cellUuid }) => {
-  const [isUpdate, setIsUpdate] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const dispatchToCell = useContext(CellDispatchContext);
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const { terminalState } = useContext(TerminalContext);
+
   const { outputTexts } = terminalState;
 
   const socket = socketManager.get(cellUuid);
 
   useEffect(() => {
-    debug("prev enroll socket's stdout event with", cellUuid, socket);
     if (socket) {
       debug("enroll socket's stdout event with", cellUuid, socket);
+
       socket.on("stdout", (chunk) => {
+        setIsLoading(false);
+
         const decodedText = decoder.decode(chunk);
         debug("stdout text is", decodedText);
+
         dispatchToTerminal(terminalAction.updateOutputText(decodedText));
+
         setIsUpdate(true);
       });
     } else {
@@ -60,25 +80,49 @@ const ReplOutput = ({ cellUuid }) => {
   useEffect(() => {
     if (isUpdate) {
       setIsUpdate(false);
-      const savedOutput = outputTexts.join("\n");
-      dispatchToCell(cellAction.input(cellUuid, savedOutput));
+
+      dispatchToCell(cellAction.input(cellUuid, outputTexts));
     }
   }, [outputTexts]);
 
-  const outputs = outputTexts.map((output, index) => {
-    const key = `repl-output-${index}`;
-    const coloredOutputs = [...parse(output)];
-    return coloredOutputs.map((line, i) => {
-      const innerKey = `${key}-${i}`;
-      return (
-        <ColoredOutputWrapper key={innerKey} css={line.css}>
-          {line.text}
-        </ColoredOutputWrapper>
-      );
-    });
-  });
+  const renderOutputs = () => {
+    const outputs = outputTexts.reduce((repls, output, index) => {
+      const key = `repl-output-${index}`;
 
-  return <ReplOutputWrapper>{outputs}</ReplOutputWrapper>;
+      const parsedRepl = [...parse(output)];
+      const coloredRepl = parsedRepl.map((line, innerIndex) => {
+        const innerKey = `${key}-${innerIndex}`;
+        const rawString = strip(line.text);
+
+        return (
+          <ColoredLineWrapper key={innerKey} css={line.css}>
+            {rawString}
+          </ColoredLineWrapper>
+        );
+      });
+
+      repls.push(coloredRepl);
+      return repls;
+    }, []);
+
+    return outputs;
+  };
+
+  const memoizedOutputs = useMemo(() => {
+    return renderOutputs();
+  }, [outputTexts]);
+
+  return (
+    <ReplOutputWrapper>
+      {isLoading ? (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      ) : (
+        memoizedOutputs
+      )}
+    </ReplOutputWrapper>
+  );
 };
 
 ReplOutput.propTypes = {

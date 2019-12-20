@@ -1,10 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import PropTypes from "prop-types";
 import createDebug from "debug";
 
 import { EVENT_TYPE } from "../../../../enums";
 import { useKeys, socketManager } from "../../../../utils";
-import { cellGenerator } from "../CellGenerator";
 import { cellActionCreator as cellAction } from "../../../../actions/CellAction";
 import { CellDispatchContext } from "../../../../stores/CellStore";
 import { terminalActionCreator as terminalAction } from "../../../../actions/TerminalAction";
@@ -12,43 +11,41 @@ import {
   TerminalContext,
   TerminalDispatchContext,
 } from "../../../../stores/TerminalStore";
-import ReplCell from "./ReplCell";
+import ReplInput from "./ReplInput";
+import ReplOutput from "./ReplOutput";
 
 const debug = createDebug("boost:component:repl-container");
 
-const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
+const ReplContainer = ({ cellUuid, isCellFocus }) => {
+  const replRef = useRef(null);
+
   const dispatchToTerminal = useContext(TerminalDispatchContext);
   const dispatchToCell = useContext(CellDispatchContext);
   const { terminalState } = useContext(TerminalContext);
+
   const { currentText } = terminalState;
 
-  const focusHandlers = {
+  const eventHandlers = {
     [EVENT_TYPE.ENTER]: (e) => {
       e.preventDefault();
-      debug("Evaling terminal input");
+
+      debug("Enter terminal input");
       socketManager.writeToStdin(cellUuid, currentText);
       dispatchToTerminal(terminalAction.changeCurrentText(""));
     },
 
-    [EVENT_TYPE.BACKSPACE]: () => {
-      debug("Backspace terminal cell");
-      if (currentText.length === 0) {
-        // if outputTexts.length === 0 -> init cell
-        // delete last output
-      }
-      // dispatchToCell(cellAction.init(null, cellUuid));
-    },
-
     [EVENT_TYPE.SHIFT_BACKSPACE]: () => {
       debug("Shift backspace terminal cell");
-      dispatchToCell(cellAction.init(null, cellUuid));
+
+      dispatchToCell(cellAction.reset());
       dispatchToCell(cellAction.input(cellUuid, ""));
     },
 
     [EVENT_TYPE.OPTION_COMMAND_DOWN]: () => {
       debug("Create Next & Focus next");
+
       dispatchToTerminal(terminalAction.focusOut());
-      const makeNewMarkdownCell = cellAction.new(cellUuid, cellGenerator.p);
+      const makeNewMarkdownCell = cellAction.newEmptyDefault();
       dispatchToCell(makeNewMarkdownCell);
     },
 
@@ -59,31 +56,35 @@ const ReplContainer = ({ cellUuid, cellIndex, isCellFocus }) => {
 
     [EVENT_TYPE.ARROW_UP]: (e) => {
       e.preventDefault();
+
       debug("Focus to prev cell");
+
       dispatchToTerminal(terminalAction.focusOut());
       dispatchToCell(cellAction.focusPrev());
     },
 
     [EVENT_TYPE.ARROW_DOWN]: (e) => {
       e.preventDefault();
+
       debug("Focus Down In Terminal");
+
       dispatchToTerminal(terminalAction.focusOut());
       dispatchToCell(cellAction.focusNext());
     },
   };
 
-  useKeys(focusHandlers, isCellFocus, [currentText]);
+  useKeys(eventHandlers, isCellFocus, [currentText], replRef);
 
   return (
     <>
-      <ReplCell cellUuid={cellUuid} isCellFocus={isCellFocus} />
+      <ReplOutput cellUuid={cellUuid} />
+      <ReplInput ref={replRef} cellUuid={cellUuid} isCellFocus={isCellFocus} />
     </>
   );
 };
 
 ReplContainer.propTypes = {
   cellUuid: PropTypes.string.isRequired,
-  cellIndex: PropTypes.number.isRequired,
   isCellFocus: PropTypes.bool.isRequired,
 };
 

@@ -6,7 +6,6 @@ import {
   faFileMedical,
   faFileDownload,
   faFileUpload,
-  faFileCode,
   faFileExport,
   faTerminal,
 } from "@fortawesome/free-solid-svg-icons";
@@ -15,15 +14,63 @@ import { TerminalSettingDispatch } from "../../../stores/TerminalSetting";
 import { CellDispatchContext, CellContext } from "../../../stores/CellStore";
 import { THEME } from "../../../enums";
 import { cellActionCreator } from "../../../actions/CellAction";
-import { request } from "../../../utils";
+import { request, utils, modalManager } from "../../../utils";
+import SimpleModalContentsWrapper from "../../common/SimpleModalContentsWrapper";
+
+const { openModal } = modalManager;
 
 const BUTTON_TYPE = {
   NEW: faFileMedical,
   SAVE: faFileDownload,
   LOAD: faFileUpload,
-  CODE: faFileCode,
   SHARE: faFileExport,
   TERMINAL: faTerminal,
+};
+
+const openShareSuccessModal = () => {
+  const label = "공유 성공";
+  const modalContents = (
+    <SimpleModalContentsWrapper>
+      <div>공유에 성공하였습니다.</div>
+      <div>공유를 위한 UUID가 클립보드에 복사되었습니다.</div>
+    </SimpleModalContentsWrapper>
+  );
+  openModal(label, modalContents);
+};
+
+const openShareFailModal = () => {
+  const label = "공유 실패";
+  const modalContents = (
+    <SimpleModalContentsWrapper>
+      <div>공유에 실패하였습니다.</div>
+      <div>다시 시도해 주세요.</div>
+    </SimpleModalContentsWrapper>
+  );
+  openModal(label, modalContents);
+};
+
+const openLoadFailModal = () => {
+  const label = "불러오기 실패";
+  const modalContents = (
+    <SimpleModalContentsWrapper>
+      <div>불러오기에 실패하였습니다.</div>
+      <div>다시 시도해 주세요.</div>
+    </SimpleModalContentsWrapper>
+  );
+  openModal(label, modalContents);
+};
+
+const share = async () => {
+  const containerId = 9;
+  const response = await request.shareDocument(containerId);
+  if (response.status === 500) {
+    openShareFailModal();
+    return false;
+  }
+  const shareId = response.data;
+  localStorage.setItem("sharedDocumentId", shareId);
+  openShareSuccessModal();
+  return shareId;
 };
 
 const BUTTON_HANDLER = {
@@ -33,16 +80,40 @@ const BUTTON_HANDLER = {
   },
   LOAD: (cellDispatch, cellManager) => {
     const loadDocument = async () => {
-      const result = await request.do("LOAD");
-      const doc = await result.text();
-      cellManager.load(doc);
-      cellDispatch(cellActionCreator.loadFinish());
+      /**
+       * @todo static한거 바꾸기
+       * - 터미널 생성한 정보 받아서 바꾸기
+       */
+      const containerId = 9;
+      const response = await request.loadDocument(containerId);
+      if (response.status === 200) {
+        const document = response.data;
+        cellManager.load(document);
+        cellDispatch(cellActionCreator.loadFinish());
+      } else {
+        openLoadFailModal();
+      }
     };
     cellDispatch(cellActionCreator.load());
     loadDocument();
   },
-  CODE: () => {},
-  SHARE: () => {},
+  SHARE: () => {
+    let shareId = null;
+    const shareDocument = async () => {
+      shareId = await share();
+      if (shareId) {
+        utils.copyText(shareId);
+      }
+    };
+
+    shareId = localStorage.getItem("sharedDocumentId");
+    if (shareId) {
+      utils.copyText(shareId);
+      openShareSuccessModal();
+    } else {
+      shareDocument();
+    }
+  },
   TERMINAL: (tmp, temp, terminalDispatch) => {
     terminalDispatch(terminalSettingActionCreator.viewTerminalSetting());
   },

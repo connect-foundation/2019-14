@@ -10,18 +10,9 @@ import { useCellState, useKeys } from "../../../../utils";
 import {
   getSelection,
   saveCursorPosition,
-  deleteCell,
   blockRelease,
 } from "../Markdown/handler";
-import { newCell, initCell } from "./handler";
-import { cellGenerator, setGenerator } from "../CellGenerator";
-
-setGenerator("h1", (uuid) => <HeadingCell cellUuid={uuid} />);
-setGenerator("h2", (uuid) => <HeadingCell cellUuid={uuid} />);
-setGenerator("h3", (uuid) => <HeadingCell cellUuid={uuid} />);
-setGenerator("h4", (uuid) => <HeadingCell cellUuid={uuid} />);
-setGenerator("h5", (uuid) => <HeadingCell cellUuid={uuid} />);
-setGenerator("h6", (uuid) => <HeadingCell cellUuid={uuid} />);
+import { newCell } from "./handler";
 
 const HeadingCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
@@ -30,7 +21,7 @@ const HeadingCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block, cursor } = state;
+  const { block, cursor, isShared } = state;
   let inputRef = null;
   let intoShiftBlock = false;
 
@@ -45,17 +36,15 @@ const HeadingCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     const currentCursor = getSelection();
-    const isStartPos =
+    const isCursorPosZero =
       textContent.length === 0 ||
       (currentCursor.start === 0 && currentCursor.end === 0);
 
-    if (isStartPos) {
-      const componentCallback = cellGenerator.p;
+    if (block.start !== null) {
+      dispatch(cellActionCreator.blockDelete());
+    } else if (isCursorPosZero) {
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      initCell(cellUuid, dispatch, componentCallback);
-    }
-    if (state.block.start !== null) {
-      deleteCell(dispatch);
+      dispatch(cellActionCreator.reset());
     }
   };
 
@@ -64,10 +53,9 @@ const HeadingCell = ({ cellUuid }) => {
     if (textContent.length === 0) {
       backspaceEvent(e);
     } else {
-      const componentCallback = cellGenerator.p;
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback);
+      newCell(dispatch);
     }
     blockRelease(dispatch);
   };
@@ -82,7 +70,8 @@ const HeadingCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus, [block.end]);
+  const eventTrigger = isFocus && !isShared;
+  useKeys(keydownHandlers, eventTrigger, [block.end], inputRef);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -113,7 +102,7 @@ const HeadingCell = ({ cellUuid }) => {
   return (
     <MarkdownWrapper
       as={tag}
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       isQuote={false}

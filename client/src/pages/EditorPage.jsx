@@ -18,6 +18,8 @@ const EditorWindowLayout = styled.div`
 
   height: 100vh;
 
+  overflow: hidden;
+
   background-color: ${THEME.VS_CODE.EDITOR};
 `;
 

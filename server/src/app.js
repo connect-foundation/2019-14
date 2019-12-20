@@ -13,6 +13,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const terminalRouter = require("./routes/terminal");
 const documentRouter = require("./routes/document");
+const shareRouter = require("./routes/share");
 
 const app = express();
 const server = http.createServer(app);
@@ -44,8 +45,14 @@ const sshOptions = {
   password: process.env.REMOTE_SSH_PASSWORD,
   port: process.env.REMOTE_CONTAINER_PORT,
   host: process.env.REMOTE_DOCKER_IP,
+  containerId: process.env.REMOTE_CONTAINER_ID,
 };
 app.set("session", sshOptions);
+
+if (sshOptions.containerId) {
+  // start default container
+  docker.startContainer(sshOptions.containerId);
+}
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -77,18 +84,26 @@ io.use((socket, next) => {
 
 app.use(sessionMiddleware);
 
-(async () => {
+const thirtySec = 30000;
+const monitoring = async () => {
+  debug(`monitoring container start!`);
   const containers = await docker.getActiveContainers();
 
-  containers.forEach(async (element) => {
+  const isJobDone = containers.map(async (element) => {
     await docker.monitorContainer(element.Id);
   });
-})();
+
+  Promise.all(isJobDone).then(() => {
+    setTimeout(monitoring, thirtySec);
+  });
+};
+monitoring();
 
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/terminal", terminalRouter);
 app.use("/api/document", documentRouter);
+app.use("/api/share", shareRouter);
 
 io.of((name, query, next) => {
   next(null, true);
@@ -109,9 +124,14 @@ io.of((name, query, next) => {
 
   // server <-- docker container
   shellChannel.on("data", (data) => {
-    debug(`Shell command output : ${data}`);
+    debug(`Shell command output : ${data.toString()}`);
     // client <-- server
-    socket.emit("stdout", data);
+    const sshConnection = sshManager.getConnection(connectionId);
+    const isWelcomeString = /^Welcome/.exec(data) !== null;
+    if (!sshConnection.isFirstMessage || !isWelcomeString) {
+      socket.emit("stdout", data);
+    }
+    sshConnection.isFirstMessage = false;
   });
 
   // client --> (server) --> docker container

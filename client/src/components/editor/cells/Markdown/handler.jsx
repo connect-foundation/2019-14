@@ -22,12 +22,12 @@ const saveCursorPosition = (cellDispatch) => {
   return null;
 };
 
-const newCell = (cellUuid, cellDispatch, componentCallback, tag) => {
-  cellDispatch(cellActionCreator.new(cellUuid, componentCallback, tag));
+const newCell = (cellDispatch) => {
+  cellDispatch(cellActionCreator.new());
 };
 
-const deleteCell = (cellDispatch, cellUuid, textContent) => {
-  cellDispatch(cellActionCreator.delete(cellUuid, textContent));
+const deleteCell = (cellDispatch, textContent = "") => {
+  cellDispatch(cellActionCreator.delete(textContent));
 };
 
 const focusNext = (cellDispatch) => {
@@ -60,6 +60,7 @@ const transformCell = (cellUuid, cellDispatch, text, tag) => {
 
     const isOrderedList = matchingTag === "ol";
 
+    const depth = 0;
     let start = null;
     if (isOrderedList) {
       start = getStart(text);
@@ -76,6 +77,7 @@ const transformCell = (cellUuid, cellDispatch, text, tag) => {
         exceptPatternText,
         matchingTag,
         cell,
+        depth,
         start
       )
     );

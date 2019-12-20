@@ -11,13 +11,9 @@ import { useCellState, useKeys } from "../../../../utils";
 import {
   getSelection,
   saveCursorPosition,
-  deleteCell,
   blockRelease,
 } from "../Markdown/handler";
-import { newCell, initCell } from "../Heading/handler";
-import { cellGenerator, setGenerator } from "../CellGenerator";
-
-setGenerator("blockquote", (uuid) => <QuoteCell cellUuid={uuid} />);
+import { newCell } from "../Heading/handler";
 
 const QuoteCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
@@ -26,7 +22,7 @@ const QuoteCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block, cursor } = state;
+  const { block, cursor, isShared } = state;
   let inputRef = null;
   let intoShiftBlock = false;
 
@@ -41,17 +37,15 @@ const QuoteCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     const currentCursor = getSelection();
-    const isStartPos =
+    const isCursorPosZero =
       textContent.length === 0 ||
       (currentCursor.start === 0 && currentCursor.end === 0);
 
-    if (isStartPos) {
-      const componentCallback = cellGenerator.p;
+    if (block.start !== null) {
+      dispatch(cellActionCreator.blockDelete());
+    } else if (isCursorPosZero) {
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      initCell(cellUuid, dispatch, componentCallback);
-    }
-    if (state.block.start !== null) {
-      deleteCell(dispatch);
+      dispatch(cellActionCreator.reset());
     }
   };
 
@@ -60,10 +54,9 @@ const QuoteCell = ({ cellUuid }) => {
     if (textContent.length === 0) {
       backspaceEvent(e);
     } else {
-      const componentCallback = cellGenerator.p;
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback);
+      newCell(dispatch);
     }
     blockRelease(dispatch);
   };
@@ -78,7 +71,8 @@ const QuoteCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus, [block.end]);
+  const eventTrigger = isFocus && !isShared;
+  useKeys(keydownHandlers, eventTrigger, [block.end], inputRef);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -108,7 +102,7 @@ const QuoteCell = ({ cellUuid }) => {
   return (
     <MarkdownWrapper
       as={tag}
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       isQuote
@@ -118,7 +112,9 @@ const QuoteCell = ({ cellUuid }) => {
       ref={inputRef || null}
       spellCheck={false}
       suppressContentEditableWarning
-    />
+    >
+      {text}
+    </MarkdownWrapper>
   );
 };
 

@@ -1,5 +1,4 @@
 import createDebug from "debug";
-import { uuid } from "uuidv4";
 import { CELL_ACTION } from "../actions/CellAction";
 import {
   common,
@@ -13,15 +12,8 @@ import {
 const debug = createDebug("boost:reducer:cell");
 
 const cellReducerHandler = {
-  [CELL_ACTION.INIT]: (state, action) => {
-    const { cellUuid, createMarkdownCell, tag } = action;
-    const newCellUuid = cellUuid || uuid();
-
-    common.initUuid(cellUuid, newCellUuid);
-    common.initCell(cellUuid, state.cellManager, {
-      cell: createMarkdownCell,
-      tag,
-    });
+  [CELL_ACTION.INIT]: (state) => {
+    common.initCell(state.cellManager);
 
     debug("Init cell next state", state.cellManager);
 
@@ -31,15 +23,11 @@ const cellReducerHandler = {
     };
   },
 
-  [CELL_ACTION.NEW]: (state, action) => {
-    const { cursor, cellManager } = state;
-    const { cellUuid, createMarkdownCell, tag, start } = action;
+  [CELL_ACTION.NEW]: (state) => {
+    const { currentIndex, cursor, cellManager } = state;
 
-    const result = common.newCell(cellUuid, cellManager, {
-      createCellCallback: createMarkdownCell,
+    const result = common.newCell(currentIndex, cellManager, {
       cursor,
-      tag,
-      start,
     });
 
     const nextState = {
@@ -50,6 +38,27 @@ const cellReducerHandler = {
     debug("New cell", nextState);
 
     return nextState;
+  },
+
+  [CELL_ACTION.NEW_LIST]: (state) => {
+    const { currentIndex, cellManager, cursor } = state;
+    const result = common.newListCell(currentIndex, cellManager, { cursor });
+
+    return {
+      ...state,
+      ...result,
+    };
+  },
+
+  [CELL_ACTION.NEW_EMPTY]: (state) => {
+    const { cellManager, currentIndex } = state;
+
+    common.newEmptyCell(currentIndex, cellManager);
+
+    return {
+      ...state,
+      currentIndex: currentIndex + 1,
+    };
   },
 
   [CELL_ACTION.INPUT]: (state, action) => {
@@ -66,21 +75,10 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.DELETE]: (state, action) => {
-    const { cellManager } = state;
-    const { cellUuid, text } = action;
+    const { currentIndex, cellManager } = state;
+    const { text } = action;
 
-    if (state.block.start !== null) {
-      const result = block.blockDelete(cellManager, { block: state.block });
-
-      debug("Cells delete for Block", result);
-
-      return {
-        ...state,
-        ...result,
-      };
-    }
-
-    const result = common.deleteCell(cellUuid, cellManager, { text });
+    const result = common.deleteCell(currentIndex, cellManager, { text });
 
     debug("Cell delete", result);
 
@@ -133,17 +131,27 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TARGET.TRANSFORM]: (state, action) => {
-    const { cellUuid, cell, text, tag, start } = action;
+    const { cellUuid, cell, text, tag, depth, start } = action;
     const result = target.transform(cellUuid, state.cellManager, {
       cell,
       text,
       tag,
+      depth,
       start,
     });
 
     return {
       ...state,
       ...result,
+    };
+  },
+
+  [CELL_ACTION.TARGET.RESET]: (state) => {
+    const { currentIndex, cellManager } = state;
+    target.reset(currentIndex, cellManager);
+
+    return {
+      ...state,
     };
   },
 
@@ -159,7 +167,6 @@ const cellReducerHandler = {
 
   [CELL_ACTION.BLOCK.UP]: (state) => {
     const result = block.blockRangeUp(state.currentIndex, state.block);
-
     return {
       ...state,
       ...result,
@@ -188,6 +195,19 @@ const cellReducerHandler = {
     return {
       ...state,
       block: emptyBlock,
+    };
+  },
+
+  [CELL_ACTION.BLOCK.DELETE]: (state) => {
+    const { cellManager } = state;
+
+    const result = block.blockDelete(cellManager, { block: state.block });
+
+    debug("Cells delete for Block", result);
+
+    return {
+      ...state,
+      ...result,
     };
   },
 
@@ -244,6 +264,21 @@ const cellReducerHandler = {
   },
 
   [CELL_ACTION.TOOLBAR.LOAD_FINISH]: (state) => {
+    return {
+      ...state,
+      isLoading: false,
+    };
+  },
+
+  [CELL_ACTION.TOOLBAR.SHARE_LOAD]: (state) => {
+    return {
+      ...state,
+      isShared: true,
+      isLoading: true,
+    };
+  },
+
+  [CELL_ACTION.TOOLBAR.SHARE_LOAD_FINISH]: (state) => {
     return {
       ...state,
       isLoading: false,

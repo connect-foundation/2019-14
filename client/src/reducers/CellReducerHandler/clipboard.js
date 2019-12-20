@@ -14,6 +14,8 @@ const copy = (cellManager, block) => {
     options: options.slice(blockStart, blockEnd + 1),
   };
 
+  navigator.clipboard.writeText(clipboard.texts.join("\n"));
+
   return {
     clipboard,
   };
@@ -37,9 +39,11 @@ const paste = (index, cellManager, dataObj) => {
   };
   cellManager.pushArray(index, data);
 
-  clipboard.options.forEach((opt, i) => {
-    if (opt) cellManager.addOption(index + i + 1, opt);
-  });
+  if (clipboard.options) {
+    clipboard.options.forEach((opt, i) => {
+      if (opt) cellManager.addOption(index + i + 1, opt);
+    });
+  }
 
   const pos = cellManager.texts[currentIndex].length;
   const cursor = {
