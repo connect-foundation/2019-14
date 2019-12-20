@@ -10,13 +10,8 @@ import {
   TerminalStore,
 } from "../../../../stores/TerminalStore";
 import { CellContext } from "../../../../stores/CellStore";
-import { setGenerator } from "../CellGenerator";
 import { uuidManager } from "../../../../utils";
 import ReplContainer from "./ReplContainer";
-
-setGenerator("terminal", (uuid) => {
-  return <TerminalCell cellUuid={uuid} />;
-});
 
 const debug = createDebug("boost:component:terminal-cell");
 
@@ -32,29 +27,32 @@ const TerminalWrapper = styled.div`
 
 const InnerTerminalCell = ({ cellUuid }) => {
   const [isFirstRender, setIsFirstRender] = useState(true);
+
   const { state } = useContext(CellContext);
   const dispatchToTerminal = useContext(TerminalDispatchContext);
+
   const { currentIndex, cellManager } = state;
   const cellIndex = uuidManager.findIndex(cellUuid);
 
-  const isCellFocus = cellIndex === currentIndex;
-  if (isCellFocus) {
+  const isFocus = cellIndex === currentIndex;
+  if (isFocus) {
     debug(`Terminal cell ${cellIndex} focus in`);
     dispatchToTerminal(terminalAction.focusIn());
   }
 
   if (isFirstRender) {
     setIsFirstRender(false);
-    dispatchToTerminal(terminalAction.load(cellManager.texts[cellIndex]));
+
+    const loadedOutput = cellManager.texts[cellIndex];
+    if (Array.isArray(loadedOutput)) {
+      loadedOutput.push("\n");
+      dispatchToTerminal(terminalAction.load(loadedOutput));
+    }
   }
 
   return (
     <TerminalWrapper>
-      <ReplContainer
-        cellUuid={cellUuid}
-        cellIndex={cellIndex}
-        isCellFocus={isCellFocus}
-      />
+      <ReplContainer cellUuid={cellUuid} isCellFocus={isFocus} />
     </TerminalWrapper>
   );
 };

@@ -1,11 +1,8 @@
 import { cellActionCreator } from "../../../../actions/CellAction";
 
-const newCell = (cellUuid, cellDispatch, componentCallback, tag) => {
-  cellDispatch(cellActionCreator.new(cellUuid, componentCallback, tag));
+const newCell = (cellDispatch) => {
+  cellDispatch(cellActionCreator.new());
 };
 
-const initCell = (cellUuid, cellDispatch, componentCallback) => {
-  cellDispatch(cellActionCreator.init(componentCallback, cellUuid));
-};
-
-export { newCell, initCell };
+// eslint-disable-next-line import/prefer-default-export
+export { newCell };

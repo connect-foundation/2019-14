@@ -2,27 +2,21 @@ import { uuid } from "uuidv4";
 import { uuidManager } from "../../utils";
 import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
-const initUuid = (cellUuid, newCellUuid) => {
-  if (!cellUuid) {
-    uuidManager.push(newCellUuid);
-  }
-};
+const initCell = (cellManager) => {
+  const index = 0;
+  const newUuid = uuid();
+  uuidManager.init();
+  uuidManager.push(newUuid);
 
-const initCell = (cellUuid, cellManager, dataObj) => {
-  const { cell, tag } = dataObj;
-  const uuidArray = uuidManager.getUuidArray();
-  const index = cellUuid ? uuidManager.findIndex(cellUuid) : 0;
-  const targetUuid = uuidArray[index];
   cellManager.change(index, {
-    cell: cell ? cell(targetUuid) : cellGenerator.p(targetUuid),
-    text: cellManager.texts[index] || "",
-    tag,
+    cell: cellGenerator.p(newUuid),
+    text: "",
+    tag: "p",
   });
   cellManager.deleteOption(index);
 };
 
-const newDefaultEmptyCell = (cellUuid, cellManager) => {
-  const index = uuidManager.findIndex(cellUuid);
+const newEmptyCell = (index, cellManager) => {
   const newUuid = uuid();
   uuidManager.push(newUuid, index);
   const newData = {
@@ -33,28 +27,82 @@ const newDefaultEmptyCell = (cellUuid, cellManager) => {
   cellManager.add(index, newData);
 };
 
-const newCell = (cellUuid, cellManager, dataObj) => {
-  const { createCellCallback, cursor, tag, start } = dataObj;
+const sliceNewText = (cellManager, index, cursor) => {
+  const originText = cellManager.texts[index];
+  const currentText = originText ? originText.slice(0, cursor) : "";
+  cellManager.change(index, { text: currentText });
+  const newText = originText ? originText.slice(cursor) : "";
+
+  return newText;
+};
+
+const newCell = (index, cellManager, dataObj) => {
+  const { cursor } = dataObj;
+
+  // uuid
+  const newUuid = uuid();
+  uuidManager.push(newUuid, index);
+
+  // cell
+  const cell = cellGenerator.p(newUuid);
+
+  // 중간에서 enter
+  const newText = sliceNewText(cellManager, index, cursor.start);
+
+  const data = {
+    cell,
+    text: newText,
+    tag: "p",
+  };
+  cellManager.add(index, data);
+
+  // cursor
+  const newCursor = {
+    start: 0,
+    end: 0,
+  };
+
+  // index
+  const currentIndex = index + 1;
+
+  return {
+    cursor: newCursor,
+    currentIndex,
+  };
+};
+
+const newListCell = (index, cellManager, dataObj) => {
+  const { cursor } = dataObj;
+  const tag = cellManager.tags[index];
+  const { start, depth } = cellManager.options[index];
 
   const isOrderedList = tag === "ol";
-  const index = uuidManager.findIndex(cellUuid);
 
-  uuidManager.push(uuid(), index);
+  // uuid
+  const newUuid = uuid();
+  uuidManager.push(newUuid, index);
 
-  const uuidArray = uuidManager.getUuidArray();
   const newStart = isOrderedList ? start + 1 : null;
+  const newDepth = depth;
 
-  const newCellUuid = uuidArray[index + 1];
-  const cell = createCellCallback(newCellUuid);
+  // cell
+  const cell = cellGenerator[tag](newUuid);
+
+  // index
+  const newIndex = index + 1;
+
+  // depth
+  let newOption = null;
   if (isOrderedList) {
-    cellManager.addOption(index + 1, { start: newStart });
+    newOption = { depth: newDepth, start: newStart };
+  } else {
+    newOption = { depth: newDepth };
   }
+  cellManager.addOption(newIndex, newOption);
 
-  const originText = cellManager.texts[index];
-  const currentText = originText ? originText.slice(0, cursor.start) : "";
-  cellManager.change(index, { text: currentText });
+  // 중간에서 enter
+  const newText = sliceNewText(cellManager, index, cursor.start);
 
-  const newText = originText ? originText.slice(cursor.start) : "";
   const data = {
     cell,
     text: newText,
@@ -62,16 +110,15 @@ const newCell = (cellUuid, cellManager, dataObj) => {
   };
   cellManager.add(index, data);
 
+  // cursor
   const newCursor = {
     start: 0,
     end: 0,
   };
 
-  const currentIndex = index + 1;
-
   return {
     cursor: newCursor,
-    currentIndex,
+    currentIndex: newIndex,
   };
 };
 
@@ -81,9 +128,8 @@ const inputText = (cellUuid, cellManager, dataObj) => {
   cellManager.change(index, { text });
 };
 
-const deleteCell = (cellUuid, cellManager, dataObj) => {
+const deleteCell = (index, cellManager, dataObj) => {
   const { text } = dataObj;
-  const index = uuidManager.findIndex(cellUuid);
   const prevIndex = index - 1;
 
   uuidManager.pop(index);
@@ -101,14 +147,7 @@ const deleteCell = (cellUuid, cellManager, dataObj) => {
   };
   cellManager.delete(index, flag);
   cellManager.change(prevIndex, { text: joinedText });
-  if (cellManager.cells.length === 0) {
-    initUuid(null, uuid());
-    initCell(cellUuid, cellManager, {
-      cell: cellGenerator.p,
-      text: "",
-      tag: "p",
-    });
-  }
+
   return {
     cursor,
     currentIndex: prevIndex,
@@ -116,10 +155,10 @@ const deleteCell = (cellUuid, cellManager, dataObj) => {
 };
 
 export default {
-  initUuid,
   initCell,
-  newDefaultEmptyCell,
+  newEmptyCell,
   newCell,
+  newListCell,
   inputText,
   deleteCell,
 };

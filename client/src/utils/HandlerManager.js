@@ -45,6 +45,8 @@ const checkOsDependentOptionCommand = (e) => {
   return ctrlKey;
 };
 
+let lockTime = null;
+
 const makeKeyHandler = {
   [EVENT_TYPE.ENTER]: (handler) => {
     return (e) => {
@@ -53,7 +55,11 @@ const makeKeyHandler = {
       const isShift = shiftKey;
       if (isEnter && !isShift) {
         e.preventDefault();
-        handler(e);
+        const currentTime = new Date().getTime();
+        if (!lockTime || currentTime - lockTime >= 40) {
+          handler(e);
+          lockTime = new Date().getTime();
+        }
       }
     };
   },
@@ -120,7 +126,11 @@ const makeKeyHandler = {
       const isShiftUp = shiftKey;
       if (!isShiftUp && isArrowUp) {
         e.preventDefault();
-        handler(e);
+        const currentTime = new Date().getTime();
+        if (!lockTime || currentTime - lockTime >= 40) {
+          handler(e);
+          lockTime = new Date().getTime();
+        }
       }
     };
   },
@@ -156,7 +166,11 @@ const makeKeyHandler = {
       const isShiftUp = shiftKey;
       if (!isShiftUp && isArrowDown) {
         e.preventDefault();
-        handler(e);
+        const currentTime = new Date().getTime();
+        if (!lockTime || currentTime - lockTime >= 40) {
+          handler(e);
+          lockTime = new Date().getTime();
+        }
       }
     };
   },
@@ -293,6 +307,7 @@ const useKeys = (
   handlers,
   isFocus,
   deps = [],
+  ref,
   checksum = defaultChecksumAllTrue
 ) => {
   const keydownHandlers = {};
@@ -305,15 +320,18 @@ const useKeys = (
   });
 
   useEffect(() => {
-    if (isFocus) {
+    const target = ref && ref.current ? ref.current : null;
+    if (isFocus && target) {
       Object.values(keydownHandlers).forEach((handler) => {
-        window.addEventListener("keydown", handler);
+        target.addEventListener("keydown", handler);
       });
     }
     return () => {
-      Object.values(keydownHandlers).forEach((handler) => {
-        window.removeEventListener("keydown", handler);
-      });
+      if (target) {
+        Object.values(keydownHandlers).forEach((handler) => {
+          target.removeEventListener("keydown", handler);
+        });
+      }
     };
   }, [isFocus, ...deps]);
 };

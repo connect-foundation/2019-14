@@ -1,33 +1,68 @@
 # Boost Writer
 
-Boost Writer Web Page
+<p>
+  <img alt="Version" src="https://img.shields.io/badge/version-0.5.0-red.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/node/v/react" />
+  <img src="https://user-images.githubusercontent.com/7288322/32581402-b7e79c80-c54e-11e7-8650-ba6a944ada4b.png" alt="" style="max-width:100%;">
+  <br>
+  <img alt="Node.js" src="https://img.shields.io/badge/Node.js-black?logo=Node.js&logoColor=green" />
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-black?logo=Docker&logoColor=1488C6" />
+  <img alt="React" src="https://img.shields.io/badge/React.js-black?logo=React&logoColor=61DAFB" />
+  <br>
+  <img alt="SocketIO" src="https://img.shields.io/badge/Socket.io-black?logo=socket.io" />
+  <img alt="MySQL" src="https://img.shields.io/badge/Mysql-black?logo=mysql" />
+  
+</p>
 
-[https://boostwriter.stenrine.com](https://boostwriter.stenrine.com)
+[Boost Writer Homepage](https://boostwriter.stenrine.com)
+
+`Boost Writer`는 기술 문서를 작성하며 바로 코드 수행을 통해 과정과 결과를 확인할 수 있게 도와주는 테크니컬 라이팅 서비스 입니다.  
+문서 작성 시에는 *Notion*, 확인 및 테스트 시에는 *실제 터미널*과 같은 UX를 지원해 기술 문서를 작성하는데 도움을 줍니다.
 
 ---
-
-> `Boost Writer`는 기술 문서를 작성하며, 바로 코드 수행을 통해 과정과 결과를 확인할 수 있게 도와주는 테크니컬 라이팅 서비스 입니다.  
-> 문서 작성 시 **Notion**과 같은, 확인 및 테스트 간 **Jupyter Notebook**과 같은 UX를 지원해 기술 문서를 작성하는데 도움을 줍니다.
 
 ## Structure
 
----
-
 ### 인프라 구성
 
-- Docker Server : Docker daemon이 가동중인 서버. 유저 터미널 환경을 컨터이너로 관리한다.
-- Docker Private Registry : 유저가 만든 터미널 환경을 이미지로 관리한다.
+- Docker Server : Docker daemon이 가동중인 서버. 유저 터미널 환경을 컨테이너로 관리한다.
 - Production Server : express 서버 및 클라이언트 배포 서버
 - DB Server
 - Nginx
 
-![infra](https://user-images.githubusercontent.com/4661295/69394024-2c33e580-0d1e-11ea-8c7a-49cec33aeea7.jpg)
+![infra](https://user-images.githubusercontent.com/26639508/71149453-f2e58b80-2271-11ea-8c84-5437226f4cd0.jpg)
 
-## Feature
 
 ---
 
-### 1. **WYSIWYG 방식의 마크다운 편집 기능**
+## Usage
+
+### **Shortcut**
+
+|기능|윈도우 단축키|맥OS 단축키
+|-|-|-|
+| 모든 셀 선택 | Ctrl + a | ⌘ + a
+| 범위 선택 | Shift + ↑ | ⇧ + ↑
+| 범위 선택 | Shift + ↓ | ⇧ + ↓
+| 범위 잘라내기 | Ctrl + x | ⌘ + x
+| 범위 복사 | Ctrl + c | ⌘ + c
+| 범위 붙여넣기 | Ctrl + v | ⌘ + v
+| 깊이 증가(List) | Tab | ⇥
+| 깊이 감소(List) | Shift + Tab | ⇧ + ⇥
+| 터미널 셀 삭제 | Shift + Backspace | ⇧ + ⌫
+| 터미널 셀, 코드 셀 위로 탈출 | Ctrl + ↑ | ⌥ + ⌘ + ↑
+| 터미널 셀, 코드 셀 아래로 탈출 | Ctrl + ↓ | ⌥ + ⌘ + ↓
+
+### **Markdown**
+
+### Terminal(Custom)
+
+```
+$$$
+```
+
+![terminal](https://user-images.githubusercontent.com/26639508/71147099-0a6d4600-226b-11ea-93a3-86c1fdecc73f.gif)
+
 
 ### Headings
 
@@ -40,9 +75,7 @@ Boost Writer Web Page
 ###### Heading 6
 ```
 
-![heading](https://user-images.githubusercontent.com/46277703/69843494-15a40600-12ab-11ea-85ea-0db75541fbe2.gif)
-
----
+![Headings](https://user-images.githubusercontent.com/26639508/71147100-0a6d4600-226b-11ea-89b2-77fb66a861df.gif)
 
 ### Unordered List
 
@@ -52,9 +85,9 @@ Boost Writer Web Page
 * Unordered List
 ```
 
-![ul](https://user-images.githubusercontent.com/46277703/69843876-bb0ba980-12ac-11ea-9b4f-b81528f808c1.gif)
+![ul](https://user-images.githubusercontent.com/26639508/71147107-0f31fa00-226b-11ea-90e3-8cc31c09bade.gif)
 
----
+**Tip**: (Shift+)Tab을 눌러 깊이를 조정할 수 있습니다.
 
 ### Ordered List
 
@@ -64,9 +97,9 @@ Boost Writer Web Page
 3. Ordered List
 ```
 
-![ol](https://user-images.githubusercontent.com/46277703/69843875-ba731300-12ac-11ea-9cba-554cbdfcb2cb.gif)
+![ol](https://user-images.githubusercontent.com/26639508/71147105-0f31fa00-226b-11ea-897e-5cb2038113fb.gif)
 
----
+**Tip**: (Shift+)Tab을 눌러 깊이를 조정할 수 있습니다.
 
 ### Quoting text
 
@@ -74,9 +107,7 @@ Boost Writer Web Page
 > Quote
 ```
 
-![quote](https://user-images.githubusercontent.com/46277703/69843619-b5fa2a80-12ab-11ea-962f-42818cf5e62d.gif)
-
----
+![Quote](https://user-images.githubusercontent.com/26639508/71147110-10632700-226b-11ea-834d-9c6d164fe878.gif)
 
 ### Code
 
@@ -85,126 +116,39 @@ Boost Writer Web Page
     code
 ````
 
-```
-code
-```
+![Code](https://user-images.githubusercontent.com/26639508/71147109-0fca9080-226b-11ea-9e5a-c5b1f8efca1e.gif)
 
-**주의**: 각 언어의 코드 하이라이팅을 지원하지 않습니다. (구현 예정)
+**Warning**: 각 언어의 코드 하이라이팅을 지원하지 않습니다.
 
 ---
 
-### HR
+## Feature
 
-```
----
-***
-___
-```
+### **1. WYSIWYG 방식의 마크다운 편집 기능**
 
-![hr](https://user-images.githubusercontent.com/46277703/69843837-81d33980-12ac-11ea-8d49-13c9f6707f90.gif)
-
-**주의**: - - -, \* \* \* 등 띄어쓰기를 입력할 경우 WYSIWYG 지원에 따라 Unordered List로 입력됩니다.
-
-### Terminal(Custom)
-
-```
-$$$
-```
-
-![terminal](https://user-images.githubusercontent.com/46277703/69843579-8519f580-12ab-11ea-8c3f-bcc1c7b467bd.gif)
-
----
-
-## **구현 예정입니다.**
-
-### Bold
-
-```
-**Bold**
-__Bold__
-```
-
-**Bold**
-
----
-
-### Italic
-
-```
-*Italic*
-_Italic_
-```
-
-_Italic_
-
----
-
-### Strikethrough
-
-```
-~~Strikethrough~~
-```
-
-~~Strikethrough~~
-
----
-
-### Quoting code
-
-```
-`code`
-```
-
-`code`
-
----
-
-### Link
-
-```
-[Link](https://www.naver.com)
-```
-
-[Link](uri)
-
----
-
-### Image
-
-```
-![Image](uri)
-```
-
-![image](https://recruit.navercorp.com/img/favicon/naver_favicon.ico)
-
----
-
-- **터미널 환경 설정**
+### **2. 터미널 환경 설정**
 
   ### OS
 
   - Ubuntu
   - CentOS
 
-  ### Programming Language
+  ### Programming Environment
 
-  - JavaScript
-  - C/C++
-  - Java
+  - NodeJS
   - Python
 
   ### Database
 
   - MySQL
-  - MariaDB
   - MongoDB
 
-- **문서 공유**
-  - 링크를 통한 작성한 문서 공유 가능
-
-## Team
+### **3. 문서 공유**
+  - 공유 UUID를 통한 작성한 문서 공유 가능
 
 ---
+
+## Team
 
 #### 권태욱
 
@@ -218,7 +162,7 @@ _Italic_
 
 #### 박다정
 
-[개인 홈페이지](https://dimss.tistory.com/)
+[Blog](https://dimss.tistory.com/)
 
 [GitHub](https://github.com/dimsssss)
 

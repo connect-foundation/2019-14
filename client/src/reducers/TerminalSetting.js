@@ -58,10 +58,17 @@ const terminalSettingHandler = {
   [TERMINAL_SETTING_ACTION.HIDE]: (state) => {
     return { ...state, isHidden: !state.isHidden };
   },
+
+  [TERMINAL_SETTING_ACTION.TERMINAL_LOADING]: (state, action) => {
+    return { ...state, loadLodingbar: action.isLoading };
+  },
+
+  [TERMINAL_SETTING_ACTION.CREATE_BUTTON_DISABLE]: (state, action) => {
+    return { ...state, createTerminalButtonDisabled: action.isDisable };
+  },
 };
 
 const terminalSettingReducer = (state, action) => {
-  console.log(state, action);
   const handler = terminalSettingHandler[action.type];
 
   if (handler === undefined) {

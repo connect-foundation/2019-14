@@ -1,13 +1,14 @@
 const express = require("express");
 
-const router = express.Router();
 const { utils } = require("../utils");
 const { documentController } = require("../controller");
 
 const { wrapAsync } = utils;
 
-router
-  .route("/")
-  .get(wrapAsync(documentController.load))
-  .patch(wrapAsync(documentController.save));
+const router = express.Router();
+
+router.route("/").patch(wrapAsync(documentController.save));
+
+router.route("/:containerId").get(wrapAsync(documentController.load));
+
 module.exports = router;

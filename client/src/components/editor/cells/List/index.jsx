@@ -10,14 +10,9 @@ import { useCellState, useKeys } from "../../../../utils";
 import {
   getSelection,
   saveCursorPosition,
-  deleteCell,
   blockRelease,
 } from "../Markdown/handler";
-import { newCell, initCell } from "./handler";
-import { cellGenerator, setGenerator } from "../CellGenerator";
-
-setGenerator("ul", (uuid) => <ListCell cellUuid={uuid} />);
-setGenerator("ol", (uuid) => <ListCell cellUuid={uuid} />);
+import { newCell, transformCell } from "./handler";
 
 const ListCell = ({ cellUuid }) => {
   const { state } = useContext(CellContext);
@@ -26,8 +21,12 @@ const ListCell = ({ cellUuid }) => {
     state,
     cellUuid
   );
-  const { block, cursor, cellManager } = state;
+  const { block, cursor, cellManager, isShared } = state;
   const { options } = cellManager;
+  const depth =
+    options[cellIndex] && options[cellIndex].depth
+      ? options[cellIndex].depth
+      : 0;
   const start =
     options[cellIndex] && options[cellIndex].start
       ? options[cellIndex].start
@@ -50,51 +49,47 @@ const ListCell = ({ cellUuid }) => {
       textContent.length === 0 ||
       (currentCursor.start === 0 && currentCursor.end === 0);
 
-    if (isStartPos) {
-      const componentCallback = cellGenerator.p;
-      dispatch(cellActionCreator.input(cellUuid, textContent));
-      initCell(cellUuid, dispatch, componentCallback);
-    }
-    if (state.block.start !== null) {
-      deleteCell(dispatch);
+    if (block.start !== null) {
+      dispatch(cellActionCreator.blockDelete());
+    } else if (isStartPos) {
+      if (depth) {
+        transformCell(cellUuid, dispatch, textContent, tag, depth - 1, start);
+      } else {
+        dispatch(cellActionCreator.input(cellUuid, textContent));
+        dispatch(cellActionCreator.reset());
+      }
     }
   };
 
   const enterEvent = (e) => {
     const { textContent } = e.target;
-    /*
-      e.target.insertAdjacentHTML(
-        "afterend",
-        renderToString(
-          <MarkdownWrapper
-            as="li"
-            placeholder={placeholder}
-            ref={inputRef || null}
-            suppressContentEditableWarning
-            contentEditable
-          ></MarkdownWrapper>
-        )
-      );
-      */
     if (textContent.length === 0) {
       backspaceEvent(e);
     } else {
-      const isOrderedList = tag === "ol";
-
-      const componentCallback = isOrderedList
-        ? cellGenerator.ol
-        : cellGenerator.ul;
-
       saveCursorPosition(dispatch);
       dispatch(cellActionCreator.input(cellUuid, textContent));
-      newCell(cellUuid, dispatch, componentCallback, tag, start);
+      newCell(dispatch);
     }
     blockRelease(dispatch);
+  };
+
+  const tabEvent = (ev) => {
+    const { textContent } = ev.target;
+
+    transformCell(cellUuid, dispatch, textContent, tag, depth + 1, start);
+  };
+
+  const shiftTabEvent = (ev) => {
+    const { textContent } = ev.target;
+
+    transformCell(cellUuid, dispatch, textContent, tag, depth - 1, start);
   };
 
   const keydownHandlers = {
     [EVENT_TYPE.ENTER]: enterEvent,
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
+    [EVENT_TYPE.TAB]: tabEvent,
+    [EVENT_TYPE.SHIFT_TAB]: shiftTabEvent,
   };
 
   const isFocus = currentIndex === cellIndex;
@@ -102,7 +97,8 @@ const ListCell = ({ cellUuid }) => {
     inputRef = state.inputRef;
   }
 
-  useKeys(keydownHandlers, isFocus, [block.end]);
+  const eventTrigger = isFocus && !isShared;
+  useKeys(keydownHandlers, eventTrigger, [block.end, depth], inputRef);
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
@@ -132,7 +128,7 @@ const ListCell = ({ cellUuid }) => {
   const renderTarget = (
     <MarkdownWrapper
       as="li"
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       placeholder={placeholder}
@@ -141,6 +137,8 @@ const ListCell = ({ cellUuid }) => {
       ref={inputRef || null}
       spellCheck={false}
       suppressContentEditableWarning
+      isList
+      depth={depth}
     >
       {text}
     </MarkdownWrapper>

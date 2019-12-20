@@ -3,13 +3,9 @@ import propTypes from "prop-types";
 import styled from "styled-components";
 import { CellContext, CellDispatchContext } from "../../../../stores/CellStore";
 import { cellActionCreator } from "../../../../actions/CellAction";
-import { setGenerator, cellGenerator } from "../CellGenerator";
 import { useCellState, useKeys, getChecksumAllFalse } from "../../../../utils";
 import { EVENT_TYPE } from "../../../../enums";
 import { focusPrev, focusNext } from "../Markdown/handler";
-import { initCell } from "../Heading/handler";
-
-setGenerator("code", (uuid) => <CodeCell cellUuid={uuid} />);
 
 const CodeCellWrapper = styled.p`
   &:empty {
@@ -51,7 +47,7 @@ const CodeCell = ({ cellUuid }) => {
   );
   let inputRef = null;
   let intoShiftBlock = false;
-  const { block } = state;
+  const { block, isShared } = state;
 
   if (block.start !== null) {
     const blockStart = block.start < block.end ? block.start : block.end;
@@ -96,8 +92,7 @@ const CodeCell = ({ cellUuid }) => {
   const backspaceEvent = (e) => {
     const { textContent } = e.target;
     if (textContent.length === 0) {
-      const componentCallback = cellGenerator.p;
-      initCell(cellUuid, dispatch, componentCallback);
+      dispatch(cellActionCreator.reset());
     }
   };
 
@@ -108,7 +103,14 @@ const CodeCell = ({ cellUuid }) => {
     [EVENT_TYPE.BACKSPACE]: backspaceEvent,
   };
 
-  useKeys(keydownHandlerArray, isFocus, [], getChecksumAllFalse());
+  const eventTrigger = isFocus && !isShared;
+  useKeys(
+    keydownHandlerArray,
+    eventTrigger,
+    [],
+    inputRef,
+    getChecksumAllFalse()
+  );
 
   const onClick = () => {
     dispatch(cellActionCreator.focusMove(cellUuid));
@@ -123,7 +125,7 @@ const CodeCell = ({ cellUuid }) => {
 
   return (
     <CodeCellWrapper
-      contentEditable
+      contentEditable={!state.isShared}
       intoShiftBlock={intoShiftBlock}
       isCurrentCell={isFocus}
       isQuote={false}

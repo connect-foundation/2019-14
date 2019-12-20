@@ -1,5 +1,6 @@
 const path = require("path");
-const Dotenv = require('dotenv-webpack');
+const Dotenv = require("dotenv-webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const config = {
   mode: "production",
@@ -47,7 +48,12 @@ const config = {
     ], // rules
   }, // module
 
-  plugins: [new Dotenv()],
+  plugins: [
+    new Dotenv(),
+    new HtmlWebpackPlugin({
+      template: "dist/index.html",
+    }),
+  ],
 };
 
 module.exports = config;

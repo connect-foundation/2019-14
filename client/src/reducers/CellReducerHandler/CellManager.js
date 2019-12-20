@@ -1,6 +1,5 @@
 import { uuid } from "uuidv4";
-import { utils, uuidManager, getType } from "../../utils";
-import { CELL_TAG } from "../../enums";
+import { utils, uuidManager } from "../../utils";
 import { cellGenerator } from "../../components/editor/cells/CellGenerator";
 
 const { splice } = utils;
@@ -11,27 +10,6 @@ function CellManager() {
   this.tags = [];
   this.options = [];
 }
-
-const TAG_MARKDOWN = {
-  [CELL_TAG.DEFAULT]: "",
-  [CELL_TAG.LIST.UL]: "- ",
-  [CELL_TAG.LIST.OL]: "1. ",
-  [CELL_TAG.LIST.LI]: "- ",
-  [CELL_TAG.HEADING.H1]: "# ",
-  [CELL_TAG.HEADING.H2]: "## ",
-  [CELL_TAG.HEADING.H3]: "### ",
-  [CELL_TAG.HEADING.H4]: "#### ",
-  [CELL_TAG.HEADING.H5]: "##### ",
-  [CELL_TAG.HEADING.H6]: "###### ",
-  [CELL_TAG.BLOCKQUOTE]: "> ",
-  [CELL_TAG.CODE]: "```",
-  [CELL_TAG.TERMINAL]: "$$$",
-};
-
-const findMakdownByTag = (tag) => {
-  const mdText = TAG_MARKDOWN[tag];
-  return mdText;
-};
 
 CellManager.prototype.init = function() {
   this.cells = [];
@@ -99,61 +77,43 @@ CellManager.prototype.popArray = function(start, end, flag) {
 };
 
 CellManager.prototype.createMarkdownDocument = function() {
-  let document = "";
-  for (let i = 0; i < this.texts.length; i += 1) {
-    let mdExp = null;
-    if (this.tags[i] === "ol") {
-      mdExp = "".concat(this.options[i].start).concat(". ");
-    } else {
-      mdExp = findMakdownByTag(this.tags[i]);
-    }
+  const document = [];
 
-    let text = mdExp;
+  for (let i = 0; i < this.texts.length; i += 1) {
+    const text = this.texts[i];
     const tag = this.tags[i];
-    const isAreaTag = tag === "code" || tag === "terminal";
-    text += `${isAreaTag ? "\n" : ""}`;
-    text += `${this.texts[i]}\n`;
-    text += `${isAreaTag ? `${mdExp}\n` : ""}`;
-    document = document.concat(text);
+    const option = this.options[i];
+    const cellData = {
+      text,
+      tag,
+      option,
+    };
+
+    document.push(cellData);
   }
-  return document;
+
+  const documentString = JSON.stringify(document);
+  return documentString;
 };
 
-CellManager.prototype.load = function(doc) {
-  const array = doc.split("\n");
+CellManager.prototype.load = function(document) {
   this.init();
   uuidManager.init();
 
-  let cellIndex = 0;
-  for (let i = 0; i < array.length; i += 1) {
+  document.forEach((cellData, index) => {
     const newCellUuid = uuid();
     uuidManager.push(newCellUuid);
 
-    const { findPattern, matchingTag } = getType(array[i]);
-    const tag = matchingTag || "p";
-    const cell = cellGenerator[tag];
-    this.cells.push(cell(newCellUuid));
+    const { tag, text, option } = cellData;
 
+    const createCell = cellGenerator[tag];
+    this.cells.push(createCell(newCellUuid));
     this.tags.push(tag);
 
-    const isAreaTag = tag === "code" || tag === "terminal";
-    if (isAreaTag) {
-      let areaText = "";
-      this.texts[cellIndex] = "";
-      i += 1;
-      const pattern = findPattern[0];
-      while (array[i] !== pattern) {
-        areaText = array[i].concat("\n");
-        this.texts[cellIndex] = this.texts[cellIndex].concat(areaText);
-        i += 1;
-      }
-    } else {
-      let sliceStart = tag !== "p" ? findPattern.length : 0;
-      sliceStart = tag === "ol" ? sliceStart + 2 : sliceStart;
-      this.texts[cellIndex] = array[i].slice(sliceStart);
-    }
-    cellIndex += 1;
-  }
+    this.texts.push(text);
+
+    this.addOption(index, option);
+  });
 };
 
 export default CellManager;
