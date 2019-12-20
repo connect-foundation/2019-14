@@ -1,7 +1,7 @@
 const path = require("path");
 const debug = require("debug")("boostwriter:controller:terminal");
-const { writeDockerfile } = require("../api/makeDockerfile");
-const validImages = require("../dockerImages");
+const { writeDockerfile } = require("../api/make-dockerfile");
+const validImages = require("../docker-images");
 
 const makeImageNameString = (terminalOption) => {
   let userSelectionEnvironment = [];
