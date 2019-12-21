@@ -251,6 +251,8 @@ const makeKeyHandler = {
 
 const defaultHandlers = {
   [EVENT_TYPE.SHIFT_ENTER]: null,
+  [EVENT_TYPE.TAB]: null,
+  [EVENT_TYPE.SHIFT_TAB]: null,
   [EVENT_TYPE.ARROW_UP]: null,
   [EVENT_TYPE.ARROW_DOWN]: null,
   [EVENT_TYPE.SHIFT_ARROW_UP]: null,
@@ -263,6 +265,8 @@ const defaultHandlers = {
 
 const defaultChecksumAllFalse = {
   [EVENT_TYPE.SHIFT_ENTER]: false,
+  [EVENT_TYPE.TAB]: false,
+  [EVENT_TYPE.SHIFT_TAB]: false,
   [EVENT_TYPE.ARROW_UP]: false,
   [EVENT_TYPE.ARROW_DOWN]: false,
   [EVENT_TYPE.SHIFT_ARROW_UP]: false,
@@ -279,6 +283,8 @@ const getChecksumAllFalse = () => {
 
 const defaultChecksumAllTrue = {
   [EVENT_TYPE.SHIFT_ENTER]: true,
+  [EVENT_TYPE.TAB]: true,
+  [EVENT_TYPE.SHIFT_TAB]: true,
   [EVENT_TYPE.ARROW_UP]: true,
   [EVENT_TYPE.ARROW_DOWN]: true,
   [EVENT_TYPE.SHIFT_ARROW_UP]: true,

@@ -61,6 +61,8 @@ const MarkdownCell = ({ cellUuid }) => {
   };
 
   const shiftEnterEvent = () => {};
+  const tabEvent = () => {};
+  const shiftTabEvent = () => {};
 
   const arrowUpEvent = () => {
     focusPrev(dispatch);
@@ -118,6 +120,8 @@ const MarkdownCell = ({ cellUuid }) => {
     [EVENT_TYPE.ARROW_DOWN]: arrowDownEvent,
     [EVENT_TYPE.SHIFT_ARROW_UP]: shiftArrowUpEvent,
     [EVENT_TYPE.SHIFT_ARROW_DOWN]: shiftArrowDownEvent,
+    [EVENT_TYPE.TAB]: tabEvent,
+    [EVENT_TYPE.SHIFT_TAB]: shiftTabEvent,
     [EVENT_TYPE.CTRL_A]: ctrlAEvent,
     [EVENT_TYPE.CTRL_X]: ctrlXEvent,
     [EVENT_TYPE.CTRL_C]: ctrlCEvent,

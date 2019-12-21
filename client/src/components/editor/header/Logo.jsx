@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import logoImagePath from "../../../../public/BoostWriter.png";
 
@@ -10,10 +9,11 @@ const HeaderLogoImageWrapper = styled.img`
 `;
 
 const HeaderLogoImage = () => {
+  const goHome = () => {
+    window.location.href = "/";
+  };
   return (
-    <Link to="/">
-      <HeaderLogoImageWrapper alt="logo" src={logoImagePath} />
-    </Link>
+    <HeaderLogoImageWrapper alt="logo" src={logoImagePath} onClick={goHome} />
   );
 };
 
