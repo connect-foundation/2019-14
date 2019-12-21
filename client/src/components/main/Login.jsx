@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-autofocus */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from "react";
@@ -43,15 +44,7 @@ const LoginWrapper = styled.div`
 `;
 
 const Login = () => {
-  const [loginState, setLoginState] = useState(false);
   const [open, setOpen] = useState(false);
-
-  const onKeyPress = (e) => {
-    const { key } = e;
-    if (key === "Enter") {
-      setLoginState(true);
-    }
-  };
 
   const openShareDocument = () => {
     const saveShareDocument = async (shareId) => {
@@ -103,34 +96,12 @@ const Login = () => {
     openModal(label, modalContents);
   };
 
-  const beforeLogin = (
+  const renderTarget = (
     <>
       {open && <Redirect to="/editor" />}
       <div className="btn-common" onClick={openShareDocument}>
         Open Share Document
       </div>
-      <input type="text" id="id" name="id" placeholder="ID" />
-      <input
-        type="password"
-        id="pw"
-        name="pw"
-        placeholder="password"
-        onKeyPress={onKeyPress}
-      />
-      <div
-        className="btn-common"
-        onClick={() => {
-          setLoginState(true);
-        }}
-      >
-        Login
-      </div>
-    </>
-  );
-
-  const afterLogin = (
-    <>
-      {open && <Redirect to="/editor" />}
       <div
         className="btn-common"
         onClick={() => {
@@ -139,18 +110,10 @@ const Login = () => {
       >
         Open Editor
       </div>
-      <div
-        className="btn-common"
-        onClick={() => {
-          setLoginState(false);
-        }}
-      >
-        Logout
-      </div>
     </>
   );
 
-  return <LoginWrapper>{loginState ? afterLogin : beforeLogin}</LoginWrapper>;
+  return <LoginWrapper>{renderTarget}</LoginWrapper>;
 };
 
 export default Login;
