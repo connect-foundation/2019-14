@@ -25,6 +25,7 @@ const TerminalSettingDrawer = () => {
   return (
     <TermialSettingDrawerWrapper isHidden={state.isHidden}>
       <Header />
+      <hr />
       <Contents />
     </TermialSettingDrawerWrapper>
   );
