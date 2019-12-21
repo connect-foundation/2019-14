@@ -17,7 +17,7 @@
 [Boost Writer Homepage](https://boostwriter.stenrine.com)
 
 `Boost Writer`는 기술 문서를 작성하며 바로 코드 수행을 통해 과정과 결과를 확인할 수 있게 도와주는 테크니컬 라이팅 서비스 입니다.  
-문서 작성 시에는 *Notion*, 확인 및 테스트 시에는 *실제 터미널*과 같은 UX를 지원해 기술 문서를 작성하는데 도움을 줍니다.
+문서 작성 시에는 _Notion_, 확인 및 테스트 시에는 *실제 터미널*과 같은 UX를 지원해 기술 문서를 작성하는데 도움을 줍니다.
 
 ---
 
@@ -32,26 +32,25 @@
 
 ![infra](https://user-images.githubusercontent.com/26639508/71149453-f2e58b80-2271-11ea-8c84-5437226f4cd0.jpg)
 
-
 ---
 
 ## Usage
 
 ### **Shortcut**
 
-|기능|윈도우 단축키|맥OS 단축키
-|-|-|-|
-| 모든 셀 선택 | Ctrl + a | ⌘ + a
-| 범위 선택 | Shift + ↑ | ⇧ + ↑
-| 범위 선택 | Shift + ↓ | ⇧ + ↓
-| 범위 잘라내기 | Ctrl + x | ⌘ + x
-| 범위 복사 | Ctrl + c | ⌘ + c
-| 범위 붙여넣기 | Ctrl + v | ⌘ + v
-| 깊이 증가(List) | Tab | ⇥
-| 깊이 감소(List) | Shift + Tab | ⇧ + ⇥
-| 터미널 셀 삭제 | Shift + Backspace | ⇧ + ⌫
-| 터미널 셀, 코드 셀 위로 탈출 | Ctrl + ↑ | ⌥ + ⌘ + ↑
-| 터미널 셀, 코드 셀 아래로 탈출 | Ctrl + ↓ | ⌥ + ⌘ + ↓
+| 기능                           | 윈도우 단축키     | 맥OS 단축키 |
+| ------------------------------ | ----------------- | ----------- |
+| 모든 셀 선택                   | Ctrl + a          | ⌘ + a       |
+| 범위 선택                      | Shift + ↑         | ⇧ + ↑       |
+| 범위 선택                      | Shift + ↓         | ⇧ + ↓       |
+| 범위 잘라내기                  | Ctrl + x          | ⌘ + x       |
+| 범위 복사                      | Ctrl + c          | ⌘ + c       |
+| 범위 붙여넣기                  | Ctrl + v          | ⌘ + v       |
+| 깊이 증가(List)                | Tab               | ⇥           |
+| 깊이 감소(List)                | Shift + Tab       | ⇧ + ⇥       |
+| 터미널 셀, 코드 셀 삭제        | Shift + Backspace | ⇧ + ⌫       |
+| 터미널 셀, 코드 셀 위로 탈출   | Ctrl + ↑          | ⌥ + ⌘ + ↑   |
+| 터미널 셀, 코드 셀 아래로 탈출 | Ctrl + ↓          | ⌥ + ⌘ + ↓   |
 
 ### **Markdown**
 
@@ -62,7 +61,6 @@ $$$
 ```
 
 ![terminal](https://user-images.githubusercontent.com/26639508/71147099-0a6d4600-226b-11ea-93a3-86c1fdecc73f.gif)
-
 
 ### Headings
 
@@ -128,23 +126,24 @@ $$$
 
 ### **2. 터미널 환경 설정**
 
-  ### OS
+### OS
 
-  - Ubuntu
-  - CentOS
+- Ubuntu
+- CentOS
 
-  ### Programming Environment
+### Programming Environment
 
-  - NodeJS
-  - Python
+- NodeJS
+- Python
 
-  ### Database
+### Database
 
-  - MySQL
-  - MongoDB
+- MySQL
+- MongoDB
 
 ### **3. 문서 공유**
-  - 공유 UUID를 통한 작성한 문서 공유 가능
+
+- 공유 UUID를 통한 작성한 문서 공유 가능
 
 ---
 
