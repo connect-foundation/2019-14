@@ -80,7 +80,7 @@ const CodeCell = ({ cellUuid }) => {
   };
 
   const optionCommandDownEvent = () => {
-    focusNext(dispatch);
+    dispatch(cellActionCreator.newEmptyDefault());
   };
 
   // 참고 : https://stackoverflow.com/a/36168767/12117094
@@ -89,18 +89,15 @@ const CodeCell = ({ cellUuid }) => {
     document.execCommand("insertHTML", false, "&#32;&#32;&#32;&#32;");
   };
 
-  const backspaceEvent = (e) => {
-    const { textContent } = e.target;
-    if (textContent.length === 0) {
-      dispatch(cellActionCreator.reset());
-    }
+  const shiftBackspaceEvent = () => {
+    dispatch(cellActionCreator.reset());
   };
 
   const keydownHandlerArray = {
     [EVENT_TYPE.OPTION_COMMAND_UP]: optionCommandUpEvent,
     [EVENT_TYPE.OPTION_COMMAND_DOWN]: optionCommandDownEvent,
     [EVENT_TYPE.TAB]: tabEvent,
-    [EVENT_TYPE.BACKSPACE]: backspaceEvent,
+    [EVENT_TYPE.SHIFT_BACKSPACE]: shiftBackspaceEvent,
   };
 
   const eventTrigger = isFocus && !isShared;
