@@ -1,5 +1,8 @@
+import createDebug from "debug";
 import { useEffect } from "react";
 import { EVENT_TYPE } from "../enums";
+
+const debug = createDebug("boost:util:handler");
 
 const KEY_TYPE = {
   ENTER: "Enter",
@@ -164,10 +167,12 @@ const makeKeyHandler = {
       const { key, shiftKey } = e;
       const isArrowDown = key === KEY_TYPE.ARROW_DOWN;
       const isShiftUp = shiftKey;
+      debug("prev arrow down");
       if (!isShiftUp && isArrowDown) {
         e.preventDefault();
         const currentTime = new Date().getTime();
         if (!lockTime || currentTime - lockTime >= 40) {
+          debug("in arrow down");
           handler(e);
           lockTime = new Date().getTime();
         }
@@ -318,8 +323,9 @@ const useKeys = (
 ) => {
   const keydownHandlers = {};
   Object.entries(checksum).forEach(([type, check]) => {
-    if (check)
+    if (check) {
       keydownHandlers[type] = makeKeyHandler[type](defaultHandlers[type]);
+    }
   });
   Object.entries(handlers).forEach(([type, handler]) => {
     keydownHandlers[type] = makeKeyHandler[type](handler);

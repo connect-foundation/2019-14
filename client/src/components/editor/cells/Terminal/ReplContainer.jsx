@@ -71,6 +71,14 @@ const ReplContainer = ({ cellUuid, isCellFocus }) => {
       dispatchToTerminal(terminalAction.focusOut());
       dispatchToCell(cellAction.focusNext());
     },
+
+    [EVENT_TYPE.TAB]: (e) => {
+      e.preventDefault();
+    },
+
+    [EVENT_TYPE.SHIFT_TAB]: (e) => {
+      e.preventDefault();
+    },
   };
 
   useKeys(eventHandlers, isCellFocus, [currentText], replRef);

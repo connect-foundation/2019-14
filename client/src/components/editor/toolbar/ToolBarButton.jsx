@@ -120,20 +120,24 @@ const BUTTON_HANDLER = {
 };
 
 const ToolBarButtonWrapper = styled.button`
-  margin: 0 0.5rem;
-  width: 2rem;
   height: 3rem;
-  font-size: 1.5rem;
+
+  border: none;
+  outline: none;
+
   background: transparent;
-  border: transparent;
-  cursor: pointer;
+
   color: ${THEME.VS_CODE.FONT};
   outline: none;
 
+  cursor: pointer;
+
+  font-size: 1.5rem;
   div {
-    font-size: 0.4rem;
+    font-size: 0.7rem;
   }
 
+  margin: 0 0.5rem;
   margin-left: ${({ isTerminal }) => isTerminal && "auto"};
 `;
 
