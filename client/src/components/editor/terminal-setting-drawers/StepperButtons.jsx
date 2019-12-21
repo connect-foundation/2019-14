@@ -20,15 +20,22 @@ const StepperButtonsWrapper = styled.footer`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: 5rem;
+  margin-top: 2.5rem;
 `;
 
 const Button = styled.button`
-  background-color: ${THEME.VS_CODE.SIDE_MENU};
+  background-color: ${THEME.VS_CODE.INNER_BOX};
   color: ${THEME.VS_CODE.FONT};
+
   cursor: pointer;
+
   font-size: 1.2rem;
+
+  outline: none;
   border: none;
+  border-radius: 10px;
+
+  padding: 5px 20px;
 `;
 
 const ModalContents = ({ resultmessage }) => {
@@ -56,7 +63,6 @@ const StepperButtons = () => {
   };
 
   const terminalButtonClickHandler = async () => {
-    // TODO 함수로 분리 할 것
     const option = {
       OS: state.OS,
       PE: state.PE,
@@ -102,14 +108,14 @@ const StepperButtons = () => {
   return (
     <>
       <StepperButtonsWrapper>
-        <Button onClick={clickHandler}>&lt; prev</Button>
+        <Button onClick={clickHandler}>◄</Button>
         <Button
           onClick={waitSecond}
           disabled={state.createTerminalButtonDisabled}
         >
-          createTerminal
+          생성
         </Button>
-        <Button onClick={clickHandler}>next &gt;</Button>
+        <Button onClick={clickHandler}>►</Button>
       </StepperButtonsWrapper>
       <div>{state.loadLodingbar ? <Loading /> : null}</div>
     </>

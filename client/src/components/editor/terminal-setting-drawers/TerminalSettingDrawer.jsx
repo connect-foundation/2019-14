@@ -11,7 +11,7 @@ const TermialSettingDrawerWrapper = styled.section`
 
   right: 0;
 
-  width: 28rem;
+  width: 18rem;
   height: 100%;
 
   background-color: ${THEME.VS_CODE.SIDE_MENU};

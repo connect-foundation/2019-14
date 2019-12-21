@@ -6,7 +6,10 @@ import { ToolBarButton, BUTTON_TYPE } from "./ToolBarButton";
 
 const ToolBarWrapper = styled.nav`
   display: flex;
+
   width: 100%;
+
+  margin-top: 1rem;
 `;
 
 const ToolBar = () => {
