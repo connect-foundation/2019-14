@@ -86,6 +86,7 @@ const StepperButtons = () => {
       <ModalContents resultmessage={defaultCreateTerminalResultMessage} />
     );
     dispatch(terminalSettingActionCreator.loadTerminalLodingbar(false));
+    dispatch(terminalSettingActionCreator.viewTerminalSetting());
   };
 
   const waitSecond = () => {
