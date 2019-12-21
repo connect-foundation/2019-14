@@ -20,7 +20,7 @@ const StepperButtonsWrapper = styled.footer`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: 5rem;
+  margin-top: 2.5rem;
 `;
 
 const Button = styled.button`
@@ -31,6 +31,7 @@ const Button = styled.button`
 
   font-size: 1.2rem;
 
+  outline: none;
   border: none;
   border-radius: 10px;
 

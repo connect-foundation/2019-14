@@ -134,7 +134,7 @@ const ToolBarButtonWrapper = styled.button`
 
   font-size: 1.5rem;
   div {
-    font-size: 0.4rem;
+    font-size: 0.7rem;
   }
 
   margin: 0 0.5rem;
