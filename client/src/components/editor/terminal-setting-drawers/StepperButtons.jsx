@@ -55,7 +55,7 @@ const StepperButtons = () => {
   const dispatch = useContext(TerminalSettingDispatch);
 
   const clickHandler = (e) => {
-    if (e.target.textContent === "< prev") {
+    if (e.target.textContent === "◄") {
       dispatch(terminalSettingActionCreator.prevStep(state.currentStep));
     } else {
       dispatch(terminalSettingActionCreator.nextStep(state.currentStep));
